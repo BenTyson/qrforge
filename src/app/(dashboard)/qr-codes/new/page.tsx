@@ -32,6 +32,8 @@ export default function NewQRCodePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [isPasswordProtected, setIsPasswordProtected] = useState(false);
 
   // Form state
   const [urlValue, setUrlValue] = useState('');
@@ -161,6 +163,16 @@ export default function NewQRCodePage() {
         destinationUrl = content.type === 'url' ? (content as any).url : null;
       }
 
+      // Hash password if set
+      let passwordHash = null;
+      if (isDynamic && isPasswordProtected && password) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+
       const { error: insertError } = await supabase
         .from('qr_codes')
         .insert({
@@ -172,6 +184,7 @@ export default function NewQRCodePage() {
           short_code: shortCode,
           destination_url: destinationUrl,
           expires_at: isDynamic && expiresAt ? new Date(expiresAt).toISOString() : null,
+          password_hash: passwordHash,
           style: {
             foregroundColor: style.foregroundColor,
             backgroundColor: style.backgroundColor,
@@ -311,6 +324,38 @@ export default function NewQRCodePage() {
                 <p className="text-xs text-muted-foreground mt-2">
                   Expires: {new Date(expiresAt).toLocaleString()}
                 </p>
+              )}
+            </Card>
+          )}
+
+          {/* Password Protection (Dynamic QR codes only) */}
+          {isDynamic && (
+            <Card className="p-6 glass">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="font-medium">Password Protection</p>
+                  <p className="text-sm text-muted-foreground">
+                    Require a password to access the destination
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                    Pro
+                  </span>
+                  <Switch
+                    checked={isPasswordProtected}
+                    onCheckedChange={setIsPasswordProtected}
+                  />
+                </div>
+              </div>
+              {isPasswordProtected && (
+                <Input
+                  type="password"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-secondary/50"
+                />
               )}
             </Card>
           )}

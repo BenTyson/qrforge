@@ -39,6 +39,11 @@ export async function GET(
     }
   }
 
+  // Check if QR code is password protected
+  if (qrCode.password_hash) {
+    return NextResponse.redirect(new URL(`/r/${code}/unlock`, request.url));
+  }
+
   // Check scan limits
   const profile = qrCode.profiles as {
     id: string;

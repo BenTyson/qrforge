@@ -65,6 +65,9 @@ async function recordScan(
     const os = getOS(userAgent);
     const browser = getBrowser(userAgent);
 
+    // Get geolocation data from IP-API (free tier: 45 requests/minute)
+    const geoData = await getGeolocation(ip);
+
     // Insert scan record
     await supabase.from('scans').insert({
       qr_code_id: qrCodeId,
@@ -73,11 +76,54 @@ async function recordScan(
       os: os,
       browser: browser,
       referrer: referrer,
-      // Note: For geo data, you'd need to integrate an IP geolocation service
-      // like MaxMind, IP-API, or similar
+      country: geoData?.country || null,
+      city: geoData?.city || null,
+      region: geoData?.region || null,
     });
   } catch (error) {
     console.error('Failed to record scan:', error);
+  }
+}
+
+interface GeoData {
+  country: string;
+  city: string;
+  region: string;
+}
+
+async function getGeolocation(ip: string): Promise<GeoData | null> {
+  // Skip for local/private IPs
+  if (ip === 'unknown' || ip.startsWith('127.') || ip.startsWith('192.168.') ||
+      ip.startsWith('10.') || ip === '::1' || ip.startsWith('172.')) {
+    return null;
+  }
+
+  try {
+    // Using IP-API (free tier: 45 requests/minute, no API key required)
+    // For production with higher limits, consider MaxMind or paid IP-API
+    const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`, {
+      signal: AbortSignal.timeout(2000), // 2 second timeout
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (data.status !== 'success') {
+      return null;
+    }
+
+    return {
+      country: data.country || '',
+      city: data.city || '',
+      region: data.regionName || '',
+    };
+  } catch (error) {
+    // Silently fail - geolocation is nice-to-have, not critical
+    console.error('Geolocation lookup failed:', error);
+    return null;
   }
 }
 

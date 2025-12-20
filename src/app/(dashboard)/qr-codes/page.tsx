@@ -2,12 +2,26 @@ import { createClient } from '@/lib/supabase/server';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { QRCodeCard } from '@/components/qr/QRCodeCard';
 
 export default async function QRCodesPage() {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  // TODO: Fetch QR codes from database
-  const qrCodes: any[] = [];
+  if (!user) {
+    return null;
+  }
+
+  // Fetch QR codes from database
+  const { data: qrCodes, error } = await supabase
+    .from('qr_codes')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching QR codes:', error);
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -27,8 +41,19 @@ export default async function QRCodesPage() {
         </Link>
       </div>
 
+      {/* Stats Bar */}
+      {qrCodes && qrCodes.length > 0 && (
+        <div className="flex gap-4 mb-6 text-sm text-muted-foreground">
+          <span>{qrCodes.length} QR code{qrCodes.length !== 1 ? 's' : ''}</span>
+          <span>•</span>
+          <span>{qrCodes.filter(qr => qr.type === 'dynamic').length} dynamic</span>
+          <span>•</span>
+          <span>{qrCodes.reduce((sum, qr) => sum + (qr.scan_count || 0), 0)} total scans</span>
+        </div>
+      )}
+
       {/* Empty State */}
-      {qrCodes.length === 0 && (
+      {(!qrCodes || qrCodes.length === 0) && (
         <Card className="p-12 glass text-center">
           <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-2xl flex items-center justify-center">
             <QRIcon className="w-10 h-10 text-primary" />
@@ -47,12 +72,10 @@ export default async function QRCodesPage() {
       )}
 
       {/* QR Codes Grid */}
-      {qrCodes.length > 0 && (
+      {qrCodes && qrCodes.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {qrCodes.map((qr) => (
-            <Card key={qr.id} className="p-4 glass">
-              {/* QR Code card content will go here */}
-            </Card>
+            <QRCodeCard key={qr.id} qrCode={qr} />
           ))}
         </div>
       )}

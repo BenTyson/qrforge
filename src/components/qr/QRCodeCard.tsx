@@ -22,6 +22,7 @@ interface QRCodeData {
   style: QRStyleOptions;
   scan_count: number;
   created_at: string;
+  expires_at: string | null;
 }
 
 interface QRCodeCardProps {
@@ -123,6 +124,18 @@ export function QRCodeCard({ qrCode }: QRCodeCardProps) {
     });
   };
 
+  const formatExpirationDate = (date: string) => {
+    const expDate = new Date(date);
+    const now = new Date();
+    const diffMs = expDate.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 0) return 'Expired';
+    if (diffDays === 1) return 'tomorrow';
+    if (diffDays <= 7) return `in ${diffDays}d`;
+    return expDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
   return (
     <Card
       className="p-4 glass hover:glow transition-all duration-300 group"
@@ -148,6 +161,17 @@ export function QRCodeCard({ qrCode }: QRCodeCardProps) {
                 <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
                   Dynamic
                 </Badge>
+              )}
+              {qrCode.expires_at && (
+                new Date(qrCode.expires_at) < new Date() ? (
+                  <Badge variant="secondary" className="bg-red-500/10 text-red-500 text-xs">
+                    Expired
+                  </Badge>
+                ) : (
+                  <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 text-xs">
+                    Expires {formatExpirationDate(qrCode.expires_at)}
+                  </Badge>
+                )
               )}
             </div>
           </div>

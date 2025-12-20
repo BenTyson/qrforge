@@ -228,3 +228,22 @@ BEGIN
   END CASE;
 END;
 $$ LANGUAGE plpgsql;
+
+-- ============================================
+-- QR EXPIRATION (Phase 3.2 - Pro+ Feature)
+-- ============================================
+
+-- Add expiration column to qr_codes
+-- Run this migration on existing database:
+-- ALTER TABLE qr_codes ADD COLUMN expires_at TIMESTAMPTZ;
+
+-- Index for efficient expiration queries
+-- CREATE INDEX idx_qr_codes_expires ON qr_codes(expires_at) WHERE expires_at IS NOT NULL;
+
+-- ============================================
+-- PASSWORD PROTECTION (Phase 3.3 - Pro+ Feature)
+-- ============================================
+
+-- Add password protection to qr_codes
+-- Run this migration on existing database:
+-- ALTER TABLE qr_codes ADD COLUMN password_hash TEXT;

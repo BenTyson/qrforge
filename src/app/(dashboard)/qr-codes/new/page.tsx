@@ -31,6 +31,7 @@ export default function NewQRCodePage() {
   const [style, setStyle] = useState<QRStyleOptions>(DEFAULT_STYLE);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expiresAt, setExpiresAt] = useState<string>('');
 
   // Form state
   const [urlValue, setUrlValue] = useState('');
@@ -170,6 +171,7 @@ export default function NewQRCodePage() {
           content: content as Record<string, any>,
           short_code: shortCode,
           destination_url: destinationUrl,
+          expires_at: isDynamic && expiresAt ? new Date(expiresAt).toISOString() : null,
           style: {
             foregroundColor: style.foregroundColor,
             backgroundColor: style.backgroundColor,
@@ -283,6 +285,35 @@ export default function NewQRCodePage() {
               </div>
             </div>
           </Card>
+
+          {/* Expiration Date (Dynamic QR codes only) */}
+          {isDynamic && (
+            <Card className="p-6 glass">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="font-medium">Expiration Date</p>
+                  <p className="text-sm text-muted-foreground">
+                    QR code will stop working after this date
+                  </p>
+                </div>
+                <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                  Pro
+                </span>
+              </div>
+              <Input
+                type="datetime-local"
+                value={expiresAt}
+                onChange={(e) => setExpiresAt(e.target.value)}
+                min={new Date().toISOString().slice(0, 16)}
+                className="bg-secondary/50"
+              />
+              {expiresAt && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Expires: {new Date(expiresAt).toLocaleString()}
+                </p>
+              )}
+            </Card>
+          )}
 
           {/* Type Selector */}
           <QRTypeSelector

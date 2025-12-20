@@ -31,6 +31,14 @@ export async function GET(
     return NextResponse.redirect(new URL('/', request.url));
   }
 
+  // Check if QR code has expired
+  if (qrCode.expires_at) {
+    const expiresAt = new Date(qrCode.expires_at);
+    if (expiresAt < new Date()) {
+      return NextResponse.redirect(new URL('/expired', request.url));
+    }
+  }
+
   // Check scan limits
   const profile = qrCode.profiles as {
     id: string;

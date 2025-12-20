@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import crypto from 'crypto';
+import { SCAN_LIMITS } from '@/lib/stripe/config';
 
 export async function GET(
   request: Request,
@@ -10,16 +11,51 @@ export async function GET(
   const { code } = await params;
   const supabase = await createClient();
 
-  // Find the QR code by short_code
+  // Find the QR code by short_code with owner profile
   const { data: qrCode, error } = await supabase
     .from('qr_codes')
-    .select('*')
+    .select(`
+      *,
+      profiles:user_id (
+        id,
+        subscription_tier,
+        monthly_scan_count,
+        scan_count_reset_at
+      )
+    `)
     .eq('short_code', code)
     .single();
 
   if (error || !qrCode) {
     // Redirect to home page if QR code not found
     return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  // Check scan limits
+  const profile = qrCode.profiles as {
+    id: string;
+    subscription_tier: 'free' | 'pro' | 'business';
+    monthly_scan_count: number | null;
+    scan_count_reset_at: string | null;
+  } | null;
+
+  if (profile) {
+    const tier = profile.subscription_tier || 'free';
+    const limit = SCAN_LIMITS[tier];
+    const currentCount = profile.monthly_scan_count || 0;
+
+    // Check if we need to reset (new month) - handled in DB trigger, but double-check
+    const resetAt = profile.scan_count_reset_at ? new Date(profile.scan_count_reset_at) : new Date(0);
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    monthStart.setHours(0, 0, 0, 0);
+
+    const effectiveCount = resetAt < monthStart ? 0 : currentCount;
+
+    // If limit is not unlimited (-1) and exceeded, redirect to limit page
+    if (limit !== -1 && effectiveCount >= limit) {
+      return NextResponse.redirect(new URL('/limit-reached', request.url));
+    }
   }
 
   // Get destination URL

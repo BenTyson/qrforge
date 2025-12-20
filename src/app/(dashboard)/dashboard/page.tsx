@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { SCAN_LIMITS, PLANS } from '@/lib/stripe/config';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -12,7 +13,7 @@ export default async function DashboardPage() {
   }
 
   // Fetch real stats from database
-  const [qrCodesResult, scansResult, recentScansResult] = await Promise.all([
+  const [qrCodesResult, scansResult, recentScansResult, profileResult] = await Promise.all([
     // Total QR codes and dynamic count
     supabase
       .from('qr_codes')
@@ -36,7 +37,26 @@ export default async function DashboardPage() {
       .eq('qr_codes.user_id', user.id)
       .order('scanned_at', { ascending: false })
       .limit(10),
+    // User profile for scan limits
+    supabase
+      .from('profiles')
+      .select('subscription_tier, monthly_scan_count, scan_count_reset_at')
+      .eq('id', user.id)
+      .single(),
   ]);
+
+  // Get profile data for scan usage
+  const profile = profileResult.data;
+  const tier = (profile?.subscription_tier || 'free') as keyof typeof SCAN_LIMITS;
+  const scanLimit = SCAN_LIMITS[tier];
+  const monthlyScanCount = profile?.monthly_scan_count || 0;
+
+  // Check if we need to reset (new month)
+  const resetAt = profile?.scan_count_reset_at ? new Date(profile.scan_count_reset_at) : new Date(0);
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+  const effectiveScanCount = resetAt < monthStart ? 0 : monthlyScanCount;
 
   const qrCodes = qrCodesResult.data || [];
   const userQRCodeIds = qrCodes.map(qr => qr.id);
@@ -102,6 +122,66 @@ export default async function DashboardPage() {
           icon={<CalendarIcon />}
         />
       </div>
+
+      {/* Scan Usage Bar */}
+      <Card className="p-6 glass mb-8">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-semibold">Monthly Scan Usage</h2>
+            <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full capitalize">
+              {tier}
+            </span>
+          </div>
+          {scanLimit !== -1 && (
+            <span className="text-sm text-muted-foreground">
+              {effectiveScanCount.toLocaleString()} / {scanLimit.toLocaleString()} scans
+            </span>
+          )}
+          {scanLimit === -1 && (
+            <span className="text-sm text-muted-foreground">Unlimited</span>
+          )}
+        </div>
+
+        {scanLimit !== -1 ? (
+          <>
+            <div className="h-3 bg-secondary rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${
+                  effectiveScanCount >= scanLimit
+                    ? 'bg-red-500'
+                    : effectiveScanCount >= scanLimit * 0.8
+                    ? 'bg-amber-500'
+                    : 'bg-primary'
+                }`}
+                style={{ width: `${Math.min((effectiveScanCount / scanLimit) * 100, 100)}%` }}
+              />
+            </div>
+            <div className="flex items-center justify-between mt-3">
+              <p className="text-xs text-muted-foreground">
+                {effectiveScanCount >= scanLimit ? (
+                  <span className="text-red-500 font-medium">Limit reached! Upgrade to continue receiving scans.</span>
+                ) : effectiveScanCount >= scanLimit * 0.8 ? (
+                  <span className="text-amber-500">Approaching limit. Consider upgrading.</span>
+                ) : (
+                  `${Math.round((effectiveScanCount / scanLimit) * 100)}% of monthly limit used`
+                )}
+              </p>
+              {tier === 'free' && (
+                <Link href="/#pricing">
+                  <Button size="sm" variant="outline" className="text-xs">
+                    <SparkleIcon className="w-3 h-3 mr-1" />
+                    Upgrade for more scans
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            You have unlimited scans with your {PLANS[tier].name} plan.
+          </p>
+        )}
+      </Card>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

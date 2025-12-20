@@ -169,3 +169,62 @@ BEGIN
   RETURN result;
 END;
 $$ LANGUAGE plpgsql;
+
+-- ============================================
+-- SCAN LIMITS (Phase 3 - Upgrade Triggers)
+-- ============================================
+
+-- Add scan limit tracking columns to profiles
+-- Run this migration on existing database:
+-- ALTER TABLE profiles ADD COLUMN monthly_scan_count INTEGER DEFAULT 0;
+-- ALTER TABLE profiles ADD COLUMN scan_count_reset_at TIMESTAMPTZ DEFAULT NOW();
+
+-- For new deployments, add these columns to profiles table creation above
+
+-- Function to increment user's monthly scan count
+CREATE OR REPLACE FUNCTION increment_user_scan_count()
+RETURNS TRIGGER AS $$
+DECLARE
+  qr_owner_id UUID;
+BEGIN
+  -- Get the owner of the QR code
+  SELECT user_id INTO qr_owner_id FROM qr_codes WHERE id = NEW.qr_code_id;
+
+  IF qr_owner_id IS NOT NULL THEN
+    -- Check if we need to reset the monthly count (new month)
+    UPDATE profiles
+    SET
+      monthly_scan_count = CASE
+        WHEN scan_count_reset_at < date_trunc('month', NOW())
+        THEN 1  -- Reset to 1 (this scan)
+        ELSE monthly_scan_count + 1
+      END,
+      scan_count_reset_at = CASE
+        WHEN scan_count_reset_at < date_trunc('month', NOW())
+        THEN NOW()
+        ELSE scan_count_reset_at
+      END
+    WHERE id = qr_owner_id;
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to track monthly scans per user
+CREATE TRIGGER on_scan_increment_user_count
+  AFTER INSERT ON scans
+  FOR EACH ROW EXECUTE FUNCTION increment_user_scan_count();
+
+-- Function to get user's scan limit based on tier
+CREATE OR REPLACE FUNCTION get_scan_limit(tier TEXT)
+RETURNS INTEGER AS $$
+BEGIN
+  CASE tier
+    WHEN 'free' THEN RETURN 100;
+    WHEN 'pro' THEN RETURN 10000;
+    WHEN 'business' THEN RETURN -1; -- unlimited
+    ELSE RETURN 100;
+  END CASE;
+END;
+$$ LANGUAGE plpgsql;

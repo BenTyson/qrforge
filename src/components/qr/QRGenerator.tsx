@@ -15,8 +15,8 @@ import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 const DEFAULT_STYLE_OPTIONS: QRStyleOptions = {
-  foregroundColor: '#000000',
-  backgroundColor: '#ffffff',
+  foregroundColor: '#14b8a6', // Teal/primary brand color
+  backgroundColor: '#0f172a', // Dark navy background
   errorCorrectionLevel: 'M',
   margin: 2,
   width: 256,

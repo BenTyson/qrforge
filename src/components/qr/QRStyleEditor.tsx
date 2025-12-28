@@ -13,14 +13,14 @@ interface QRStyleEditorProps {
 }
 
 const PRESET_COLORS = [
+  { fg: '#14b8a6', bg: '#0f172a', name: 'QRWolf' },
+  { fg: '#06b6d4', bg: '#0f172a', name: 'Cyan Dark' },
   { fg: '#000000', bg: '#ffffff', name: 'Classic' },
-  { fg: '#1e3a5f', bg: '#ffffff', name: 'Navy' },
   { fg: '#14b8a6', bg: '#ffffff', name: 'Teal' },
-  { fg: '#06b6d4', bg: '#ffffff', name: 'Cyan' },
+  { fg: '#1e3a5f', bg: '#ffffff', name: 'Navy' },
   { fg: '#059669', bg: '#ffffff', name: 'Emerald' },
-  { fg: '#dc2626', bg: '#ffffff', name: 'Red' },
-  { fg: '#000000', bg: '#fef3c7', name: 'Cream' },
   { fg: '#ffffff', bg: '#000000', name: 'Inverted' },
+  { fg: '#000000', bg: '#fef3c7', name: 'Cream' },
 ];
 
 export function QRStyleEditor({ style, onChange }: QRStyleEditorProps) {

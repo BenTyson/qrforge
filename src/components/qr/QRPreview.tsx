@@ -91,9 +91,9 @@ export function QRPreview({
     <div
       className={cn(
         'relative flex items-center justify-center rounded-2xl transition-all duration-300',
-        'bg-white', // QR codes need white background
         className
       )}
+      style={{ backgroundColor: style.backgroundColor }}
     >
       {/* QR Code Display */}
       {qrDataURL && (
@@ -110,9 +110,9 @@ export function QRPreview({
 
       {/* Placeholder State */}
       {!qrDataURL && showPlaceholder && !error && (
-        <div className="flex flex-col items-center justify-center text-zinc-400 p-8">
+        <div className="flex flex-col items-center justify-center p-8" style={{ color: style.foregroundColor, opacity: 0.4 }}>
           <svg
-            className="w-16 h-16 mb-4 opacity-30"
+            className="w-16 h-16 mb-4"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -126,7 +126,7 @@ export function QRPreview({
             <rect x="14" y="18" width="3" height="3" />
             <rect x="18" y="18" width="3" height="3" />
           </svg>
-          <p className="text-sm text-center">
+          <p className="text-sm text-center opacity-80">
             Enter content to generate<br />your QR code
           </p>
         </div>
@@ -134,8 +134,8 @@ export function QRPreview({
 
       {/* Loading Indicator */}
       {isGenerating && qrDataURL && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/50 rounded-lg">
-          <div className="w-6 h-6 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+        <div className="absolute inset-0 flex items-center justify-center rounded-lg" style={{ backgroundColor: `${style.backgroundColor}80` }}>
+          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 

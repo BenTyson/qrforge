@@ -1,8 +1,9 @@
-# QRForge - Session Start Guide
+# QRWolf - Session Start Guide
 
-> **Last Updated**: December 28, 2024
-> **Status**: Pre-Launch - Pending Stripe Live Mode
-> **Live URL**: https://qrforge-production.up.railway.app
+> **Last Updated**: December 28, 2025
+> **Status**: Live
+> **Live URL**: https://qrwolf.com
+> **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
 
 ---
 
@@ -34,7 +35,7 @@ See `docs/WORKFLOW.md` for full details.
 
 ## Quick Context
 
-QRForge is a premium QR code generator with analytics and dynamic codes. Goal: passive income via SEO-driven traffic and recurring subscriptions.
+QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: passive income via SEO-driven traffic and recurring subscriptions.
 
 ## Current Status
 
@@ -71,6 +72,10 @@ QRForge is a premium QR code generator with analytics and dynamic codes. Goal: p
 - **Logo upload as Pro feature** - Dedicated card for logo upload (extracted from style editor)
 - **Centralized plans page** - `/plans` page for all upgrade flows with billing cycle toggle
 - **Subscription success page** - `/subscription/success` with confetti animation and feature summary
+- **Custom Stripe checkout** - Branded payment form at `/checkout/[plan]` using Stripe Elements
+- **Google OAuth** - Sign in with Google configured
+- **Admin dashboard** - Site-wide metrics at `/admin` (users, QR codes, scans, revenue)
+- **Simplified contact page** - Single email (hello@qrwolf.com) at `/contact`
 
 ### Planned Enhancements
 - QR code folders/organization
@@ -113,6 +118,14 @@ src/
 │   ├── expired/page.tsx            # QR code expired page
 │   ├── limit-reached/page.tsx      # Scan limit exceeded page
 │   ├── not-active/page.tsx         # Scheduled QR not yet active
+│   ├── (admin)/
+│   │   ├── layout.tsx              # Admin layout with auth guard
+│   │   └── admin/
+│   │       ├── page.tsx            # Admin overview dashboard
+│   │       ├── users/page.tsx      # User management
+│   │       ├── qr-codes/page.tsx   # All QR codes site-wide
+│   │       ├── analytics/page.tsx  # Site-wide scan analytics
+│   │       └── subscriptions/page.tsx # Revenue tracking
 │   ├── (auth)/
 │   │   ├── login/page.tsx          # Login (+ Google OAuth)
 │   │   ├── signup/page.tsx         # Signup (+ Google OAuth)
@@ -132,7 +145,9 @@ src/
 │   │   └── settings/page.tsx       # Settings + Billing
 │   ├── api/
 │   │   ├── stripe/
-│   │   │   ├── checkout/route.ts   # Create checkout session
+│   │   │   ├── checkout/route.ts   # Create checkout session (legacy)
+│   │   │   ├── create-subscription/route.ts  # SetupIntent for custom checkout
+│   │   │   ├── finalize-subscription/route.ts # Complete subscription after payment
 │   │   │   ├── webhook/route.ts    # Handle Stripe events
 │   │   │   └── portal/route.ts     # Customer portal
 │   │   ├── qr/
@@ -148,11 +163,17 @@ src/
 │   │           └── [id]/
 │   │               ├── route.ts    # Get/update/delete QR code
 │   │               └── image/route.ts  # Generate QR image
+│   ├── checkout/
+│   │   └── [plan]/page.tsx         # Custom Stripe Elements checkout
+│   ├── contact/page.tsx            # Contact page (hello@qrwolf.com)
 │   └── r/[code]/
 │       ├── route.ts                # Dynamic QR redirect + tracking
 │       ├── landing/page.tsx        # Custom landing page
 │       └── unlock/page.tsx         # Password entry page
 ├── components/
+│   ├── admin/
+│   │   ├── AdminNav.tsx            # Admin sidebar navigation
+│   │   └── AdminStatsCard.tsx      # Reusable stats card
 │   ├── ui/                         # shadcn components
 │   ├── qr/
 │   │   ├── QRGenerator.tsx         # QR generation form (homepage)
@@ -170,7 +191,9 @@ src/
 │   ├── qr/                         # QR generation
 │   ├── supabase/                   # Supabase clients
 │   ├── stripe/                     # Stripe config (with SCAN_LIMITS)
-│   └── api/                        # API authentication helpers
+│   ├── api/                        # API authentication helpers
+│   └── admin/
+│       └── auth.ts                 # Admin auth (ADMIN_EMAIL, createAdminClient)
 └── middleware.ts                   # Auth protection
 ```
 
@@ -290,13 +313,19 @@ Dynamic QR codes are the key lock-in:
 
 ## Launch Status
 
-**Current:** Pre-launch, Stripe in test mode
+**Current:** Live at https://qrwolf.com
 
-**To Go Live:**
-1. Switch Stripe to live mode (see `docs/LAUNCH-CHECKLIST.md`)
-2. Update Railway env vars with live keys
-3. Create production webhook in Stripe
-4. Update Supabase auth URLs
+**Production Configuration:**
+- Railway deploys from `main` branch
+- Stripe in live mode with production webhook
+- Supabase auth URLs configured for qrwolf.com
+- Google OAuth enabled
+- Custom domain DNS configured
+
+**Admin Access:**
+- URL: https://qrwolf.com/admin
+- Restricted to: ideaswithben@gmail.com
+- Features: User management, site-wide analytics, revenue tracking
 
 **See Also:**
 - `docs/WORKFLOW.md` - Branch workflow (develop → main)

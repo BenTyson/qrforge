@@ -1,62 +1,63 @@
-# QRForge Launch Checklist
+# QRWolf Launch Checklist
 
-> **Target URL**: https://qrforge-production.up.railway.app
-> **Status**: Pre-Launch
+> **Live URL**: https://qrwolf.com
+> **Status**: LAUNCHED (December 28, 2025)
+> **Admin Dashboard**: https://qrwolf.com/admin
 
 ---
 
 ## 1. Railway Configuration
 
-- [ ] **Verify branch setting**: Railway → Service → Settings → Branch = `main`
-- [ ] **Check environment variables are set**:
-  - [ ] `NEXT_PUBLIC_SUPABASE_URL`
-  - [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-  - [ ] `SUPABASE_SERVICE_ROLE_KEY`
-  - [ ] `NEXT_PUBLIC_APP_URL` = `https://qrforge-production.up.railway.app`
-  - [ ] `STRIPE_SECRET_KEY`
-  - [ ] `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-  - [ ] `STRIPE_WEBHOOK_SECRET`
-  - [ ] All 4 `STRIPE_PRICE_*` variables
-- [ ] **Verify deployment is healthy**: `railway logs`
+- [x] **Verify branch setting**: Railway → Service → Settings → Branch = `main`
+- [x] **Check environment variables are set**:
+  - [x] `NEXT_PUBLIC_SUPABASE_URL`
+  - [x] `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+  - [x] `SUPABASE_SERVICE_ROLE_KEY`
+  - [x] `NEXT_PUBLIC_APP_URL` = `https://qrwolf.com`
+  - [x] `STRIPE_SECRET_KEY` (live key)
+  - [x] `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (live key)
+  - [x] `STRIPE_WEBHOOK_SECRET` (production webhook)
+  - [x] All 4 `STRIPE_PRICE_*` variables (live prices)
+- [x] **Verify deployment is healthy**: `railway logs`
+- [x] **Custom domain configured**: qrwolf.com with SSL
 
 ---
 
 ## 2. Supabase Configuration
 
-- [ ] **Auth redirect URLs** (Supabase → Authentication → URL Configuration):
-  - Site URL: `https://qrforge-production.up.railway.app`
+- [x] **Auth redirect URLs** (Supabase → Authentication → URL Configuration):
+  - Site URL: `https://qrwolf.com`
   - Redirect URLs:
-    - `https://qrforge-production.up.railway.app/callback`
-    - `https://qrforge-production.up.railway.app/auth/callback`
-- [ ] **Database migrations applied**: Check all tables exist
+    - `https://qrwolf.com/callback`
+    - `https://qrwolf.com/auth/callback`
+- [x] **Google OAuth configured**: Client ID and secret set
+- [x] **Database migrations applied**: All tables exist
   - `profiles` (with `monthly_scan_count`, `scan_count_reset_at`)
   - `qr_codes` (with `expires_at`, `password_hash`, `active_from`, `active_until`, `show_landing_page`, `landing_page_*`, `bulk_batch_id`)
   - `scans`
   - `api_keys`
   - `teams`, `team_members`, `team_invites`
-- [ ] **RLS policies enabled**: All tables
+- [x] **RLS policies enabled**: All tables
 
 ---
 
 ## 3. Stripe Configuration
 
-### Test Mode (Current)
+### Test Mode (Completed)
 - [x] Products created (Pro, Business)
 - [x] Prices created (monthly, yearly)
 - [x] Webhook endpoint configured for localhost
-- [ ] Test checkout flow end-to-end
+- [x] Test checkout flow end-to-end
 
-### Production Mode (Before Go-Live)
-- [ ] **Switch to live keys**:
-  1. Stripe Dashboard → toggle off "Test mode"
-  2. Copy `pk_live_*` and `sk_live_*` keys
-  3. Update Railway environment variables
-- [ ] **Create production webhook**:
-  1. Stripe → Developers → Webhooks → Add endpoint
-  2. URL: `https://qrforge-production.up.railway.app/api/stripe/webhook`
-  3. Events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.payment_failed`
-  4. Copy signing secret to `STRIPE_WEBHOOK_SECRET` in Railway
-- [ ] **Test live checkout** with real card (small amount, refund after)
+### Production Mode (LIVE)
+- [x] **Switched to live keys**:
+  - Live publishable key in Railway
+  - Live secret key in Railway
+- [x] **Production webhook configured**:
+  - URL: `https://qrwolf.com/api/stripe/webhook`
+  - Events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.payment_failed`, `invoice.payment_succeeded`
+  - Signing secret in Railway
+- [x] **Custom checkout page**: `/checkout/[plan]` with Stripe Elements
 
 ---
 
@@ -156,27 +157,32 @@
 
 ---
 
-## 7. Custom Domain (Optional)
+## 7. Custom Domain (COMPLETED)
 
-- [ ] Purchase domain (e.g., qrforge.io)
-- [ ] Railway → Settings → Domains → Add custom domain
-- [ ] Configure DNS records
-- [ ] Update `NEXT_PUBLIC_APP_URL` in Railway
-- [ ] Update Supabase redirect URLs
-- [ ] Update Stripe webhook URL
-- [ ] Wait for SSL certificate (automatic)
+- [x] Domain: qrwolf.com
+- [x] Railway → Settings → Domains → Custom domain added
+- [x] DNS records configured
+- [x] `NEXT_PUBLIC_APP_URL` = `https://qrwolf.com`
+- [x] Supabase redirect URLs updated
+- [x] Stripe webhook URL updated
+- [x] SSL certificate active
 
 ---
 
-## 8. Final Launch Steps
+## 8. Final Launch Steps (COMPLETED)
 
-1. [ ] Merge any pending changes: `develop` → `main`
-2. [ ] Verify Railway deployment succeeds
-3. [ ] Run through functional tests above
-4. [ ] Switch Stripe to live mode
-5. [ ] Update webhook to production URL
-6. [ ] Test one real payment (refund after)
-7. [ ] Announce launch!
+1. [x] Merge any pending changes: `develop` → `main`
+2. [x] Verify Railway deployment succeeds
+3. [x] Switch Stripe to live mode
+4. [x] Update webhook to production URL
+5. [x] Site is LIVE at https://qrwolf.com
+
+**Admin Dashboard Added:**
+- [x] `/admin` - Overview with key metrics
+- [x] `/admin/users` - User management
+- [x] `/admin/qr-codes` - All QR codes
+- [x] `/admin/analytics` - Site-wide analytics
+- [x] `/admin/subscriptions` - Revenue tracking
 
 ---
 
@@ -200,5 +206,8 @@ railway logs
 supabase db push --linked --dry-run
 
 # Test site is up
-curl -I https://qrforge-production.up.railway.app
+curl -I https://qrwolf.com
+
+# Test admin dashboard (must be logged in as admin)
+# Visit: https://qrwolf.com/admin
 ```

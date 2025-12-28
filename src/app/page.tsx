@@ -12,7 +12,7 @@ const jsonLd = {
   '@type': 'WebApplication',
   name: 'QRWolf',
   description: 'Create professional QR codes in seconds. Free QR code generator with custom colors, logos, dynamic URLs, and real-time scan analytics.',
-  url: process.env.NEXT_PUBLIC_APP_URL || 'https://qrforge.com',
+  url: process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com',
   applicationCategory: 'UtilitiesApplication',
   operatingSystem: 'Web',
   offers: [

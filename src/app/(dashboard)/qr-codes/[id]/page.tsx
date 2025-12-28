@@ -184,10 +184,21 @@ export default function EditQRCodePage() {
         updateData.landing_page_button_text = showLandingPage ? landingPageButtonText : 'Continue';
         updateData.landing_page_theme = showLandingPage ? landingPageTheme : 'dark';
 
-        // Password - only update if changed
+        // Password - only update if changed (use server-side bcrypt)
         if (isPasswordProtected && password) {
-          const { createHash } = await import('crypto');
-          updateData.password_hash = createHash('sha256').update(password).digest('hex');
+          const hashResponse = await fetch('/api/qr/hash-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password }),
+          });
+
+          if (!hashResponse.ok) {
+            const errorData = await hashResponse.json();
+            throw new Error(errorData.error || 'Failed to hash password');
+          }
+
+          const { hash } = await hashResponse.json();
+          updateData.password_hash = hash;
         } else if (!isPasswordProtected) {
           updateData.password_hash = null;
         }

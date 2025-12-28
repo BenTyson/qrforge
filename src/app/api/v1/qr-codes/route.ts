@@ -1,9 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
-import { validateApiKey, apiError, apiSuccess } from '@/lib/api/auth';
+import { validateApiKey, apiError, apiSuccess, rateLimitError, validators } from '@/lib/api/auth';
 import { headers } from 'next/headers';
+import crypto from 'crypto';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+// Constants for validation
+const MAX_NAME_LENGTH = 255;
+const MAX_URL_LENGTH = 2048;
+const MAX_CONTENT_SIZE = 10000; // 10KB max for content object
 
 /**
  * GET /api/v1/qr-codes
@@ -12,8 +18,15 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 export async function GET(request: Request) {
   const headersList = await headers();
   const authHeader = headersList.get('authorization');
+  const clientIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || undefined;
 
-  const user = await validateApiKey(authHeader);
+  const { user, rateLimitInfo } = await validateApiKey(authHeader, clientIp);
+
+  // Check rate limit
+  if (rateLimitInfo && !rateLimitInfo.allowed) {
+    return rateLimitError(rateLimitInfo.resetAt);
+  }
+
   if (!user) {
     return apiError('Invalid or missing API key', 401);
   }
@@ -21,9 +34,16 @@ export async function GET(request: Request) {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   const url = new URL(request.url);
-  const limit = Math.min(parseInt(url.searchParams.get('limit') || '50'), 100);
-  const offset = parseInt(url.searchParams.get('offset') || '0');
-  const type = url.searchParams.get('type'); // 'static' or 'dynamic'
+
+  // Validate and sanitize pagination params
+  let limit = parseInt(url.searchParams.get('limit') || '50', 10);
+  let offset = parseInt(url.searchParams.get('offset') || '0', 10);
+
+  // Ensure positive integers
+  limit = Math.max(1, Math.min(isNaN(limit) ? 50 : limit, 100));
+  offset = Math.max(0, isNaN(offset) ? 0 : offset);
+
+  const type = url.searchParams.get('type');
 
   let query = supabase
     .from('qr_codes')
@@ -32,7 +52,8 @@ export async function GET(request: Request) {
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1);
 
-  if (type === 'static' || type === 'dynamic') {
+  // Validate type filter
+  if (type && validators.isValidQRType(type)) {
     query = query.eq('type', type);
   }
 
@@ -62,22 +83,19 @@ export async function GET(request: Request) {
 /**
  * POST /api/v1/qr-codes
  * Create a new QR code
- *
- * Body:
- * - name: string (required)
- * - type: 'static' | 'dynamic' (default: 'dynamic')
- * - content_type: string (default: 'url')
- * - content: object (required)
- * - style: object (optional) - { foregroundColor, backgroundColor, errorCorrectionLevel, margin }
- * - expires_at: ISO date string (optional)
- * - active_from: ISO date string (optional)
- * - active_until: ISO date string (optional)
  */
 export async function POST(request: Request) {
   const headersList = await headers();
   const authHeader = headersList.get('authorization');
+  const clientIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || undefined;
 
-  const user = await validateApiKey(authHeader);
+  const { user, rateLimitInfo } = await validateApiKey(authHeader, clientIp);
+
+  // Check rate limit
+  if (rateLimitInfo && !rateLimitInfo.allowed) {
+    return rateLimitError(rateLimitInfo.resetAt);
+  }
+
   if (!user) {
     return apiError('Invalid or missing API key', 401);
   }
@@ -89,22 +107,64 @@ export async function POST(request: Request) {
     return apiError('Invalid JSON body', 400);
   }
 
+  // Check body size (rough estimate)
+  if (JSON.stringify(body).length > MAX_CONTENT_SIZE) {
+    return apiError('Request body too large', 400);
+  }
+
   const { name, type = 'dynamic', content_type = 'url', content, style, expires_at, active_from, active_until } = body;
 
+  // Validate name
   if (!name || typeof name !== 'string') {
     return apiError('name is required', 400);
   }
+  if (!validators.validateStringLength(name, MAX_NAME_LENGTH)) {
+    return apiError(`name must be ${MAX_NAME_LENGTH} characters or less`, 400);
+  }
 
+  // Validate type
+  if (!validators.isValidQRType(type)) {
+    return apiError('type must be "static" or "dynamic"', 400);
+  }
+
+  // Validate content_type
+  if (!validators.isValidContentType(content_type)) {
+    return apiError('Invalid content_type. Allowed: url, text, wifi, vcard, email, phone, sms', 400);
+  }
+
+  // Validate content
   if (!content || typeof content !== 'object') {
     return apiError('content is required', 400);
   }
 
   // Validate content based on type
-  if (content_type === 'url' && !content.url) {
-    return apiError('content.url is required for URL type', 400);
+  if (content_type === 'url') {
+    if (!content.url || typeof content.url !== 'string') {
+      return apiError('content.url is required for URL type', 400);
+    }
+    if (!validators.validateStringLength(content.url, MAX_URL_LENGTH)) {
+      return apiError(`URL must be ${MAX_URL_LENGTH} characters or less`, 400);
+    }
+    if (!validators.isValidUrl(content.url)) {
+      return apiError('Invalid URL. Must start with http:// or https://', 400);
+    }
   }
 
-  // Build style object with defaults
+  // Validate dates if provided
+  if (expires_at && !validators.isValidISODate(expires_at)) {
+    return apiError('expires_at must be a valid ISO date string', 400);
+  }
+  if (active_from && !validators.isValidISODate(active_from)) {
+    return apiError('active_from must be a valid ISO date string', 400);
+  }
+  if (active_until && !validators.isValidISODate(active_until)) {
+    return apiError('active_until must be a valid ISO date string', 400);
+  }
+  if (active_from && active_until && new Date(active_from) >= new Date(active_until)) {
+    return apiError('active_from must be before active_until', 400);
+  }
+
+  // Build style object with defaults and validation
   const defaultStyle = {
     foregroundColor: '#000000',
     backgroundColor: '#ffffff',
@@ -113,9 +173,13 @@ export async function POST(request: Request) {
   };
 
   const validatedStyle = {
-    foregroundColor: style?.foregroundColor || defaultStyle.foregroundColor,
-    backgroundColor: style?.backgroundColor || defaultStyle.backgroundColor,
-    errorCorrectionLevel: ['L', 'M', 'Q', 'H'].includes(style?.errorCorrectionLevel)
+    foregroundColor: style?.foregroundColor && validators.isValidHexColor(style.foregroundColor)
+      ? style.foregroundColor
+      : defaultStyle.foregroundColor,
+    backgroundColor: style?.backgroundColor && validators.isValidHexColor(style.backgroundColor)
+      ? style.backgroundColor
+      : defaultStyle.backgroundColor,
+    errorCorrectionLevel: style?.errorCorrectionLevel && validators.isValidErrorCorrectionLevel(style.errorCorrectionLevel)
       ? style.errorCorrectionLevel
       : defaultStyle.errorCorrectionLevel,
     margin: typeof style?.margin === 'number' && style.margin >= 0 && style.margin <= 10
@@ -138,7 +202,7 @@ export async function POST(request: Request) {
     .from('qr_codes')
     .insert({
       user_id: user.id,
-      name,
+      name: name.trim(),
       type,
       content_type,
       content,
@@ -159,13 +223,12 @@ export async function POST(request: Request) {
 
   // Build response with image URLs
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
-  const apiBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
 
   const response = {
     ...data,
     redirect_url: shortCode ? `${baseUrl}/r/${shortCode}` : null,
-    image_url: `${apiBaseUrl}/api/v1/qr-codes/${data.id}/image`,
-    image_url_svg: `${apiBaseUrl}/api/v1/qr-codes/${data.id}/image?format=svg`,
+    image_url: `${baseUrl}/api/v1/qr-codes/${data.id}/image`,
+    image_url_svg: `${baseUrl}/api/v1/qr-codes/${data.id}/image?format=svg`,
   };
 
   return apiSuccess(response, 201);
@@ -173,9 +236,10 @@ export async function POST(request: Request) {
 
 function generateShortCode(): string {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const randomBytes = crypto.randomBytes(7);
   let result = '';
   for (let i = 0; i < 7; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+    result += chars.charAt(randomBytes[i] % chars.length);
   }
   return result;
 }

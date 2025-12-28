@@ -1,8 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import crypto from 'crypto';
+import { JSDOM } from 'jsdom';
+import DOMPurify from 'dompurify';
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
-const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/svg+xml'];
+
+// Map MIME types to safe extensions
+const ALLOWED_TYPES: Record<string, string> = {
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'image/svg+xml': 'svg',
+};
+
+// Create DOMPurify instance for SVG sanitization
+function createDOMPurify() {
+  const window = new JSDOM('').window;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return DOMPurify(window as any);
+}
+
+// Sanitize SVG content to remove dangerous elements
+function sanitizeSVG(svgContent: string): string {
+  const purify = createDOMPurify();
+
+  // Configure DOMPurify for SVG
+  const clean = purify.sanitize(svgContent, {
+    USE_PROFILES: { svg: true, svgFilters: true },
+    // Remove script tags, event handlers, and other dangerous elements
+    FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'link', 'meta'],
+    FORBID_ATTR: [
+      'onclick', 'onerror', 'onload', 'onmouseover', 'onfocus', 'onblur',
+      'onchange', 'oninput', 'onsubmit', 'onreset', 'onselect', 'onkeydown',
+      'onkeypress', 'onkeyup', 'onmousedown', 'onmouseup', 'onmousemove',
+      'onmouseout', 'onwheel', 'ondrag', 'ondrop', 'ondragstart', 'ondragend',
+    ],
+    // Allow data URIs for embedded images but sanitize them
+    ADD_DATA_URI_TAGS: ['image'],
+  });
+
+  return clean;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,8 +75,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Validate file type
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    // Validate file type and get safe extension
+    const safeExtension = ALLOWED_TYPES[file.type];
+    if (!safeExtension) {
       return NextResponse.json(
         { error: 'Invalid file type. Allowed: PNG, JPG, SVG' },
         { status: 400 }
@@ -53,15 +92,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate unique filename
-    const ext = file.name.split('.').pop() || 'png';
-    const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+    // Process file content
+    let fileBuffer = Buffer.from(await file.arrayBuffer());
+
+    // If SVG, sanitize it
+    if (file.type === 'image/svg+xml') {
+      const svgContent = fileBuffer.toString('utf-8');
+      const sanitizedSVG = sanitizeSVG(svgContent);
+
+      // Verify it's still valid after sanitization
+      if (!sanitizedSVG.includes('<svg')) {
+        return NextResponse.json(
+          { error: 'Invalid SVG file' },
+          { status: 400 }
+        );
+      }
+
+      fileBuffer = Buffer.from(sanitizedSVG, 'utf-8');
+    }
+
+    // Generate secure unique filename
+    const randomBytes = crypto.randomBytes(16).toString('hex');
+    const filename = `${Date.now()}-${randomBytes}.${safeExtension}`;
     const path = `${user.id}/${filename}`;
 
     // Upload to Supabase Storage
     const { data, error: uploadError } = await supabase.storage
       .from('qr-logos')
-      .upload(path, file, {
+      .upload(path, fileBuffer, {
+        contentType: file.type,
         cacheControl: '3600',
         upsert: false,
       });

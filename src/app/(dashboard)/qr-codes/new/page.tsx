@@ -271,14 +271,22 @@ export default function NewQRCodePage() {
         destinationUrl = content.type === 'url' ? (content as any).url : null;
       }
 
-      // Hash password if set
+      // Hash password using server-side bcrypt
       let passwordHash = null;
       if (isDynamic && isPasswordProtected && password) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        const hashResponse = await fetch('/api/qr/hash-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password }),
+        });
+
+        if (!hashResponse.ok) {
+          const errorData = await hashResponse.json();
+          throw new Error(errorData.error || 'Failed to hash password');
+        }
+
+        const { hash } = await hashResponse.json();
+        passwordHash = hash;
       }
 
       const { error: insertError } = await supabase
@@ -1052,9 +1060,11 @@ export default function NewQRCodePage() {
 
 function generateShortCode(): string {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const randomValues = new Uint8Array(7);
+  crypto.getRandomValues(randomValues);
   let result = '';
   for (let i = 0; i < 7; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+    result += chars.charAt(randomValues[i] % chars.length);
   }
   return result;
 }

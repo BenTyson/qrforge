@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
-import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 
 export async function POST(request: Request) {
   try {
@@ -36,10 +36,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // Hash the provided password and compare
-    const inputHash = crypto.createHash('sha256').update(password).digest('hex');
+    // Use bcrypt.compare which is timing-safe
+    const isValid = await bcrypt.compare(password, qrCode.password_hash);
 
-    if (inputHash !== qrCode.password_hash) {
+    if (!isValid) {
       return NextResponse.json(
         { success: false, error: 'Invalid password' },
         { status: 401 }
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     let destinationUrl = qrCode.destination_url;
 
     if (!destinationUrl && qrCode.content) {
-      const content = qrCode.content as Record<string, any>;
+      const content = qrCode.content as Record<string, string>;
       if (content.type === 'url' && content.url) {
         destinationUrl = content.url;
       }

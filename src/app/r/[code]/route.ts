@@ -4,6 +4,27 @@ import { headers } from 'next/headers';
 import crypto from 'crypto';
 import { SCAN_LIMITS } from '@/lib/stripe/config';
 
+// In-memory cache for geolocation (reduces API calls)
+// Cache entries expire after 1 hour
+const geoCache = new Map<string, { data: GeoData | null; timestamp: number }>();
+const GEO_CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
+// Common bot user agent patterns
+const BOT_PATTERNS = [
+  /bot/i, /spider/i, /crawl/i, /slurp/i,
+  /mediapartners/i, /adsbot/i, /bingpreview/i,
+  /facebookexternalhit/i, /linkedinbot/i, /twitterbot/i,
+  /whatsapp/i, /telegrambot/i, /discordbot/i,
+  /googlebot/i, /baiduspider/i, /yandex/i,
+  /duckduckbot/i, /sogou/i, /exabot/i,
+  /facebot/i, /ia_archiver/i, /mj12bot/i,
+  /semrushbot/i, /ahrefsbot/i, /dotbot/i,
+  /petalbot/i, /applebot/i, /seznambot/i,
+  /curl/i, /wget/i, /python-requests/i,
+  /go-http-client/i, /java\//i, /okhttp/i,
+  /headlesschrome/i, /phantomjs/i, /puppeteer/i,
+];
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ code: string }> }
@@ -129,6 +150,12 @@ async function recordScan(
     const userAgent = headersList.get('user-agent') || '';
     const referrer = headersList.get('referer') || '';
 
+    // Skip bot traffic - don't record scans from crawlers
+    if (isBot(userAgent)) {
+      console.log('[Scan] Skipping bot:', userAgent.slice(0, 100));
+      return;
+    }
+
     // Hash IP for privacy
     const ipHash = crypto.createHash('sha256').update(ip).digest('hex').slice(0, 16);
 
@@ -137,8 +164,8 @@ async function recordScan(
     const os = getOS(userAgent);
     const browser = getBrowser(userAgent);
 
-    // Get geolocation data from IP-API (free tier: 45 requests/minute)
-    const geoData = await getGeolocation(ip);
+    // Get geolocation data (with caching)
+    const geoData = await getGeolocationCached(ip);
 
     // Insert scan record
     await supabase.from('scans').insert({
@@ -157,17 +184,44 @@ async function recordScan(
   }
 }
 
+/**
+ * Check if user agent appears to be a bot/crawler
+ */
+function isBot(userAgent: string): boolean {
+  if (!userAgent) return true; // Empty UA is suspicious
+  return BOT_PATTERNS.some(pattern => pattern.test(userAgent));
+}
+
 interface GeoData {
   country: string;
   city: string;
   region: string;
 }
 
-async function getGeolocation(ip: string): Promise<GeoData | null> {
+/**
+ * Get geolocation with caching to reduce API calls
+ */
+async function getGeolocationCached(ip: string): Promise<GeoData | null> {
   // Skip for local/private IPs
   if (ip === 'unknown' || ip.startsWith('127.') || ip.startsWith('192.168.') ||
       ip.startsWith('10.') || ip === '::1' || ip.startsWith('172.')) {
     return null;
+  }
+
+  // Check cache first
+  const cached = geoCache.get(ip);
+  if (cached && Date.now() - cached.timestamp < GEO_CACHE_TTL) {
+    return cached.data;
+  }
+
+  // Clean up old cache entries periodically (every 100 requests)
+  if (geoCache.size > 1000) {
+    const now = Date.now();
+    for (const [key, value] of geoCache.entries()) {
+      if (now - value.timestamp > GEO_CACHE_TTL) {
+        geoCache.delete(key);
+      }
+    }
   }
 
   try {
@@ -178,22 +232,30 @@ async function getGeolocation(ip: string): Promise<GeoData | null> {
     });
 
     if (!response.ok) {
+      geoCache.set(ip, { data: null, timestamp: Date.now() });
       return null;
     }
 
     const data = await response.json();
 
     if (data.status !== 'success') {
+      geoCache.set(ip, { data: null, timestamp: Date.now() });
       return null;
     }
 
-    return {
+    const geoData: GeoData = {
       country: data.country || '',
       city: data.city || '',
       region: data.regionName || '',
     };
+
+    // Cache the result
+    geoCache.set(ip, { data: geoData, timestamp: Date.now() });
+
+    return geoData;
   } catch (error) {
-    // Silently fail - geolocation is nice-to-have, not critical
+    // Cache the failure to avoid repeated requests
+    geoCache.set(ip, { data: null, timestamp: Date.now() });
     console.error('Geolocation lookup failed:', error);
     return null;
   }

@@ -1,9 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
-import { validateApiKey, apiError, apiSuccess } from '@/lib/api/auth';
+import { validateApiKey, apiError, apiSuccess, rateLimitError, validators } from '@/lib/api/auth';
 import { headers } from 'next/headers';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+const MAX_NAME_LENGTH = 255;
+const MAX_URL_LENGTH = 2048;
 
 /**
  * GET /api/v1/qr-codes/:id
@@ -15,8 +18,14 @@ export async function GET(
 ) {
   const headersList = await headers();
   const authHeader = headersList.get('authorization');
+  const clientIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || undefined;
 
-  const user = await validateApiKey(authHeader);
+  const { user, rateLimitInfo } = await validateApiKey(authHeader, clientIp);
+
+  if (rateLimitInfo && !rateLimitInfo.allowed) {
+    return rateLimitError(rateLimitInfo.resetAt);
+  }
+
   if (!user) {
     return apiError('Invalid or missing API key', 401);
   }
@@ -50,15 +59,6 @@ export async function GET(
 /**
  * PATCH /api/v1/qr-codes/:id
  * Update a QR code
- *
- * Body (all optional):
- * - name: string
- * - content: object
- * - destination_url: string
- * - style: object - { foregroundColor, backgroundColor, errorCorrectionLevel, margin }
- * - expires_at: ISO date string
- * - active_from: ISO date string
- * - active_until: ISO date string
  */
 export async function PATCH(
   request: Request,
@@ -66,8 +66,14 @@ export async function PATCH(
 ) {
   const headersList = await headers();
   const authHeader = headersList.get('authorization');
+  const clientIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || undefined;
 
-  const user = await validateApiKey(authHeader);
+  const { user, rateLimitInfo } = await validateApiKey(authHeader, clientIp);
+
+  if (rateLimitInfo && !rateLimitInfo.allowed) {
+    return rateLimitError(rateLimitInfo.resetAt);
+  }
+
   if (!user) {
     return apiError('Invalid or missing API key', 401);
   }
@@ -95,25 +101,75 @@ export async function PATCH(
     return apiError('QR code not found', 404);
   }
 
-  // Only allow certain fields to be updated
-  const allowedFields = ['name', 'content', 'destination_url', 'expires_at', 'active_from', 'active_until'];
   const updates: Record<string, unknown> = {};
 
-  for (const field of allowedFields) {
-    if (body[field] !== undefined) {
-      updates[field] = body[field];
+  // Validate and add name if provided
+  if (body.name !== undefined) {
+    if (typeof body.name !== 'string' || !validators.validateStringLength(body.name, MAX_NAME_LENGTH)) {
+      return apiError(`name must be a string of ${MAX_NAME_LENGTH} characters or less`, 400);
     }
+    updates.name = body.name.trim();
   }
 
-  // Handle style updates - merge with existing style
+  // Validate and add content if provided
+  if (body.content !== undefined) {
+    if (typeof body.content !== 'object') {
+      return apiError('content must be an object', 400);
+    }
+    updates.content = body.content;
+  }
+
+  // Validate and add destination_url if provided
+  if (body.destination_url !== undefined) {
+    if (body.destination_url !== null) {
+      if (typeof body.destination_url !== 'string') {
+        return apiError('destination_url must be a string or null', 400);
+      }
+      if (!validators.validateStringLength(body.destination_url, MAX_URL_LENGTH)) {
+        return apiError(`destination_url must be ${MAX_URL_LENGTH} characters or less`, 400);
+      }
+      if (!validators.isValidUrl(body.destination_url)) {
+        return apiError('Invalid destination_url. Must start with http:// or https://', 400);
+      }
+    }
+    updates.destination_url = body.destination_url;
+  }
+
+  // Validate and add date fields if provided
+  if (body.expires_at !== undefined) {
+    if (body.expires_at !== null && !validators.isValidISODate(body.expires_at)) {
+      return apiError('expires_at must be a valid ISO date string or null', 400);
+    }
+    updates.expires_at = body.expires_at;
+  }
+
+  if (body.active_from !== undefined) {
+    if (body.active_from !== null && !validators.isValidISODate(body.active_from)) {
+      return apiError('active_from must be a valid ISO date string or null', 400);
+    }
+    updates.active_from = body.active_from;
+  }
+
+  if (body.active_until !== undefined) {
+    if (body.active_until !== null && !validators.isValidISODate(body.active_until)) {
+      return apiError('active_until must be a valid ISO date string or null', 400);
+    }
+    updates.active_until = body.active_until;
+  }
+
+  // Handle style updates - merge with existing style and validate
   if (body.style && typeof body.style === 'object') {
     const existingStyle = (existing.style as Record<string, unknown>) || {};
     const newStyle = body.style;
 
     updates.style = {
-      foregroundColor: newStyle.foregroundColor || existingStyle.foregroundColor || '#000000',
-      backgroundColor: newStyle.backgroundColor || existingStyle.backgroundColor || '#ffffff',
-      errorCorrectionLevel: ['L', 'M', 'Q', 'H'].includes(newStyle.errorCorrectionLevel)
+      foregroundColor: newStyle.foregroundColor && validators.isValidHexColor(newStyle.foregroundColor)
+        ? newStyle.foregroundColor
+        : existingStyle.foregroundColor || '#000000',
+      backgroundColor: newStyle.backgroundColor && validators.isValidHexColor(newStyle.backgroundColor)
+        ? newStyle.backgroundColor
+        : existingStyle.backgroundColor || '#ffffff',
+      errorCorrectionLevel: newStyle.errorCorrectionLevel && validators.isValidErrorCorrectionLevel(newStyle.errorCorrectionLevel)
         ? newStyle.errorCorrectionLevel
         : existingStyle.errorCorrectionLevel || 'M',
       margin: typeof newStyle.margin === 'number' && newStyle.margin >= 0 && newStyle.margin <= 10
@@ -160,8 +216,14 @@ export async function DELETE(
 ) {
   const headersList = await headers();
   const authHeader = headersList.get('authorization');
+  const clientIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || undefined;
 
-  const user = await validateApiKey(authHeader);
+  const { user, rateLimitInfo } = await validateApiKey(authHeader, clientIp);
+
+  if (rateLimitInfo && !rateLimitInfo.allowed) {
+    return rateLimitError(rateLimitInfo.resetAt);
+  }
+
   if (!user) {
     return apiError('Invalid or missing API key', 401);
   }

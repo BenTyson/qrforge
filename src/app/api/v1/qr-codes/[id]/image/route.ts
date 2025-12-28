@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { validateApiKey, apiError } from '@/lib/api/auth';
+import { validateApiKey, apiError, rateLimitError, validators } from '@/lib/api/auth';
 import { generateQRPNG, generateQRSVGServer } from '@/lib/qr/server-generator';
 import { headers } from 'next/headers';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
@@ -22,8 +22,15 @@ export async function GET(
 ) {
   const headersList = await headers();
   const authHeader = headersList.get('authorization');
+  const clientIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || undefined;
 
-  const user = await validateApiKey(authHeader);
+  const { user, rateLimitInfo } = await validateApiKey(authHeader, clientIp);
+
+  // Check rate limit
+  if (rateLimitInfo && !rateLimitInfo.allowed) {
+    return rateLimitError(rateLimitInfo.resetAt);
+  }
+
   if (!user) {
     return apiError('Invalid or missing API key', 401);
   }
@@ -90,6 +97,9 @@ export async function GET(
   };
 
   try {
+    // Sanitize filename for Content-Disposition header
+    const safeFilename = validators.sanitizeFilename(qrCode.name || 'qrcode');
+
     if (format === 'svg') {
       const svg = await generateQRSVGServer(content, style);
 
@@ -99,7 +109,8 @@ export async function GET(
       };
 
       if (download) {
-        responseHeaders['Content-Disposition'] = `attachment; filename="${qrCode.name || 'qrcode'}.svg"`;
+        // Use RFC 5987 encoding for filename to handle special characters safely
+        responseHeaders['Content-Disposition'] = `attachment; filename="${safeFilename}.svg"; filename*=UTF-8''${encodeURIComponent(safeFilename)}.svg`;
       }
 
       return new Response(svg, { headers: responseHeaders });
@@ -112,7 +123,8 @@ export async function GET(
       };
 
       if (download) {
-        responseHeaders['Content-Disposition'] = `attachment; filename="${qrCode.name || 'qrcode'}.png"`;
+        // Use RFC 5987 encoding for filename to handle special characters safely
+        responseHeaders['Content-Disposition'] = `attachment; filename="${safeFilename}.png"; filename*=UTF-8''${encodeURIComponent(safeFilename)}.png`;
       }
 
       // Convert Buffer to Uint8Array for Response body

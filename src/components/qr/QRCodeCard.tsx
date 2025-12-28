@@ -275,19 +275,35 @@ export function QRCodeCard({ qrCode, index = 0, compact = false }: QRCodeCardPro
         </div>
 
         {/* Actions - Always visible on mobile, hover on desktop */}
-        <div className={`flex gap-2 mt-3 pt-3 border-t border-border/30 transition-all duration-200 ${showActions ? 'opacity-100' : 'sm:opacity-0'}`}>
+        <div
+          className={`flex gap-2 mt-3 pt-3 border-t border-border/30 transition-all duration-200 ${showActions ? 'opacity-100' : 'sm:opacity-0'}`}
+          role="group"
+          aria-label="QR code actions"
+        >
           <Link href={`/qr-codes/${qrCode.id}`} className="flex-1">
             <Button variant="outline" size="sm" className="w-full h-8 text-xs">
-              <EditIcon className="w-3 h-3 mr-1.5" />
+              <EditIcon className="w-3 h-3 mr-1.5" aria-hidden="true" />
               Edit
             </Button>
           </Link>
-          <Button variant="outline" size="sm" className="h-8 text-xs px-3" onClick={handleDownloadPNG}>
-            <DownloadIcon className="w-3 h-3" />
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 text-xs px-3"
+            onClick={handleDownloadPNG}
+            aria-label="Download as PNG"
+          >
+            <DownloadIcon className="w-3 h-3" aria-hidden="true" />
           </Button>
           {qrCode.short_code && (
-            <Button variant="outline" size="sm" className="h-8 text-xs px-3" onClick={handleCopyLink}>
-              <CopyIcon className="w-3 h-3" />
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 text-xs px-3"
+              onClick={handleCopyLink}
+              aria-label="Copy short link"
+            >
+              <CopyIcon className="w-3 h-3" aria-hidden="true" />
             </Button>
           )}
           <Button
@@ -296,8 +312,9 @@ export function QRCodeCard({ qrCode, index = 0, compact = false }: QRCodeCardPro
             className="h-8 text-xs px-3 text-red-500 hover:text-red-600 hover:bg-red-500/10 hover:border-red-500/30"
             onClick={handleDelete}
             disabled={isDeleting}
+            aria-label="Delete QR code"
           >
-            <TrashIcon className="w-3 h-3" />
+            <TrashIcon className="w-3 h-3" aria-hidden="true" />
           </Button>
         </div>
       </div>

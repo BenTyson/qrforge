@@ -3,7 +3,18 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 
-export default async function AnalyticsPage() {
+// Pagination constants
+const SCANS_PER_PAGE = 10;
+const MAX_SCANS_FOR_AGGREGATION = 10000;
+
+interface AnalyticsPageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps) {
+  const params = await searchParams;
+  const currentPage = Math.max(1, parseInt(params.page || '1', 10));
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -21,7 +32,7 @@ export default async function AnalyticsPage() {
   const tier = profile?.subscription_tier || 'free';
   const isPro = tier === 'pro' || tier === 'business';
 
-  // Fetch user's QR codes
+  // Fetch user's QR codes with scan counts
   const { data: qrCodes } = await supabase
     .from('qr_codes')
     .select('id, name, scan_count')
@@ -29,19 +40,40 @@ export default async function AnalyticsPage() {
 
   const qrCodeIds = qrCodes?.map(qr => qr.id) || [];
 
-  // Fetch scans for user's QR codes
-  const { data: scans } = qrCodeIds.length > 0
+  // Get total scan count for pagination
+  const { count: totalScansCount } = qrCodeIds.length > 0
     ? await supabase
         .from('scans')
-        .select('*')
+        .select('id', { count: 'exact', head: true })
+        .in('qr_code_id', qrCodeIds)
+    : { count: 0 };
+
+  // Fetch scans for aggregation (limited for performance)
+  const { data: aggregationScans } = qrCodeIds.length > 0
+    ? await supabase
+        .from('scans')
+        .select('scanned_at, ip_hash, device_type, browser, country, city')
         .in('qr_code_id', qrCodeIds)
         .order('scanned_at', { ascending: false })
+        .limit(MAX_SCANS_FOR_AGGREGATION)
     : { data: [] };
 
-  const allScans = scans || [];
+  // Fetch paginated scans for recent activity table
+  const offset = (currentPage - 1) * SCANS_PER_PAGE;
+  const { data: paginatedScans } = qrCodeIds.length > 0
+    ? await supabase
+        .from('scans')
+        .select('id, qr_code_id, scanned_at, device_type, browser, country, city')
+        .in('qr_code_id', qrCodeIds)
+        .order('scanned_at', { ascending: false })
+        .range(offset, offset + SCANS_PER_PAGE - 1)
+    : { data: [] };
 
-  // Calculate stats
-  const totalScans = allScans.length;
+  const allScans = aggregationScans || [];
+  const totalPages = Math.ceil((totalScansCount || 0) / SCANS_PER_PAGE);
+
+  // Calculate stats - use actual count from DB, not array length
+  const totalScans = totalScansCount || 0;
   const uniqueVisitors = new Set(allScans.map(s => s.ip_hash)).size;
 
   // Get scans for different time periods
@@ -80,9 +112,9 @@ export default async function AnalyticsPage() {
     .sort((a, b) => (b.scan_count || 0) - (a.scan_count || 0))
     .slice(0, 5);
 
-  // Recent scans with QR code names
+  // Recent scans with QR code names (from paginated results)
   const qrCodeNames = new Map(qrCodes?.map(qr => [qr.id, qr.name]) || []);
-  const recentScans = allScans.slice(0, 10).map(scan => ({
+  const recentScans = (paginatedScans || []).map(scan => ({
     ...scan,
     qrName: qrCodeNames.get(scan.qr_code_id) || 'Unknown',
   }));
@@ -387,6 +419,39 @@ export default async function AnalyticsPage() {
                 ))}
               </tbody>
             </table>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/30">
+                <p className="text-sm text-muted-foreground">
+                  Page {currentPage} of {totalPages} ({totalScans.toLocaleString()} total scans)
+                </p>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={currentPage > 1 ? `/analytics?page=${currentPage - 1}` : '#'}
+                    className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
+                      currentPage > 1
+                        ? 'border-border hover:bg-secondary/50 cursor-pointer'
+                        : 'border-border/30 text-muted-foreground/50 cursor-not-allowed pointer-events-none'
+                    }`}
+                    aria-disabled={currentPage <= 1}
+                  >
+                    Previous
+                  </Link>
+                  <Link
+                    href={currentPage < totalPages ? `/analytics?page=${currentPage + 1}` : '#'}
+                    className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
+                      currentPage < totalPages
+                        ? 'border-border hover:bg-secondary/50 cursor-pointer'
+                        : 'border-border/30 text-muted-foreground/50 cursor-not-allowed pointer-events-none'
+                    }`}
+                    aria-disabled={currentPage >= totalPages}
+                  >
+                    Next
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

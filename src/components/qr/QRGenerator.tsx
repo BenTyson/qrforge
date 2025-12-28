@@ -132,7 +132,7 @@ export function QRGenerator() {
     setIsDownloading(true);
     try {
       const dataURL = await generateQRDataURL(content, { ...style, width: 1024 });
-      downloadQRPNG(dataURL, 'qrforge-code');
+      downloadQRPNG(dataURL, 'qrwolf-code');
     } catch (error) {
       console.error('Download failed:', error);
     } finally {

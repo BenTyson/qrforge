@@ -73,7 +73,7 @@ export function QRCodeCard({ qrCode, index = 0, compact = false }: QRCodeCardPro
   const handleDownloadPNG = async () => {
     try {
       const dataURL = await generateQRDataURL(qrCode.content, { ...qrCode.style, width: 1024 });
-      downloadQRPNG(dataURL, qrCode.name || 'qrforge-code');
+      downloadQRPNG(dataURL, `qrwolf-${(qrCode.name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
       toast.success('PNG downloaded');
     } catch (error) {
       toast.error('Failed to download PNG');
@@ -83,7 +83,7 @@ export function QRCodeCard({ qrCode, index = 0, compact = false }: QRCodeCardPro
   const handleDownloadSVG = async () => {
     try {
       const svg = await generateQRSVG(qrCode.content, qrCode.style);
-      downloadQRSVG(svg, qrCode.name || 'qrforge-code');
+      downloadQRSVG(svg, `qrwolf-${(qrCode.name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
       toast.success('SVG downloaded');
     } catch (error) {
       toast.error('Failed to download SVG');

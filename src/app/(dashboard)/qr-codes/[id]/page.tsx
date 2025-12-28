@@ -228,13 +228,13 @@ export default function EditQRCodePage() {
   const handleDownloadPNG = async () => {
     if (!content) return;
     const dataURL = await generateQRDataURL(content, { ...style, width: 1024 });
-    downloadQRPNG(dataURL, name || 'qrforge-code');
+    downloadQRPNG(dataURL, `qrwolf-${(name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
   };
 
   const handleDownloadSVG = async () => {
     if (!content) return;
     const svg = await generateQRSVG(content, style);
-    downloadQRSVG(svg, name || 'qrforge-code');
+    downloadQRSVG(svg, `qrwolf-${(name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
   };
 
   if (isLoading) {

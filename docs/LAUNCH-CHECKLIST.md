@@ -106,9 +106,16 @@
 - [ ] Device/browser/country breakdowns work
 
 ### Billing
-- [ ] Pricing page loads
+- [ ] Pricing page loads (homepage)
+- [ ] Plans page loads (`/plans`)
+- [ ] Plans page shows current tier highlighted
+- [ ] Monthly/yearly toggle works with 17% savings badge
+- [ ] All upgrade buttons across app route to `/plans`
 - [ ] Checkout redirects to Stripe
 - [ ] Successful payment updates user tier
+- [ ] Success page shows (`/subscription/success`)
+- [ ] Success page displays confetti animation
+- [ ] Success page shows correct tier features
 - [ ] Customer portal opens
 - [ ] Usage bar shows correct limits
 

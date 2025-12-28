@@ -239,9 +239,9 @@ export function QRLogoUploader({ style, onChange, userTier = 'free' }: QRLogoUpl
           <p className="text-sm text-muted-foreground mb-3">
             Add your brand logo to the center of QR codes to increase brand recognition.
           </p>
-          <Link href="/settings">
+          <Link href="/plans">
             <Button size="sm" className="w-full">
-              Upgrade to Pro
+              View Plans
             </Button>
           </Link>
         </div>

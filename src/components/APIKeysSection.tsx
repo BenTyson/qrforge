@@ -117,7 +117,7 @@ export function APIKeysSection({ tier }: APIKeysSectionProps) {
           This feature is available on the Business plan.
         </p>
         <Button variant="outline" asChild>
-          <a href="#billing">Upgrade to Business</a>
+          <a href="/plans">View Plans</a>
         </Button>
       </Card>
     );

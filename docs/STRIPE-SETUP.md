@@ -73,11 +73,17 @@ When deploying to Railway:
 | `src/hooks/useStripe.ts` | React hooks for checkout & portal |
 | `src/components/pricing/PricingSection.tsx` | Landing page pricing UI |
 | `src/components/billing/BillingSection.tsx` | Settings page billing UI |
+| `src/app/(dashboard)/plans/page.tsx` | Centralized upgrade page with billing toggle |
+| `src/app/(dashboard)/subscription/success/page.tsx` | Post-checkout success page |
 
 ## Subscription Flow
 
 ```
-User clicks Upgrade
+User clicks Upgrade (anywhere in app)
+       ↓
+Redirect to /plans (centralized upgrade page)
+       ↓
+User selects plan + billing cycle (monthly/yearly)
        ↓
 POST /api/stripe/checkout
        ↓
@@ -92,7 +98,12 @@ Webhook updates profiles table:
   - subscription_status: 'active'
   - stripe_customer_id: 'cus_...'
        ↓
-User redirected back to /dashboard?success=true
+User redirected to /subscription/success
+       ↓
+Success page shows:
+  - Confetti celebration animation
+  - Tier-specific unlocked features
+  - CTAs to create QR codes or go to dashboard
 ```
 
 ## Subscription Management

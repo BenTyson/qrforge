@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useStripeCheckout } from '@/hooks/useStripe';
 
 interface PricingSectionProps {
   isAuthenticated?: boolean;
@@ -13,15 +13,16 @@ interface PricingSectionProps {
 
 export function PricingSection({ isAuthenticated = false, currentTier = 'free' }: PricingSectionProps) {
   const [interval, setInterval] = useState<'monthly' | 'yearly'>('monthly');
-  const { checkout, loading } = useStripeCheckout();
   const router = useRouter();
 
-  const handleUpgrade = async (plan: 'pro' | 'business') => {
+  const handleUpgrade = (plan: 'pro' | 'business') => {
     if (!isAuthenticated) {
-      router.push(`/login?redirect=/dashboard&plan=${plan}`);
+      // Not logged in - send to signup, they can upgrade after
+      router.push('/signup');
       return;
     }
-    await checkout(plan, interval);
+    // Logged in - go to plans page
+    router.push('/plans');
   };
 
   const handleGetStarted = () => {
@@ -122,9 +123,9 @@ export function PricingSection({ isAuthenticated = false, currentTier = 'free' }
           <Button
             className="w-full glow"
             onClick={() => handleUpgrade('pro')}
-            disabled={loading || currentTier === 'pro'}
+            disabled={currentTier === 'pro'}
           >
-            {loading ? 'Loading...' : currentTier === 'pro' ? 'Current Plan' : 'Upgrade to Pro'}
+            {currentTier === 'pro' ? 'Current Plan' : isAuthenticated ? 'Select Plan' : 'Get Started'}
           </Button>
         </Card>
 
@@ -156,9 +157,9 @@ export function PricingSection({ isAuthenticated = false, currentTier = 'free' }
             variant="outline"
             className="w-full"
             onClick={() => handleUpgrade('business')}
-            disabled={loading || currentTier === 'business'}
+            disabled={currentTier === 'business'}
           >
-            {loading ? 'Loading...' : currentTier === 'business' ? 'Current Plan' : 'Upgrade to Business'}
+            {currentTier === 'business' ? 'Current Plan' : isAuthenticated ? 'Select Plan' : 'Get Started'}
           </Button>
         </Card>
       </div>

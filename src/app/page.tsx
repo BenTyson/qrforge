@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PricingSection } from '@/components/pricing';
 import { Footer, PublicNav } from '@/components/layout';
+import { createClient } from '@/lib/supabase/server';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -64,7 +65,23 @@ const jsonLd = {
   },
 };
 
-export default function Home() {
+export default async function Home() {
+  // Check if user is authenticated for pricing section
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isAuthenticated = !!user;
+
+  // Get user's current tier if authenticated
+  let currentTier = 'free';
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('subscription_tier')
+      .eq('id', user.id)
+      .single();
+    currentTier = profile?.subscription_tier || 'free';
+  }
+
   return (
     <main className="min-h-screen">
       <script
@@ -598,7 +615,7 @@ export default function Home() {
             </p>
           </div>
 
-          <PricingSection />
+          <PricingSection isAuthenticated={isAuthenticated} currentTier={currentTier} />
         </div>
       </section>
 

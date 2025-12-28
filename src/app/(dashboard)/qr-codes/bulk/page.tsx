@@ -272,9 +272,9 @@ export default function BulkQRPage() {
             Create up to 100 QR codes at once from a CSV file or pasted data.
             This feature is available on the Business plan.
           </p>
-          <Link href="/settings">
+          <Link href="/plans">
             <Button size="lg">
-              Upgrade to Business
+              View Plans
             </Button>
           </Link>
         </Card>

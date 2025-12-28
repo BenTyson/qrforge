@@ -49,7 +49,7 @@ export default async function DevelopersPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild>
-              <Link href="/#pricing">Upgrade to Business</Link>
+              <Link href="/plans">View Plans</Link>
             </Button>
             <Button variant="outline" asChild>
               <Link href="/developers/docs">View Documentation</Link>

@@ -746,8 +746,8 @@ export default function NewQRCodePage() {
               <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                 <p className="text-sm text-muted-foreground">
                   You&apos;ve reached your limit of {dynamicLimit} dynamic QR codes.{' '}
-                  <Link href="/settings" className="text-primary hover:underline">
-                    Upgrade to Business
+                  <Link href="/plans" className="text-primary hover:underline">
+                    View upgrade options
                   </Link>{' '}
                   for unlimited.
                 </p>

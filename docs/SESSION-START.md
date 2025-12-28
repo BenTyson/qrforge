@@ -1,6 +1,6 @@
 # QRForge - Session Start Guide
 
-> **Last Updated**: December 27, 2024
+> **Last Updated**: December 28, 2024
 > **Status**: Pre-Launch - Pending Stripe Live Mode
 > **Live URL**: https://qrforge-production.up.railway.app
 
@@ -69,6 +69,8 @@ QRForge is a premium QR code generator with analytics and dynamic codes. Goal: p
 - **Developer portal** - `/developers` page with API docs, key management, usage stats
 - **Landing page enhancements** - Branding showcase, upgrade CTAs
 - **Logo upload as Pro feature** - Dedicated card for logo upload (extracted from style editor)
+- **Centralized plans page** - `/plans` page for all upgrade flows with billing cycle toggle
+- **Subscription success page** - `/subscription/success` with confetti animation and feature summary
 
 ### Planned Enhancements
 - QR code folders/organization
@@ -125,6 +127,8 @@ src/
 │   │   ├── analytics/page.tsx      # Full analytics dashboard
 │   │   ├── developers/page.tsx     # API dashboard (Business)
 │   │   ├── developers/docs/page.tsx # Interactive API documentation
+│   │   ├── plans/page.tsx          # Centralized upgrade page
+│   │   ├── subscription/success/page.tsx # Post-checkout success page
 │   │   └── settings/page.tsx       # Settings + Billing
 │   ├── api/
 │   │   ├── stripe/
@@ -269,14 +273,18 @@ Dynamic QR codes are the key lock-in:
 
 ## Subscription Flow
 
-1. User clicks "Upgrade" on pricing or settings page
-2. Redirected to Stripe Checkout
-3. User completes payment
-4. Stripe webhook fires `checkout.session.completed`
-5. Webhook updates `profiles.subscription_tier` and `subscription_status`
-6. User returns to app with upgraded account
-7. Settings page shows subscription details (status, billing cycle, renewal date)
-8. "Manage Subscription" button opens Stripe Customer Portal
+1. User clicks any "Upgrade" button across the app
+2. Redirected to `/plans` page (centralized upgrade hub)
+3. User sees current plan, all features, and monthly/yearly toggle
+4. User selects plan and clicks "Upgrade"
+5. Redirected to Stripe Checkout
+6. User completes payment
+7. Stripe webhook fires `checkout.session.completed`
+8. Webhook updates `profiles.subscription_tier` and `subscription_status`
+9. User redirected to `/subscription/success` with confetti celebration
+10. Success page shows unlocked features and CTA to create QR codes
+11. Settings page shows subscription details (status, billing cycle, renewal date)
+12. "Manage Subscription" button opens Stripe Customer Portal
 
 ---
 

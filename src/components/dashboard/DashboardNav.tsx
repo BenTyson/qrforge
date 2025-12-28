@@ -165,12 +165,12 @@ export function DashboardNav({ user }: DashboardNavProps) {
                     </DropdownMenuItem>
                     {tier === 'free' && (
                       <DropdownMenuItem asChild>
-                        <Link href="/#pricing">Upgrade to Pro</Link>
+                        <Link href="/plans">Upgrade Plan</Link>
                       </DropdownMenuItem>
                     )}
                     {tier === 'pro' && (
                       <DropdownMenuItem asChild>
-                        <Link href="/#pricing">Upgrade to Business</Link>
+                        <Link href="/plans">Upgrade Plan</Link>
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />

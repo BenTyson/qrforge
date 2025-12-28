@@ -13,6 +13,8 @@ export interface QRStyleOptions {
   errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
   margin: number;
   width: number;
+  logoUrl?: string;    // URL to uploaded logo image
+  logoSize?: number;   // Logo size as % of QR code (10-30, default 20)
 }
 
 export interface URLContent {

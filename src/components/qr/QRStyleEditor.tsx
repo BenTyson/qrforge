@@ -62,7 +62,7 @@ export function QRStyleEditor({ style, onChange }: QRStyleEditorProps) {
       <div
         className={cn(
           'overflow-hidden transition-all duration-300',
-          isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+          isExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
         )}
       >
         <div className="px-6 pb-6 space-y-6">

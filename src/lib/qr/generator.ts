@@ -90,7 +90,21 @@ function generateVCard(content: {
 }
 
 /**
+ * Loads an image from a URL and returns it as an HTMLImageElement
+ */
+function loadImage(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Failed to load logo image'));
+    img.src = url;
+  });
+}
+
+/**
  * Generates a QR code as a Data URL (base64 encoded image)
+ * Supports optional logo overlay in the center
  */
 export async function generateQRDataURL(
   content: QRContent,
@@ -108,7 +122,26 @@ export async function generateQRDataURL(
     throw new Error('No content to encode');
   }
 
-  const dataURL = await QRCode.toDataURL(text, {
+  // If no logo, use the simple method
+  if (!style.logoUrl) {
+    const dataURL = await QRCode.toDataURL(text, {
+      errorCorrectionLevel: style.errorCorrectionLevel,
+      margin: style.margin,
+      width: style.width,
+      color: {
+        dark: style.foregroundColor,
+        light: style.backgroundColor,
+      },
+    });
+    return dataURL;
+  }
+
+  // With logo: generate to canvas, draw logo, export
+  const canvas = document.createElement('canvas');
+  canvas.width = style.width;
+  canvas.height = style.width;
+
+  await QRCode.toCanvas(canvas, text, {
     errorCorrectionLevel: style.errorCorrectionLevel,
     margin: style.margin,
     width: style.width,
@@ -118,7 +151,38 @@ export async function generateQRDataURL(
     },
   });
 
-  return dataURL;
+  // Load and draw logo
+  try {
+    const logo = await loadImage(style.logoUrl);
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      const logoSizePercent = style.logoSize || 20;
+      const logoSize = (style.width * logoSizePercent) / 100;
+      const logoX = (style.width - logoSize) / 2;
+      const logoY = (style.width - logoSize) / 2;
+
+      // Draw white background circle behind logo for contrast
+      const padding = logoSize * 0.1;
+      ctx.fillStyle = style.backgroundColor;
+      ctx.beginPath();
+      ctx.arc(
+        style.width / 2,
+        style.width / 2,
+        logoSize / 2 + padding,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      // Draw the logo
+      ctx.drawImage(logo, logoX, logoY, logoSize, logoSize);
+    }
+  } catch (error) {
+    console.error('Failed to draw logo:', error);
+    // Continue without logo if it fails to load
+  }
+
+  return canvas.toDataURL('image/png');
 }
 
 /**

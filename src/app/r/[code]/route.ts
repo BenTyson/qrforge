@@ -39,9 +39,32 @@ export async function GET(
     }
   }
 
+  // Check scheduled activation (Pro+ feature)
+  const now = new Date();
+  if (qrCode.active_from) {
+    const activeFrom = new Date(qrCode.active_from);
+    if (now < activeFrom) {
+      // QR code is not yet active
+      return NextResponse.redirect(new URL('/not-active?reason=early', request.url));
+    }
+  }
+  if (qrCode.active_until) {
+    const activeUntil = new Date(qrCode.active_until);
+    if (now > activeUntil) {
+      // QR code is no longer active
+      return NextResponse.redirect(new URL('/not-active?reason=ended', request.url));
+    }
+  }
+
   // Check if QR code is password protected
   if (qrCode.password_hash) {
     return NextResponse.redirect(new URL(`/r/${code}/unlock`, request.url));
+  }
+
+  // Check if QR code has a landing page enabled
+  console.log('[QR Route] show_landing_page:', qrCode.show_landing_page, 'for code:', code);
+  if (qrCode.show_landing_page) {
+    return NextResponse.redirect(new URL(`/r/${code}/landing`, request.url));
   }
 
   // Check scan limits

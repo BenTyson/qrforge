@@ -504,6 +504,32 @@ export function QRGenerator() {
 
           {/* Style Editor */}
           <QRStyleEditor style={style} onChange={setStyle} />
+
+          {/* Upgrade CTA */}
+          <Card className="p-6 glass border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-foreground">Want more features?</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Upgrade to Pro for dynamic QR codes, analytics, brand logos, SVG downloads, and more.
+                </p>
+                <Link href="/signup" className="inline-block mt-3">
+                  <Button size="sm" className="glow-hover">
+                    Upgrade to Pro
+                    <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </div>

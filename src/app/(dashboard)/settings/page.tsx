@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { BillingSection } from '@/components/billing';
+import { APIKeysSection } from '@/components/APIKeysSection';
+// Teams feature removed for launch - database ready for future implementation
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -110,6 +112,9 @@ export default async function SettingsPage() {
         cancelAtPeriodEnd={subscriptionDetails.cancelAtPeriodEnd}
         interval={subscriptionDetails.interval}
       />
+
+      {/* API Keys Section */}
+      <APIKeysSection tier={tier} />
 
       {/* Danger Zone */}
       <Card className="p-6 glass border-red-500/20">

@@ -107,9 +107,11 @@ export function PricingSection({ isAuthenticated = false, currentTier = 'free' }
               '50 dynamic QR codes',
               '10,000 scans/month',
               'Scan analytics',
+              'Custom logo upload',
               'SVG downloads',
-              'QR expiration dates',
               'Password protection',
+              'Expiration & scheduling',
+              'Branded landing pages',
             ].map((feature) => (
               <li key={feature} className="flex items-center gap-2 text-sm">
                 <CheckIcon />
@@ -140,6 +142,8 @@ export function PricingSection({ isAuthenticated = false, currentTier = 'free' }
               'Everything in Pro',
               'Unlimited dynamic QR codes',
               'Unlimited scans',
+              'API access',
+              'Bulk generation (CSV)',
               'Priority support',
             ].map((feature) => (
               <li key={feature} className="flex items-center gap-2 text-sm">

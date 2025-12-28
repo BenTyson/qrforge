@@ -30,9 +30,11 @@
     - `https://qrforge-production.up.railway.app/auth/callback`
 - [ ] **Database migrations applied**: Check all tables exist
   - `profiles` (with `monthly_scan_count`, `scan_count_reset_at`)
-  - `qr_codes` (with `expires_at`, `password_hash`)
+  - `qr_codes` (with `expires_at`, `password_hash`, `active_from`, `active_until`, `show_landing_page`, `landing_page_*`, `bulk_batch_id`)
   - `scans`
-- [ ] **RLS policies enabled**: All three tables
+  - `api_keys`
+  - `teams`, `team_members`, `team_invites`
+- [ ] **RLS policies enabled**: All tables
 
 ---
 
@@ -76,9 +78,19 @@
 
 ### QR Code Management
 - [ ] QR list shows all codes
+- [ ] QR list groups bulk batches separately
 - [ ] Edit QR code works (dynamic only)
 - [ ] Delete QR code works
 - [ ] Copy link works
+- [ ] Logo upload works (Pro+)
+
+### Bulk QR Generation (Business)
+- [ ] Bulk upload page accessible for Business tier
+- [ ] CSV parsing works correctly
+- [ ] Style customization applies to all codes
+- [ ] Feature toggles (expiration, password, landing page) work
+- [ ] Bulk batch grouping displays on QR list page
+- [ ] Batch expansion shows individual codes
 
 ### Dynamic QR Redirect
 - [ ] `/r/[code]` redirects to destination
@@ -99,6 +111,18 @@
 - [ ] Successful payment updates user tier
 - [ ] Customer portal opens
 - [ ] Usage bar shows correct limits
+
+### API Access (Business)
+- [ ] Developer portal accessible at `/developers`
+- [ ] API key creation works
+- [ ] API key revocation works
+- [ ] API documentation displays correctly
+- [ ] `GET /api/v1/qr-codes` returns user's QR codes
+- [ ] `POST /api/v1/qr-codes` creates new QR code
+- [ ] `GET /api/v1/qr-codes/:id` returns single QR code
+- [ ] `PATCH /api/v1/qr-codes/:id` updates QR code
+- [ ] `DELETE /api/v1/qr-codes/:id` deletes QR code
+- [ ] `GET /api/v1/qr-codes/:id/image` returns QR image
 
 ---
 

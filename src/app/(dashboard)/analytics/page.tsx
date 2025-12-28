@@ -104,132 +104,209 @@ export default async function AnalyticsPage() {
           </p>
         </div>
         {!isPro && (
-          <Link href="/#pricing">
-            <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors text-sm">
-              Upgrade for More
+          <Link href="/settings">
+            <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors text-sm flex items-center gap-2">
+              <SparkleIcon className="w-4 h-4" />
+              Unlock Full Analytics
             </button>
           </Link>
         )}
       </div>
 
-      {/* Main Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <StatCard title="Total Scans" value={totalScans} />
-        <StatCard title="Unique Visitors" value={uniqueVisitors} />
-        <StatCard title="Scans Today" value={scansToday} />
-        <StatCard title="Top Country" value={topCountry?.[0] || '-'} isText />
-      </div>
-
-      {/* Time Period Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="p-6 glass">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">This Week</p>
-            <TrendIcon className="w-4 h-4 text-primary" />
-          </div>
-          <p className="text-2xl font-bold mt-2">{scansThisWeek}</p>
-          <p className="text-xs text-muted-foreground mt-1">scans in the last 7 days</p>
-        </Card>
-        <Card className="p-6 glass">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">This Month</p>
-            <CalendarIcon className="w-4 h-4 text-primary" />
-          </div>
-          <p className="text-2xl font-bold mt-2">{scansThisMonth}</p>
-          <p className="text-xs text-muted-foreground mt-1">scans this month</p>
-        </Card>
-        <Card className="p-6 glass">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">Avg Daily</p>
-            <ChartIcon className="w-4 h-4 text-primary" />
-          </div>
-          <p className="text-2xl font-bold mt-2">
-            {scansThisWeek > 0 ? (scansThisWeek / 7).toFixed(1) : '0'}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">scans per day (7d avg)</p>
-        </Card>
-      </div>
-
-      {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Top QR Codes */}
-        <Card className="p-6 glass">
-          <h3 className="text-lg font-semibold mb-4">Top QR Codes</h3>
-          {topQRCodes.length === 0 ? (
-            <p className="text-muted-foreground text-sm">No QR codes yet</p>
-          ) : (
-            <div className="space-y-3">
-              {topQRCodes.map((qr, index) => (
-                <div key={qr.id} className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center font-medium">
-                    {index + 1}
-                  </span>
-                  <span className="flex-1 truncate">{qr.name}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {qr.scan_count || 0} scans
-                  </span>
-                </div>
-              ))}
+      {/* Hero Stats Row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* Primary Stat - Total Scans */}
+        <div className="col-span-2 lg:col-span-1 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
+              <ScanIcon className="w-5 h-5 text-primary" />
             </div>
-          )}
-        </Card>
+          </div>
+          <div className="text-4xl font-bold text-primary">{totalScans.toLocaleString()}</div>
+          <p className="text-sm text-muted-foreground mt-1">Total Scans</p>
+        </div>
 
+        {/* Unique Visitors */}
+        <div className="bg-card/50 backdrop-blur border border-border/50 rounded-2xl p-5 hover:border-purple-500/30 transition-colors">
+          <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center text-purple-500 mb-3">
+            <UsersIcon className="w-5 h-5" />
+          </div>
+          <div className="text-2xl font-bold">{uniqueVisitors.toLocaleString()}</div>
+          <p className="text-xs text-muted-foreground mt-0.5">Unique Visitors</p>
+        </div>
+
+        {/* Scans Today */}
+        <div className="bg-card/50 backdrop-blur border border-border/50 rounded-2xl p-5 hover:border-emerald-500/30 transition-colors">
+          <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center text-emerald-500 mb-3">
+            <ZapIcon className="w-5 h-5" />
+          </div>
+          <div className="text-2xl font-bold">{scansToday.toLocaleString()}</div>
+          <p className="text-xs text-muted-foreground mt-0.5">Today</p>
+        </div>
+
+        {/* Top Country */}
+        <div className="bg-card/50 backdrop-blur border border-border/50 rounded-2xl p-5 hover:border-amber-500/30 transition-colors">
+          <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center text-amber-500 mb-3">
+            <GlobeIcon className="w-5 h-5" />
+          </div>
+          <div className="text-2xl font-bold truncate">{topCountry?.[0] || '-'}</div>
+          <p className="text-xs text-muted-foreground mt-0.5">Top Location</p>
+        </div>
+      </div>
+
+      {/* Time Period Stats - Horizontal bar style */}
+      <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6 mb-8">
+        <h3 className="text-sm font-medium text-muted-foreground mb-4">Performance Overview</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center">
+              <TrendIcon className="w-6 h-6 text-cyan-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{scansThisWeek.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground">Last 7 days</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center">
+              <CalendarIcon className="w-6 h-6 text-violet-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{scansThisMonth.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground">This month</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500/20 to-pink-500/20 flex items-center justify-center">
+              <ChartIcon className="w-6 h-6 text-rose-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{scansThisWeek > 0 ? (scansThisWeek / 7).toFixed(1) : '0'}</p>
+              <p className="text-xs text-muted-foreground">Daily average</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Top QR Codes - Full Width with ranking */}
+      <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold">Top Performing QR Codes</h3>
+          <Link href="/qr-codes" className="text-xs text-primary hover:underline">View all</Link>
+        </div>
+        {topQRCodes.length === 0 ? (
+          <div className="text-center py-8">
+            <div className="w-12 h-12 rounded-full bg-secondary/50 flex items-center justify-center mx-auto mb-3">
+              <QRIcon className="w-6 h-6 text-muted-foreground/30" />
+            </div>
+            <p className="text-muted-foreground text-sm">No QR codes yet</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {topQRCodes.map((qr, index) => {
+              const maxScans = topQRCodes[0]?.scan_count || 1;
+              const percentage = ((qr.scan_count || 0) / maxScans) * 100;
+              const colors = ['from-primary to-cyan-500', 'from-purple-500 to-violet-500', 'from-emerald-500 to-teal-500', 'from-amber-500 to-orange-500', 'from-rose-500 to-pink-500'];
+              return (
+                <div key={qr.id} className="group">
+                  <div className="flex items-center gap-3 mb-1">
+                    <span className={`w-7 h-7 rounded-lg text-xs flex items-center justify-center font-bold ${
+                      index === 0 ? 'bg-primary/20 text-primary' : 'bg-secondary text-muted-foreground'
+                    }`}>
+                      {index + 1}
+                    </span>
+                    <span className="flex-1 font-medium truncate">{qr.name}</span>
+                    <span className="text-sm font-semibold">{(qr.scan_count || 0).toLocaleString()}</span>
+                  </div>
+                  <div className="ml-10 h-1.5 bg-secondary/50 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full bg-gradient-to-r ${colors[index]} transition-all duration-500`}
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Breakdown Grid - 3 columns */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {/* Device Breakdown */}
-        <Card className="p-6 glass">
-          <h3 className="text-lg font-semibold mb-4">Device Types</h3>
+        <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+              <DeviceIcon device="mobile" className="w-4 h-4 text-blue-500" />
+            </div>
+            <h3 className="font-semibold">Devices</h3>
+          </div>
           {Object.keys(deviceBreakdown).length === 0 ? (
             <p className="text-muted-foreground text-sm">No data yet</p>
           ) : (
             <div className="space-y-3">
               {Object.entries(deviceBreakdown)
                 .sort((a, b) => (b[1] as number) - (a[1] as number))
-                .map(([device, count]) => (
-                  <div key={device} className="flex items-center gap-3">
-                    <DeviceIcon device={device} className="w-5 h-5 text-primary" />
-                    <span className="flex-1 capitalize">{device}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {count as number} ({totalScans > 0 ? (((count as number) / totalScans) * 100).toFixed(0) : 0}%)
-                    </span>
-                  </div>
-                ))}
+                .map(([device, count]) => {
+                  const pct = totalScans > 0 ? ((count as number) / totalScans) * 100 : 0;
+                  return (
+                    <div key={device}>
+                      <div className="flex items-center justify-between text-sm mb-1">
+                        <span className="capitalize">{device}</span>
+                        <span className="text-muted-foreground">{pct.toFixed(0)}%</span>
+                      </div>
+                      <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full bg-blue-500" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
           )}
-        </Card>
-      </div>
+        </div>
 
-      {/* Two Column Layout - Browsers & Countries */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Browser Breakdown */}
-        <Card className="p-6 glass">
-          <h3 className="text-lg font-semibold mb-4">Browsers</h3>
+        <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
+              <BrowserIcon className="w-4 h-4 text-violet-500" />
+            </div>
+            <h3 className="font-semibold">Browsers</h3>
+          </div>
           {Object.keys(browserBreakdown).length === 0 ? (
             <p className="text-muted-foreground text-sm">No data yet</p>
           ) : (
             <div className="space-y-3">
               {Object.entries(browserBreakdown)
                 .sort((a, b) => (b[1] as number) - (a[1] as number))
-                .slice(0, 5)
-                .map(([browser, count]) => (
-                  <div key={browser} className="flex items-center gap-3">
-                    <BrowserIcon className="w-5 h-5 text-primary" />
-                    <span className="flex-1">{browser}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {count as number} ({totalScans > 0 ? (((count as number) / totalScans) * 100).toFixed(0) : 0}%)
-                    </span>
-                  </div>
-                ))}
+                .slice(0, 4)
+                .map(([browser, count]) => {
+                  const pct = totalScans > 0 ? ((count as number) / totalScans) * 100 : 0;
+                  return (
+                    <div key={browser}>
+                      <div className="flex items-center justify-between text-sm mb-1">
+                        <span className="truncate">{browser}</span>
+                        <span className="text-muted-foreground">{pct.toFixed(0)}%</span>
+                      </div>
+                      <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full bg-violet-500" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
           )}
-        </Card>
+        </div>
 
         {/* Country Breakdown */}
-        <Card className="p-6 glass">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Countries</h3>
+        <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+              <GlobeIcon className="w-4 h-4 text-emerald-500" />
+            </div>
+            <h3 className="font-semibold">Locations</h3>
             {!isPro && (
-              <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
-                Pro
-              </Badge>
+              <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full ml-auto">Pro</span>
             )}
           </div>
           {Object.keys(countryBreakdown).length === 0 ? (
@@ -238,31 +315,44 @@ export default async function AnalyticsPage() {
             <div className="space-y-3">
               {Object.entries(countryBreakdown)
                 .sort((a, b) => (b[1] as number) - (a[1] as number))
-                .slice(0, 5)
-                .map(([country, count]) => (
-                  <div key={country} className="flex items-center gap-3">
-                    <GlobeIcon className="w-5 h-5 text-primary" />
-                    <span className="flex-1">{country}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {count as number} ({totalScans > 0 ? (((count as number) / totalScans) * 100).toFixed(0) : 0}%)
-                    </span>
-                  </div>
-                ))}
+                .slice(0, 4)
+                .map(([country, count]) => {
+                  const pct = totalScans > 0 ? ((count as number) / totalScans) * 100 : 0;
+                  return (
+                    <div key={country}>
+                      <div className="flex items-center justify-between text-sm mb-1">
+                        <span className="truncate">{country}</span>
+                        <span className="text-muted-foreground">{pct.toFixed(0)}%</span>
+                      </div>
+                      <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full bg-emerald-500" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
           )}
-        </Card>
+        </div>
       </div>
 
       {/* Recent Activity */}
-      <Card className="p-6 glass">
-        <h3 className="text-lg font-semibold mb-4">Recent Scans</h3>
+      <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6">
+        <h3 className="font-semibold mb-4">Recent Scans</h3>
         {recentScans.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No scans yet</p>
+          <div className="text-center py-12">
+            <div className="w-16 h-16 rounded-full bg-secondary/50 flex items-center justify-center mx-auto mb-4">
+              <ScanIcon className="w-8 h-8 text-muted-foreground/30" />
+            </div>
+            <p className="font-medium text-muted-foreground">No scans yet</p>
+            <p className="text-sm text-muted-foreground/70 mt-1">
+              Scans will appear here once your QR codes are used
+            </p>
+          </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto -mx-6 px-6">
+            <table className="w-full text-sm min-w-[600px]">
               <thead>
-                <tr className="text-left text-muted-foreground border-b border-border">
+                <tr className="text-left text-muted-foreground">
                   <th className="pb-3 font-medium">QR Code</th>
                   <th className="pb-3 font-medium">Time</th>
                   <th className="pb-3 font-medium">Device</th>
@@ -270,16 +360,25 @@ export default async function AnalyticsPage() {
                   <th className="pb-3 font-medium">Location</th>
                 </tr>
               </thead>
-              <tbody>
-                {recentScans.map((scan) => (
-                  <tr key={scan.id} className="border-b border-border/50">
-                    <td className="py-3 font-medium">{scan.qrName}</td>
+              <tbody className="divide-y divide-border/30">
+                {recentScans.map((scan, index) => (
+                  <tr key={scan.id} className="group hover:bg-secondary/20 transition-colors">
+                    <td className="py-3">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${index === 0 ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
+                        <span className="font-medium">{scan.qrName}</span>
+                      </div>
+                    </td>
                     <td className="py-3 text-muted-foreground">
                       {formatTimeAgo(scan.scanned_at)}
                     </td>
-                    <td className="py-3 capitalize">{scan.device_type || '-'}</td>
-                    <td className="py-3">{scan.browser || '-'}</td>
                     <td className="py-3">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-secondary/50 text-xs capitalize">
+                        {scan.device_type || 'Unknown'}
+                      </span>
+                    </td>
+                    <td className="py-3 text-muted-foreground">{scan.browser || '-'}</td>
+                    <td className="py-3 text-muted-foreground">
                       {scan.city && scan.country
                         ? `${scan.city}, ${scan.country}`
                         : scan.country || '-'}
@@ -290,17 +389,8 @@ export default async function AnalyticsPage() {
             </table>
           </div>
         )}
-      </Card>
+      </div>
     </div>
-  );
-}
-
-function StatCard({ title, value, isText }: { title: string; value: number | string; isText?: boolean }) {
-  return (
-    <Card className="p-6 glass">
-      <p className="text-sm text-muted-foreground mb-2">{title}</p>
-      <p className="text-3xl font-bold">{isText ? value : value.toLocaleString()}</p>
-    </Card>
   );
 }
 
@@ -388,6 +478,55 @@ function CalendarIcon({ className }: { className?: string }) {
       <line x1="16" y1="2" x2="16" y2="6" />
       <line x1="8" y1="2" x2="8" y2="6" />
       <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  );
+}
+
+function SparkleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+    </svg>
+  );
+}
+
+function ScanIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+      <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+      <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+      <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+      <line x1="7" y1="12" x2="17" y2="12" />
+    </svg>
+  );
+}
+
+function UsersIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+function ZapIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+  );
+}
+
+function QRIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
     </svg>
   );
 }

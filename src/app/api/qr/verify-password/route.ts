@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     // Find the QR code
     const { data: qrCode, error } = await supabase
       .from('qr_codes')
-      .select('password_hash, destination_url, content')
+      .select('password_hash, destination_url, content, show_landing_page')
       .eq('short_code', code)
       .single();
 
@@ -63,9 +63,19 @@ export async function POST(request: Request) {
       );
     }
 
+    // If landing page is enabled, redirect there instead
+    if (qrCode.show_landing_page) {
+      return NextResponse.json({
+        success: true,
+        redirectUrl: `/r/${code}/landing`,
+        hasLandingPage: true,
+      });
+    }
+
     return NextResponse.json({
       success: true,
       destinationUrl,
+      hasLandingPage: false,
     });
   } catch (error) {
     console.error('Password verification error:', error);

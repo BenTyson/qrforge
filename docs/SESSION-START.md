@@ -1,6 +1,6 @@
 # QRForge - Session Start Guide
 
-> **Last Updated**: December 22, 2024
+> **Last Updated**: December 27, 2024
 > **Status**: Pre-Launch - Pending Stripe Live Mode
 > **Live URL**: https://qrforge-production.up.railway.app
 
@@ -62,12 +62,18 @@ QRForge is a premium QR code generator with analytics and dynamic codes. Goal: p
 - **QR expiration dates** - Set expiry on dynamic QR codes (Pro+)
 - **Password protection** - Require password to access QR destination (Pro+)
 - **Branch workflow** - develop → PR → main (production)
+- **Bulk QR generation** - CSV upload for batch creation (Business tier)
+- **Bulk style customization** - Apply colors, logos, features to bulk batches
+- **Bulk batch grouping** - Bulk-generated codes grouped separately in QR list
+- **API access** - Full REST API with key management (Business tier)
+- **Developer portal** - `/developers` page with API docs, key management, usage stats
+- **Landing page enhancements** - Branding showcase, upgrade CTAs
+- **Logo upload as Pro feature** - Dedicated card for logo upload (extracted from style editor)
 
 ### Planned Enhancements
 - QR code folders/organization
 - Email scan alerts
-- Bulk QR generation (Business)
-- API endpoints for Business tier
+- Webhooks for scan notifications
 - Custom domain for short URLs
 
 ## Environment Setup
@@ -97,13 +103,14 @@ STRIPE_PRICE_BUSINESS_YEARLY=price_...
 ```
 src/
 ├── app/
-│   ├── page.tsx                    # Landing page + JSON-LD
+│   ├── page.tsx                    # Landing page + JSON-LD + branding showcase
 │   ├── layout.tsx                  # Root layout + meta tags
 │   ├── sitemap.ts                  # Dynamic sitemap
 │   ├── robots.ts                   # Robots.txt config
 │   ├── globals.css                 # Theme + custom CSS
 │   ├── expired/page.tsx            # QR code expired page
 │   ├── limit-reached/page.tsx      # Scan limit exceeded page
+│   ├── not-active/page.tsx         # Scheduled QR not yet active
 │   ├── (auth)/
 │   │   ├── login/page.tsx          # Login (+ Google OAuth)
 │   │   ├── signup/page.tsx         # Signup (+ Google OAuth)
@@ -111,27 +118,46 @@ src/
 │   ├── (dashboard)/
 │   │   ├── layout.tsx              # Dashboard layout
 │   │   ├── dashboard/page.tsx      # Overview with real stats + usage bar
-│   │   ├── qr-codes/page.tsx       # QR list with actions
-│   │   ├── qr-codes/new/page.tsx   # Create QR (with expiry/password)
+│   │   ├── qr-codes/page.tsx       # QR list with bulk batch grouping
+│   │   ├── qr-codes/new/page.tsx   # Create QR (with expiry/password/landing)
 │   │   ├── qr-codes/[id]/page.tsx  # Edit QR (dynamic only)
+│   │   ├── qr-codes/bulk/page.tsx  # Bulk QR generator (Business)
 │   │   ├── analytics/page.tsx      # Full analytics dashboard
+│   │   ├── developers/page.tsx     # API dashboard (Business)
+│   │   ├── developers/docs/page.tsx # Interactive API documentation
 │   │   └── settings/page.tsx       # Settings + Billing
 │   ├── api/
 │   │   ├── stripe/
 │   │   │   ├── checkout/route.ts   # Create checkout session
 │   │   │   ├── webhook/route.ts    # Handle Stripe events
 │   │   │   └── portal/route.ts     # Customer portal
-│   │   └── qr/
-│   │       └── verify-password/route.ts  # Password verification
+│   │   ├── qr/
+│   │   │   ├── verify-password/route.ts  # Password verification
+│   │   │   ├── upload-logo/route.ts      # Logo upload to Supabase
+│   │   │   └── delete-logo/route.ts      # Logo deletion
+│   │   ├── api-keys/               # API key management
+│   │   │   ├── route.ts            # Create/list keys
+│   │   │   └── [id]/route.ts       # Revoke key
+│   │   └── v1/                     # Public REST API (Business)
+│   │       └── qr-codes/
+│   │           ├── route.ts        # List/create QR codes
+│   │           └── [id]/
+│   │               ├── route.ts    # Get/update/delete QR code
+│   │               └── image/route.ts  # Generate QR image
 │   └── r/[code]/
 │       ├── route.ts                # Dynamic QR redirect + tracking
+│       ├── landing/page.tsx        # Custom landing page
 │       └── unlock/page.tsx         # Password entry page
 ├── components/
 │   ├── ui/                         # shadcn components
 │   ├── qr/
-│   │   ├── QRGenerator.tsx         # QR generation form
-│   │   └── QRCodeCard.tsx          # QR list item with actions
-│   ├── dashboard/                  # Dashboard components
+│   │   ├── QRGenerator.tsx         # QR generation form (homepage)
+│   │   ├── QRCodeCard.tsx          # QR list item with actions
+│   │   ├── QRStyleEditor.tsx       # Color/preset customization
+│   │   ├── QRLogoUploader.tsx      # Logo upload (Pro feature)
+│   │   └── BulkBatchCard.tsx       # Expandable bulk batch display
+│   ├── dashboard/
+│   │   └── DashboardNav.tsx        # Nav with tier-aware profile dropdown
 │   ├── pricing/                    # PricingSection component
 │   └── billing/                    # BillingSection component
 ├── hooks/
@@ -139,7 +165,8 @@ src/
 ├── lib/
 │   ├── qr/                         # QR generation
 │   ├── supabase/                   # Supabase clients
-│   └── stripe/                     # Stripe config (with SCAN_LIMITS)
+│   ├── stripe/                     # Stripe config (with SCAN_LIMITS)
+│   └── api/                        # API authentication helpers
 └── middleware.ts                   # Auth protection
 ```
 
@@ -188,8 +215,12 @@ Scan tracking in `/r/[code]/route.ts`:
 
 Tables deployed:
 - `profiles` - User profiles with subscription_tier, stripe_customer_id, subscription_status, **monthly_scan_count**, **scan_count_reset_at**
-- `qr_codes` - QR codes with content, style, short_code, scan_count, **expires_at**, **password_hash**
+- `qr_codes` - QR codes with content, style, short_code, scan_count, **expires_at**, **password_hash**, **active_from**, **active_until**, **show_landing_page**, **landing_page_title/description/button_text/theme**, **bulk_batch_id**
 - `scans` - Scan analytics (device_type, os, browser, country, city, region, referrer)
+- `api_keys` - API keys for Business tier (hashed keys, last_used_at)
+- `teams` - Team management for Business tier
+- `team_members` - Team membership with roles
+- `team_invites` - Pending team invitations
 
 RLS policies active. Trigger auto-creates profile on signup. Trigger auto-increments monthly_scan_count on scan.
 
@@ -214,11 +245,11 @@ Test card: `4242 4242 4242 4242` (any future expiry, any CVC)
 
 ## Business Model
 
-| Tier | Price | Dynamic QRs | Analytics |
-|------|-------|-------------|-----------|
-| Free | $0 | 0 | No |
-| Pro | $9/mo | 50 | Yes |
-| Business | $29/mo | Unlimited | Yes |
+| Tier | Price | Dynamic QRs | Analytics | Features |
+|------|-------|-------------|-----------|----------|
+| Free | $0 | 0 | No | Static QR codes only |
+| Pro | $9/mo | 50 | Yes | Logo upload, expiration, password, landing pages |
+| Business | $29/mo | Unlimited | Yes | All Pro + Bulk generation, API access, Team management |
 
 ## Revenue Mechanics
 

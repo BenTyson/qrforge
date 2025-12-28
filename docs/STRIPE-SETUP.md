@@ -133,6 +133,13 @@ stripe_customer_id: 'cus_...'
 | Analytics | No | Yes | Yes |
 | Geolocation tracking | No | Yes | Yes |
 | Scan history | No | Yes | Yes |
+| Logo upload | No | Yes | Yes |
+| Expiration dates | No | Yes | Yes |
+| Password protection | No | Yes | Yes |
+| Landing pages | No | Yes | Yes |
+| Bulk generation | No | No | Yes |
+| API access | No | No | Yes |
+| Team management | No | No | Yes |
 
 ## Troubleshooting
 

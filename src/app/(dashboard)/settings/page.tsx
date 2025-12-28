@@ -5,15 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { BillingSection } from '@/components/billing';
+import { APIKeysSection } from '@/components/APIKeysSection';
+// Teams feature removed for launch - database ready for future implementation
 
 export default async function SettingsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Get profile with subscription info
+  // Get profile with subscription info and scan count
   const { data: profile } = await supabase
     .from('profiles')
-    .select('subscription_tier, subscription_status, stripe_customer_id')
+    .select('subscription_tier, subscription_status, stripe_customer_id, monthly_scan_count, scan_count_reset_at')
     .eq('id', user?.id)
     .single();
 
@@ -105,10 +107,14 @@ export default async function SettingsPage() {
         status={status}
         staticCount={staticCount || 0}
         dynamicCount={dynamicCount || 0}
+        monthlyScanCount={profile?.monthly_scan_count || 0}
         currentPeriodEnd={subscriptionDetails.currentPeriodEnd?.toISOString() || null}
         cancelAtPeriodEnd={subscriptionDetails.cancelAtPeriodEnd}
         interval={subscriptionDetails.interval}
       />
+
+      {/* API Keys Section */}
+      <APIKeysSection tier={tier} />
 
       {/* Danger Zone */}
       <Card className="p-6 glass border-red-500/20">

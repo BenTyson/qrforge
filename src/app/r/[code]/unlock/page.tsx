@@ -31,8 +31,12 @@ export default function UnlockPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Redirect to destination
-        window.location.href = data.destinationUrl;
+        // Redirect to landing page or destination
+        if (data.hasLandingPage && data.redirectUrl) {
+          window.location.href = data.redirectUrl;
+        } else {
+          window.location.href = data.destinationUrl;
+        }
       } else {
         setError(data.error || 'Invalid password');
       }
@@ -85,7 +89,7 @@ export default function UnlockPage() {
           <p className="text-xs text-muted-foreground">
             Protected by{' '}
             <a href="/" className="text-primary hover:underline">
-              QRForge
+              QRWolf
             </a>
           </p>
         </div>

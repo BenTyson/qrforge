@@ -3,9 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { generateQRDataURL, generateQRSVG, downloadQRPNG, downloadQRSVG } from '@/lib/qr/generator';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
 import { toast } from 'sonner';
@@ -23,13 +21,18 @@ interface QRCodeData {
   scan_count: number;
   created_at: string;
   expires_at: string | null;
+  active_from: string | null;
+  active_until: string | null;
+  password_hash: string | null;
 }
 
 interface QRCodeCardProps {
   qrCode: QRCodeData;
+  index?: number;
+  compact?: boolean;
 }
 
-export function QRCodeCard({ qrCode }: QRCodeCardProps) {
+export function QRCodeCard({ qrCode, index = 0, compact = false }: QRCodeCardProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showActions, setShowActions] = useState(false);
@@ -136,90 +139,186 @@ export function QRCodeCard({ qrCode }: QRCodeCardProps) {
     return expDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
+  // Determine scheduled activation status
+  const getScheduledStatus = () => {
+    const now = new Date();
+
+    if (qrCode.active_from) {
+      const from = new Date(qrCode.active_from);
+      if (now < from) {
+        return { status: 'pending', label: `Starts ${formatExpirationDate(qrCode.active_from)}` };
+      }
+    }
+
+    if (qrCode.active_until) {
+      const until = new Date(qrCode.active_until);
+      if (now > until) {
+        return { status: 'ended', label: 'Schedule ended' };
+      }
+      return { status: 'active', label: `Until ${formatExpirationDate(qrCode.active_until)}` };
+    }
+
+    if (qrCode.active_from) {
+      return { status: 'active', label: 'Active (scheduled)' };
+    }
+
+    return null;
+  };
+
+  const scheduledStatus = getScheduledStatus();
+
+  // Color accents based on content type
+  const getAccentColor = () => {
+    switch (qrCode.content_type) {
+      case 'url': return 'blue';
+      case 'wifi': return 'emerald';
+      case 'vcard': return 'violet';
+      case 'email': return 'amber';
+      case 'phone': return 'rose';
+      case 'sms': return 'cyan';
+      default: return 'primary';
+    }
+  };
+
+  const accent = getAccentColor();
+
   return (
-    <Card
-      className="p-4 glass hover:glow transition-all duration-300 group"
+    <div
+      className="group relative rounded-2xl border border-border/50 bg-card/50 backdrop-blur overflow-hidden hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
     >
-      <div className="flex gap-4">
-        {/* QR Preview */}
-        <div className="w-24 h-24 bg-white rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
-          {qrDataURL ? (
-            <img src={qrDataURL} alt={qrCode.name} className="w-full h-full object-contain" />
-          ) : (
-            <div className="w-12 h-12 bg-gray-200 animate-pulse rounded" />
-          )}
-        </div>
+      {/* Top accent bar */}
+      <div className={`h-1 bg-gradient-to-r ${
+        accent === 'blue' ? 'from-blue-500 to-cyan-500' :
+        accent === 'emerald' ? 'from-emerald-500 to-teal-500' :
+        accent === 'violet' ? 'from-violet-500 to-purple-500' :
+        accent === 'amber' ? 'from-amber-500 to-orange-500' :
+        accent === 'rose' ? 'from-rose-500 to-pink-500' :
+        accent === 'cyan' ? 'from-cyan-500 to-blue-500' :
+        'from-primary to-cyan-500'
+      }`} />
 
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold truncate">{qrCode.name}</h3>
-            <div className="flex gap-1 shrink-0">
+      <div className="p-4">
+        <div className="flex gap-4">
+          {/* QR Preview */}
+          <div className="relative w-20 h-20 bg-white rounded-xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+            {qrDataURL ? (
+              <img src={qrDataURL} alt={qrCode.name} className="w-full h-full object-contain p-1" />
+            ) : (
+              <div className="w-10 h-10 bg-gray-100 animate-pulse rounded" />
+            )}
+            {/* Scan count overlay */}
+            {qrCode.scan_count > 0 && (
+              <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">
+                {qrCode.scan_count > 999 ? '999+' : qrCode.scan_count}
+              </div>
+            )}
+          </div>
+
+          {/* Info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="font-semibold truncate text-sm">{qrCode.name}</h3>
+            </div>
+
+            <div className="flex items-center gap-2 mt-1.5">
+              <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
+                accent === 'blue' ? 'bg-blue-500/10 text-blue-500' :
+                accent === 'emerald' ? 'bg-emerald-500/10 text-emerald-500' :
+                accent === 'violet' ? 'bg-violet-500/10 text-violet-500' :
+                accent === 'amber' ? 'bg-amber-500/10 text-amber-600' :
+                accent === 'rose' ? 'bg-rose-500/10 text-rose-500' :
+                accent === 'cyan' ? 'bg-cyan-500/10 text-cyan-500' :
+                'bg-primary/10 text-primary'
+              }`}>
+                {getContentTypeIcon()}
+                <span className="capitalize">{qrCode.content_type}</span>
+              </span>
               {qrCode.type === 'dynamic' && (
-                <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
+                <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-medium">
                   Dynamic
-                </Badge>
-              )}
-              {qrCode.expires_at && (
-                new Date(qrCode.expires_at) < new Date() ? (
-                  <Badge variant="secondary" className="bg-red-500/10 text-red-500 text-xs">
-                    Expired
-                  </Badge>
-                ) : (
-                  <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 text-xs">
-                    Expires {formatExpirationDate(qrCode.expires_at)}
-                  </Badge>
-                )
+                </span>
               )}
             </div>
-          </div>
 
-          <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
-            {getContentTypeIcon()}
-            <span className="capitalize">{qrCode.content_type}</span>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2 text-[11px] text-muted-foreground">
+              {/* Password protected indicator */}
+              {qrCode.password_hash && (
+                <span className="inline-flex items-center gap-0.5 text-violet-500">
+                  <LockIcon className="w-3 h-3" />
+                  Protected
+                </span>
+              )}
+              {/* Scheduled activation indicator */}
+              {scheduledStatus && (
+                <span className={`inline-flex items-center gap-0.5 ${
+                  scheduledStatus.status === 'pending' ? 'text-blue-500' :
+                  scheduledStatus.status === 'ended' ? 'text-red-500' :
+                  'text-emerald-500'
+                }`}>
+                  <ClockIcon className="w-3 h-3" />
+                  {scheduledStatus.label}
+                </span>
+              )}
+              {/* Expiration indicator */}
+              {qrCode.expires_at && (
+                new Date(qrCode.expires_at) < new Date() ? (
+                  <span className="text-red-500 font-medium">Expired</span>
+                ) : (
+                  <span className="text-amber-500">Expires {formatExpirationDate(qrCode.expires_at)}</span>
+                )
+              )}
+              <span>{formatDate(qrCode.created_at)}</span>
+            </div>
           </div>
+        </div>
 
-          <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <ScanIcon className="w-3 h-3" />
-              {qrCode.scan_count} scan{qrCode.scan_count !== 1 ? 's' : ''}
-            </span>
-            <span>{formatDate(qrCode.created_at)}</span>
-          </div>
-
-          {/* Actions */}
-          <div className={`flex gap-2 mt-3 transition-opacity duration-200 ${showActions ? 'opacity-100' : 'opacity-0'}`}>
-            <Link href={`/qr-codes/${qrCode.id}`}>
-              <Button variant="outline" size="sm" className="h-7 text-xs">
-                <EditIcon className="w-3 h-3 mr-1" />
-                Edit
-              </Button>
-            </Link>
-            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={handleDownloadPNG}>
-              <DownloadIcon className="w-3 h-3 mr-1" />
-              PNG
+        {/* Actions - Always visible on mobile, hover on desktop */}
+        <div
+          className={`flex gap-2 mt-3 pt-3 border-t border-border/30 transition-all duration-200 ${showActions ? 'opacity-100' : 'sm:opacity-0'}`}
+          role="group"
+          aria-label="QR code actions"
+        >
+          <Link href={`/qr-codes/${qrCode.id}`} className="flex-1">
+            <Button variant="outline" size="sm" className="w-full h-8 text-xs">
+              <EditIcon className="w-3 h-3 mr-1.5" aria-hidden="true" />
+              Edit
             </Button>
-            {qrCode.short_code && (
-              <Button variant="outline" size="sm" className="h-7 text-xs" onClick={handleCopyLink}>
-                <CopyIcon className="w-3 h-3 mr-1" />
-                Link
-              </Button>
-            )}
+          </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 text-xs px-3"
+            onClick={handleDownloadPNG}
+            aria-label="Download as PNG"
+          >
+            <DownloadIcon className="w-3 h-3" aria-hidden="true" />
+          </Button>
+          {qrCode.short_code && (
             <Button
               variant="outline"
               size="sm"
-              className="h-7 text-xs text-red-500 hover:text-red-600 hover:bg-red-500/10"
-              onClick={handleDelete}
-              disabled={isDeleting}
+              className="h-8 text-xs px-3"
+              onClick={handleCopyLink}
+              aria-label="Copy short link"
             >
-              <TrashIcon className="w-3 h-3" />
+              <CopyIcon className="w-3 h-3" aria-hidden="true" />
             </Button>
-          </div>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 text-xs px-3 text-red-500 hover:text-red-600 hover:bg-red-500/10 hover:border-red-500/30"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            aria-label="Delete QR code"
+          >
+            <TrashIcon className="w-3 h-3" aria-hidden="true" />
+          </Button>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
 
@@ -332,6 +431,24 @@ function TrashIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <polyline points="3 6 5 6 21 6" />
       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </svg>
+  );
+}
+
+function LockIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
+function ClockIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
     </svg>
   );
 }

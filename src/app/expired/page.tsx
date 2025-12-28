@@ -1,16 +1,18 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Footer } from '@/components/layout';
 
 export const metadata = {
-  title: 'QR Code Expired - QRForge',
+  title: 'QR Code Expired - QRWolf',
   description: 'This QR code has expired.',
 };
 
 export default function ExpiredPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-secondary/20 px-4">
-      <Card className="max-w-md w-full p-8 glass text-center">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-secondary/20">
+      <div className="flex-1 flex items-center justify-center px-4">
+        <Card className="max-w-md w-full p-8 glass text-center">
         <div className="w-16 h-16 mx-auto mb-6 bg-muted/50 rounded-full flex items-center justify-center">
           <ClockIcon className="w-8 h-8 text-muted-foreground" />
         </div>
@@ -23,7 +25,7 @@ export default function ExpiredPage() {
         <div className="space-y-3">
           <Link href="/">
             <Button className="w-full">
-              Visit QRForge
+              Visit QRWolf
             </Button>
           </Link>
           <Link href="/#pricing">
@@ -43,7 +45,9 @@ export default function ExpiredPage() {
             </Button>
           </Link>
         </div>
-      </Card>
+        </Card>
+      </div>
+      <Footer />
     </div>
   );
 }

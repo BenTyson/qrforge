@@ -3,11 +3,13 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
+import { Footer } from '@/components/layout';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -50,18 +52,18 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <Card className="w-full max-w-md p-8 glass">
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 flex items-center justify-center px-4">
+        <Card className="w-full max-w-md p-8 glass">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="3" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="3" width="7" height="7" rx="1" />
-                <rect x="3" y="14" width="7" height="7" rx="1" />
-              </svg>
-            </div>
-            <span className="text-xl font-bold gradient-text">QRForge</span>
+            <Image
+              src="/QRWolf_Logo_Icon.png"
+              alt="QRWolf"
+              width={32}
+              height={32}
+            />
+            <span className="text-xl font-bold gradient-text">QRWolf</span>
           </Link>
           <h1 className="text-2xl font-bold">Welcome back</h1>
           <p className="text-muted-foreground mt-2">Sign in to your account</p>
@@ -147,7 +149,9 @@ function LoginForm() {
             Sign up
           </Link>
         </p>
-      </Card>
+        </Card>
+      </div>
+      <Footer />
     </div>
   );
 }

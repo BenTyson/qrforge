@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
+import { Footer } from '@/components/layout';
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('');
@@ -66,42 +68,45 @@ export default function SignUpPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <Card className="w-full max-w-md p-8 glass text-center">
-          <div className="w-16 h-16 mx-auto mb-6 bg-green-500/10 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold mb-2">Check your email</h1>
-          <p className="text-muted-foreground mb-6">
-            We&apos;ve sent a confirmation link to <strong>{email}</strong>
-          </p>
-          <Button variant="outline" onClick={() => router.push('/login')}>
-            Back to login
-          </Button>
-        </Card>
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-1 flex items-center justify-center px-4">
+          <Card className="w-full max-w-md p-8 glass text-center">
+            <div className="w-16 h-16 mx-auto mb-6 bg-green-500/10 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold mb-2">Check your email</h1>
+            <p className="text-muted-foreground mb-6">
+              We&apos;ve sent a confirmation link to <strong>{email}</strong>
+            </p>
+            <Button variant="outline" onClick={() => router.push('/login')}>
+              Back to login
+            </Button>
+          </Card>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <Card className="w-full max-w-md p-8 glass">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="3" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="3" width="7" height="7" rx="1" />
-                <rect x="3" y="14" width="7" height="7" rx="1" />
-              </svg>
-            </div>
-            <span className="text-xl font-bold gradient-text">QRForge</span>
-          </Link>
-          <h1 className="text-2xl font-bold">Create an account</h1>
-          <p className="text-muted-foreground mt-2">Get started with dynamic QR codes</p>
-        </div>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 flex items-center justify-center px-4">
+        <Card className="w-full max-w-md p-8 glass">
+          <div className="text-center mb-8">
+            <Link href="/" className="inline-flex items-center gap-2 mb-6">
+              <Image
+                src="/QRWolf_Logo_Icon.png"
+                alt="QRWolf"
+                width={32}
+                height={32}
+              />
+              <span className="text-xl font-bold gradient-text">QRWolf</span>
+            </Link>
+            <h1 className="text-2xl font-bold">Create an account</h1>
+            <p className="text-muted-foreground mt-2">Get started with dynamic QR codes</p>
+          </div>
 
         <form onSubmit={handleSignUp} className="space-y-4">
           <div>
@@ -190,13 +195,15 @@ export default function SignUpPage() {
           Google
         </Button>
 
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          Already have an account?{' '}
-          <Link href="/login" className="text-primary hover:underline">
-            Sign in
-          </Link>
-        </p>
-      </Card>
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            Already have an account?{' '}
+            <Link href="/login" className="text-primary hover:underline">
+              Sign in
+            </Link>
+          </p>
+        </Card>
+      </div>
+      <Footer />
     </div>
   );
 }

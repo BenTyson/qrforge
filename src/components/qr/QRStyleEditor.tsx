@@ -62,41 +62,51 @@ export function QRStyleEditor({ style, onChange }: QRStyleEditorProps) {
       <div
         className={cn(
           'overflow-hidden transition-all duration-300',
-          isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+          isExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
         )}
       >
         <div className="px-6 pb-6 space-y-6">
           {/* Color Presets */}
           <div>
             <Label className="mb-3 block">Color Presets</Label>
-            <div className="grid grid-cols-4 gap-2">
-              {PRESET_COLORS.map((preset) => (
-                <button
-                  key={preset.name}
-                  onClick={() => updateStyle({
-                    foregroundColor: preset.fg,
-                    backgroundColor: preset.bg,
-                  })}
-                  className={cn(
-                    'flex flex-col items-center p-2 rounded-lg transition-all',
-                    'border-2',
-                    style.foregroundColor === preset.fg && style.backgroundColor === preset.bg
-                      ? 'border-primary'
-                      : 'border-transparent hover:border-primary/30'
-                  )}
-                >
-                  <div
-                    className="w-8 h-8 rounded-md shadow-sm mb-1"
-                    style={{ backgroundColor: preset.bg }}
+            <div className="flex flex-wrap gap-2">
+              {PRESET_COLORS.map((preset) => {
+                const isSelected = style.foregroundColor === preset.fg && style.backgroundColor === preset.bg;
+                return (
+                  <button
+                    key={preset.name}
+                    onClick={() => updateStyle({
+                      foregroundColor: preset.fg,
+                      backgroundColor: preset.bg,
+                    })}
+                    className={cn(
+                      'group flex items-center gap-2 px-3 py-2 rounded-full transition-all',
+                      'border',
+                      isSelected
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border/50 hover:border-primary/50 hover:bg-secondary/30'
+                    )}
                   >
-                    <div
-                      className="w-4 h-4 m-2 rounded-sm"
-                      style={{ backgroundColor: preset.fg }}
-                    />
-                  </div>
-                  <span className="text-xs text-muted-foreground">{preset.name}</span>
-                </button>
-              ))}
+                    {/* Split color swatch */}
+                    <div className="relative w-5 h-5 rounded-full overflow-hidden shadow-sm ring-1 ring-black/10">
+                      <div
+                        className="absolute inset-0"
+                        style={{ backgroundColor: preset.bg }}
+                      />
+                      <div
+                        className="absolute top-0 left-0 w-1/2 h-full"
+                        style={{ backgroundColor: preset.fg }}
+                      />
+                    </div>
+                    <span className={cn(
+                      'text-sm transition-colors',
+                      isSelected ? 'text-primary font-medium' : 'text-muted-foreground group-hover:text-foreground'
+                    )}>
+                      {preset.name}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -142,37 +152,61 @@ export function QRStyleEditor({ style, onChange }: QRStyleEditorProps) {
 
           {/* Error Correction Level */}
           <div>
-            <Label className="mb-3 block">Error Correction</Label>
-            <div className="grid grid-cols-4 gap-2">
-              {(['L', 'M', 'Q', 'H'] as const).map((level) => (
+            <Label className="mb-3 block">Durability</Label>
+            <div className="grid grid-cols-2 gap-2">
+              {([
+                { level: 'L' as const, name: 'Basic', desc: 'Screens & digital use' },
+                { level: 'M' as const, name: 'Standard', desc: 'General print use', recommended: true },
+                { level: 'Q' as const, name: 'Enhanced', desc: 'Logos & busy designs' },
+                { level: 'H' as const, name: 'Maximum', desc: 'Outdoor & rough conditions' },
+              ]).map((option) => (
                 <button
-                  key={level}
-                  onClick={() => updateStyle({ errorCorrectionLevel: level })}
+                  key={option.level}
+                  onClick={() => updateStyle({ errorCorrectionLevel: option.level })}
                   className={cn(
-                    'px-3 py-2 rounded-lg text-sm font-medium transition-all',
-                    style.errorCorrectionLevel === level
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-secondary/50 hover:bg-secondary'
+                    'relative flex items-start gap-3 p-3 rounded-lg text-left transition-all',
+                    'border',
+                    style.errorCorrectionLevel === option.level
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border/50 hover:border-primary/50 hover:bg-secondary/30'
                   )}
                 >
-                  {level === 'L' && 'Low (7%)'}
-                  {level === 'M' && 'Medium (15%)'}
-                  {level === 'Q' && 'Quartile (25%)'}
-                  {level === 'H' && 'High (30%)'}
+                  <div className={cn(
+                    'w-2 h-2 rounded-full mt-1.5 shrink-0',
+                    style.errorCorrectionLevel === option.level ? 'bg-primary' : 'bg-muted-foreground/30'
+                  )} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className={cn(
+                        'text-sm font-medium',
+                        style.errorCorrectionLevel === option.level ? 'text-primary' : 'text-foreground'
+                      )}>
+                        {option.name}
+                      </span>
+                      {option.recommended && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-medium">
+                          Default
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs text-muted-foreground">{option.desc}</span>
+                  </div>
                 </button>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              Higher error correction allows the QR code to be readable even if partially damaged or obscured.
-            </p>
           </div>
 
           {/* Margin */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <Label>Quiet Zone (Margin)</Label>
-              <span className="text-sm text-muted-foreground">{style.margin} modules</span>
+            <div className="flex items-center justify-between mb-1">
+              <Label>Border Space</Label>
+              <span className="text-sm text-muted-foreground">
+                {style.margin === 0 ? 'None' : style.margin <= 2 ? 'Tight' : style.margin <= 4 ? 'Normal' : 'Wide'}
+              </span>
             </div>
+            <p className="text-xs text-muted-foreground mb-3">
+              Empty space around the QR code helps scanners read it reliably
+            </p>
             <Slider
               value={[style.margin]}
               onValueChange={([value]) => updateStyle({ margin: value })}

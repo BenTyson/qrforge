@@ -2,6 +2,31 @@
 
 > **Live URL**: https://qrforge-production.up.railway.app
 
+---
+
+## ⚠️ Branch Workflow
+
+```
+develop (default) ──PR──> main ──auto──> Railway
+```
+
+| Branch | Purpose | Auto-deploys? |
+|--------|---------|---------------|
+| `develop` | Active development | NO |
+| `main` | Production releases | YES → Railway |
+
+**To deploy:**
+1. Push changes to `develop`
+2. Create PR: `develop` → `main`
+3. Merge PR
+4. Railway auto-deploys (~2 min)
+
+**NEVER push directly to `main`**
+
+See `docs/WORKFLOW.md` for full details.
+
+---
+
 ## Railway (Production)
 
 ### Setup
@@ -9,6 +34,7 @@
 1. Go to [railway.app](https://railway.app)
 2. New Project → Deploy from GitHub repo
 3. Select `QRForge` repository
+4. **IMPORTANT**: Set branch to `main` in service settings
 
 ### Nixpacks Configuration
 

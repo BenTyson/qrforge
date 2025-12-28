@@ -1,16 +1,18 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Footer } from '@/components/layout';
 
 export const metadata = {
-  title: 'Scan Limit Reached - QRForge',
+  title: 'Scan Limit Reached - QRWolf',
   description: 'This QR code has reached its monthly scan limit.',
 };
 
 export default function LimitReachedPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-secondary/20 px-4">
-      <Card className="max-w-md w-full p-8 glass text-center">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-secondary/20">
+      <div className="flex-1 flex items-center justify-center px-4">
+        <Card className="max-w-md w-full p-8 glass text-center">
         <div className="w-16 h-16 mx-auto mb-6 bg-amber-500/10 rounded-full flex items-center justify-center">
           <WarningIcon className="w-8 h-8 text-amber-500" />
         </div>
@@ -29,7 +31,7 @@ export default function LimitReachedPage() {
           </Link>
           <Link href="/">
             <Button variant="outline" className="w-full">
-              Learn About QRForge
+              Learn About QRWolf
             </Button>
           </Link>
         </div>
@@ -44,7 +46,9 @@ export default function LimitReachedPage() {
             </Button>
           </Link>
         </div>
-      </Card>
+        </Card>
+      </div>
+      <Footer />
     </div>
   );
 }

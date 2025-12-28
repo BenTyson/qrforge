@@ -213,3 +213,53 @@
 .glow-cyan-hover:hover {
   box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
 }
+
+/* Hero mast with logo glow */
+.hero-mast {
+  background-image: url('/mast1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.logo-glow {
+  filter: drop-shadow(0 0 20px rgba(20, 184, 166, 0.6))
+          drop-shadow(0 0 40px rgba(20, 184, 166, 0.4))
+          drop-shadow(0 0 60px rgba(6, 182, 212, 0.3));
+  animation: logo-pulse 3s ease-in-out infinite;
+}
+
+@keyframes logo-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(20, 184, 166, 0.6))
+            drop-shadow(0 0 40px rgba(20, 184, 166, 0.4))
+            drop-shadow(0 0 60px rgba(6, 182, 212, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 30px rgba(20, 184, 166, 0.8))
+            drop-shadow(0 0 50px rgba(20, 184, 166, 0.5))
+            drop-shadow(0 0 80px rgba(6, 182, 212, 0.4));
+  }
+}
+
+/* Stripe Elements styling */
+.stripe-element-wrapper {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stripe-element-wrapper:focus-within {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+}
+
+.stripe-element-wrapper.StripeElement--invalid {
+  border-color: #ef4444;
+}
+
+.stripe-element-wrapper.StripeElement--invalid:focus-within {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}

@@ -1,6 +1,9 @@
 # Development Workflow
 
-> **Last Updated**: December 21, 2024
+> **Last Updated**: December 28, 2025
+> **Live URL**: https://qrwolf.com
+
+See also: `docs/SESSION-START.md` for full project context
 
 ## Branch Strategy
 
@@ -55,7 +58,7 @@ railway status
 railway logs
 ```
 
-Or visit: https://qrforge-production.up.railway.app
+Or visit: https://qrwolf.com
 
 ## Rollback (If Something Breaks)
 
@@ -84,7 +87,7 @@ git push origin main
 - Environment variables set in Railway dashboard
 - Supabase: Production database
 - Stripe: Switch to live keys when ready
-- URL: https://qrforge-production.up.railway.app
+- URL: https://qrwolf.com
 
 ## Railway Configuration
 

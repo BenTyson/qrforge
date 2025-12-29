@@ -8,7 +8,7 @@ import { QRPreview } from '@/components/qr/QRPreview';
 import { QRStyleEditor } from '@/components/qr/QRStyleEditor';
 import { QRLogoUploader } from '@/components/qr/QRLogoUploader';
 import { generateQRDataURL, downloadQRPNG, downloadQRSVG, generateQRSVG } from '@/lib/qr/generator';
-import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
+import type { QRContent, QRContentType, QRStyleOptions } from '@/lib/qr/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,6 +22,14 @@ import {
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { PLANS } from '@/lib/stripe/plans';
+
+// Form components for new QR types
+import { MenuForm } from '@/components/qr/forms/MenuForm';
+import { BusinessForm } from '@/components/qr/forms/BusinessForm';
+import { LinksForm } from '@/components/qr/forms/LinksForm';
+import { CouponForm } from '@/components/qr/forms/CouponForm';
+import { SocialForm } from '@/components/qr/forms/SocialForm';
+import { QR_TYPE_LABELS, DYNAMIC_REQUIRED_TYPES } from '@/lib/qr/types';
 
 const DEFAULT_STYLE: QRStyleOptions = {
   foregroundColor: '#000000',
@@ -39,6 +47,7 @@ export default function EditQRCodePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [name, setName] = useState('');
   const [isDynamic, setIsDynamic] = useState(false);
+  const [contentType, setContentType] = useState<QRContentType>('url');
   const [content, setContent] = useState<QRContent | null>(null);
   const [style, setStyle] = useState<QRStyleOptions>(DEFAULT_STYLE);
   const [isSaving, setIsSaving] = useState(false);
@@ -102,6 +111,7 @@ export default function EditQRCodePage() {
       // Populate form
       setName(qrCode.name || '');
       setIsDynamic(qrCode.type === 'dynamic');
+      setContentType((qrCode.content_type || 'url') as QRContentType);
       setContent(qrCode.content as QRContent);
       setStyle(qrCode.style || DEFAULT_STYLE);
 
@@ -169,6 +179,11 @@ export default function EditQRCodePage() {
           ...(style.logoSize && { logoSize: style.logoSize }),
         },
       };
+
+      // Update content for landing page types
+      if (DYNAMIC_REQUIRED_TYPES.includes(contentType) && content) {
+        updateData.content = content;
+      }
 
       // Dynamic QR settings
       if (isDynamic) {
@@ -309,6 +324,55 @@ export default function EditQRCodePage() {
               )}
             </div>
           </Card>
+
+          {/* Content Editor for Landing Page Types */}
+          {DYNAMIC_REQUIRED_TYPES.includes(contentType) && (
+            <Card className="p-6 glass">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="font-medium">Edit Content</p>
+                  <p className="text-sm text-muted-foreground">
+                    {QR_TYPE_LABELS[contentType]}
+                  </p>
+                </div>
+              </div>
+
+              {contentType === 'menu' && (
+                <MenuForm
+                  content={(content as any) || {}}
+                  onChange={(c) => setContent(c)}
+                />
+              )}
+
+              {contentType === 'business' && (
+                <BusinessForm
+                  content={(content as any) || {}}
+                  onChange={(c) => setContent(c)}
+                />
+              )}
+
+              {contentType === 'links' && (
+                <LinksForm
+                  content={(content as any) || {}}
+                  onChange={(c) => setContent(c)}
+                />
+              )}
+
+              {contentType === 'coupon' && (
+                <CouponForm
+                  content={(content as any) || {}}
+                  onChange={(c) => setContent(c)}
+                />
+              )}
+
+              {contentType === 'social' && (
+                <SocialForm
+                  content={(content as any) || {}}
+                  onChange={(c) => setContent(c)}
+                />
+              )}
+            </Card>
+          )}
 
           {/* Style Editor */}
           <QRStyleEditor

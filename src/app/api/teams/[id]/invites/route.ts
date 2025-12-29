@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
+import { sendTeamInviteEmail } from '@/lib/email';
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 
@@ -69,13 +70,25 @@ export async function POST(
   const { id: teamId } = await params;
   const serviceClient = createServiceClient(supabaseUrl, supabaseServiceKey);
 
-  // Check if user is admin/owner of this team
-  const { data: membership } = await serviceClient
-    .from('team_members')
-    .select('role')
-    .eq('team_id', teamId)
-    .eq('user_id', user.id)
-    .single();
+  // Check if user is admin/owner of this team and get team details
+  const [{ data: membership }, { data: team }, { data: inviterProfile }] = await Promise.all([
+    serviceClient
+      .from('team_members')
+      .select('role')
+      .eq('team_id', teamId)
+      .eq('user_id', user.id)
+      .single(),
+    serviceClient
+      .from('teams')
+      .select('name')
+      .eq('id', teamId)
+      .single(),
+    serviceClient
+      .from('profiles')
+      .select('full_name')
+      .eq('id', user.id)
+      .single(),
+  ]);
 
   if (!membership || !['owner', 'admin'].includes(membership.role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -158,6 +171,16 @@ export async function POST(
   // Generate invite link
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
   const inviteLink = `${baseUrl}/invite/${token}`;
+
+  // Send invite email (non-blocking)
+  const inviterName = inviterProfile?.full_name || user.email?.split('@')[0] || 'A team member';
+  const teamName = team?.name || 'their team';
+
+  sendTeamInviteEmail(email, inviterName, teamName, inviteLink, role).then((result) => {
+    if (!result.success) {
+      console.error('Failed to send team invite email:', result.error);
+    }
+  });
 
   return NextResponse.json({
     invite,

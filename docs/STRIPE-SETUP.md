@@ -1,7 +1,9 @@
 # Stripe Setup Guide
 
-> **Status**: Configured and Working (Test Mode)
-> **Live URL**: https://qrforge-production.up.railway.app
+> **Status**: Live Mode (Production)
+> **Live URL**: https://qrwolf.com
+
+See also: `docs/SESSION-START.md` for full project context
 
 ## Current Configuration
 
@@ -46,7 +48,7 @@ When deploying to Railway:
 
 2. **Create Production Webhook**
    - Developers → Webhooks → Add endpoint
-   - URL: `https://qrforge-production.up.railway.app/api/stripe/webhook`
+   - URL: `https://qrwolf.com/api/stripe/webhook`
    - Events:
      - `checkout.session.completed`
      - `customer.subscription.updated`

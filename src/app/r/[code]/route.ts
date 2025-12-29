@@ -4,6 +4,20 @@ import { headers } from 'next/headers';
 import crypto from 'crypto';
 import { SCAN_LIMITS } from '@/lib/stripe/config';
 
+// Get the base URL for redirects (supports ngrok/proxy scenarios)
+function getBaseUrl(request: Request): string {
+  // Check for forwarded host (ngrok, proxies)
+  const forwardedHost = request.headers.get('x-forwarded-host');
+  const forwardedProto = request.headers.get('x-forwarded-proto') || 'https';
+
+  if (forwardedHost) {
+    return `${forwardedProto}://${forwardedHost}`;
+  }
+
+  // Fall back to APP_URL or request URL
+  return process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
+}
+
 // In-memory cache for geolocation (reduces API calls)
 // Cache entries expire after 1 hour
 const geoCache = new Map<string, { data: GeoData | null; timestamp: number }>();
@@ -47,16 +61,18 @@ export async function GET(
     .eq('short_code', code)
     .single();
 
+  const baseUrl = getBaseUrl(request);
+
   if (error || !qrCode) {
     // Redirect to home page if QR code not found
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/', baseUrl));
   }
 
   // Check if QR code has expired
   if (qrCode.expires_at) {
     const expiresAt = new Date(qrCode.expires_at);
     if (expiresAt < new Date()) {
-      return NextResponse.redirect(new URL('/expired', request.url));
+      return NextResponse.redirect(new URL('/expired', baseUrl));
     }
   }
 
@@ -66,26 +82,46 @@ export async function GET(
     const activeFrom = new Date(qrCode.active_from);
     if (now < activeFrom) {
       // QR code is not yet active
-      return NextResponse.redirect(new URL('/not-active?reason=early', request.url));
+      return NextResponse.redirect(new URL('/not-active?reason=early', baseUrl));
     }
   }
   if (qrCode.active_until) {
     const activeUntil = new Date(qrCode.active_until);
     if (now > activeUntil) {
       // QR code is no longer active
-      return NextResponse.redirect(new URL('/not-active?reason=ended', request.url));
+      return NextResponse.redirect(new URL('/not-active?reason=ended', baseUrl));
     }
   }
 
   // Check if QR code is password protected
   if (qrCode.password_hash) {
-    return NextResponse.redirect(new URL(`/r/${code}/unlock`, request.url));
+    return NextResponse.redirect(new URL(`/r/${code}/unlock`, baseUrl));
   }
 
-  // Check if QR code has a landing page enabled
+  // Check if QR code has a landing page enabled (custom landing page)
   console.log('[QR Route] show_landing_page:', qrCode.show_landing_page, 'for code:', code);
   if (qrCode.show_landing_page) {
-    return NextResponse.redirect(new URL(`/r/${code}/landing`, request.url));
+    return NextResponse.redirect(new URL(`/r/${code}/landing`, baseUrl));
+  }
+
+  // Route landing page types to their specific pages
+  const LANDING_PAGE_ROUTES: Record<string, string> = {
+    pdf: 'pdf',
+    images: 'gallery',
+    video: 'video',
+    mp3: 'audio',
+    menu: 'menu',
+    business: 'business',
+    links: 'links',
+    coupon: 'coupon',
+    social: 'social',
+  };
+
+  const contentType = qrCode.content_type as string;
+  if (LANDING_PAGE_ROUTES[contentType]) {
+    // Record the scan before redirecting to landing page
+    recordScan(supabase, qrCode.id, request);
+    return NextResponse.redirect(new URL(`/r/${code}/${LANDING_PAGE_ROUTES[contentType]}`, baseUrl));
   }
 
   // Check scan limits
@@ -111,7 +147,7 @@ export async function GET(
 
     // If limit is not unlimited (-1) and exceeded, redirect to limit page
     if (limit !== -1 && effectiveCount >= limit) {
-      return NextResponse.redirect(new URL('/limit-reached', request.url));
+      return NextResponse.redirect(new URL('/limit-reached', baseUrl));
     }
   }
 
@@ -127,7 +163,7 @@ export async function GET(
   }
 
   if (!destinationUrl) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/', baseUrl));
   }
 
   // Record the scan (async, don't wait)

@@ -38,6 +38,51 @@ export function contentToString(content: QRContent): string {
       }
       return sms;
 
+    // === Simple URL Types ===
+    case 'whatsapp':
+      // WhatsApp deep link format: wa.me/{phone}?text={message}
+      let waUrl = `https://wa.me/${content.phone.replace(/\D/g, '')}`;
+      if (content.message) {
+        waUrl += `?text=${encodeURIComponent(content.message)}`;
+      }
+      return waUrl;
+
+    case 'facebook':
+      return content.profileUrl;
+
+    case 'instagram':
+      // Remove @ if present and build Instagram URL
+      const username = content.username.replace(/^@/, '');
+      return `https://instagram.com/${username}`;
+
+    case 'apps':
+      // Return fallback URL or first available store URL
+      // For smart redirects, this will point to a landing page
+      return content.fallbackUrl || content.appStoreUrl || content.playStoreUrl || '';
+
+    // === File Upload & Landing Page Types ===
+    // These types always use dynamic QR codes with landing pages
+    // The QR code points to /r/[shortCode] which handles the redirect
+    // For preview purposes, we return a placeholder URL
+    case 'pdf':
+      return `https://qrwolf.com/preview/${content.type}`;
+    case 'images':
+      return `https://qrwolf.com/preview/${content.type}`;
+    case 'video':
+      return `https://qrwolf.com/preview/${content.type}`;
+    case 'mp3':
+      return `https://qrwolf.com/preview/${content.type}`;
+    case 'menu':
+      return `https://qrwolf.com/preview/${content.type}`;
+    case 'business':
+      return `https://qrwolf.com/preview/${content.type}`;
+    case 'links':
+      return `https://qrwolf.com/preview/${content.type}`;
+    case 'coupon':
+      return `https://qrwolf.com/preview/${content.type}`;
+    case 'social':
+      return `https://qrwolf.com/preview/${content.type}`;
+
     default:
       return '';
   }
@@ -320,6 +365,82 @@ export function validateContent(content: QRContent): { valid: boolean; error?: s
 
     case 'sms':
       if (!content.phone) return { valid: false, error: 'Phone number is required' };
+      return { valid: true };
+
+    // === Simple URL Types ===
+    case 'whatsapp':
+      if (!content.phone) return { valid: false, error: 'WhatsApp number is required' };
+      return { valid: true };
+
+    case 'facebook':
+      if (!content.profileUrl) return { valid: false, error: 'Facebook URL is required' };
+      if (!content.profileUrl.includes('facebook.com') && !content.profileUrl.includes('fb.com')) {
+        return { valid: false, error: 'Invalid Facebook URL' };
+      }
+      return { valid: true };
+
+    case 'instagram':
+      if (!content.username) return { valid: false, error: 'Instagram username is required' };
+      return { valid: true };
+
+    case 'apps':
+      if (!content.appStoreUrl && !content.playStoreUrl && !content.fallbackUrl) {
+        return { valid: false, error: 'At least one app store URL or fallback URL is required' };
+      }
+      return { valid: true };
+
+    // === File Upload Types ===
+    case 'pdf':
+      if (!content.fileUrl) return { valid: false, error: 'PDF file is required' };
+      return { valid: true };
+
+    case 'images':
+      if (!content.images || content.images.length === 0) {
+        return { valid: false, error: 'At least one image is required' };
+      }
+      return { valid: true };
+
+    case 'video':
+      if (!content.videoUrl && !content.embedUrl) {
+        return { valid: false, error: 'Video file or embed URL is required' };
+      }
+      return { valid: true };
+
+    case 'mp3':
+      if (!content.audioUrl && !content.embedUrl) {
+        return { valid: false, error: 'Audio file or embed URL is required' };
+      }
+      return { valid: true };
+
+    // === Landing Page Types ===
+    case 'menu':
+      if (!content.restaurantName) return { valid: false, error: 'Restaurant name is required' };
+      if (!content.categories || content.categories.length === 0) {
+        return { valid: false, error: 'At least one menu category is required' };
+      }
+      return { valid: true };
+
+    case 'business':
+      if (!content.name) return { valid: false, error: 'Name is required' };
+      return { valid: true };
+
+    case 'links':
+      if (!content.title) return { valid: false, error: 'Title is required' };
+      if (!content.links || content.links.length === 0) {
+        return { valid: false, error: 'At least one link is required' };
+      }
+      return { valid: true };
+
+    case 'coupon':
+      if (!content.businessName) return { valid: false, error: 'Business name is required' };
+      if (!content.headline) return { valid: false, error: 'Coupon headline is required' };
+      return { valid: true };
+
+    case 'social':
+      if (!content.name) return { valid: false, error: 'Name is required' };
+      if (!content.links || content.links.length === 0) {
+        return { valid: false, error: 'At least one social link is required' };
+      }
       return { valid: true };
 
     default:

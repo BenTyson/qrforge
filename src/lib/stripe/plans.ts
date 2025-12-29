@@ -50,8 +50,7 @@ export const PLANS = {
       'Unlimited scans',
       'Bulk QR generation',
       'API access',
-      'Team members',
-      'Custom domains',
+      'Team members (up to 3)',
     ],
   },
 };

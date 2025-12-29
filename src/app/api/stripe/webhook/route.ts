@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { stripe, STRIPE_PRICES } from '@/lib/stripe/config';
 import { createClient } from '@supabase/supabase-js';
+import { sendSubscriptionConfirmEmail, sendPaymentFailedEmail } from '@/lib/email';
 import type Stripe from 'stripe';
 
 // Use service role key for webhook (no auth context)
@@ -130,6 +131,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     throw new Error('Missing customer ID in checkout session');
   }
 
+  // Get user profile for email
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('email, full_name')
+    .eq('id', userId)
+    .single();
+
   const { error } = await supabaseAdmin
     .from('profiles')
     .update({
@@ -145,6 +153,51 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   console.log(`Subscription activated for user ${userId}: ${plan}`);
+
+  // Send subscription confirmation email (non-blocking)
+  if (profile?.email) {
+    let billingCycle: 'monthly' | 'yearly' = 'monthly';
+    let nextBillingDate = 'Next month';
+
+    if (session.subscription) {
+      try {
+        const subResponse = await stripe.subscriptions.retrieve(session.subscription as string);
+        // Access subscription data with dynamic typing for Stripe v20+ compatibility
+        const sub = subResponse as unknown as Record<string, unknown>;
+        const items = sub.items as { data: Array<{ price?: { recurring?: { interval?: string } } }> };
+        billingCycle = items?.data?.[0]?.price?.recurring?.interval === 'year'
+          ? 'yearly'
+          : 'monthly';
+        const periodEnd = sub.current_period_end as number | undefined;
+        if (periodEnd) {
+          nextBillingDate = new Date(periodEnd * 1000).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          });
+        }
+      } catch {
+        // Use defaults if subscription retrieval fails
+      }
+    }
+
+    const amount = session.amount_total
+      ? `$${(session.amount_total / 100).toFixed(2)}`
+      : plan === 'pro' ? '$9/month' : '$29/month';
+
+    sendSubscriptionConfirmEmail(
+      profile.email,
+      profile.full_name,
+      plan,
+      billingCycle,
+      amount,
+      nextBillingDate
+    ).then((result) => {
+      if (!result.success) {
+        console.error('Failed to send subscription email:', result.error);
+      }
+    });
+  }
 }
 
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
@@ -244,7 +297,7 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
 
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('id')
+    .select('id, email, full_name, subscription_tier')
     .eq('stripe_customer_id', customerId)
     .single();
 
@@ -267,6 +320,35 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
   }
 
   console.log(`Payment failed for user ${profile.id}`);
+
+  // Send payment failed email (non-blocking)
+  if (profile.email && profile.subscription_tier !== 'free') {
+    const plan = profile.subscription_tier as 'pro' | 'business';
+    const amount = invoice.amount_due
+      ? `$${(invoice.amount_due / 100).toFixed(2)}`
+      : plan === 'pro' ? '$9' : '$29';
+
+    // Next retry date is typically 3 days after failure
+    const retryDate = invoice.next_payment_attempt
+      ? new Date(invoice.next_payment_attempt * 1000).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
+      : undefined;
+
+    sendPaymentFailedEmail(
+      profile.email,
+      profile.full_name,
+      plan,
+      amount,
+      retryDate
+    ).then((result) => {
+      if (!result.success) {
+        console.error('Failed to send payment failed email:', result.error);
+      }
+    });
+  }
 }
 
 async function handleSubscriptionPaymentSucceeded(subscriptionId: string, customerId: string) {

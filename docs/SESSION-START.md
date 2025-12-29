@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: December 29, 2025 (Code Modularization + Feature Parity Audit)
+> **Last Updated**: December 29, 2025 (Email Branding + URL Normalization)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -172,6 +172,32 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
     - RATE_LIMITS, SCAN_LIMITS, DYNAMIC_QR_LIMITS
   - Updated upload routes to use centralized constants
   - QRWizard.tsx now imports from wizard module (reduced duplication)
+- **Email Branding System** (December 29, 2025):
+  - Resend integration for transactional emails (`src/lib/email.ts`)
+  - React Email templates with QRWolf branding (`src/emails/`):
+    - `BaseLayout.tsx` - Branded email wrapper with dark navy/teal theme
+    - `WelcomeEmail.tsx` - Welcome email for new signups
+    - `TeamInviteEmail.tsx` - Team invitation emails
+    - `SubscriptionConfirmEmail.tsx` - Subscription confirmation
+    - `PaymentFailedEmail.tsx` - Payment failure notification
+  - Supabase auth email templates (on-brand):
+    - Confirmation, Magic Link, Password Reset, Email Change, Invite
+    - Templates stored in `supabase/templates/*.html`
+    - Config in `supabase/config.toml` for CLI push
+  - Email integrations:
+    - Auth callback sends welcome email on first login
+    - Team invites route sends branded invite emails
+    - Stripe webhook sends subscription/payment emails
+  - Domain verified with Resend (DNS records: DKIM, SPF, MX)
+- **URL Normalization** (December 29, 2025):
+  - Added `normalizeUrl()` utility function (`src/lib/utils.ts`)
+  - Ensures all user-input URLs have https:// protocol
+  - Prevents relative URL issues in landing pages
+  - Fixed landing pages:
+    - `/r/[code]/links` - Links and social links
+    - `/r/[code]/business` - Website URL
+    - `/r/[code]/social` - Custom profile URLs
+  - Also added `isValidUrl()` validation helper
 
 ### Planned Enhancements
 - QR code folders/organization
@@ -199,6 +225,9 @@ STRIPE_PRICE_PRO_MONTHLY=price_...
 STRIPE_PRICE_PRO_YEARLY=price_...
 STRIPE_PRICE_BUSINESS_MONTHLY=price_...
 STRIPE_PRICE_BUSINESS_YEARLY=price_...
+
+# Resend (email)
+RESEND_API_KEY=re_...
 ```
 
 ## Project Structure
@@ -317,8 +346,18 @@ src/
 │   ├── supabase/                   # Supabase clients
 │   ├── stripe/                     # Stripe config (with SCAN_LIMITS)
 │   ├── api/                        # API authentication helpers
+│   ├── email.ts                    # Resend email sending utility
+│   ├── utils.ts                    # Utilities (cn, normalizeUrl, isValidUrl)
+│   ├── constants/
+│   │   └── limits.ts               # Centralized limits and constants
 │   └── admin/
 │       └── auth.ts                 # Admin auth (ADMIN_EMAIL, createAdminClient)
+├── emails/                         # React Email templates
+│   ├── BaseLayout.tsx              # Branded email wrapper
+│   ├── WelcomeEmail.tsx            # New user welcome
+│   ├── TeamInviteEmail.tsx         # Team invitation
+│   ├── SubscriptionConfirmEmail.tsx # Subscription confirmation
+│   └── PaymentFailedEmail.tsx      # Payment failure alert
 └── middleware.ts                   # Auth protection
 ```
 
@@ -475,6 +514,7 @@ Dynamic QR codes are the key lock-in:
 - `docs/LAUNCH-CHECKLIST.md` - Full launch checklist
 - `docs/STRIPE-SETUP.md` - Stripe configuration
 - `docs/AGENT-WORKFLOW.md` - Universal agent workflow rules
+- `docs/SUPABASE-EMAIL-TEMPLATES.md` - Supabase auth email templates
 
 ---
 

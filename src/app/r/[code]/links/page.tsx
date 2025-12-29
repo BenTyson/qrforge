@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { LinksContent } from '@/lib/qr/types';
 import type { ReactNode } from 'react';
+import { normalizeUrl } from '@/lib/utils';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -55,7 +56,7 @@ export default async function LinksLandingPage({ params }: PageProps) {
           {content.links.map((link, index) => (
             <a
               key={index}
-              href={link.url}
+              href={normalizeUrl(link.url)}
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full p-4 rounded-xl text-center font-medium transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
@@ -75,7 +76,7 @@ export default async function LinksLandingPage({ params }: PageProps) {
             {content.socialLinks.map((social, index) => (
               <a
                 key={index}
-                href={social.url}
+                href={normalizeUrl(social.url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"

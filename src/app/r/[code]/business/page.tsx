@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { BusinessContent } from '@/lib/qr/types';
+import { normalizeUrl } from '@/lib/utils';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -106,7 +107,7 @@ export default async function BusinessLandingPage({ params }: PageProps) {
 
             {content.website && (
               <a
-                href={content.website}
+                href={normalizeUrl(content.website)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-colors"

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { SocialContent } from '@/lib/qr/types';
 import type { ReactNode } from 'react';
+import { normalizeUrl } from '@/lib/utils';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -149,7 +150,7 @@ export default async function SocialLandingPage({ params }: PageProps) {
             const platform = PLATFORM_CONFIG[link.platform];
             if (!platform) return null;
 
-            const url = link.url || `${platform.baseUrl}${link.handle}`;
+            const url = link.url ? normalizeUrl(link.url) : `${platform.baseUrl}${link.handle}`;
 
             return (
               <a

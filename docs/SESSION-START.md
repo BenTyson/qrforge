@@ -76,6 +76,7 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
 - **Google OAuth** - Sign in with Google configured
 - **Admin dashboard** - Site-wide metrics at `/admin` (users, QR codes, scans, revenue)
 - **Simplified contact page** - Single email (hello@qrwolf.com) at `/contact`
+- **On-brand QR defaults** - Default QR colors are teal on dark navy (not black on white)
 
 ### Planned Enhancements
 - QR code folders/organization

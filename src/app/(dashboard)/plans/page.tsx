@@ -70,7 +70,7 @@ const PLANS: Record<Tier, PlanInfo> = {
       'Unlimited scans',
       'REST API access',
       'Bulk CSV generation',
-      'Webhook integrations',
+      'Team members (up to 3)',
     ],
     limitations: [],
   },

@@ -1,22 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import crypto from 'crypto';
-
-// File size limits by media type
-const FILE_LIMITS: Record<string, number> = {
-  pdf: 10 * 1024 * 1024,     // 10MB
-  image: 5 * 1024 * 1024,    // 5MB
-  video: 100 * 1024 * 1024,  // 100MB
-  audio: 20 * 1024 * 1024,   // 20MB
-};
-
-// Allowed MIME types by media type
-const ALLOWED_TYPES: Record<string, string[]> = {
-  pdf: ['application/pdf'],
-  image: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-  video: ['video/mp4', 'video/webm', 'video/quicktime'],
-  audio: ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp3', 'audio/mp4'],
-};
+import { FILE_SIZE_LIMITS, ALLOWED_MIME_TYPES } from '@/lib/constants';
 
 // Map MIME types to extensions
 const MIME_TO_EXT: Record<string, string> = {
@@ -68,7 +53,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File is required' }, { status: 400 });
     }
 
-    if (!mediaType || !ALLOWED_TYPES[mediaType]) {
+    const validMediaTypes = ['pdf', 'image', 'video', 'audio'] as const;
+    if (!mediaType || !validMediaTypes.includes(mediaType as any)) {
       return NextResponse.json(
         { error: 'Invalid media type. Must be: pdf, image, video, or audio' },
         { status: 400 }
@@ -76,7 +62,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    const allowedMimes = ALLOWED_TYPES[mediaType];
+    const mediaTypeKey = mediaType as keyof typeof ALLOWED_MIME_TYPES;
+    const allowedMimes = ALLOWED_MIME_TYPES[mediaTypeKey] as readonly string[];
     if (!allowedMimes.includes(file.type)) {
       return NextResponse.json(
         { error: `Invalid file type for ${mediaType}. Allowed: ${allowedMimes.join(', ')}` },
@@ -85,7 +72,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file size
-    const maxSize = FILE_LIMITS[mediaType];
+    const maxSize = FILE_SIZE_LIMITS[mediaTypeKey];
     if (file.size > maxSize) {
       return NextResponse.json(
         { error: `File too large. Maximum size for ${mediaType}: ${Math.round(maxSize / 1024 / 1024)}MB` },

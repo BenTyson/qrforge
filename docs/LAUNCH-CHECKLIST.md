@@ -4,6 +4,8 @@
 > **Status**: LAUNCHED (December 28, 2025)
 > **Admin Dashboard**: https://qrwolf.com/admin
 
+See also: `docs/SESSION-START.md` for full project context
+
 ---
 
 ## 1. Railway Configuration

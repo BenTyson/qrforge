@@ -3,8 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import crypto from 'crypto';
 import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
-
-const MAX_FILE_SIZE = 1024 * 1024; // 1MB
+import { FILE_SIZE_LIMITS } from '@/lib/constants';
 
 // Map MIME types to safe extensions
 const ALLOWED_TYPES: Record<string, string> = {
@@ -85,7 +84,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file size
-    if (file.size > MAX_FILE_SIZE) {
+    if (file.size > FILE_SIZE_LIMITS.logo) {
       return NextResponse.json(
         { error: 'File too large. Maximum size is 1MB' },
         { status: 400 }

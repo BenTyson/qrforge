@@ -2,6 +2,8 @@
 
 > **Universal workflow for all projects. Copy this file to any project's docs folder.**
 
+See also: `docs/SESSION-START.md` for project-specific context
+
 ---
 
 ## ⚠️ CRITICAL: Branch Rules

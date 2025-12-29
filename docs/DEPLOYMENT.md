@@ -1,6 +1,9 @@
 # Deployment Guide
 
-> **Live URL**: https://qrforge-production.up.railway.app
+> **Live URL**: https://qrwolf.com
+> **Custom Domain**: qrwolf.com (configured)
+
+See also: `docs/SESSION-START.md` for full project context
 
 ---
 
@@ -66,7 +69,7 @@ Add all variables from `.env.local`:
 NEXT_PUBLIC_SUPABASE_URL=https://otdlggbhsmgqhsviazho.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-NEXT_PUBLIC_APP_URL=https://qrforge-production.up.railway.app
+NEXT_PUBLIC_APP_URL=https://qrwolf.com
 STRIPE_SECRET_KEY=sk_live_...
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
@@ -122,6 +125,6 @@ railway up                       # Manual deploy
 - [x] Verify dashboard shows real stats
 - [x] Test analytics page with scan data
 - [x] Verify geolocation tracking on scans
-- [ ] Configure Stripe webhook for production URL
-- [ ] Test checkout flow with test card
-- [ ] Switch Stripe to live mode when ready
+- [x] Configure Stripe webhook for production URL
+- [x] Test checkout flow with test card
+- [x] Switch Stripe to live mode

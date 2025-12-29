@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: December 28, 2025 (QR Wizard Options Step + Save-Before-Download)
+> **Last Updated**: December 29, 2025 (Code Modularization + Feature Parity Audit)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -152,6 +152,26 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - QR codes appear in dashboard after download
   - Anonymous users prompted to sign up before download
   - "Done" and "Create Another" buttons on download step
+- **Feature Parity Audit** (December 28, 2025):
+  - Synced advertised features across plans.ts, PricingSection, and Plans page
+  - Removed "Custom domains" from Business tier (not yet implemented)
+  - Removed "Webhook integrations" from Business tier (not yet implemented)
+  - Added "Team members (up to 3)" to Business tier displays
+  - Updated all docs to use qrwolf.com domain (was qrforge-production.up.railway.app)
+  - Added SESSION-START.md cross-references to all documentation files
+- **Code Modularization** (December 29, 2025):
+  - Created `src/components/qr/wizard/` directory with step components:
+    - `constants.tsx` - TYPE_CATEGORIES, COLOR_PRESETS, WIZARD_STEPS
+    - `steps/TypeStep.tsx` - QR type selection step
+    - `steps/StyleStep.tsx` - Style customization step
+    - `steps/OptionsStep.tsx` - Pro options (expiration, password, scheduling)
+    - `steps/DownloadStep.tsx` - Save and download step
+  - Created `src/lib/constants/limits.ts` - Centralized constants:
+    - FILE_SIZE_LIMITS, ALLOWED_MIME_TYPES
+    - VALIDATION_LIMITS, PAGINATION
+    - RATE_LIMITS, SCAN_LIMITS, DYNAMIC_QR_LIMITS
+  - Updated upload routes to use centralized constants
+  - QRWizard.tsx now imports from wizard module (reduced duplication)
 
 ### Planned Enhancements
 - QR code folders/organization

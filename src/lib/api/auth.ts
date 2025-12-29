@@ -192,7 +192,17 @@ export const validators = {
   },
 
   isValidContentType(type: string): boolean {
-    return ['url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms'].includes(type);
+    const validTypes = [
+      // Basic types
+      'url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms',
+      // Simple URL types
+      'whatsapp', 'facebook', 'instagram', 'apps',
+      // File upload types
+      'pdf', 'images', 'video', 'mp3',
+      // Landing page types
+      'menu', 'business', 'links', 'coupon', 'social',
+    ];
+    return validTypes.includes(type);
   },
 
   isValidQRType(type: string): boolean {

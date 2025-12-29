@@ -1,6 +1,6 @@
 # Development Workflow
 
-> **Last Updated**: December 21, 2024
+> **Last Updated**: December 28, 2025
 
 ## Branch Strategy
 

@@ -33,10 +33,13 @@
 - [x] **Google OAuth configured**: Client ID and secret set
 - [x] **Database migrations applied**: All tables exist
   - `profiles` (with `monthly_scan_count`, `scan_count_reset_at`)
-  - `qr_codes` (with `expires_at`, `password_hash`, `active_from`, `active_until`, `show_landing_page`, `landing_page_*`, `bulk_batch_id`)
+  - `qr_codes` (with `expires_at`, `password_hash`, `active_from`, `active_until`, `show_landing_page`, `landing_page_*`, `bulk_batch_id`, `media_files`)
   - `scans`
   - `api_keys`
   - `teams`, `team_members`, `team_invites`
+- [x] **QR Types expansion migrations applied**:
+  - `20251228000001_add_new_qr_types.sql` - content_type CHECK constraint
+  - `20251228000002_add_media_storage.sql` - qr-media storage bucket
 - [x] **RLS policies enabled**: All tables
 
 ---
@@ -70,12 +73,44 @@
 - [ ] Password reset works
 - [ ] (Optional) Google OAuth works
 
-### QR Code Creation
+### QR Code Creation (16 Types via 5-Step Wizard)
 - [ ] Create static QR code → saves to database
 - [ ] Create dynamic QR code → generates short_code
-- [ ] Download PNG works
-- [ ] Download SVG works
+- [ ] Download PNG works (saves to DB first)
+- [ ] Download SVG works (Pro+ only)
 - [ ] Style customization works
+- [ ] Type selector shows categories (Basic, Social, Media, Landing Pages)
+- [ ] Pro-only types show badge and disable for free users
+- [ ] Options step shows Pro features (Expiration, Password, Scheduling)
+- [ ] QR code naming works and reflects in download filename
+
+**Basic Types (All Tiers):**
+- [ ] URL type works
+- [ ] Text type works
+- [ ] WiFi type works
+- [ ] vCard type works
+- [ ] Email type works
+- [ ] Phone type works
+- [ ] SMS type works
+
+**Simple URL Types (All Tiers):**
+- [ ] WhatsApp type generates wa.me link
+- [ ] Facebook type generates facebook.com link
+- [ ] Instagram type generates instagram.com link
+- [ ] Apps type generates smart redirect
+
+**File Upload Types (Pro+ Only):**
+- [ ] PDF upload works
+- [ ] Images upload works (multiple)
+- [ ] Video upload/embed works
+- [ ] MP3 upload/embed works
+
+**Landing Page Types (Pro+ Only):**
+- [ ] Menu builder works
+- [ ] Business card form works
+- [ ] Links list builder works
+- [ ] Coupon form works
+- [ ] Social profile form works
 
 ### QR Code Management
 - [ ] QR list shows all codes
@@ -100,6 +135,17 @@
 - [ ] Expired QR shows `/expired` page
 - [ ] Password-protected QR shows `/r/[code]/unlock`
 - [ ] Scan limit exceeded shows `/limit-reached`
+
+**Landing Page Routes:**
+- [ ] `/r/[code]/pdf` - PDF viewer loads
+- [ ] `/r/[code]/gallery` - Image gallery with lightbox works
+- [ ] `/r/[code]/video` - Video player (YouTube/Vimeo/upload)
+- [ ] `/r/[code]/audio` - Audio player (Spotify/SoundCloud/upload)
+- [ ] `/r/[code]/menu` - Restaurant menu displays
+- [ ] `/r/[code]/business` - Business card with vCard download
+- [ ] `/r/[code]/links` - Link list displays
+- [ ] `/r/[code]/coupon` - Coupon with copy code works
+- [ ] `/r/[code]/social` - Social profile displays
 
 ### Analytics
 - [ ] Dashboard shows real stats
@@ -183,6 +229,15 @@
 - [x] `/admin/qr-codes` - All QR codes
 - [x] `/admin/analytics` - Site-wide analytics
 - [x] `/admin/subscriptions` - Revenue tracking
+
+**QR Wizard Enhancements (December 28, 2025):**
+- [x] 5-step wizard: Type → Content → Style → Options → Download
+- [x] Options step with Pro features (Expiration, Password, Scheduling)
+- [x] Save-before-download ensures QR codes tracked in dashboard
+- [x] Real short_code URLs (no preview URLs)
+- [x] Logo upload with size slider in Style step
+- [x] Landing page previews in phone mockup
+- [x] QR code naming for download filenames
 
 ---
 

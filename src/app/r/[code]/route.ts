@@ -82,10 +82,30 @@ export async function GET(
     return NextResponse.redirect(new URL(`/r/${code}/unlock`, request.url));
   }
 
-  // Check if QR code has a landing page enabled
+  // Check if QR code has a landing page enabled (custom landing page)
   console.log('[QR Route] show_landing_page:', qrCode.show_landing_page, 'for code:', code);
   if (qrCode.show_landing_page) {
     return NextResponse.redirect(new URL(`/r/${code}/landing`, request.url));
+  }
+
+  // Route landing page types to their specific pages
+  const LANDING_PAGE_ROUTES: Record<string, string> = {
+    pdf: 'pdf',
+    images: 'gallery',
+    video: 'video',
+    mp3: 'audio',
+    menu: 'menu',
+    business: 'business',
+    links: 'links',
+    coupon: 'coupon',
+    social: 'social',
+  };
+
+  const contentType = qrCode.content_type as string;
+  if (LANDING_PAGE_ROUTES[contentType]) {
+    // Record the scan before redirecting to landing page
+    recordScan(supabase, qrCode.id, request);
+    return NextResponse.redirect(new URL(`/r/${code}/${LANDING_PAGE_ROUTES[contentType]}`, request.url));
   }
 
   // Check scan limits

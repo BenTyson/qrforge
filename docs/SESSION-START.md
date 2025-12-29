@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: December 28, 2025
+> **Last Updated**: December 28, 2025 (QR Wizard Options Step + Save-Before-Download)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -37,11 +37,60 @@ See `docs/WORKFLOW.md` for full details.
 
 QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: passive income via SEO-driven traffic and recurring subscriptions.
 
+## QR Code Types (16 Total)
+
+### Basic Types (All Tiers)
+| Type | Description | Output |
+|------|-------------|--------|
+| **URL** | Website link | Direct URL QR |
+| **Text** | Plain text | Text QR |
+| **WiFi** | WiFi credentials | WiFi connect QR |
+| **vCard** | Contact card | vCard download |
+| **Email** | Email with subject | mailto: link |
+| **Phone** | Phone number | tel: link |
+| **SMS** | SMS with message | sms: link |
+
+### Simple URL Types (All Tiers)
+| Type | Description | Output |
+|------|-------------|--------|
+| **WhatsApp** | WhatsApp chat link | wa.me link |
+| **Facebook** | Facebook profile | facebook.com link |
+| **Instagram** | Instagram profile | instagram.com link |
+| **Apps** | App store links | Smart app redirect |
+
+### File Upload Types (Pro+ Only)
+| Type | Description | Landing Page |
+|------|-------------|--------------|
+| **PDF** | Hosted PDF | Viewer + download |
+| **Images** | Image gallery | Lightbox gallery |
+| **Video** | Video player | YouTube/Vimeo/upload |
+| **MP3** | Audio player | Spotify/SoundCloud/upload |
+
+### Landing Page Types (Pro+ Only)
+| Type | Description | Landing Page |
+|------|-------------|--------------|
+| **Menu** | Restaurant menu | Categories + items |
+| **Business** | Digital business card | vCard download |
+| **Links** | Link list (Linktree-style) | Branded link page |
+| **Coupon** | Promotional coupon | Coupon display + copy code |
+| **Social** | Social media aggregator | Profile + social links |
+
+**Landing Page Routes:**
+- `/r/[code]/pdf` - PDF viewer
+- `/r/[code]/gallery` - Image gallery
+- `/r/[code]/video` - Video player
+- `/r/[code]/audio` - Audio player
+- `/r/[code]/menu` - Restaurant menu
+- `/r/[code]/business` - Business card
+- `/r/[code]/links` - Link list
+- `/r/[code]/coupon` - Coupon display
+- `/r/[code]/social` - Social profile
+
 ## Current Status
 
 ### Completed
 - Next.js 15 app with TypeScript + Tailwind CSS v4
-- QR generator with 7 content types (URL, Text, WiFi, vCard, Email, Phone, SMS)
+- **QR generator with 16 content types** (see QR Types section below)
 - Real-time preview with style customization
 - PNG and SVG downloads
 - Full landing page with pricing, features, FAQ
@@ -77,6 +126,32 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
 - **Admin dashboard** - Site-wide metrics at `/admin` (users, QR codes, scans, revenue)
 - **Simplified contact page** - Single email (hello@qrwolf.com) at `/contact`
 - **On-brand QR defaults** - Default QR colors are teal on dark navy (not black on white)
+- **QR Types Expansion** - Expanded from 7 to 16 QR code types with landing pages
+- **QR Wizard Polish** (December 28, 2025):
+  - Default colors changed to classic black on white
+  - QR code naming in Content step (used for download filenames)
+  - Logo upload functional in Style step (Pro+ feature)
+  - Logo size slider (15-30%) when logo is uploaded
+  - Preview buttons for landing page types (menu, business, links, coupon, social)
+  - Mobile phone mockup preview showing final landing page
+  - LogoUploader component for file uploads
+  - Forms updated to use file uploads instead of URL inputs (Menu, Business, Coupon, Links, Social)
+  - qr-media storage bucket created for file uploads
+- **QR Wizard Options Step** (December 28, 2025):
+  - 5-step wizard flow: Type → Content → Style → Options → Download
+  - Options step with 3 Pro features:
+    - Expiration Date - Set when QR code stops working
+    - Password Protection - Require password to view content
+    - Scheduled Activation - Set active from/until dates
+  - On-brand teal/primary color scheme (no random colors)
+  - Pro badges and upgrade CTAs for free users
+  - Enabled options summary with badges
+- **Save-Before-Download** (December 28, 2025):
+  - QR codes saved to database before download (ensures proper tracking)
+  - Real short_code URLs generated (no more preview URLs)
+  - QR codes appear in dashboard after download
+  - Anonymous users prompted to sign up before download
+  - "Done" and "Create Another" buttons on download step
 
 ### Planned Enhancements
 - QR code folders/organization
@@ -154,7 +229,9 @@ src/
 │   │   ├── qr/
 │   │   │   ├── verify-password/route.ts  # Password verification
 │   │   │   ├── upload-logo/route.ts      # Logo upload to Supabase
-│   │   │   └── delete-logo/route.ts      # Logo deletion
+│   │   │   ├── delete-logo/route.ts      # Logo deletion
+│   │   │   ├── upload-media/route.ts     # Media upload for file types
+│   │   │   └── hash-password/route.ts    # Password hashing
 │   │   ├── api-keys/               # API key management
 │   │   │   ├── route.ts            # Create/list keys
 │   │   │   └── [id]/route.ts       # Revoke key
@@ -169,8 +246,17 @@ src/
 │   ├── contact/page.tsx            # Contact page (hello@qrwolf.com)
 │   └── r/[code]/
 │       ├── route.ts                # Dynamic QR redirect + tracking
-│       ├── landing/page.tsx        # Custom landing page
-│       └── unlock/page.tsx         # Password entry page
+│       ├── landing/page.tsx        # Custom branded landing page
+│       ├── unlock/page.tsx         # Password entry page
+│       ├── pdf/page.tsx            # PDF viewer landing
+│       ├── gallery/page.tsx        # Image gallery landing
+│       ├── video/page.tsx          # Video player landing
+│       ├── audio/page.tsx          # Audio player landing
+│       ├── menu/page.tsx           # Restaurant menu landing
+│       ├── business/page.tsx       # Business card landing
+│       ├── links/page.tsx          # Links list landing
+│       ├── coupon/page.tsx         # Coupon display landing
+│       └── social/page.tsx         # Social profile landing
 ├── components/
 │   ├── admin/
 │   │   ├── AdminNav.tsx            # Admin sidebar navigation
@@ -181,7 +267,25 @@ src/
 │   │   ├── QRCodeCard.tsx          # QR list item with actions
 │   │   ├── QRStyleEditor.tsx       # Color/preset customization
 │   │   ├── QRLogoUploader.tsx      # Logo upload (Pro feature)
-│   │   └── BulkBatchCard.tsx       # Expandable bulk batch display
+│   │   ├── QRTypeSelector.tsx      # Categorized type selector with Pro badges
+│   │   ├── QRWizard.tsx            # 5-step QR creation wizard (Type→Content→Style→Options→Download)
+│   │   ├── LogoUploader.tsx        # Single image upload component for logos/avatars
+│   │   ├── MediaUploader.tsx       # File upload component for media types
+│   │   ├── BulkBatchCard.tsx       # Expandable bulk batch display
+│   │   └── forms/                  # Type-specific form components
+│   │       ├── WhatsAppForm.tsx    # WhatsApp content form
+│   │       ├── FacebookForm.tsx    # Facebook content form
+│   │       ├── InstagramForm.tsx   # Instagram content form
+│   │       ├── AppsForm.tsx        # Apps content form
+│   │       ├── PDFForm.tsx         # PDF upload form
+│   │       ├── ImagesForm.tsx      # Images upload form
+│   │       ├── VideoForm.tsx       # Video upload/embed form
+│   │       ├── MP3Form.tsx         # Audio upload/embed form
+│   │       ├── MenuForm.tsx        # Menu builder form
+│   │       ├── BusinessForm.tsx    # Business card form
+│   │       ├── LinksForm.tsx       # Links list form
+│   │       ├── CouponForm.tsx      # Coupon form
+│   │       └── SocialForm.tsx      # Social profile form
 │   ├── dashboard/
 │   │   └── DashboardNav.tsx        # Nav with tier-aware profile dropdown
 │   ├── pricing/                    # PricingSection component
@@ -233,7 +337,10 @@ Scan tracking in `/r/[code]/route.ts`:
 - qr code generator, free qr code, qr code maker
 - dynamic qr code, qr code tracking, qr code analytics
 - wifi qr code, menu qr code, vcard qr code
-- restaurant qr code, business qr code
+- restaurant qr code, business qr code, digital business card qr
+- whatsapp qr code, instagram qr code, facebook qr code
+- pdf qr code, video qr code, linktree alternative qr
+- coupon qr code, social media qr code
 
 **To enable Google Search Console:**
 1. Add verification meta tag to `layout.tsx` verification object
@@ -241,14 +348,28 @@ Scan tracking in `/r/[code]/route.ts`:
 
 ## Database (Supabase)
 
-Tables deployed:
+**Tables deployed:**
 - `profiles` - User profiles with subscription_tier, stripe_customer_id, subscription_status, **monthly_scan_count**, **scan_count_reset_at**
-- `qr_codes` - QR codes with content, style, short_code, scan_count, **expires_at**, **password_hash**, **active_from**, **active_until**, **show_landing_page**, **landing_page_title/description/button_text/theme**, **bulk_batch_id**
+- `qr_codes` - QR codes with content, style, short_code, scan_count, **expires_at**, **password_hash**, **active_from**, **active_until**, **show_landing_page**, **landing_page_title/description/button_text/theme**, **bulk_batch_id**, **media_files**
 - `scans` - Scan analytics (device_type, os, browser, country, city, region, referrer)
 - `api_keys` - API keys for Business tier (hashed keys, last_used_at)
 - `teams` - Team management for Business tier
 - `team_members` - Team membership with roles
 - `team_invites` - Pending team invitations
+
+**Storage buckets:**
+- `qr-logos` - Logo uploads for QR code branding
+- `qr-media` - Media files for file upload types (PDF, images, video, audio)
+
+**QR Types constraint:**
+```sql
+content_type IN (
+  'url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms',
+  'whatsapp', 'facebook', 'instagram', 'apps',
+  'pdf', 'images', 'video', 'mp3',
+  'menu', 'business', 'links', 'coupon', 'social'
+)
+```
 
 RLS policies active. Trigger auto-creates profile on signup. Trigger auto-increments monthly_scan_count on scan.
 
@@ -275,8 +396,8 @@ Test card: `4242 4242 4242 4242` (any future expiry, any CVC)
 
 | Tier | Price | Dynamic QRs | Analytics | Features |
 |------|-------|-------------|-----------|----------|
-| Free | $0 | 0 | No | Static QR codes only |
-| Pro | $9/mo | 50 | Yes | Logo upload, expiration, password, landing pages |
+| Free | $0 | 0 | No | Basic 11 QR types (URL, Text, WiFi, vCard, Email, Phone, SMS, WhatsApp, Facebook, Instagram, Apps) |
+| Pro | $9/mo | 50 | Yes | All 16 QR types, Logo upload, File uploads (PDF/Images/Video/MP3), Landing pages (Menu/Business/Links/Coupon/Social), Expiration, Password protection |
 | Business | $29/mo | Unlimited | Yes | All Pro + Bulk generation, API access, Team management |
 
 ## Revenue Mechanics

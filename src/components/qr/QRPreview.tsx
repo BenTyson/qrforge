@@ -54,6 +54,35 @@ export function QRPreview({
           return content.phone && content.phone.length > 0;
         case 'sms':
           return content.phone && content.phone.length > 0;
+        case 'whatsapp':
+          return content.phone && content.phone.length > 0;
+        case 'facebook':
+          return content.profileUrl && content.profileUrl.length > 0;
+        case 'instagram':
+          return content.username && content.username.length > 0;
+        case 'apps':
+          return (content.appStoreUrl && content.appStoreUrl.length > 0) ||
+                 (content.playStoreUrl && content.playStoreUrl.length > 0) ||
+                 (content.fallbackUrl && content.fallbackUrl.length > 0);
+        // Pro types - these generate preview QR codes
+        case 'pdf':
+          return (content.fileUrl && content.fileUrl.length > 0) || (content.fileName && content.fileName.length > 0);
+        case 'images':
+          return content.images && content.images.length > 0;
+        case 'video':
+          return (content.videoUrl && content.videoUrl.length > 0) || (content.embedUrl && content.embedUrl.length > 0);
+        case 'mp3':
+          return (content.audioUrl && content.audioUrl.length > 0) || (content.embedUrl && content.embedUrl.length > 0);
+        case 'menu':
+          return content.restaurantName && content.restaurantName.length > 0;
+        case 'business':
+          return content.name && content.name.length > 0;
+        case 'links':
+          return content.title && content.title.length > 0;
+        case 'coupon':
+          return (content.businessName && content.businessName.length > 0) && (content.headline && content.headline.length > 0);
+        case 'social':
+          return content.name && content.name.length > 0;
         default:
           return false;
       }

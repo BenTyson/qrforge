@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { validateApiKey, apiError, apiSuccess, rateLimitError, validators } from '@/lib/api/auth';
+import { validateApiKey, apiError, apiSuccess, rateLimitError, monthlyLimitError, incrementRequestCount, validators } from '@/lib/api/auth';
 import { headers } from 'next/headers';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -20,10 +20,16 @@ export async function GET(
   const authHeader = headersList.get('authorization');
   const clientIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || undefined;
 
-  const { user, rateLimitInfo } = await validateApiKey(authHeader, clientIp);
+  const { user, rateLimitInfo, monthlyLimitExceeded } = await validateApiKey(authHeader, clientIp);
 
+  // Check rate limit
   if (rateLimitInfo && !rateLimitInfo.allowed) {
     return rateLimitError(rateLimitInfo.resetAt);
+  }
+
+  // Check monthly limit
+  if (monthlyLimitExceeded) {
+    return monthlyLimitError();
   }
 
   if (!user) {
@@ -53,6 +59,9 @@ export async function GET(
     image_url_svg: `${baseUrl}/api/v1/qr-codes/${data.id}/image?format=svg`,
   };
 
+  // Increment request count after successful operation
+  await incrementRequestCount(user.keyHash);
+
   return apiSuccess(response);
 }
 
@@ -68,10 +77,16 @@ export async function PATCH(
   const authHeader = headersList.get('authorization');
   const clientIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || undefined;
 
-  const { user, rateLimitInfo } = await validateApiKey(authHeader, clientIp);
+  const { user, rateLimitInfo, monthlyLimitExceeded } = await validateApiKey(authHeader, clientIp);
 
+  // Check rate limit
   if (rateLimitInfo && !rateLimitInfo.allowed) {
     return rateLimitError(rateLimitInfo.resetAt);
+  }
+
+  // Check monthly limit
+  if (monthlyLimitExceeded) {
+    return monthlyLimitError();
   }
 
   if (!user) {
@@ -203,6 +218,9 @@ export async function PATCH(
     image_url_svg: `${baseUrl}/api/v1/qr-codes/${data.id}/image?format=svg`,
   };
 
+  // Increment request count after successful operation
+  await incrementRequestCount(user.keyHash);
+
   return apiSuccess(response);
 }
 
@@ -218,10 +236,16 @@ export async function DELETE(
   const authHeader = headersList.get('authorization');
   const clientIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || undefined;
 
-  const { user, rateLimitInfo } = await validateApiKey(authHeader, clientIp);
+  const { user, rateLimitInfo, monthlyLimitExceeded } = await validateApiKey(authHeader, clientIp);
 
+  // Check rate limit
   if (rateLimitInfo && !rateLimitInfo.allowed) {
     return rateLimitError(rateLimitInfo.resetAt);
+  }
+
+  // Check monthly limit
+  if (monthlyLimitExceeded) {
+    return monthlyLimitError();
   }
 
   if (!user) {
@@ -252,6 +276,9 @@ export async function DELETE(
     console.error('API delete error:', error);
     return apiError('Failed to delete QR code', 500);
   }
+
+  // Increment request count after successful operation
+  await incrementRequestCount(user.keyHash);
 
   return new Response(null, { status: 204 });
 }

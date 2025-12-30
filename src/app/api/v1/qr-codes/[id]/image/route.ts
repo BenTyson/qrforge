@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { validateApiKey, apiError, rateLimitError, validators } from '@/lib/api/auth';
+import { validateApiKey, apiError, rateLimitError, monthlyLimitError, incrementRequestCount, validators } from '@/lib/api/auth';
 import { generateQRPNG, generateQRSVGServer } from '@/lib/qr/server-generator';
 import { headers } from 'next/headers';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
@@ -24,11 +24,16 @@ export async function GET(
   const authHeader = headersList.get('authorization');
   const clientIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || undefined;
 
-  const { user, rateLimitInfo } = await validateApiKey(authHeader, clientIp);
+  const { user, rateLimitInfo, monthlyLimitExceeded } = await validateApiKey(authHeader, clientIp);
 
   // Check rate limit
   if (rateLimitInfo && !rateLimitInfo.allowed) {
     return rateLimitError(rateLimitInfo.resetAt);
+  }
+
+  // Check monthly limit
+  if (monthlyLimitExceeded) {
+    return monthlyLimitError();
   }
 
   if (!user) {
@@ -113,6 +118,9 @@ export async function GET(
         responseHeaders['Content-Disposition'] = `attachment; filename="${safeFilename}.svg"; filename*=UTF-8''${encodeURIComponent(safeFilename)}.svg`;
       }
 
+      // Increment request count after successful operation
+      await incrementRequestCount(user.keyHash);
+
       return new Response(svg, { headers: responseHeaders });
     } else {
       const pngBuffer = await generateQRPNG(content, style);
@@ -126,6 +134,9 @@ export async function GET(
         // Use RFC 5987 encoding for filename to handle special characters safely
         responseHeaders['Content-Disposition'] = `attachment; filename="${safeFilename}.png"; filename*=UTF-8''${encodeURIComponent(safeFilename)}.png`;
       }
+
+      // Increment request count after successful operation
+      await incrementRequestCount(user.keyHash);
 
       // Convert Buffer to Uint8Array for Response body
       return new Response(new Uint8Array(pngBuffer), { headers: responseHeaders });

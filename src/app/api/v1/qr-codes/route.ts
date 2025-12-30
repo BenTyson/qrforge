@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { validateApiKey, apiError, apiSuccess, rateLimitError, validators } from '@/lib/api/auth';
+import { validateApiKey, apiError, apiSuccess, rateLimitError, monthlyLimitError, incrementRequestCount, validators } from '@/lib/api/auth';
 import { headers } from 'next/headers';
 import crypto from 'crypto';
 
@@ -20,11 +20,16 @@ export async function GET(request: Request) {
   const authHeader = headersList.get('authorization');
   const clientIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || undefined;
 
-  const { user, rateLimitInfo } = await validateApiKey(authHeader, clientIp);
+  const { user, rateLimitInfo, monthlyLimitExceeded } = await validateApiKey(authHeader, clientIp);
 
   // Check rate limit
   if (rateLimitInfo && !rateLimitInfo.allowed) {
     return rateLimitError(rateLimitInfo.resetAt);
+  }
+
+  // Check monthly limit
+  if (monthlyLimitExceeded) {
+    return monthlyLimitError();
   }
 
   if (!user) {
@@ -72,6 +77,9 @@ export async function GET(request: Request) {
     image_url_svg: `${baseUrl}/api/v1/qr-codes/${qr.id}/image?format=svg`,
   })) || [];
 
+  // Increment request count after successful operation
+  await incrementRequestCount(user.keyHash);
+
   return apiSuccess({
     qr_codes: qrCodesWithUrls,
     total: count,
@@ -89,11 +97,16 @@ export async function POST(request: Request) {
   const authHeader = headersList.get('authorization');
   const clientIp = headersList.get('x-forwarded-for')?.split(',')[0] || headersList.get('x-real-ip') || undefined;
 
-  const { user, rateLimitInfo } = await validateApiKey(authHeader, clientIp);
+  const { user, rateLimitInfo, monthlyLimitExceeded } = await validateApiKey(authHeader, clientIp);
 
   // Check rate limit
   if (rateLimitInfo && !rateLimitInfo.allowed) {
     return rateLimitError(rateLimitInfo.resetAt);
+  }
+
+  // Check monthly limit
+  if (monthlyLimitExceeded) {
+    return monthlyLimitError();
   }
 
   if (!user) {
@@ -129,7 +142,7 @@ export async function POST(request: Request) {
 
   // Validate content_type
   if (!validators.isValidContentType(content_type)) {
-    return apiError('Invalid content_type. Allowed: url, text, wifi, vcard, email, phone, sms', 400);
+    return apiError('Invalid content_type. Allowed: url, text, wifi, vcard, email, phone, sms, whatsapp, facebook, instagram, apps, pdf, images, video, mp3, menu, business, links, coupon, social', 400);
   }
 
   // Validate content
@@ -137,16 +150,16 @@ export async function POST(request: Request) {
     return apiError('content is required', 400);
   }
 
-  // Validate content based on type
-  if (content_type === 'url') {
-    if (!content.url || typeof content.url !== 'string') {
-      return apiError('content.url is required for URL type', 400);
-    }
-    if (!validators.validateStringLength(content.url, MAX_URL_LENGTH)) {
+  // Validate content based on content_type
+  const contentValidation = validators.validateContent(content as Record<string, unknown>, content_type);
+  if (!contentValidation.valid) {
+    return apiError(contentValidation.error || 'Invalid content', 400);
+  }
+
+  // Additional URL length validation for URL-based types
+  if (content_type === 'url' && content.url) {
+    if (!validators.validateStringLength(content.url as string, MAX_URL_LENGTH)) {
       return apiError(`URL must be ${MAX_URL_LENGTH} characters or less`, 400);
-    }
-    if (!validators.isValidUrl(content.url)) {
-      return apiError('Invalid URL. Must start with http:// or https://', 400);
     }
   }
 
@@ -230,6 +243,9 @@ export async function POST(request: Request) {
     image_url: `${baseUrl}/api/v1/qr-codes/${data.id}/image`,
     image_url_svg: `${baseUrl}/api/v1/qr-codes/${data.id}/image?format=svg`,
   };
+
+  // Increment request count after successful operation
+  await incrementRequestCount(user.keyHash);
 
   return apiSuccess(response, 201);
 }

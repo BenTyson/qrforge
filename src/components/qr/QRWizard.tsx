@@ -1,3 +1,12 @@
+/**
+ * @deprecated This modal-based wizard is deprecated in favor of QRStudio.
+ * Use the full-page QRStudio component instead:
+ *   - Create: /qr-codes/create (QRStudio mode="create")
+ *   - Edit: /qr-codes/[id]/edit (QRStudio mode="edit")
+ *
+ * This file is kept temporarily for reference during migration.
+ * TODO: Remove this file once QRStudio is fully tested.
+ */
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';

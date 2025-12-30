@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: December 29, 2025 (Email Branding + URL Normalization)
+> **Last Updated**: December 30, 2025 (API Launch Readiness)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -198,6 +198,24 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
     - `/r/[code]/business` - Website URL
     - `/r/[code]/social` - Custom profile URLs
   - Also added `isValidUrl()` validation helper
+- **API Launch Readiness** (December 30, 2025):
+  - Request counting implemented (`incrementRequestCount()` in `src/lib/api/auth.ts`)
+  - All API routes now track successful requests in database:
+    - `request_count` - Total lifetime requests
+    - `monthly_request_count` - Current month requests
+    - `last_used_at` - Timestamp of last API call
+  - Monthly limit enforcement (10,000 requests/month):
+    - `validateApiKey()` checks `monthlyLimitExceeded`
+    - Returns 429 with `X-RateLimit-Monthly-*` headers when exceeded
+    - Auto-resets on 1st of each month
+  - Per-minute rate limiting (60 requests/minute):
+    - In-memory rate limiter per API key
+    - Returns 429 with `Retry-After` header when exceeded
+  - Content type validation for all 19 QR types:
+    - `validateContent()` validates required fields per type
+    - URL, text, wifi, vcard, email, phone, sms, whatsapp validated
+    - File/landing page types have permissive validation
+  - Business tier gating enforced on all API endpoints
 
 ### Planned Enhancements
 - QR code folders/organization
@@ -411,7 +429,16 @@ Scan tracking in `/r/[code]/route.ts`:
 - `profiles` - User profiles with subscription_tier, stripe_customer_id, subscription_status, **monthly_scan_count**, **scan_count_reset_at**
 - `qr_codes` - QR codes with content, style, short_code, scan_count, **expires_at**, **password_hash**, **active_from**, **active_until**, **show_landing_page**, **landing_page_title/description/button_text/theme**, **bulk_batch_id**, **media_files**
 - `scans` - Scan analytics (device_type, os, browser, country, city, region, referrer)
-- `api_keys` - API keys for Business tier (hashed keys, last_used_at)
+- `api_keys` - API keys for Business tier:
+  - `key_hash` - SHA-256 hash of API key
+  - `key_prefix` - First 8 chars for identification
+  - `request_count` - Total lifetime requests
+  - `monthly_request_count` - Current month requests (auto-resets)
+  - `monthly_reset_at` - When monthly counter resets
+  - `last_used_at` - Timestamp of last use
+  - `expires_at` - Optional expiration date
+  - `ip_whitelist` - Optional IP restrictions
+  - `permissions` - Granted permissions array
 - `teams` - Team management for Business tier
 - `team_members` - Team membership with roles
 - `team_invites` - Pending team invitations
@@ -457,7 +484,7 @@ Test card: `4242 4242 4242 4242` (any future expiry, any CVC)
 |------|-------|-------------|-----------|----------|
 | Free | $0 | 0 | No | Basic 11 QR types (URL, Text, WiFi, vCard, Email, Phone, SMS, WhatsApp, Facebook, Instagram, Apps) |
 | Pro | $9/mo | 50 | Yes | All 16 QR types, Logo upload, File uploads (PDF/Images/Video/MP3), Landing pages (Menu/Business/Links/Coupon/Social), Expiration, Password protection |
-| Business | $29/mo | Unlimited | Yes | All Pro + Bulk generation, API access, Team management |
+| Business | $29/mo | Unlimited | Yes | All Pro + Bulk generation, API access (10k requests/mo, 60/min), Team management |
 
 ## Revenue Mechanics
 

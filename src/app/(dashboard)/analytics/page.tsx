@@ -1,11 +1,37 @@
 import { createClient } from '@/lib/supabase/server';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 
 // Pagination constants
 const SCANS_PER_PAGE = 10;
 const MAX_SCANS_FOR_AGGREGATION = 10000;
+
+// Mock data for free users - looks enticing!
+const MOCK_DATA = {
+  totalScans: 2847,
+  uniqueVisitors: 1923,
+  scansToday: 127,
+  topCountry: 'United States',
+  scansThisWeek: 892,
+  scansThisMonth: 2134,
+  dailyAverage: 127.4,
+  topQRCodes: [
+    { id: '1', name: 'Product Launch Campaign', scan_count: 847 },
+    { id: '2', name: 'Restaurant Menu', scan_count: 623 },
+    { id: '3', name: 'Business Card - John', scan_count: 412 },
+    { id: '4', name: 'Event Registration', scan_count: 298 },
+    { id: '5', name: 'WiFi Guest Access', scan_count: 156 },
+  ],
+  deviceBreakdown: { Mobile: 68, Desktop: 24, Tablet: 8 },
+  browserBreakdown: { Chrome: 45, Safari: 32, Firefox: 12, Edge: 11 },
+  countryBreakdown: { 'United States': 42, 'United Kingdom': 18, 'Germany': 14, 'Canada': 12 },
+  recentScans: [
+    { id: '1', qrName: 'Product Launch Campaign', scanned_at: new Date(Date.now() - 5 * 60000).toISOString(), device_type: 'Mobile', browser: 'Safari', city: 'New York', country: 'United States' },
+    { id: '2', qrName: 'Restaurant Menu', scanned_at: new Date(Date.now() - 12 * 60000).toISOString(), device_type: 'Mobile', browser: 'Chrome', city: 'London', country: 'United Kingdom' },
+    { id: '3', qrName: 'Business Card - John', scanned_at: new Date(Date.now() - 23 * 60000).toISOString(), device_type: 'Desktop', browser: 'Chrome', city: 'Berlin', country: 'Germany' },
+    { id: '4', qrName: 'Event Registration', scanned_at: new Date(Date.now() - 45 * 60000).toISOString(), device_type: 'Mobile', browser: 'Safari', city: 'Toronto', country: 'Canada' },
+    { id: '5', qrName: 'WiFi Guest Access', scanned_at: new Date(Date.now() - 67 * 60000).toISOString(), device_type: 'Tablet', browser: 'Chrome', city: 'Sydney', country: 'Australia' },
+  ],
+};
 
 interface AnalyticsPageProps {
   searchParams: Promise<{ page?: string }>;
@@ -32,7 +58,69 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
   const tier = profile?.subscription_tier || 'free';
   const isPro = tier === 'pro' || tier === 'business';
 
-  // Fetch user's QR codes with scan counts
+  // For free users, show mock data with blur overlay - skip DB queries for performance
+  if (!isPro) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header - always visible */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold">Analytics</h1>
+            <p className="text-muted-foreground mt-1">
+              Track your QR code performance
+            </p>
+          </div>
+        </div>
+
+        {/* Blurred content with overlay */}
+        <div className="relative">
+          {/* Blur overlay */}
+          <div className="absolute inset-0 z-10 backdrop-blur-md bg-background/40 rounded-3xl flex items-center justify-center">
+            <div className="text-center max-w-md mx-4">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary/20 to-cyan-500/20 flex items-center justify-center">
+                <LockIcon className="w-10 h-10 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold mb-3">Unlock Analytics</h2>
+              <p className="text-muted-foreground mb-6">
+                See exactly who&apos;s scanning your QR codes — track locations, devices, browsers, and trends in real-time.
+              </p>
+              <Link href="/plans">
+                <button className="px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/90 transition-all hover:scale-105 flex items-center gap-2 mx-auto">
+                  <SparkleIcon className="w-5 h-5" />
+                  Upgrade to Pro
+                </button>
+              </Link>
+              <p className="text-xs text-muted-foreground mt-4">
+                Starting at $9/month • Cancel anytime
+              </p>
+            </div>
+          </div>
+
+          {/* Mock analytics content (blurred behind overlay) */}
+          <div className="select-none pointer-events-none" aria-hidden="true">
+            <AnalyticsContent
+              totalScans={MOCK_DATA.totalScans}
+              uniqueVisitors={MOCK_DATA.uniqueVisitors}
+              scansToday={MOCK_DATA.scansToday}
+              topCountry={MOCK_DATA.topCountry}
+              scansThisWeek={MOCK_DATA.scansThisWeek}
+              scansThisMonth={MOCK_DATA.scansThisMonth}
+              topQRCodes={MOCK_DATA.topQRCodes}
+              deviceBreakdown={MOCK_DATA.deviceBreakdown}
+              browserBreakdown={MOCK_DATA.browserBreakdown}
+              countryBreakdown={MOCK_DATA.countryBreakdown}
+              recentScans={MOCK_DATA.recentScans}
+              totalPages={1}
+              currentPage={1}
+              isPro={false}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Pro/Business users get real data
   const { data: qrCodes } = await supabase
     .from('qr_codes')
     .select('id, name, scan_count')
@@ -72,7 +160,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
   const allScans = aggregationScans || [];
   const totalPages = Math.ceil((totalScansCount || 0) / SCANS_PER_PAGE);
 
-  // Calculate stats - use actual count from DB, not array length
+  // Calculate stats
   const totalScans = totalScansCount || 0;
   const uniqueVisitors = new Set(allScans.map(s => s.ip_hash)).size;
 
@@ -112,7 +200,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
     .sort((a, b) => (b.scan_count || 0) - (a.scan_count || 0))
     .slice(0, 5);
 
-  // Recent scans with QR code names (from paginated results)
+  // Recent scans with QR code names
   const qrCodeNames = new Map(qrCodes?.map(qr => [qr.id, qr.name]) || []);
   const recentScans = (paginatedScans || []).map(scan => ({
     ...scan,
@@ -123,7 +211,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
   const sortedCountries = Object.entries(countryBreakdown)
     .filter(([country]) => country !== 'Unknown')
     .sort((a, b) => (b[1] as number) - (a[1] as number));
-  const topCountry = sortedCountries.length > 0 ? sortedCountries[0] : null;
+  const topCountry = sortedCountries.length > 0 ? sortedCountries[0][0] : null;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -135,15 +223,72 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
             Track your QR code performance
           </p>
         </div>
-        {!isPro && (
-          <Link href="/settings">
-            <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors text-sm flex items-center gap-2">
-              <SparkleIcon className="w-4 h-4" />
-              Unlock Full Analytics
-            </button>
-          </Link>
-        )}
       </div>
+
+      <AnalyticsContent
+        totalScans={totalScans}
+        uniqueVisitors={uniqueVisitors}
+        scansToday={scansToday}
+        topCountry={topCountry}
+        scansThisWeek={scansThisWeek}
+        scansThisMonth={scansThisMonth}
+        topQRCodes={topQRCodes}
+        deviceBreakdown={deviceBreakdown}
+        browserBreakdown={browserBreakdown}
+        countryBreakdown={countryBreakdown}
+        recentScans={recentScans}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        isPro={true}
+      />
+    </div>
+  );
+}
+
+// Extracted analytics content component for reuse
+interface AnalyticsContentProps {
+  totalScans: number;
+  uniqueVisitors: number;
+  scansToday: number;
+  topCountry: string | null;
+  scansThisWeek: number;
+  scansThisMonth: number;
+  topQRCodes: Array<{ id: string; name: string; scan_count: number }>;
+  deviceBreakdown: Record<string, number>;
+  browserBreakdown: Record<string, number>;
+  countryBreakdown: Record<string, number>;
+  recentScans: Array<{
+    id: string;
+    qrName: string;
+    scanned_at: string;
+    device_type: string;
+    browser: string;
+    city?: string;
+    country?: string;
+  }>;
+  totalPages: number;
+  currentPage: number;
+  isPro: boolean;
+}
+
+function AnalyticsContent({
+  totalScans,
+  uniqueVisitors,
+  scansToday,
+  topCountry,
+  scansThisWeek,
+  scansThisMonth,
+  topQRCodes,
+  deviceBreakdown,
+  browserBreakdown,
+  countryBreakdown,
+  recentScans,
+  totalPages,
+  currentPage,
+  isPro,
+}: AnalyticsContentProps) {
+  return (
+    <>
 
       {/* Hero Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -455,7 +600,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }
 
@@ -592,6 +737,15 @@ function QRIcon({ className }: { className?: string }) {
       <rect x="3" y="3" width="7" height="7" rx="1" />
       <rect x="14" y="3" width="7" height="7" rx="1" />
       <rect x="3" y="14" width="7" height="7" rx="1" />
+    </svg>
+  );
+}
+
+function LockIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
   );
 }

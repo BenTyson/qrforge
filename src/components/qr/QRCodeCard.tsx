@@ -280,7 +280,7 @@ export function QRCodeCard({ qrCode, index = 0, compact = false }: QRCodeCardPro
           role="group"
           aria-label="QR code actions"
         >
-          <Link href={`/qr-codes/${qrCode.id}`} className="flex-1">
+          <Link href={`/qr-codes/${qrCode.id}/edit`} className="flex-1">
             <Button variant="outline" size="sm" className="w-full h-8 text-xs">
               <EditIcon className="w-3 h-3 mr-1.5" aria-hidden="true" />
               Edit

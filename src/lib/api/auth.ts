@@ -7,24 +7,27 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 export interface ApiUser {
   id: string;
   tier: 'free' | 'pro' | 'business';
+  keyHash: string; // Added to track which key was used
 }
 
-// In-memory rate limiter (upgrade to Redis for production scale)
-const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
-
+// Rate limit configuration
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const RATE_LIMIT_MAX_REQUESTS = 60; // 60 requests per minute per key
+const MONTHLY_REQUEST_LIMIT = 10000; // 10,000 requests per month
+
+// In-memory rate limiter with fallback
+// Note: This resets on server restart - acceptable for per-minute limits
+// Monthly limits are enforced via database
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 /**
- * Check rate limit for an API key
- * Returns true if request should be allowed, false if rate limited
+ * Check per-minute rate limit for an API key
  */
 function checkRateLimit(keyHash: string): { allowed: boolean; remaining: number; resetAt: number } {
   const now = Date.now();
   const entry = rateLimitStore.get(keyHash);
 
   if (!entry || entry.resetAt < now) {
-    // Reset or create new window
     const resetAt = now + RATE_LIMIT_WINDOW_MS;
     rateLimitStore.set(keyHash, { count: 1, resetAt });
     return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - 1, resetAt };
@@ -38,15 +41,17 @@ function checkRateLimit(keyHash: string): { allowed: boolean; remaining: number;
   return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - entry.count, resetAt: entry.resetAt };
 }
 
-// Clean up old rate limit entries periodically
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of rateLimitStore.entries()) {
-    if (entry.resetAt < now) {
-      rateLimitStore.delete(key);
+// Clean up old rate limit entries periodically (only in long-running processes)
+if (typeof setInterval !== 'undefined') {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of rateLimitStore.entries()) {
+      if (entry.resetAt < now) {
+        rateLimitStore.delete(key);
+      }
     }
-  }
-}, 60000); // Clean up every minute
+  }, 60000);
+}
 
 /**
  * Validate API key and return user info
@@ -54,7 +59,11 @@ setInterval(() => {
 export async function validateApiKey(
   authHeader: string | null,
   clientIp?: string
-): Promise<{ user: ApiUser | null; rateLimitInfo?: { allowed: boolean; remaining: number; resetAt: number } }> {
+): Promise<{
+  user: ApiUser | null;
+  rateLimitInfo?: { allowed: boolean; remaining: number; resetAt: number };
+  monthlyLimitExceeded?: boolean;
+}> {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return { user: null };
   }
@@ -65,7 +74,7 @@ export async function validateApiKey(
   // Hash the key
   const keyHash = crypto.createHash('sha256').update(apiKey).digest('hex');
 
-  // Check rate limit first
+  // Check per-minute rate limit first
   const rateLimitInfo = checkRateLimit(keyHash);
   if (!rateLimitInfo.allowed) {
     return { user: null, rateLimitInfo };
@@ -74,10 +83,10 @@ export async function validateApiKey(
   // Use service role to bypass RLS
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-  // Find the API key with all constraints
+  // Find the API key with all constraints including monthly usage
   const { data: keyData, error: keyError } = await supabase
     .from('api_keys')
-    .select('user_id, expires_at, ip_whitelist, permissions')
+    .select('user_id, expires_at, ip_whitelist, permissions, monthly_request_count, monthly_reset_at')
     .eq('key_hash', keyHash)
     .is('revoked_at', null)
     .single();
@@ -94,7 +103,6 @@ export async function validateApiKey(
   // Check IP whitelist if configured
   if (keyData.ip_whitelist && keyData.ip_whitelist.length > 0 && clientIp) {
     const allowed = keyData.ip_whitelist.some((ip: string) => {
-      // Support CIDR notation in the future, for now exact match
       return ip === clientIp || ip === '*';
     });
     if (!allowed) {
@@ -102,11 +110,30 @@ export async function validateApiKey(
     }
   }
 
-  // Update last used
-  await supabase
-    .from('api_keys')
-    .update({ last_used_at: new Date().toISOString() })
-    .eq('key_hash', keyHash);
+  // Check and reset monthly counter if needed
+  const now = new Date();
+  const monthlyResetAt = keyData.monthly_reset_at ? new Date(keyData.monthly_reset_at) : null;
+  let currentMonthlyCount = keyData.monthly_request_count || 0;
+
+  // Reset monthly counter if we're in a new month
+  if (!monthlyResetAt || monthlyResetAt < now) {
+    currentMonthlyCount = 0;
+    // Set reset date to first of next month
+    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    await supabase
+      .from('api_keys')
+      .update({
+        monthly_request_count: 0,
+        monthly_reset_at: nextMonth.toISOString(),
+        last_used_at: now.toISOString()
+      })
+      .eq('key_hash', keyHash);
+  }
+
+  // Check monthly limit
+  if (currentMonthlyCount >= MONTHLY_REQUEST_LIMIT) {
+    return { user: null, rateLimitInfo, monthlyLimitExceeded: true };
+  }
 
   // Get user tier
   const { data: profile } = await supabase
@@ -126,9 +153,54 @@ export async function validateApiKey(
     user: {
       id: keyData.user_id,
       tier,
+      keyHash, // Return keyHash so we can increment counts later
     },
     rateLimitInfo,
   };
+}
+
+/**
+ * Increment request count for an API key
+ * Call this after a successful API operation
+ */
+export async function incrementRequestCount(keyHash: string): Promise<void> {
+  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+  // Get current counts
+  const { data } = await supabase
+    .from('api_keys')
+    .select('request_count, monthly_request_count')
+    .eq('key_hash', keyHash)
+    .single();
+
+  if (data) {
+    // Increment both counts
+    await supabase
+      .from('api_keys')
+      .update({
+        request_count: (data.request_count || 0) + 1,
+        monthly_request_count: (data.monthly_request_count || 0) + 1,
+        last_used_at: new Date().toISOString(),
+      })
+      .eq('key_hash', keyHash);
+  }
+}
+
+/**
+ * Monthly limit exceeded error response
+ */
+export function monthlyLimitError() {
+  return new Response(JSON.stringify({
+    error: 'Monthly request limit exceeded',
+    message: 'You have exceeded your monthly API request limit of 10,000 requests. Limits reset on the first of each month.',
+  }), {
+    status: 429,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-RateLimit-Monthly-Limit': String(MONTHLY_REQUEST_LIMIT),
+      'X-RateLimit-Monthly-Remaining': '0',
+    },
+  });
 }
 
 /**
@@ -228,5 +300,90 @@ export const validators = {
 
   validateStringLength(str: string, maxLength: number): boolean {
     return typeof str === 'string' && str.length <= maxLength;
+  },
+
+  // Content validation helpers for each content type
+  validateContent(content: Record<string, unknown>, contentType: string): { valid: boolean; error?: string } {
+    switch (contentType) {
+      case 'url':
+        if (!content.url || typeof content.url !== 'string') {
+          return { valid: false, error: 'content.url is required for URL type' };
+        }
+        if (!validators.isValidUrl(content.url)) {
+          return { valid: false, error: 'Invalid URL. Must start with http:// or https://' };
+        }
+        break;
+
+      case 'text':
+        if (!content.text || typeof content.text !== 'string') {
+          return { valid: false, error: 'content.text is required for text type' };
+        }
+        break;
+
+      case 'wifi':
+        if (!content.ssid || typeof content.ssid !== 'string') {
+          return { valid: false, error: 'content.ssid is required for WiFi type' };
+        }
+        if (content.encryption && !['WPA', 'WEP', 'nopass'].includes(content.encryption as string)) {
+          return { valid: false, error: 'content.encryption must be WPA, WEP, or nopass' };
+        }
+        break;
+
+      case 'vcard':
+        // vCard requires at least a name
+        if (!content.firstName && !content.lastName && !content.organization) {
+          return { valid: false, error: 'vCard requires firstName, lastName, or organization' };
+        }
+        break;
+
+      case 'email':
+        if (!content.address || typeof content.address !== 'string') {
+          return { valid: false, error: 'content.address is required for email type' };
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(content.address)) {
+          return { valid: false, error: 'Invalid email address format' };
+        }
+        break;
+
+      case 'phone':
+      case 'sms':
+        if (!content.number || typeof content.number !== 'string') {
+          return { valid: false, error: `content.number is required for ${contentType} type` };
+        }
+        break;
+
+      case 'whatsapp':
+        if (!content.number || typeof content.number !== 'string') {
+          return { valid: false, error: 'content.number is required for WhatsApp type' };
+        }
+        break;
+
+      // URL-based social types
+      case 'facebook':
+      case 'instagram':
+      case 'apps':
+        if (content.url && typeof content.url === 'string' && !validators.isValidUrl(content.url)) {
+          return { valid: false, error: 'Invalid URL format' };
+        }
+        break;
+
+      // File/landing page types - more permissive
+      case 'pdf':
+      case 'images':
+      case 'video':
+      case 'mp3':
+      case 'menu':
+      case 'business':
+      case 'links':
+      case 'coupon':
+      case 'social':
+        // These are more complex types, basic validation only
+        break;
+
+      default:
+        return { valid: false, error: `Unknown content type: ${contentType}` };
+    }
+
+    return { valid: true };
   },
 };

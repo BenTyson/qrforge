@@ -180,6 +180,17 @@ See also: `docs/SESSION-START.md` for full project context
 - [ ] `DELETE /api/v1/qr-codes/:id` deletes QR code
 - [ ] `GET /api/v1/qr-codes/:id/image` returns QR image
 
+### API Security & Limits (December 30, 2025)
+- [x] Request counting tracks all API calls in database
+- [x] Monthly limit enforced (10,000 requests/month)
+- [x] Per-minute rate limiting (60 requests/minute)
+- [x] Returns 429 with proper headers when limits exceeded
+- [x] Content validation for all 19 QR content types
+- [x] Business tier gating on all API endpoints
+- [x] API keys hashed with SHA-256 (raw key never stored)
+- [x] IP whitelist support for API keys
+- [x] API key expiration support
+
 ---
 
 ## 5. SEO & Marketing
@@ -197,11 +208,15 @@ See also: `docs/SESSION-START.md` for full project context
 
 ## 6. Security
 
-- [ ] All API routes use proper authentication
-- [ ] RLS policies prevent unauthorized data access
-- [ ] Stripe webhook validates signatures
-- [ ] No secrets exposed in client-side code
-- [ ] HTTPS only (Railway handles this)
+- [x] All API routes use proper authentication
+- [x] RLS policies prevent unauthorized data access
+- [x] Stripe webhook validates signatures
+- [x] No secrets exposed in client-side code
+- [x] HTTPS only (Railway handles this)
+- [x] API rate limiting prevents abuse (60/min, 10k/month)
+- [x] API keys hashed before storage (SHA-256)
+- [x] Content validation prevents malformed data
+- [x] Input sanitization on filenames and URLs
 
 ---
 

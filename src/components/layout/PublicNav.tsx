@@ -12,9 +12,8 @@ interface PublicNavProps {
 
 const NAV_LINKS = [
   { label: 'Features', href: '#features' },
-  { label: 'Use Cases', href: '#use-cases' },
   { label: 'Pricing', href: '#pricing' },
-  { label: 'FAQ', href: '#faq' },
+  { label: 'Learn', href: '/learn' },
 ];
 
 export function PublicNav({ showAuthButtons = true }: PublicNavProps) {
@@ -94,14 +93,24 @@ export function PublicNav({ showAuthButtons = true }: PublicNavProps) {
             {showAuthButtons && (
               <div className="hidden md:flex items-center gap-6">
                 {NAV_LINKS.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={(e) => handleSmoothScroll(e, link.href)}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </a>
+                  link.href.startsWith('#') ? (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      onClick={(e) => handleSmoothScroll(e, link.href)}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  )
                 ))}
                 {!isLoading && (
                   isLoggedIn ? (
@@ -166,14 +175,25 @@ export function PublicNav({ showAuthButtons = true }: PublicNavProps) {
         <div className="px-4 py-6 space-y-4">
           {/* Nav Links */}
           {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={(e) => handleSmoothScroll(e, link.href)}
-              className="block py-3 text-lg font-medium text-foreground hover:text-primary transition-colors"
-            >
-              {link.label}
-            </a>
+            link.href.startsWith('#') ? (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => handleSmoothScroll(e, link.href)}
+                className="block py-3 text-lg font-medium text-foreground hover:text-primary transition-colors"
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block py-3 text-lg font-medium text-foreground hover:text-primary transition-colors"
+              >
+                {link.label}
+              </Link>
+            )
           ))}
 
           {/* Divider */}

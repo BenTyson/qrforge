@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: December 30, 2025 (API Launch Readiness)
+> **Last Updated**: December 30, 2025 (Blog & Learn Knowledge Base)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -216,6 +216,53 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
     - URL, text, wifi, vcard, email, phone, sms, whatsapp validated
     - File/landing page types have permissive validation
   - Business tier gating enforced on all API endpoints
+- **Dynamic QR Type Upgrades** (December 30, 2025):
+  - All 9 dynamic QR types upgraded with modern UI:
+    - **Menu** - Glassmorphism design, floating orbs, staggered animations
+    - **Links** - Linktree-style with social icons, link hover effects
+    - **Business** - Professional card with vCard download, social links
+    - **Social** - Platform-colored buttons, animated profile card
+    - **Coupon** - Animated promo code copy, expiration badges
+    - **Gallery** - Modern grid with zoom, lightbox with thumbnail strip
+    - **PDF** - Document header card, embedded viewer with toolbar
+    - **Video** - YouTube/Vimeo badging, floating orbs
+    - **Audio** - Spotify/SoundCloud detection, vinyl-style cover art
+  - Phone mockup preview components for all types:
+    - `src/components/menu/MenuPreview.tsx`
+    - `src/components/links/LinksPreview.tsx`
+    - `src/components/business/BusinessPreview.tsx`
+    - `src/components/social/SocialPreview.tsx`
+    - `src/components/coupon/CouponPreview.tsx`
+    - `src/components/gallery/GalleryPreview.tsx`
+    - `src/components/pdf/PDFPreview.tsx`
+    - `src/components/video/VideoPreview.tsx`
+    - `src/components/audio/AudioPreview.tsx`
+  - QRStudio shows live preview during content creation
+  - Consistent design language across all landing pages:
+    - Dark navy/teal theme with accent color support
+    - Glassmorphism cards with `backdrop-blur-xl`
+    - Floating orb decorations with `animate-pulse`
+    - Dot pattern backgrounds
+    - Staggered `animate-fade-in` and `animate-slide-up`
+  - SocialLinksEditor component reused across Business, Links, Social types
+- **Blog & Learn Knowledge Base** (December 30, 2025):
+  - Velite MDX content system for static content generation
+  - `/learn` - QR code knowledge base with 6 categories:
+    - QR Basics, How It Works, Use Cases, Industries, Best Practices, Technical
+  - `/learn/[slug]` - Individual wiki articles with TOC sidebar
+  - `/learn/category/[category]` - Category listing pages
+  - `/blog` - Blog listing with featured posts and category filters
+  - `/blog/[slug]` - Individual blog posts with JSON-LD Article schema
+  - `/blog/category/[category]` - Category-filtered blog posts
+  - Blog accessible via "Latest from the Blog" section on /learn page
+  - Content stored in `content/blog/` and `content/learn/` directories
+  - MDX components: Callout, styled headings, tables, code blocks
+  - Auto-generated table of contents with scroll-spy
+  - Related articles section on each page
+  - Dynamic sitemap includes all blog/learn pages
+  - Initial content: 1 blog post, 4 wiki articles
+  - Components: ArticleCard, TableOfContents, LearnSidebar, MDXContent
+  - SEO: Per-article metadata, JSON-LD schema, OpenGraph tags
 
 ### Planned Enhancements
 - QR code folders/organization
@@ -255,12 +302,20 @@ src/
 ├── app/
 │   ├── page.tsx                    # Landing page + JSON-LD + branding showcase
 │   ├── layout.tsx                  # Root layout + meta tags
-│   ├── sitemap.ts                  # Dynamic sitemap
+│   ├── sitemap.ts                  # Dynamic sitemap (includes blog/learn)
 │   ├── robots.ts                   # Robots.txt config
 │   ├── globals.css                 # Theme + custom CSS
 │   ├── expired/page.tsx            # QR code expired page
 │   ├── limit-reached/page.tsx      # Scan limit exceeded page
 │   ├── not-active/page.tsx         # Scheduled QR not yet active
+│   ├── blog/
+│   │   ├── page.tsx                # Blog listing with featured posts
+│   │   ├── [slug]/page.tsx         # Individual blog post
+│   │   └── category/[category]/page.tsx # Category-filtered posts
+│   ├── learn/
+│   │   ├── page.tsx                # Knowledge base home + blog section
+│   │   ├── [slug]/page.tsx         # Individual wiki article
+│   │   └── category/[category]/page.tsx # Category listing
 │   ├── (admin)/
 │   │   ├── layout.tsx              # Admin layout with auth guard
 │   │   └── admin/
@@ -352,11 +407,49 @@ src/
 │   │       ├── BusinessForm.tsx    # Business card form
 │   │       ├── LinksForm.tsx       # Links list form
 │   │       ├── CouponForm.tsx      # Coupon form
-│   │       └── SocialForm.tsx      # Social profile form
+│   │       ├── SocialForm.tsx      # Social profile form
+│   │       └── SocialLinksEditor.tsx # Reusable social links editor
 │   ├── dashboard/
 │   │   └── DashboardNav.tsx        # Nav with tier-aware profile dropdown
+│   ├── menu/
+│   │   └── MenuPreview.tsx         # Phone mockup preview for menu
+│   ├── links/
+│   │   └── LinksPreview.tsx        # Phone mockup preview for links
+│   ├── business/
+│   │   └── BusinessPreview.tsx     # Phone mockup preview for business card
+│   ├── social/
+│   │   └── SocialPreview.tsx       # Phone mockup preview for social profile
+│   ├── coupon/
+│   │   └── CouponPreview.tsx       # Phone mockup preview for coupon
+│   ├── gallery/
+│   │   └── GalleryPreview.tsx      # Phone mockup preview for gallery
+│   ├── pdf/
+│   │   └── PDFPreview.tsx          # Phone mockup preview for PDF
+│   ├── video/
+│   │   └── VideoPreview.tsx        # Phone mockup preview for video
+│   ├── audio/
+│   │   └── AudioPreview.tsx        # Phone mockup preview for audio
+│   ├── content/                    # Blog/Learn content components
+│   │   ├── ArticleCard.tsx         # Card for article listings
+│   │   ├── TableOfContents.tsx     # Sticky TOC with scroll-spy
+│   │   ├── LearnSidebar.tsx        # Category tree navigation
+│   │   ├── RelatedArticles.tsx     # Related content section
+│   │   ├── MDXContent.tsx          # Client-side MDX renderer
+│   │   └── mdx/                    # MDX component overrides
+│   │       ├── index.tsx           # Component exports
+│   │       └── Callout.tsx         # Info/warning/tip callouts
 │   ├── pricing/                    # PricingSection component
 │   └── billing/                    # BillingSection component
+├── content/                        # MDX content (Velite)
+│   ├── blog/                       # Blog posts by year
+│   │   └── 2025/*.mdx
+│   └── learn/                      # Wiki articles by category
+│       ├── qr-basics/*.mdx
+│       ├── how-it-works/*.mdx
+│       ├── use-cases/*.mdx
+│       ├── industries/*.mdx
+│       ├── best-practices/*.mdx
+│       └── technical/*.mdx
 ├── hooks/
 │   └── useStripe.ts                # Checkout & portal hooks
 ├── lib/
@@ -364,6 +457,8 @@ src/
 │   ├── supabase/                   # Supabase clients
 │   ├── stripe/                     # Stripe config (with SCAN_LIMITS)
 │   ├── api/                        # API authentication helpers
+│   ├── content/
+│   │   └── utils.ts                # Content helpers (formatDate, categories)
 │   ├── email.ts                    # Resend email sending utility
 │   ├── utils.ts                    # Utilities (cn, normalizeUrl, isValidUrl)
 │   ├── constants/
@@ -406,9 +501,11 @@ Scan tracking in `/r/[code]/route.ts`:
 
 **Files:**
 - `src/app/layout.tsx` - Comprehensive meta tags, OpenGraph, Twitter cards
-- `src/app/sitemap.ts` - Auto-generated sitemap at `/sitemap.xml`
+- `src/app/sitemap.ts` - Auto-generated sitemap at `/sitemap.xml` (includes blog/learn)
 - `src/app/robots.ts` - Search engine rules at `/robots.txt`
 - `src/app/page.tsx` - JSON-LD structured data (WebApplication schema)
+- `src/app/blog/[slug]/page.tsx` - JSON-LD Article schema for blog posts
+- `src/app/learn/[slug]/page.tsx` - JSON-LD Article schema for wiki articles
 
 **Keywords targeted:**
 - qr code generator, free qr code, qr code maker
@@ -418,6 +515,8 @@ Scan tracking in `/r/[code]/route.ts`:
 - whatsapp qr code, instagram qr code, facebook qr code
 - pdf qr code, video qr code, linktree alternative qr
 - coupon qr code, social media qr code
+- what is a qr code, how qr codes work, qr code history
+- static vs dynamic qr code, qr code best practices
 
 **To enable Google Search Console:**
 1. Add verification meta tag to `layout.tsx` verification object

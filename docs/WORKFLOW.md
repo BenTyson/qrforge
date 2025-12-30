@@ -1,6 +1,6 @@
 # Development Workflow
 
-> **Last Updated**: December 28, 2025
+> **Last Updated**: December 30, 2025
 > **Live URL**: https://qrwolf.com
 
 See also: `docs/SESSION-START.md` for full project context

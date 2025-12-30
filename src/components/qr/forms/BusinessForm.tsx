@@ -3,6 +3,7 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LogoUploader } from '@/components/qr/LogoUploader';
+import { SocialLinksEditor } from './SocialLinksEditor';
 import type { BusinessContent } from '@/lib/qr/types';
 
 interface BusinessFormProps {
@@ -22,9 +23,27 @@ export function BusinessForm({ content, onChange }: BusinessFormProps) {
       website: content.website,
       address: content.address,
       photoUrl: content.photoUrl,
+      socialLinks: content.socialLinks,
       bio: content.bio,
       accentColor: content.accentColor,
       [field]: value,
+    });
+  };
+
+  const handleSocialLinksChange = (socialLinks: { platform: string; url: string }[]) => {
+    onChange({
+      type: 'business',
+      name: content.name || '',
+      title: content.title,
+      company: content.company,
+      email: content.email,
+      phone: content.phone,
+      website: content.website,
+      address: content.address,
+      photoUrl: content.photoUrl,
+      socialLinks: socialLinks as BusinessContent['socialLinks'],
+      bio: content.bio,
+      accentColor: content.accentColor,
     });
   };
 
@@ -136,6 +155,12 @@ export function BusinessForm({ content, onChange }: BusinessFormProps) {
           className="mt-1"
         />
       </div>
+
+      {/* Social Links */}
+      <SocialLinksEditor
+        links={content.socialLinks || []}
+        onChange={handleSocialLinksChange}
+      />
 
       {/* Accent Color */}
       <div>

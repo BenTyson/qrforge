@@ -36,6 +36,15 @@ import { BusinessForm } from '@/components/qr/forms/BusinessForm';
 import { LinksForm } from '@/components/qr/forms/LinksForm';
 import { CouponForm } from '@/components/qr/forms/CouponForm';
 import { SocialForm } from '@/components/qr/forms/SocialForm';
+import { MenuPreview } from '@/components/menu/MenuPreview';
+import { LinksPreview } from '@/components/links/LinksPreview';
+import { BusinessPreview } from '@/components/business/BusinessPreview';
+import { SocialPreview } from '@/components/social/SocialPreview';
+import { CouponPreview } from '@/components/coupon/CouponPreview';
+import { GalleryPreview } from '@/components/gallery/GalleryPreview';
+import { PDFPreview } from '@/components/pdf/PDFPreview';
+import { VideoPreview } from '@/components/video/VideoPreview';
+import { AudioPreview } from '@/components/audio/AudioPreview';
 
 interface QRStudioProps {
   mode: 'create' | 'edit';
@@ -379,18 +388,57 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
         {/* Preview panel - hidden on mobile */}
         <div className="hidden lg:block">
           <div className="sticky top-16 h-[calc(100vh-4rem)]">
-            <QRStudioPreview
-              content={state.content}
-              style={state.style}
-              qrName={state.qrName}
-              shortCode={state.shortCode}
-              userTier={state.userTier}
-              isSaving={state.isSaving}
-              isDownloading={state.isDownloading}
-              onDownloadPNG={handleDownloadPNG}
-              onDownloadSVG={handleDownloadSVG}
-              className="h-full"
-            />
+            {/* Show content preview for dynamic types on content step, QRStudioPreview otherwise */}
+            {state.selectedType === 'menu' && state.currentStep === 'content' ? (
+              <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
+                <MenuPreview content={(state.content as any) || {}} />
+              </div>
+            ) : state.selectedType === 'links' && state.currentStep === 'content' ? (
+              <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
+                <LinksPreview content={(state.content as any) || {}} />
+              </div>
+            ) : state.selectedType === 'business' && state.currentStep === 'content' ? (
+              <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
+                <BusinessPreview content={(state.content as any) || {}} />
+              </div>
+            ) : state.selectedType === 'social' && state.currentStep === 'content' ? (
+              <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
+                <SocialPreview content={(state.content as any) || {}} />
+              </div>
+            ) : state.selectedType === 'coupon' && state.currentStep === 'content' ? (
+              <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
+                <CouponPreview content={(state.content as any) || {}} />
+              </div>
+            ) : state.selectedType === 'images' && state.currentStep === 'content' ? (
+              <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
+                <GalleryPreview content={(state.content as any) || {}} />
+              </div>
+            ) : state.selectedType === 'pdf' && state.currentStep === 'content' ? (
+              <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
+                <PDFPreview content={(state.content as any) || {}} />
+              </div>
+            ) : state.selectedType === 'video' && state.currentStep === 'content' ? (
+              <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
+                <VideoPreview content={(state.content as any) || {}} />
+              </div>
+            ) : state.selectedType === 'mp3' && state.currentStep === 'content' ? (
+              <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
+                <AudioPreview content={(state.content as any) || {}} />
+              </div>
+            ) : (
+              <QRStudioPreview
+                content={state.content}
+                style={state.style}
+                qrName={state.qrName}
+                shortCode={state.shortCode}
+                userTier={state.userTier}
+                isSaving={state.isSaving}
+                isDownloading={state.isDownloading}
+                onDownloadPNG={handleDownloadPNG}
+                onDownloadSVG={handleDownloadSVG}
+                className="h-full"
+              />
+            )}
           </div>
         </div>
       </div>

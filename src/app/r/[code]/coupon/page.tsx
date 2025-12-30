@@ -52,7 +52,7 @@ export default function CouponLandingPage({ params }: PageProps) {
   }
 
   const accentColor = content.accentColor || '#14b8a6';
-  const isExpired = content.validUntil && new Date(content.validUntil) < new Date();
+  const isExpired = content.validUntil ? new Date(content.validUntil) < new Date() : false;
 
   const copyCode = () => {
     if (content.code) {
@@ -64,67 +64,166 @@ export default function CouponLandingPage({ params }: PageProps) {
 
   return (
     <div
-      className="min-h-screen py-8 px-4 flex items-center justify-center"
+      className="min-h-screen py-12 px-4 flex items-center justify-center relative overflow-hidden"
       style={{
-        background: `linear-gradient(135deg, ${accentColor}20 0%, #0f172a 100%)`,
+        background: `radial-gradient(ellipse at top, ${accentColor}15 0%, transparent 50%),
+                     radial-gradient(ellipse at bottom, ${accentColor}10 0%, transparent 50%),
+                     linear-gradient(to bottom, #0f172a, #1e293b)`,
       }}
     >
-      <div className="max-w-md w-full">
-        {/* Coupon Card */}
-        <div className="relative bg-slate-800/80 backdrop-blur rounded-2xl overflow-hidden shadow-2xl border border-slate-700/50">
-          {/* Coupon perforations */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-6 h-12 bg-slate-900 rounded-r-full" />
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-12 bg-slate-900 rounded-l-full" />
+      {/* Floating orbs */}
+      <div
+        className="absolute top-20 right-[15%] w-64 h-64 rounded-full blur-3xl opacity-20 animate-pulse"
+        style={{ backgroundColor: accentColor }}
+      />
+      <div
+        className="absolute bottom-32 left-[10%] w-48 h-48 rounded-full blur-2xl opacity-15 animate-pulse"
+        style={{ backgroundColor: accentColor, animationDelay: '1s' }}
+      />
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl opacity-10"
+        style={{ backgroundColor: accentColor }}
+      />
 
-          <div className="p-6">
+      {/* Dot pattern */}
+      <div
+        className="absolute inset-0 opacity-5"
+        style={{
+          backgroundImage: `radial-gradient(${accentColor} 1px, transparent 1px)`,
+          backgroundSize: '24px 24px',
+        }}
+      />
+
+      <div className="max-w-md w-full relative z-10">
+        {/* Coupon Card */}
+        <div
+          className="relative bg-slate-800/60 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 animate-fade-in"
+          style={{ boxShadow: `0 25px 50px -12px ${accentColor}30` }}
+        >
+          {/* Coupon perforations */}
+          <div
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-6 h-12 rounded-r-full"
+            style={{
+              background: `radial-gradient(ellipse at top, ${accentColor}15 0%, transparent 50%),
+                           linear-gradient(to bottom, #0f172a, #1e293b)`,
+            }}
+          />
+          <div
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-12 rounded-l-full"
+            style={{
+              background: `radial-gradient(ellipse at top, ${accentColor}15 0%, transparent 50%),
+                           linear-gradient(to bottom, #0f172a, #1e293b)`,
+            }}
+          />
+
+          <div className="p-8">
             {/* Logo & Business Name */}
-            <div className="text-center mb-6">
-              {content.logoUrl && (
-                <img
-                  src={content.logoUrl}
-                  alt={content.businessName}
-                  className="h-16 mx-auto mb-3 object-contain"
-                />
+            <div
+              className="text-center mb-8 animate-slide-up"
+              style={{ animationDelay: '100ms' }}
+            >
+              {content.logoUrl ? (
+                <div
+                  className="w-20 h-20 mx-auto mb-4 rounded-2xl p-2 flex items-center justify-center"
+                  style={{
+                    background: `linear-gradient(135deg, ${accentColor}20, transparent)`,
+                    boxShadow: `0 8px 24px ${accentColor}20`,
+                  }}
+                >
+                  <img
+                    src={content.logoUrl}
+                    alt={content.businessName}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
+              ) : (
+                <div
+                  className="w-20 h-20 mx-auto mb-4 rounded-2xl flex items-center justify-center text-white font-bold text-2xl"
+                  style={{
+                    background: `linear-gradient(135deg, ${accentColor}40, ${accentColor}20)`,
+                    boxShadow: `0 8px 24px ${accentColor}20`,
+                  }}
+                >
+                  {content.businessName.charAt(0).toUpperCase()}
+                </div>
               )}
-              <h2 className="text-lg font-medium text-slate-300">{content.businessName}</h2>
+              <h2 className="text-xl font-semibold text-white">{content.businessName}</h2>
             </div>
 
             {/* Main Offer */}
-            <div className="text-center py-6 border-y border-dashed border-slate-600">
+            <div
+              className="text-center py-8 border-y border-dashed border-slate-600/50 animate-slide-up"
+              style={{ animationDelay: '200ms' }}
+            >
               <p
-                className="text-5xl font-bold mb-2"
-                style={{ color: accentColor }}
+                className="text-6xl font-black mb-3 tracking-tight"
+                style={{
+                  color: accentColor,
+                  textShadow: `0 0 40px ${accentColor}50`,
+                }}
               >
                 {content.headline}
               </p>
-              <p className="text-xl text-white">{content.description}</p>
+              <p className="text-xl text-white/90 font-medium">{content.description}</p>
             </div>
 
             {/* Promo Code */}
             {content.code && (
-              <div className="mt-6">
-                <p className="text-sm text-slate-400 text-center mb-2">Use code:</p>
+              <div
+                className="mt-8 animate-slide-up"
+                style={{ animationDelay: '300ms' }}
+              >
+                <p className="text-sm text-slate-400 text-center mb-3">Tap to copy code:</p>
                 <button
                   onClick={copyCode}
-                  className="w-full p-4 bg-slate-700/50 rounded-lg border-2 border-dashed border-slate-500 flex items-center justify-center gap-3 hover:bg-slate-700 transition-colors group"
+                  disabled={isExpired}
+                  className="w-full p-5 rounded-xl border-2 border-dashed flex items-center justify-center gap-4 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: `${accentColor}10`,
+                    borderColor: `${accentColor}40`,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isExpired) {
+                      e.currentTarget.style.backgroundColor = `${accentColor}20`;
+                      e.currentTarget.style.borderColor = `${accentColor}60`;
+                      e.currentTarget.style.transform = 'scale(1.02)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = `${accentColor}10`;
+                    e.currentTarget.style.borderColor = `${accentColor}40`;
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
                 >
-                  <span className="text-2xl font-mono font-bold text-white tracking-wider">
+                  <span
+                    className="text-3xl font-mono font-bold tracking-widest"
+                    style={{ color: accentColor }}
+                  >
                     {content.code}
                   </span>
                   <svg
-                    className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors"
+                    className="w-6 h-6 text-slate-400 transition-all duration-300 group-hover:text-white group-hover:scale-110"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
                   >
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    {copied ? (
+                      <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+                    ) : (
+                      <>
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                      </>
+                    )}
                   </svg>
                 </button>
                 {copied && (
-                  <p className="text-center text-sm text-green-400 mt-2">
-                    Copied to clipboard!
+                  <p
+                    className="text-center text-sm font-medium mt-3 animate-fade-in"
+                    style={{ color: accentColor }}
+                  >
+                    ✓ Copied to clipboard!
                   </p>
                 )}
               </div>
@@ -132,33 +231,63 @@ export default function CouponLandingPage({ params }: PageProps) {
 
             {/* Validity */}
             {content.validUntil && (
-              <div className="mt-6 text-center">
+              <div
+                className="mt-6 text-center animate-slide-up"
+                style={{ animationDelay: '400ms' }}
+              >
                 {isExpired ? (
-                  <p className="text-red-400 font-medium">This coupon has expired</p>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-full">
+                    <svg className="w-4 h-4 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    <span className="text-red-400 font-medium">This coupon has expired</span>
+                  </div>
                 ) : (
-                  <p className="text-slate-400">
-                    Valid until:{' '}
-                    <span className="text-white">
-                      {new Date(content.validUntil).toLocaleDateString()}
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700/30 rounded-full">
+                    <svg className="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span className="text-slate-400">
+                      Valid until{' '}
+                      <span className="text-white font-medium">
+                        {new Date(content.validUntil).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                      </span>
                     </span>
-                  </p>
+                  </div>
                 )}
               </div>
             )}
 
             {/* Terms */}
             {content.terms && (
-              <div className="mt-6 pt-4 border-t border-slate-700">
-                <p className="text-xs text-slate-500 text-center">{content.terms}</p>
+              <div
+                className="mt-8 pt-6 border-t border-slate-700/50 animate-slide-up"
+                style={{ animationDelay: '500ms' }}
+              >
+                <p className="text-xs text-slate-500 text-center leading-relaxed">{content.terms}</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Powered by */}
-        <p className="mt-8 text-center text-sm text-slate-500">
+        <p
+          className="mt-10 text-center text-sm text-slate-500 animate-slide-up"
+          style={{ animationDelay: '600ms' }}
+        >
           Powered by{' '}
-          <Link href="/" className="hover:text-primary transition-colors">
+          <Link
+            href="/"
+            className="font-medium transition-colors hover:text-primary"
+            style={{ color: accentColor }}
+          >
             QRWolf
           </Link>
         </p>

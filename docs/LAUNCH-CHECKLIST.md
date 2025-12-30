@@ -2,6 +2,7 @@
 
 > **Live URL**: https://qrwolf.com
 > **Status**: LAUNCHED (December 28, 2025)
+> **Last Updated**: December 30, 2025 (Dynamic QR Type Upgrades)
 > **Admin Dashboard**: https://qrwolf.com/admin
 
 See also: `docs/SESSION-START.md` for full project context
@@ -138,16 +139,23 @@ See also: `docs/SESSION-START.md` for full project context
 - [ ] Password-protected QR shows `/r/[code]/unlock`
 - [ ] Scan limit exceeded shows `/limit-reached`
 
-**Landing Page Routes:**
-- [ ] `/r/[code]/pdf` - PDF viewer loads
-- [ ] `/r/[code]/gallery` - Image gallery with lightbox works
-- [ ] `/r/[code]/video` - Video player (YouTube/Vimeo/upload)
-- [ ] `/r/[code]/audio` - Audio player (Spotify/SoundCloud/upload)
-- [ ] `/r/[code]/menu` - Restaurant menu displays
-- [ ] `/r/[code]/business` - Business card with vCard download
-- [ ] `/r/[code]/links` - Link list displays
-- [ ] `/r/[code]/coupon` - Coupon with copy code works
-- [ ] `/r/[code]/social` - Social profile displays
+**Landing Page Routes (All Upgraded December 30, 2025):**
+All landing pages now feature:
+- Glassmorphism design with `backdrop-blur-xl`
+- Floating orb decorations with `animate-pulse`
+- Dot pattern backgrounds
+- Staggered fade-in/slide-up animations
+- Dark navy/teal theme with accent color support
+
+- [ ] `/r/[code]/pdf` - PDF viewer with header card, toolbar
+- [ ] `/r/[code]/gallery` - Image grid with zoom effect, lightbox + thumbnail strip
+- [ ] `/r/[code]/video` - Video player with YouTube/Vimeo badging
+- [ ] `/r/[code]/audio` - Audio player with Spotify/SoundCloud detection, vinyl cover art
+- [ ] `/r/[code]/menu` - Restaurant menu with category navigation
+- [ ] `/r/[code]/business` - Business card with glow effect, social links, vCard download
+- [ ] `/r/[code]/links` - Linktree-style with animated buttons, social icons
+- [ ] `/r/[code]/coupon` - Coupon with animated copy button, expiration badge
+- [ ] `/r/[code]/social` - Social profile with platform-colored buttons
 
 ### Analytics
 - [ ] Dashboard shows real stats
@@ -255,6 +263,13 @@ See also: `docs/SESSION-START.md` for full project context
 - [x] Logo upload with size slider in Style step
 - [x] Landing page previews in phone mockup
 - [x] QR code naming for download filenames
+
+**Dynamic QR Type Upgrades (December 30, 2025):**
+- [x] All 9 dynamic types have phone mockup previews in QRStudio
+- [x] Preview components: MenuPreview, LinksPreview, BusinessPreview, SocialPreview, CouponPreview, GalleryPreview, PDFPreview, VideoPreview, AudioPreview
+- [x] SocialLinksEditor reusable component for Business, Links, Social types
+- [x] All landing pages redesigned with modern glassmorphism UI
+- [x] Consistent design language across all QR types
 
 ---
 

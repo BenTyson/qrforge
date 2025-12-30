@@ -35,6 +35,7 @@ import { LinksForm } from '@/components/qr/forms/LinksForm';
 import { CouponForm } from '@/components/qr/forms/CouponForm';
 import { SocialForm } from '@/components/qr/forms/SocialForm';
 import { LogoUploader } from '@/components/qr/LogoUploader';
+import { MenuPreview } from '@/components/menu/MenuPreview';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
@@ -661,25 +662,34 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
 
           {/* Step 2: Content */}
           {step === 'content' && selectedType && (
-            <div className="max-w-xl mx-auto space-y-6">
+            <div className={cn(
+              selectedType === 'menu' ? 'max-w-4xl' : 'max-w-xl',
+              'mx-auto'
+            )}>
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold text-white mb-2">Enter your content</h3>
                 <p className="text-slate-400">Fill in the details for your QR code</p>
               </div>
 
-              {/* QR Code Name */}
-              <div className="space-y-2">
-                <Label htmlFor="qrName" className="text-white">QR Code Name</Label>
-                <Input
-                  id="qrName"
-                  type="text"
-                  placeholder="e.g., Business Card, Menu, Website Link..."
-                  value={qrName}
-                  onChange={(e) => setQrName(e.target.value)}
-                  className="bg-slate-800 border-slate-700"
-                />
-                <p className="text-xs text-slate-500">This helps you identify it later and names your download file</p>
-              </div>
+              {/* Two-column layout for menu, single column for others */}
+              <div className={cn(
+                selectedType === 'menu' ? 'grid grid-cols-1 lg:grid-cols-2 gap-8' : ''
+              )}>
+                {/* Form Column */}
+                <div className="space-y-6">
+                  {/* QR Code Name */}
+                  <div className="space-y-2">
+                    <Label htmlFor="qrName" className="text-white">QR Code Name</Label>
+                    <Input
+                      id="qrName"
+                      type="text"
+                      placeholder="e.g., Business Card, Menu, Website Link..."
+                      value={qrName}
+                      onChange={(e) => setQrName(e.target.value)}
+                      className="bg-slate-800 border-slate-700"
+                    />
+                    <p className="text-xs text-slate-500">This helps you identify it later and names your download file</p>
+                  </div>
 
               {/* URL Form */}
               {selectedType === 'url' && (
@@ -1124,19 +1134,28 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
                 </Button>
               )}
 
-              {/* Continue Button */}
-              <div className="pt-6">
-                <Button
-                  onClick={handleContinue}
-                  disabled={!isContentValid()}
-                  className="w-full"
-                  size="lg"
-                >
-                  Continue to Style
-                  <svg className="w-5 h-5 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </Button>
+                  {/* Continue Button */}
+                  <div className="pt-6">
+                    <Button
+                      onClick={handleContinue}
+                      disabled={!isContentValid()}
+                      className="w-full"
+                      size="lg"
+                    >
+                      Continue to Style
+                      <svg className="w-5 h-5 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Preview Column - only for menu type */}
+                {selectedType === 'menu' && (
+                  <div className="hidden lg:block sticky top-8">
+                    <MenuPreview content={(content as any) || {}} />
+                  </div>
+                )}
               </div>
             </div>
           )}

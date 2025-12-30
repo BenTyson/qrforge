@@ -1,6 +1,24 @@
 import type { NextConfig } from "next";
+import { build } from 'velite';
+
+class VeliteWebpackPlugin {
+  static started = false;
+  apply(compiler: any) {
+    compiler.hooks.beforeCompile.tapPromise('VeliteWebpackPlugin', async () => {
+      if (VeliteWebpackPlugin.started) return;
+      VeliteWebpackPlugin.started = true;
+      const dev = compiler.options.mode === 'development';
+      await build({ watch: dev, clean: !dev });
+    });
+  }
+}
 
 const nextConfig: NextConfig = {
+  // Velite webpack integration
+  webpack: (config) => {
+    config.plugins.push(new VeliteWebpackPlugin());
+    return config;
+  },
   // Optimize images
   images: {
     remotePatterns: [

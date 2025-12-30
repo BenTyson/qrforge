@@ -173,7 +173,7 @@ export interface BusinessContent {
   address?: string;
   photoUrl?: string;
   socialLinks?: Array<{
-    platform: 'linkedin' | 'twitter' | 'facebook' | 'instagram' | 'github';
+    platform: 'twitter' | 'instagram' | 'tiktok' | 'youtube' | 'linkedin' | 'github' | 'facebook' | 'twitch' | 'discord';
     url: string;
   }>;
   bio?: string;
@@ -191,7 +191,7 @@ export interface LinksContent {
     icon?: string;
   }>;
   socialLinks?: Array<{
-    platform: 'twitter' | 'instagram' | 'tiktok' | 'youtube' | 'linkedin';
+    platform: 'twitter' | 'instagram' | 'tiktok' | 'youtube' | 'linkedin' | 'github' | 'facebook' | 'twitch' | 'discord';
     url: string;
   }>;
   accentColor?: string;

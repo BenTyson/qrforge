@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { LogoUploader } from '@/components/qr/LogoUploader';
+import { DietaryTagSelector } from '@/components/qr/forms/DietaryTagSelector';
 import type { MenuContent } from '@/lib/qr/types';
 
 interface MenuFormProps {
@@ -12,11 +13,14 @@ interface MenuFormProps {
   onChange: (content: MenuContent) => void;
 }
 
+type DietaryTag = 'vegetarian' | 'vegan' | 'gluten-free';
+
 type MenuItem = {
   name: string;
   description?: string;
   price: string;
   image?: string;
+  dietary?: DietaryTag[];
 };
 
 type MenuCategory = {
@@ -56,7 +60,7 @@ export function MenuForm({ content, onChange }: MenuFormProps) {
     categoryIndex: number,
     itemIndex: number,
     field: keyof MenuItem,
-    value: string
+    value: string | DietaryTag[] | undefined
   ) => {
     const newCategories = [...categories];
     const newItems = [...newCategories[categoryIndex].items];
@@ -182,41 +186,77 @@ export function MenuForm({ content, onChange }: MenuFormProps) {
               </div>
 
               {/* Items in category */}
-              <div className="space-y-2 pl-4 border-l-2 border-primary/20">
+              <div className="space-y-3 pl-4 border-l-2 border-primary/20">
                 {category.items.map((item, itemIndex) => (
-                  <div key={itemIndex} className="flex gap-2">
-                    <Input
-                      type="text"
-                      placeholder="Item name"
-                      value={item.name}
+                  <Card key={itemIndex} className="p-3 bg-secondary/30">
+                    {/* Row 1: Name, Price, Delete */}
+                    <div className="flex gap-2 mb-2">
+                      <Input
+                        type="text"
+                        placeholder="Item name"
+                        value={item.name}
+                        onChange={(e) =>
+                          handleItemChange(categoryIndex, itemIndex, 'name', e.target.value)
+                        }
+                        className="flex-1 bg-secondary/50"
+                      />
+                      <Input
+                        type="text"
+                        placeholder="$0.00"
+                        value={item.price}
+                        onChange={(e) =>
+                          handleItemChange(categoryIndex, itemIndex, 'price', e.target.value)
+                        }
+                        className="w-24 bg-secondary/50"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeItem(categoryIndex, itemIndex)}
+                        disabled={category.items.length <= 1}
+                        className="text-muted-foreground hover:text-destructive shrink-0"
+                      >
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </Button>
+                    </div>
+
+                    {/* Row 2: Description */}
+                    <textarea
+                      placeholder="Item description (optional)"
+                      value={item.description || ''}
                       onChange={(e) =>
-                        handleItemChange(categoryIndex, itemIndex, 'name', e.target.value)
+                        handleItemChange(categoryIndex, itemIndex, 'description', e.target.value)
                       }
-                      className="flex-1 bg-secondary/50"
+                      rows={2}
+                      className="w-full px-3 py-2 text-sm bg-secondary/50 border border-border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
                     />
-                    <Input
-                      type="text"
-                      placeholder="$0.00"
-                      value={item.price}
-                      onChange={(e) =>
-                        handleItemChange(categoryIndex, itemIndex, 'price', e.target.value)
-                      }
-                      className="w-24 bg-secondary/50"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeItem(categoryIndex, itemIndex)}
-                      disabled={category.items.length <= 1}
-                      className="text-muted-foreground hover:text-destructive shrink-0"
-                    >
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                      </svg>
-                    </Button>
-                  </div>
+
+                    {/* Row 3: Image & Dietary Tags */}
+                    <div className="flex gap-3 mt-2 items-start">
+                      <div className="flex-1">
+                        <LogoUploader
+                          value={item.image}
+                          onChange={(url) =>
+                            handleItemChange(categoryIndex, itemIndex, 'image', url)
+                          }
+                          placeholder="Add item photo"
+                        />
+                      </div>
+                      <div className="shrink-0">
+                        <p className="text-xs text-muted-foreground mb-1.5">Dietary</p>
+                        <DietaryTagSelector
+                          selected={item.dietary || []}
+                          onChange={(tags) =>
+                            handleItemChange(categoryIndex, itemIndex, 'dietary', tags)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </Card>
                 ))}
                 <Button
                   type="button"
@@ -272,7 +312,7 @@ export function MenuForm({ content, onChange }: MenuFormProps) {
       </div>
 
       <p className="text-sm text-muted-foreground bg-secondary/30 p-3 rounded-lg">
-        Create a digital menu for your restaurant. When scanned, customers will see your full menu.
+        Create a digital menu for your restaurant. Add photos and dietary tags to make your menu more appealing.
       </p>
     </div>
   );

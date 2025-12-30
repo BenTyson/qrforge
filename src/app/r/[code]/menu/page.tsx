@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { MenuContent } from '@/lib/qr/types';
+import { CategoryNav } from '@/components/menu/CategoryNav';
+import { MenuItemCard } from '@/components/menu/MenuItemCard';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -24,91 +26,89 @@ export default async function MenuLandingPage({ params }: PageProps) {
 
   const content = qrCode.content as MenuContent;
   const accentColor = content.accentColor || '#14b8a6';
+  const categoryNames = content.categories.map(c => c.name).filter(Boolean);
 
   return (
     <div
       className="min-h-screen py-8 px-4"
       style={{
-        background: `linear-gradient(135deg, ${accentColor}10 0%, #0f172a 100%)`,
+        background: `linear-gradient(180deg, ${accentColor}15 0%, #0f172a 30%, #0f172a 100%)`,
       }}
     >
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
+        <header className="text-center mb-6 animate-fade-in">
           {content.logoUrl && (
-            <img
-              src={content.logoUrl}
-              alt={content.restaurantName}
-              className="h-20 mx-auto mb-4 object-contain"
-            />
+            <div className="mb-4">
+              <img
+                src={content.logoUrl}
+                alt={content.restaurantName}
+                className="h-24 mx-auto object-contain drop-shadow-lg"
+              />
+            </div>
           )}
-          <h1 className="text-3xl font-bold text-white">{content.restaurantName}</h1>
-          <p className="text-slate-400 mt-2">Menu</p>
-        </div>
+          <h1 className="text-3xl font-bold text-white tracking-tight">
+            {content.restaurantName}
+          </h1>
+          <p className="text-slate-400 mt-1 text-sm">Menu</p>
+        </header>
+
+        {/* Sticky Category Navigation */}
+        <CategoryNav categories={categoryNames} accentColor={accentColor} />
 
         {/* Menu Categories */}
-        <div className="space-y-8">
+        <div className="space-y-10">
           {content.categories.map((category, categoryIndex) => (
-            <div key={categoryIndex}>
+            <section
+              key={categoryIndex}
+              id={`category-${categoryIndex}`}
+              className="scroll-mt-20"
+            >
               {/* Category Header */}
-              <h2
-                className="text-xl font-bold mb-4 pb-2 border-b-2"
-                style={{ color: accentColor, borderColor: `${accentColor}40` }}
-              >
-                {category.name}
-              </h2>
+              <div className="mb-5">
+                <h2
+                  className="text-xl font-bold pb-2 border-b-2"
+                  style={{ color: accentColor, borderColor: `${accentColor}40` }}
+                >
+                  {category.name}
+                </h2>
+                {category.items.length > 0 && (
+                  <p className="text-xs text-slate-500 mt-1">
+                    {category.items.length} item{category.items.length !== 1 ? 's' : ''}
+                  </p>
+                )}
+              </div>
 
-              {/* Items */}
-              <div className="space-y-4">
+              {/* Items Grid */}
+              <div className="grid gap-4 sm:grid-cols-2">
                 {category.items.map((item, itemIndex) => (
-                  <div
+                  <MenuItemCard
                     key={itemIndex}
-                    className="flex justify-between items-start gap-4 p-3 rounded-lg hover:bg-slate-800/50 transition-colors"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start gap-2">
-                        <h3 className="font-medium text-white">{item.name}</h3>
-                        {item.dietary && item.dietary.length > 0 && (
-                          <div className="flex gap-1">
-                            {item.dietary.map((d) => (
-                              <span
-                                key={d}
-                                className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-300"
-                              >
-                                {d === 'vegetarian' && 'V'}
-                                {d === 'vegan' && 'VG'}
-                                {d === 'gluten-free' && 'GF'}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      {item.description && (
-                        <p className="text-sm text-slate-400 mt-1">{item.description}</p>
-                      )}
-                    </div>
-                    <span
-                      className="font-bold shrink-0"
-                      style={{ color: accentColor }}
-                    >
-                      {item.price}
-                    </span>
-                  </div>
+                    item={item}
+                    accentColor={accentColor}
+                    className="animate-slide-up"
+                    style={{
+                      animationDelay: `${itemIndex * 50}ms`,
+                    } as React.CSSProperties}
+                  />
                 ))}
               </div>
-            </div>
+            </section>
           ))}
         </div>
 
         {/* Footer */}
-        <div className="mt-12 pt-6 border-t border-slate-700/50">
+        <footer className="mt-16 pt-6 border-t border-slate-700/50">
           <p className="text-center text-sm text-slate-500">
             Powered by{' '}
-            <Link href="/" className="hover:text-primary transition-colors">
+            <Link
+              href="/"
+              className="text-slate-400 hover:text-primary transition-colors font-medium"
+            >
               QRWolf
             </Link>
           </p>
-        </div>
+        </footer>
       </div>
     </div>
   );

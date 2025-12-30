@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { LogoUploader } from '@/components/qr/LogoUploader';
+import { SocialLinksEditor } from './SocialLinksEditor';
 import type { LinksContent } from '@/lib/qr/types';
 
 interface LinksFormProps {
@@ -66,6 +67,18 @@ export function LinksForm({ content, onChange }: LinksFormProps) {
         accentColor: content.accentColor,
       });
     }
+  };
+
+  const handleSocialLinksChange = (socialLinks: { platform: string; url: string }[]) => {
+    onChange({
+      type: 'links',
+      title: content.title || '',
+      description: content.description,
+      avatarUrl: content.avatarUrl,
+      links: content.links || [],
+      socialLinks: socialLinks as LinksContent['socialLinks'],
+      accentColor: content.accentColor,
+    });
   };
 
   return (
@@ -157,6 +170,12 @@ export function LinksForm({ content, onChange }: LinksFormProps) {
           Add Link
         </Button>
       </div>
+
+      {/* Social Links Section */}
+      <SocialLinksEditor
+        links={content.socialLinks || []}
+        onChange={handleSocialLinksChange}
+      />
 
       {/* Accent Color */}
       <div>

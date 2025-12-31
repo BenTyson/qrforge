@@ -81,12 +81,12 @@ export function PublicNav({ showAuthButtons = true }: PublicNavProps) {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
               <Image
-                src="/QRWolf_Logo_Icon.png"
+                src="/QRWolf_Logo_Color.png"
                 alt="QRWolf"
                 width={32}
-                height={32}
+                height={36}
               />
-              <span className="text-xl font-bold gradient-text">QRWolf</span>
+              <span className="text-xl font-bold text-white">QRWolf</span>
             </Link>
 
             {/* Desktop Nav */}

@@ -8,12 +8,12 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/QRWolf_Logo_Icon.png"
+              src="/QRWolf_Logo_Color.png"
               alt="QRWolf"
               width={24}
-              height={24}
+              height={27}
             />
-            <span className="font-semibold">QRWolf</span>
+            <span className="font-semibold text-white">QRWolf</span>
           </Link>
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} QRWolf. All rights reserved.

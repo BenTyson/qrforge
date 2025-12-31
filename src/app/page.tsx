@@ -104,10 +104,10 @@ export default async function Home() {
         {/* Logo with glow */}
         <div className="relative z-10 flex flex-col items-center text-center px-4">
           <Image
-            src="/QRWolf_Logo_Color.png"
+            src="/QRWolf_Logo_Particle_Color.png"
             alt="QRWolf Logo"
-            width={140}
-            height={158}
+            width={180}
+            height={190}
             className="logo-glow mb-4 drop-shadow-2xl"
             priority
           />

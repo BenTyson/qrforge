@@ -1,0 +1,339 @@
+---
+title: "QR Code Versions Explained: From 1 to 40"
+description: "Understand QR code versions, what determines version selection, and how version affects size, capacity, and scannability of your QR codes."
+category: "technical"
+order: 2
+tags: ["versions", "modules", "size", "technical", "specifications"]
+relatedSlugs: ["qr-code-data-capacity", "qr-code-error-correction", "what-is-a-qr-code"]
+draft: false
+---
+
+Every QR code has a version number from 1 to 40. This version determines the code's size, data capacity, and complexity. Understanding versions helps you create QR codes optimized for your specific needs.
+
+## What Is a QR Code Version?
+
+The **version** defines how many modules (the small squares) make up the QR code grid:
+
+- **Version 1:** 21×21 modules (smallest)
+- **Version 40:** 177×177 modules (largest)
+
+Each version increase adds 4 modules to both width and height:
+
+```
+Version modules = (version × 4) + 17
+
+Version 1:  (1 × 4) + 17 = 21
+Version 10: (10 × 4) + 17 = 57
+Version 40: (40 × 4) + 17 = 177
+```
+
+## Version Overview Table
+
+| Version | Modules | Total Squares | Relative Size |
+|---------|---------|---------------|---------------|
+| 1 | 21×21 | 441 | Smallest |
+| 5 | 37×37 | 1,369 | Small |
+| 10 | 57×57 | 3,249 | Medium |
+| 20 | 97×97 | 9,409 | Large |
+| 30 | 137×137 | 18,769 | Very Large |
+| 40 | 177×177 | 31,329 | Maximum |
+
+<Callout type="info" title="Did You Know?">
+Most real-world QR codes are Version 1-10. Versions above 20 are rarely used because they require very large physical sizes to remain scannable.
+</Callout>
+
+## How Version Affects Capacity
+
+Higher versions store more data. Here's the byte capacity at Level M error correction:
+
+| Version | Modules | Bytes (Level M) | Typical Use |
+|---------|---------|-----------------|-------------|
+| 1 | 21×21 | 14 | Very short URLs |
+| 2 | 25×25 | 26 | Short URLs |
+| 3 | 29×29 | 42 | Standard URLs |
+| 4 | 33×33 | 62 | Longer URLs |
+| 5 | 37×37 | 84 | URLs with parameters |
+| 6 | 41×41 | 106 | Extended URLs |
+| 7 | 45×45 | 122 | Basic vCards |
+| 10 | 57×57 | 213 | Full vCards |
+| 15 | 77×77 | 412 | Long text |
+| 20 | 97×97 | 680 | Very long content |
+
+## What Determines Version?
+
+QR generators automatically select the minimum version needed based on:
+
+### 1. Content Length
+
+More characters require higher versions:
+
+| Content | Typical Version |
+|---------|-----------------|
+| `https://qrwolf.com/r/abc` | Version 2 |
+| Full product URL (100 chars) | Version 5-6 |
+| Basic vCard | Version 7-10 |
+| Detailed vCard | Version 15-20 |
+
+### 2. Error Correction Level
+
+Higher error correction reduces capacity, potentially requiring higher versions:
+
+| Same Content | Level L | Level M | Level Q | Level H |
+|--------------|---------|---------|---------|---------|
+| 50-byte URL | Version 3 | Version 4 | Version 5 | Version 6 |
+
+### 3. Encoding Mode
+
+Numeric-only content is more efficient than text:
+
+| Content | Mode | Version Needed |
+|---------|------|----------------|
+| `12345678901234567890` (20 digits) | Numeric | Version 1 |
+| `HELLO-WORLD-12345` (17 chars) | Alphanumeric | Version 2 |
+| `hello@example.com` (17 chars) | Byte | Version 2 |
+
+## Version Components
+
+Each version includes specific structural elements:
+
+### Finder Patterns
+
+All versions have three finder patterns (the large squares in corners):
+- Always 7×7 modules each
+- Same size regardless of version
+- Located at top-left, top-right, bottom-left
+
+### Alignment Patterns
+
+Higher versions add alignment patterns for scanning accuracy:
+
+| Version | Alignment Patterns |
+|---------|-------------------|
+| 1 | 0 |
+| 2-6 | 1 |
+| 7-13 | 6 |
+| 14-20 | 13 |
+| 21-27 | 22 |
+| 28-34 | 33 |
+| 35-40 | 46 |
+
+### Timing Patterns
+
+Alternating modules that help scanners determine module positions:
+- Horizontal line from top-left to top-right finder
+- Vertical line from top-left to bottom-left finder
+- Present in all versions
+
+### Format Information
+
+Stores error correction level and mask pattern:
+- 15 modules near finder patterns
+- Duplicated for redundancy
+- Same in all versions
+
+### Version Information
+
+Only present in Version 7 and higher:
+- 18 modules total
+- Contains encoded version number
+- Helps scanners decode larger codes
+
+<Callout type="tip" title="Pro Tip">
+Versions 1-6 don't include version information modules—the scanner determines version by counting modules. This is one reason small versions scan faster.
+</Callout>
+
+## Physical Size Implications
+
+Higher versions require larger physical sizes:
+
+### Minimum Print Sizes
+
+For reliable scanning with standard smartphones:
+
+| Version | Minimum Size | Comfortable Size |
+|---------|--------------|------------------|
+| 1-3 | 0.6" (15mm) | 1" (25mm) |
+| 4-7 | 0.8" (20mm) | 1.2" (30mm) |
+| 8-14 | 1" (25mm) | 1.5" (38mm) |
+| 15-25 | 1.5" (38mm) | 2" (50mm) |
+| 26-40 | 2"+ (50mm+) | 3"+ (75mm+) |
+
+### Module Size Requirements
+
+Each module must be large enough for camera resolution:
+- **Minimum:** 0.25mm per module
+- **Recommended:** 0.5mm per module
+- **Comfortable:** 1mm+ per module
+
+### Calculating Print Size
+
+```
+Minimum size = modules × 0.25mm
+
+Version 5 (37 modules): 37 × 0.25mm = 9.25mm minimum
+Version 20 (97 modules): 97 × 0.25mm = 24.25mm minimum
+```
+
+## Version Selection Strategy
+
+### For Dynamic QR Codes
+
+Dynamic codes encode short URLs, keeping versions low:
+
+- **QRWolf short URL:** ~28 characters
+- **Typical version:** 2-3
+- **Benefit:** Small, scannable codes regardless of destination
+
+### For Static Content
+
+Match version to content type:
+
+| Content Type | Target Version | Strategy |
+|--------------|----------------|----------|
+| Simple URL | 2-4 | Use URL shortener if needed |
+| Full URL | 4-7 | Accept larger size |
+| WiFi config | 3-5 | Standard passwords |
+| Basic vCard | 7-10 | Essential fields only |
+| Full vCard | 15-20 | All contact details |
+
+### For Limited Space
+
+When physical size is constrained:
+
+1. Calculate available modules (size ÷ 0.5mm)
+2. Determine maximum version for that size
+3. Check if content fits that version
+4. If not, use dynamic QR code or shorten content
+
+## Scanning Considerations by Version
+
+### Low Versions (1-10)
+
+**Advantages:**
+- Fast detection and decoding
+- Works well at small sizes
+- Forgiving of print quality issues
+- Scans reliably from angles
+
+**Common uses:**
+- Business cards
+- Product labels
+- Mobile-first applications
+
+### Medium Versions (11-20)
+
+**Advantages:**
+- Good capacity for complex content
+- Still reasonable scan speed
+- Acceptable size for most applications
+
+**Challenges:**
+- Requires larger print size
+- More sensitive to print quality
+- Benefits from good lighting
+
+**Common uses:**
+- Detailed vCards
+- Extended information
+- Marketing materials
+
+### High Versions (21-40)
+
+**Advantages:**
+- Maximum data capacity
+- Can store binary data
+
+**Challenges:**
+- Very large physical size required
+- Slow to scan
+- Sensitive to damage and quality
+- Poor scanning at angles
+
+**Common uses:**
+- Specialized industrial applications
+- Data backup (rare)
+- Large text documents (rare)
+
+<Callout type="warning" title="Important">
+Versions above 25 are almost never practical for consumer applications. The required physical size and scanning challenges make them unsuitable for typical use cases.
+</Callout>
+
+## Micro QR Codes
+
+For extremely limited space, Micro QR codes offer smaller alternatives:
+
+| Micro Version | Modules | Max Numeric | Max Alphanumeric |
+|---------------|---------|-------------|------------------|
+| M1 | 11×11 | 5 | - |
+| M2 | 13×13 | 10 | 6 |
+| M3 | 15×15 | 23 | 14 |
+| M4 | 17×17 | 35 | 21 |
+
+**Limitations:**
+- Very limited capacity
+- Only one finder pattern
+- Not universally supported
+- Specialized use cases only
+
+## Version Optimization Tips
+
+### Reduce Content Length
+
+Every character eliminated potentially reduces version:
+- Remove tracking parameters
+- Use short domain names
+- Abbreviate where possible
+
+### Choose Efficient Encoding
+
+When possible, use content that encodes efficiently:
+- Numeric only (phone numbers) - most compact
+- Uppercase alphanumeric - good efficiency
+- Avoid special characters - less efficient
+
+### Accept Higher Error Correction Trade-off
+
+Sometimes a higher version with Level H is better than lower version with Level L:
+- More reliable scanning
+- Logo overlay possible
+- Better damage tolerance
+
+### Use Dynamic QR Codes
+
+The ultimate version optimizer:
+- Always low versions (2-3 typically)
+- Change destination without changing code
+- Track scans and engagement
+
+## Common Questions
+
+### Can I force a specific version?
+
+Some generators allow version specification, but it's rarely necessary. Let the generator choose the minimum required version.
+
+### Why is my QR code so large?
+
+Either your content is long, or error correction is high. Try:
+- Shortening content
+- Using dynamic QR code
+- Reducing error correction (if no logo)
+
+### What version should I use for business cards?
+
+Target Version 2-4 maximum. Use dynamic QR codes to ensure compact codes regardless of destination.
+
+### Can cameras scan all versions?
+
+Modern smartphones handle all versions, but higher versions require:
+- Larger physical size
+- Better lighting
+- More precise positioning
+- Closer scanning distance
+
+## Conclusion
+
+QR code versions automatically scale with your content needs, but understanding the system helps you make better decisions. For most applications, keeping versions low through content optimization or dynamic QR codes produces the best results—codes that are small, fast to scan, and reliable.
+
+When higher versions are necessary, ensure adequate physical size and printing quality to maintain scannability.
+
+Ready to create optimally-sized QR codes? [Get started for free](/signup) with QRWolf. Our dynamic QR codes automatically use minimal versions while giving you full control over destinations and tracking.

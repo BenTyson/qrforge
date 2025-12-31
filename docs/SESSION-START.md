@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: December 30, 2025 (Blog & Learn V2 UI Polish)
+> **Last Updated**: December 31, 2025 (Learn Content Expansion + Google OAuth Branding)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -260,7 +260,7 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - Auto-generated table of contents with scroll-spy
   - Related articles section on each page
   - Dynamic sitemap includes all blog/learn pages
-  - Initial content: 1 blog post, 4 wiki articles
+  - Initial content: 2 blog posts, 12 wiki articles (all 6 categories populated)
   - Components: ArticleCard, TableOfContents, LearnSidebar, MDXContent
   - SEO: Per-article metadata, JSON-LD schema, OpenGraph tags
 - **Blog & Learn V2 UI Polish** (December 30, 2025):
@@ -275,6 +275,22 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - RelatedArticles: Gradient divider, staggered card animations
   - Category pages: Consistent V2 styling with orbs and animations
   - Design patterns: Glassmorphism, `animate-slide-up` with 80ms delays, `hover:scale-[1.02]`
+- **Learn Content Expansion** (December 31, 2025):
+  - Added 7 new learn articles using content skill
+  - All 6 categories now have 2+ articles (12 total):
+    - `qr-basics/` - what-is-a-qr-code, static-vs-dynamic-qr-codes
+    - `how-it-works/` - qr-code-error-correction, how-qr-code-scanning-works
+    - `use-cases/` - restaurant-menu-qr-codes, business-card-qr-codes
+    - `industries/` - qr-codes-for-retail, qr-codes-for-healthcare
+    - `best-practices/` - qr-code-design-best-practices, qr-code-placement-guide
+    - `technical/` - qr-code-data-capacity, qr-code-versions-explained
+  - Each article includes Callout components, tables, internal links, CTAs
+  - Proper relatedSlugs cross-linking between articles
+- **Google OAuth Branding Fix** (December 31, 2025):
+  - Domain verified in Google Search Console (DNS TXT record via Porkbun)
+  - OAuth consent screen now shows "QRWolf" branding (was showing Supabase URL)
+  - Submitted sitemap to Google Search Console: `https://qrwolf.com/sitemap.xml`
+  - Cleaned up stale sitemaps from previous domain owner (2020/2023 data)
 
 ### Planned Enhancements
 - QR code folders/organization
@@ -530,9 +546,10 @@ Scan tracking in `/r/[code]/route.ts`:
 - what is a qr code, how qr codes work, qr code history
 - static vs dynamic qr code, qr code best practices
 
-**To enable Google Search Console:**
-1. Add verification meta tag to `layout.tsx` verification object
-2. Submit sitemap URL: `https://yourdomain.com/sitemap.xml`
+**Google Search Console:** Configured
+- Domain verified via DNS TXT record (Porkbun)
+- Sitemap submitted: `https://qrwolf.com/sitemap.xml`
+- URL: https://search.google.com/search-console (property: qrwolf.com)
 
 ## Database (Supabase)
 

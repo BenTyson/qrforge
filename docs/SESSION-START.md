@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: December 31, 2025 (QR Codes Page V2 + Folders + Plausible Analytics)
+> **Last Updated**: January 1, 2026 (Logo Upload UX + Image Optimization)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -163,7 +163,7 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - Created `src/components/qr/wizard/` directory with step components:
     - `constants.tsx` - TYPE_CATEGORIES, COLOR_PRESETS, WIZARD_STEPS
     - `steps/TypeStep.tsx` - QR type selection step
-    - `steps/StyleStep.tsx` - Style customization step
+    - `steps/StyleStep.tsx` - Style step with Colors | Logo tabs
     - `steps/OptionsStep.tsx` - Pro options (expiration, password, scheduling)
     - `steps/DownloadStep.tsx` - Save and download step
   - Created `src/lib/constants/limits.ts` - Centralized constants:
@@ -312,6 +312,29 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - Custom script URL integration in layout.tsx
   - Environment variable: `NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL`
   - Dashboard: https://plausible.io/qrwolf.com
+- **Logo Upload UX Enhancement** (January 1, 2026):
+  - StyleStep refactored with "Colors" | "Logo" tabs
+  - LogoBestPractices component with 5 tips:
+    - Recommended dimensions (300×300px+, square ratio)
+    - Keep it simple (bold, minimal logos)
+    - Square or circular shapes
+    - High contrast (PNG with transparency)
+    - Test before printing (2-3 phones/apps)
+  - Clickable "Add a logo" pill under QR preview for discoverability
+  - Best practices visible to all users (Pro and Free)
+  - Applied to all QR builder variants:
+    - QRWizard (create page)
+    - BulkStudio (bulk page)
+    - QRLogoUploader (edit page)
+- **Image Optimization** (January 1, 2026):
+  - Sharp library for server-side image processing
+  - Media images (JPEG, PNG, WebP): Resize to max 2000px, convert to WebP, 80% quality
+  - GIFs: Resize to max 2000px if needed, preserve animation
+  - Logos (PNG, JPEG): Resize to max 500px, compress at 85% quality, keep original format
+  - SVGs: Sanitization only (no image processing)
+  - Typical 40-70% file size reduction
+  - Graceful fallback to original if optimization fails
+  - Server logs show compression ratio for monitoring
 
 ### Planned Enhancements
 - Email scan alerts
@@ -443,7 +466,8 @@ src/
 │   │   ├── QRGenerator.tsx         # QR generation form (homepage)
 │   │   ├── QRCodeCard.tsx          # QR list item with actions + folder dropdown
 │   │   ├── QRStyleEditor.tsx       # Color/preset customization
-│   │   ├── QRLogoUploader.tsx      # Logo upload (Pro feature)
+│   │   ├── QRLogoUploader.tsx      # Logo upload (Pro feature) + best practices
+│   │   ├── LogoBestPractices.tsx   # Logo upload best practices guide
 │   │   ├── QRTypeSelector.tsx      # Categorized type selector with Pro badges
 │   │   ├── QRWizard.tsx            # 5-step QR creation wizard (Type→Content→Style→Options→Download)
 │   │   ├── QRFilters.tsx           # Search, type filter, status filter, folder filter

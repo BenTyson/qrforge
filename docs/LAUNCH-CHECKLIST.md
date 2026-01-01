@@ -2,7 +2,7 @@
 
 > **Live URL**: https://qrwolf.com
 > **Status**: LAUNCHED (December 28, 2025)
-> **Last Updated**: December 31, 2025 (QR Codes Page V2 + Folders + Plausible Analytics)
+> **Last Updated**: January 1, 2026 (Logo Upload UX + Image Optimization)
 > **Admin Dashboard**: https://qrwolf.com/admin
 
 See also: `docs/SESSION-START.md` for full project context
@@ -296,6 +296,21 @@ All landing pages now feature:
 - [x] MDX components with enhanced typography, anchor links, styled elements
 - [x] Callout component with 5 variants (info, warning, tip, error, note)
 - [x] Category pages with consistent V2 styling
+
+**Logo Upload UX Enhancement (January 1, 2026):**
+- [x] StyleStep refactored with "Colors" | "Logo" tabs
+- [x] LogoBestPractices component with 5 tips (dimensions, simplicity, shape, contrast, testing)
+- [x] Clickable "Add a logo" button under QR preview
+- [x] Best practices visible to all users (Pro and Free)
+- [x] Applied to QRWizard, BulkStudio, and QRLogoUploader (edit page)
+
+**Image Optimization (January 1, 2026):**
+- [x] Sharp library for server-side image processing
+- [x] Media images: Resize max 2000px, convert to WebP, 80% quality
+- [x] GIFs: Resize if needed, preserve animation
+- [x] Logos: Resize max 500px, 85% quality, keep PNG/JPEG format
+- [x] 40-70% file size reduction typical
+- [x] Graceful fallback if optimization fails
 
 ---
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import crypto from 'crypto';
+import sharp from 'sharp';
 import { FILE_SIZE_LIMITS, ALLOWED_MIME_TYPES } from '@/lib/constants';
 
 // Map MIME types to extensions
@@ -19,6 +20,49 @@ const MIME_TO_EXT: Record<string, string> = {
   'audio/ogg': 'ogg',
   'audio/mp4': 'm4a',
 };
+
+// Image optimization settings
+const IMAGE_MAX_DIMENSION = 2000; // Max width or height in pixels
+const IMAGE_QUALITY = 80; // Compression quality (0-100)
+
+/**
+ * Optimize image: resize if too large, compress, convert to WebP
+ * Returns optimized buffer and new content type
+ */
+async function optimizeImage(
+  buffer: Buffer,
+  mimeType: string
+): Promise<{ buffer: Buffer; contentType: string; extension: string }> {
+  // GIFs may be animated - preserve them but resize if needed
+  if (mimeType === 'image/gif') {
+    const metadata = await sharp(buffer, { animated: true }).metadata();
+
+    // Only resize if over max dimension
+    if (metadata.width && metadata.height &&
+        (metadata.width > IMAGE_MAX_DIMENSION || metadata.height > IMAGE_MAX_DIMENSION)) {
+      const optimized = await sharp(buffer, { animated: true })
+        .resize(IMAGE_MAX_DIMENSION, IMAGE_MAX_DIMENSION, {
+          fit: 'inside',
+          withoutEnlargement: true,
+        })
+        .gif()
+        .toBuffer();
+      return { buffer: optimized, contentType: 'image/gif', extension: 'gif' };
+    }
+    return { buffer, contentType: mimeType, extension: 'gif' };
+  }
+
+  // For JPEG, PNG, WebP - convert to WebP for best compression
+  const optimized = await sharp(buffer)
+    .resize(IMAGE_MAX_DIMENSION, IMAGE_MAX_DIMENSION, {
+      fit: 'inside',
+      withoutEnlargement: true,
+    })
+    .webp({ quality: IMAGE_QUALITY })
+    .toBuffer();
+
+  return { buffer: optimized, contentType: 'image/webp', extension: 'webp' };
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -80,20 +124,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Read file content
+    const arrayBuffer = await file.arrayBuffer();
+    let fileBuffer: Buffer = Buffer.from(arrayBuffer);
+    let contentType = file.type;
+    let ext = MIME_TO_EXT[file.type] || 'bin';
+
+    // Optimize images (JPEG, PNG, GIF, WebP)
+    const imageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (mediaType === 'image' && imageTypes.includes(file.type)) {
+      try {
+        const optimized = await optimizeImage(fileBuffer, file.type);
+        fileBuffer = optimized.buffer;
+        contentType = optimized.contentType;
+        ext = optimized.extension;
+        console.log(`Image optimized: ${file.size} → ${fileBuffer.length} bytes (${Math.round((1 - fileBuffer.length / file.size) * 100)}% reduction)`);
+      } catch (err) {
+        console.error('Image optimization failed, using original:', err);
+        // Fall back to original file if optimization fails
+      }
+    }
+
     // Generate secure filename
-    const ext = MIME_TO_EXT[file.type] || 'bin';
     const randomBytes = crypto.randomBytes(16).toString('hex');
     const filename = `${Date.now()}-${randomBytes}.${ext}`;
     const path = `${user.id}/${mediaType}/${filename}`;
 
-    // Read file content
-    const arrayBuffer = await file.arrayBuffer();
-
     // Upload to Supabase Storage
     const { data, error: uploadError } = await supabase.storage
       .from('qr-media')
-      .upload(path, arrayBuffer, {
-        contentType: file.type,
+      .upload(path, fileBuffer, {
+        contentType,
         cacheControl: '3600',
         upsert: false,
       });
@@ -115,8 +176,9 @@ export async function POST(request: NextRequest) {
       url: urlData.publicUrl,
       path,
       fileName: file.name,
-      fileSize: file.size,
-      mimeType: file.type,
+      fileSize: fileBuffer.length, // Return optimized size
+      originalSize: file.size,
+      mimeType: contentType, // Return actual content type (may be webp)
     });
   } catch (error) {
     console.error('Media upload error:', error);

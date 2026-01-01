@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import crypto from 'crypto';
+import sharp from 'sharp';
 import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 import { FILE_SIZE_LIMITS } from '@/lib/constants';
@@ -11,6 +12,37 @@ const ALLOWED_TYPES: Record<string, string> = {
   'image/jpeg': 'jpg',
   'image/svg+xml': 'svg',
 };
+
+// Logo optimization settings - smaller than media images
+const LOGO_MAX_DIMENSION = 500; // Logos don't need to be large
+const LOGO_QUALITY = 85; // Slightly higher quality for crisp logos
+
+/**
+ * Optimize logo image: resize if too large, compress
+ * Keeps original format (PNG/JPG) for QR code generator compatibility
+ */
+async function optimizeLogo(
+  buffer: Buffer,
+  mimeType: string
+): Promise<{ buffer: Buffer; contentType: string }> {
+  const sharpInstance = sharp(buffer).resize(LOGO_MAX_DIMENSION, LOGO_MAX_DIMENSION, {
+    fit: 'inside',
+    withoutEnlargement: true,
+  });
+
+  if (mimeType === 'image/png') {
+    const optimized = await sharpInstance
+      .png({ quality: LOGO_QUALITY, compressionLevel: 9 })
+      .toBuffer();
+    return { buffer: optimized, contentType: 'image/png' };
+  }
+
+  // JPEG
+  const optimized = await sharpInstance
+    .jpeg({ quality: LOGO_QUALITY, mozjpeg: true })
+    .toBuffer();
+  return { buffer: optimized, contentType: 'image/jpeg' };
+}
 
 // Create DOMPurify instance for SVG sanitization
 function createDOMPurify() {
@@ -92,9 +124,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Process file content
-    let fileBuffer = Buffer.from(await file.arrayBuffer());
+    let fileBuffer: Buffer = Buffer.from(await file.arrayBuffer());
+    let contentType = file.type;
+    const originalSize = file.size;
 
-    // If SVG, sanitize it
+    // If SVG, sanitize it (no image optimization for SVG)
     if (file.type === 'image/svg+xml') {
       const svgContent = fileBuffer.toString('utf-8');
       const sanitizedSVG = sanitizeSVG(svgContent);
@@ -108,6 +142,17 @@ export async function POST(request: NextRequest) {
       }
 
       fileBuffer = Buffer.from(sanitizedSVG, 'utf-8');
+    } else {
+      // Optimize PNG/JPEG logos
+      try {
+        const optimized = await optimizeLogo(fileBuffer, file.type);
+        fileBuffer = optimized.buffer;
+        contentType = optimized.contentType;
+        console.log(`Logo optimized: ${originalSize} → ${fileBuffer.length} bytes (${Math.round((1 - fileBuffer.length / originalSize) * 100)}% reduction)`);
+      } catch (err) {
+        console.error('Logo optimization failed, using original:', err);
+        // Fall back to original file if optimization fails
+      }
     }
 
     // Generate secure unique filename
@@ -119,7 +164,7 @@ export async function POST(request: NextRequest) {
     const { data, error: uploadError } = await supabase.storage
       .from('qr-logos')
       .upload(path, fileBuffer, {
-        contentType: file.type,
+        contentType,
         cacheControl: '3600',
         upsert: false,
       });

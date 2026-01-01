@@ -89,29 +89,29 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
-      >
-        {children}
-        <Toaster />
-
-        {/* Plausible Analytics - only loads when script URL is configured */}
+      <head>
+        {/* Plausible Analytics - loads in head for proper detection */}
         {plausibleScriptUrl && (
           <>
             <Script
-              async
               src={plausibleScriptUrl}
-              strategy="afterInteractive"
+              strategy="beforeInteractive"
             />
             <Script
               id="plausible-init"
-              strategy="afterInteractive"
+              strategy="beforeInteractive"
               dangerouslySetInnerHTML={{
                 __html: `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init();`,
               }}
             />
           </>
         )}
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
+      >
+        {children}
+        <Toaster />
       </body>
     </html>
   );

@@ -148,6 +148,100 @@ function loadImage(url: string): Promise<HTMLImageElement> {
 }
 
 /**
+ * Parses a hex color to RGB values
+ */
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : { r: 0, g: 0, b: 0 };
+}
+
+/**
+ * Interpolates between two colors based on a position (0-1)
+ */
+function interpolateColor(
+  start: { r: number; g: number; b: number },
+  end: { r: number; g: number; b: number },
+  t: number
+): { r: number; g: number; b: number } {
+  return {
+    r: Math.round(start.r + (end.r - start.r) * t),
+    g: Math.round(start.g + (end.g - start.g) * t),
+    b: Math.round(start.b + (end.b - start.b) * t),
+  };
+}
+
+/**
+ * Applies a gradient to the dark pixels of a QR code canvas
+ */
+function applyGradientToCanvas(
+  canvas: HTMLCanvasElement,
+  gradient: { type: 'linear' | 'radial'; startColor: string; endColor: string; angle?: number },
+  backgroundColor: string
+): void {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  const width = canvas.width;
+  const height = canvas.height;
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+
+  const startRgb = hexToRgb(gradient.startColor);
+  const endRgb = hexToRgb(gradient.endColor);
+  const bgRgb = hexToRgb(backgroundColor);
+
+  // Determine if a pixel is "dark" (part of the QR code)
+  const isDark = (r: number, g: number, b: number) => {
+    const brightness = (r + g + b) / 3;
+    const bgBrightness = (bgRgb.r + bgRgb.g + bgRgb.b) / 3;
+    return brightness < bgBrightness - 50 || (bgBrightness > 200 && brightness < 128);
+  };
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const i = (y * width + x) * 4;
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+
+      if (isDark(r, g, b)) {
+        let t: number;
+
+        if (gradient.type === 'radial') {
+          // Radial gradient from center
+          const centerX = width / 2;
+          const centerY = height / 2;
+          const maxDist = Math.sqrt(centerX * centerX + centerY * centerY);
+          const dist = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+          t = dist / maxDist;
+        } else {
+          // Linear gradient based on angle
+          const angle = ((gradient.angle || 0) * Math.PI) / 180;
+          const cos = Math.cos(angle);
+          const sin = Math.sin(angle);
+          // Project point onto gradient line
+          const proj = (x * cos + y * sin) / (width * Math.abs(cos) + height * Math.abs(sin));
+          t = Math.max(0, Math.min(1, (proj + 0.5)));
+        }
+
+        const color = interpolateColor(startRgb, endRgb, t);
+        data[i] = color.r;
+        data[i + 1] = color.g;
+        data[i + 2] = color.b;
+      }
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+}
+
+/**
  * Generates a QR code as a Data URL (base64 encoded image)
  * Supports optional logo overlay in the center
  */
@@ -167,8 +261,11 @@ export async function generateQRDataURL(
     throw new Error('No content to encode');
   }
 
-  // If no logo, use the simple method
-  if (!style.logoUrl) {
+  const hasGradient = style.gradient?.enabled;
+  const hasLogo = !!style.logoUrl;
+
+  // If no logo and no gradient, use the simple method
+  if (!hasLogo && !hasGradient) {
     const dataURL = await QRCode.toDataURL(text, {
       errorCorrectionLevel: style.errorCorrectionLevel,
       margin: style.margin,
@@ -181,7 +278,7 @@ export async function generateQRDataURL(
     return dataURL;
   }
 
-  // With logo: generate to canvas, draw logo, export
+  // With logo or gradient: generate to canvas, apply effects, export
   const canvas = document.createElement('canvas');
   canvas.width = style.width;
   canvas.height = style.width;
@@ -191,40 +288,47 @@ export async function generateQRDataURL(
     margin: style.margin,
     width: style.width,
     color: {
-      dark: style.foregroundColor,
+      dark: hasGradient ? '#000000' : style.foregroundColor, // Use black for gradient processing
       light: style.backgroundColor,
     },
   });
 
-  // Load and draw logo
-  try {
-    const logo = await loadImage(style.logoUrl);
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      const logoSizePercent = style.logoSize || 20;
-      const logoSize = (style.width * logoSizePercent) / 100;
-      const logoX = (style.width - logoSize) / 2;
-      const logoY = (style.width - logoSize) / 2;
+  // Apply gradient if enabled
+  if (hasGradient && style.gradient) {
+    applyGradientToCanvas(canvas, style.gradient, style.backgroundColor);
+  }
 
-      // Draw white background circle behind logo for contrast
-      const padding = logoSize * 0.1;
-      ctx.fillStyle = style.backgroundColor;
-      ctx.beginPath();
-      ctx.arc(
-        style.width / 2,
-        style.width / 2,
-        logoSize / 2 + padding,
-        0,
-        Math.PI * 2
-      );
-      ctx.fill();
+  // Load and draw logo if present
+  if (hasLogo && style.logoUrl) {
+    try {
+      const logo = await loadImage(style.logoUrl);
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const logoSizePercent = style.logoSize || 20;
+        const logoSize = (style.width * logoSizePercent) / 100;
+        const logoX = (style.width - logoSize) / 2;
+        const logoY = (style.width - logoSize) / 2;
 
-      // Draw the logo
-      ctx.drawImage(logo, logoX, logoY, logoSize, logoSize);
+        // Draw white background circle behind logo for contrast
+        const padding = logoSize * 0.1;
+        ctx.fillStyle = style.backgroundColor;
+        ctx.beginPath();
+        ctx.arc(
+          style.width / 2,
+          style.width / 2,
+          logoSize / 2 + padding,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+
+        // Draw the logo
+        ctx.drawImage(logo, logoX, logoY, logoSize, logoSize);
+      }
+    } catch (error) {
+      console.error('Failed to draw logo:', error);
+      // Continue without logo if it fails to load
     }
-  } catch (error) {
-    console.error('Failed to draw logo:', error);
-    // Continue without logo if it fails to load
   }
 
   return canvas.toDataURL('image/png');

@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 1, 2026 (Logo Upload UX + Image Optimization)
+> **Last Updated**: January 2, 2026 (Site Audit Fixes + Gradient QR Codes)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -736,3 +736,26 @@ git pull origin develop   # Get latest
 npm run dev               # Dev server on port 3322
 # Visit http://localhost:3322
 ```
+
+---
+
+## Future Roadmap
+
+### New QR Types (Planned)
+| Type | Description | Tier |
+|------|-------------|------|
+| **Event** | Event name, date/time, location, iCalendar export, RSVP link | Pro+ |
+| **Geo** | GPS coordinates, map link | Free |
+| **Calendar** | Add to calendar (iCalendar format) | Free |
+| **Bluetooth** | Bluetooth pairing | Free |
+
+### QR Technology Enhancements (Planned)
+- **Custom module shapes** - Dots, rounded squares, custom patterns
+- **Logo background styles** - Circle, square, rounded, transparent
+- **Decorative frames** - Border designs around QR code
+- **Custom eye patterns** - Different finder pattern styles
+
+### SEO & Content (Ongoing)
+- Expand blog to 20-30 articles
+- Expand learn section to 30+ articles
+- Add FAQ schema to knowledge base pages

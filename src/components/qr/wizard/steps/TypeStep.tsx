@@ -35,7 +35,7 @@ export function TypeStep({
             key={category.id}
             onClick={() => onCategorySelect(category.id)}
             className={cn(
-              'relative p-6 rounded-xl border-2 transition-all text-left group',
+              'relative p-6 rounded-xl border-2 transition-all text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900',
               selectedCategory === category.id
                 ? 'border-primary bg-primary/10'
                 : 'border-slate-700 bg-slate-800/50 hover:border-slate-600 hover:bg-slate-800'
@@ -75,8 +75,9 @@ export function TypeStep({
                   key={type.id}
                   onClick={() => onTypeSelect(type.id)}
                   disabled={isDisabled}
+                  aria-disabled={isDisabled}
                   className={cn(
-                    'p-4 rounded-xl border transition-all text-left',
+                    'p-4 rounded-xl border transition-all text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900',
                     isDisabled
                       ? 'border-slate-700 bg-slate-800/30 opacity-60 cursor-not-allowed'
                       : 'border-slate-700 bg-slate-800/50 hover:border-primary hover:bg-primary/5'

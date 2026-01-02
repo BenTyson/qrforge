@@ -127,7 +127,8 @@ export async function validateApiKey(
         monthly_reset_at: nextMonth.toISOString(),
         last_used_at: now.toISOString()
       })
-      .eq('key_hash', keyHash);
+      .eq('key_hash', keyHash)
+      .eq('user_id', keyData.user_id); // Defense in depth: verify ownership
   }
 
   // Check monthly limit

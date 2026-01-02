@@ -101,6 +101,9 @@ export interface QRStudioActions {
   setHasDownloaded: (downloaded: boolean) => void;
   setIsDownloading: (downloading: boolean) => void;
   getFilename: () => string;
+
+  // Error handling
+  clearSaveError: () => void;
 }
 
 interface UseQRStudioStateProps {
@@ -524,6 +527,7 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     setHasDownloaded,
     setIsDownloading,
     getFilename,
+    clearSaveError: () => setSaveError(null),
   };
 
   return [state, actions];

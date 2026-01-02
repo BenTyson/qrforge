@@ -24,6 +24,14 @@ export type QRContentType =
   | 'coupon'
   | 'social';
 
+export interface GradientOptions {
+  enabled: boolean;
+  type: 'linear' | 'radial';
+  startColor: string;
+  endColor: string;
+  angle?: number; // For linear gradient, in degrees (0-360)
+}
+
 export interface QRStyleOptions {
   foregroundColor: string;
   backgroundColor: string;
@@ -32,6 +40,7 @@ export interface QRStyleOptions {
   width: number;
   logoUrl?: string;    // URL to uploaded logo image
   logoSize?: number;   // Logo size as % of QR code (10-30, default 20)
+  gradient?: GradientOptions; // Optional gradient for foreground
 }
 
 export interface URLContent {

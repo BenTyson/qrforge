@@ -44,8 +44,8 @@ export async function POST(
     return NextResponse.json({ error: 'Invite has expired' }, { status: 400 });
   }
 
-  // Check email matches
-  if (user.email !== invite.email) {
+  // Check email matches (case-insensitive)
+  if (user.email?.toLowerCase() !== invite.email?.toLowerCase()) {
     return NextResponse.json({
       error: 'This invite was sent to a different email address',
     }, { status: 403 });

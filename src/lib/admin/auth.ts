@@ -1,10 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Hardcoded admin email - only this user can access /admin
-export const ADMIN_EMAIL = 'ideaswithben@gmail.com';
+// Admin email from environment variable
+export const ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
 
 export function isAdmin(email: string | null | undefined): boolean {
-  return email === ADMIN_EMAIL;
+  if (!ADMIN_EMAIL) {
+    console.warn('ADMIN_EMAIL environment variable not set');
+    return false;
+  }
+  return email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
 }
 
 // Create admin Supabase client with service role (bypasses RLS)

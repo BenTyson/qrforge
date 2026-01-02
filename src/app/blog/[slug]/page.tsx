@@ -94,6 +94,48 @@ function ArticleJsonLd({ post }: { post: typeof blogPosts[0] }) {
   );
 }
 
+function BreadcrumbJsonLd({ post, categoryName }: { post: typeof blogPosts[0]; categoryName: string }) {
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: `${siteUrl}/blog`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: categoryName,
+        item: `${siteUrl}/blog/category/${post.category}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 4,
+        name: post.title,
+        item: `${siteUrl}/blog/${post.slug}`,
+      },
+    ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
@@ -113,6 +155,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   return (
     <>
       <ArticleJsonLd post={post} />
+      <BreadcrumbJsonLd post={post} categoryName={categoryInfo?.label || post.category} />
       <PublicNav showAuthButtons={true} />
       <main className="min-h-screen pt-24 pb-16 relative overflow-hidden">
         {/* Background decorations */}

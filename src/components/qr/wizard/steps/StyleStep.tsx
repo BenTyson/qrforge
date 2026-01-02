@@ -139,6 +139,16 @@ export function StyleStep({
   );
 }
 
+// Gradient presets
+const GRADIENT_PRESETS = [
+  { name: 'Sunset', start: '#f97316', end: '#ec4899', type: 'linear' as const, angle: 45 },
+  { name: 'Ocean', start: '#06b6d4', end: '#3b82f6', type: 'linear' as const, angle: 135 },
+  { name: 'Forest', start: '#22c55e', end: '#14b8a6', type: 'linear' as const, angle: 90 },
+  { name: 'Royal', start: '#8b5cf6', end: '#ec4899', type: 'linear' as const, angle: 45 },
+  { name: 'Fire', start: '#ef4444', end: '#f97316', type: 'radial' as const },
+  { name: 'Sky', start: '#0ea5e9', end: '#6366f1', type: 'radial' as const },
+];
+
 // Colors Tab Content
 interface ColorsTabContentProps {
   style: QRStyleOptions;
@@ -146,72 +156,265 @@ interface ColorsTabContentProps {
 }
 
 function ColorsTabContent({ style, onStyleChange }: ColorsTabContentProps) {
+  const gradientEnabled = style.gradient?.enabled || false;
+
+  const toggleGradient = (enabled: boolean) => {
+    if (enabled) {
+      onStyleChange({
+        ...style,
+        gradient: {
+          enabled: true,
+          type: 'linear',
+          startColor: '#06b6d4',
+          endColor: '#3b82f6',
+          angle: 135,
+        },
+      });
+    } else {
+      onStyleChange({
+        ...style,
+        gradient: undefined,
+      });
+    }
+  };
+
+  const applyGradientPreset = (preset: typeof GRADIENT_PRESETS[0]) => {
+    onStyleChange({
+      ...style,
+      gradient: {
+        enabled: true,
+        type: preset.type,
+        startColor: preset.start,
+        endColor: preset.end,
+        angle: preset.angle,
+      },
+    });
+  };
+
   return (
     <div className="space-y-6">
-      {/* Color Presets */}
-      <div>
-        <h4 className="text-lg font-semibold text-white mb-4">Color Presets</h4>
-        <div className="grid grid-cols-4 gap-2">
-          {COLOR_PRESETS.map((preset) => (
-            <button
-              key={preset.name}
-              onClick={() => onStyleChange({ ...style, foregroundColor: preset.fg, backgroundColor: preset.bg })}
+      {/* Gradient Toggle */}
+      <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-white">Gradient Colors</span>
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-primary/20 text-primary border-0">
+              Pro
+            </Badge>
+          </div>
+          <button
+            onClick={() => toggleGradient(!gradientEnabled)}
+            className={cn(
+              'relative w-10 h-5 rounded-full transition-colors',
+              gradientEnabled ? 'bg-primary' : 'bg-slate-600'
+            )}
+          >
+            <span
               className={cn(
-                'aspect-square rounded-lg border-2 transition-all overflow-hidden',
-                style.foregroundColor === preset.fg && style.backgroundColor === preset.bg
-                  ? 'border-primary scale-105'
-                  : 'border-transparent hover:border-slate-600'
+                'absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform',
+                gradientEnabled ? 'translate-x-5' : 'translate-x-0.5'
               )}
-              title={preset.name}
-            >
-              <div className="w-full h-full" style={{ backgroundColor: preset.bg }}>
-                <div
-                  className="w-1/2 h-full"
-                  style={{ backgroundColor: preset.fg }}
-                />
-              </div>
-            </button>
-          ))}
+            />
+          </button>
         </div>
+
+        {gradientEnabled && style.gradient && (
+          <div className="space-y-4 pt-3 border-t border-slate-700">
+            {/* Gradient Presets */}
+            <div className="grid grid-cols-6 gap-2">
+              {GRADIENT_PRESETS.map((preset) => (
+                <button
+                  key={preset.name}
+                  onClick={() => applyGradientPreset(preset)}
+                  className={cn(
+                    'aspect-square rounded-lg border-2 transition-all overflow-hidden',
+                    style.gradient?.startColor === preset.start && style.gradient?.endColor === preset.end
+                      ? 'border-primary scale-105'
+                      : 'border-transparent hover:border-slate-600'
+                  )}
+                  title={preset.name}
+                  style={{
+                    background: preset.type === 'radial'
+                      ? `radial-gradient(circle, ${preset.start}, ${preset.end})`
+                      : `linear-gradient(${preset.angle}deg, ${preset.start}, ${preset.end})`,
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Custom Gradient Colors */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs text-slate-400">Start Color</Label>
+                <div className="flex gap-1 mt-1">
+                  <Input
+                    type="color"
+                    value={style.gradient.startColor}
+                    onChange={(e) => onStyleChange({
+                      ...style,
+                      gradient: { ...style.gradient!, startColor: e.target.value },
+                    })}
+                    className="w-10 h-8 p-0.5 bg-slate-800 border-slate-700"
+                  />
+                  <Input
+                    type="text"
+                    value={style.gradient.startColor}
+                    onChange={(e) => onStyleChange({
+                      ...style,
+                      gradient: { ...style.gradient!, startColor: e.target.value },
+                    })}
+                    className="flex-1 h-8 text-xs bg-slate-800 border-slate-700"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label className="text-xs text-slate-400">End Color</Label>
+                <div className="flex gap-1 mt-1">
+                  <Input
+                    type="color"
+                    value={style.gradient.endColor}
+                    onChange={(e) => onStyleChange({
+                      ...style,
+                      gradient: { ...style.gradient!, endColor: e.target.value },
+                    })}
+                    className="w-10 h-8 p-0.5 bg-slate-800 border-slate-700"
+                  />
+                  <Input
+                    type="text"
+                    value={style.gradient.endColor}
+                    onChange={(e) => onStyleChange({
+                      ...style,
+                      gradient: { ...style.gradient!, endColor: e.target.value },
+                    })}
+                    className="flex-1 h-8 text-xs bg-slate-800 border-slate-700"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Gradient Type & Angle */}
+            <div className="flex items-center gap-4">
+              <div className="flex gap-1">
+                <button
+                  onClick={() => onStyleChange({
+                    ...style,
+                    gradient: { ...style.gradient!, type: 'linear' },
+                  })}
+                  className={cn(
+                    'px-3 py-1 text-xs rounded-l-md transition-colors',
+                    style.gradient.type === 'linear'
+                      ? 'bg-primary text-white'
+                      : 'bg-slate-700 text-slate-400 hover:text-white'
+                  )}
+                >
+                  Linear
+                </button>
+                <button
+                  onClick={() => onStyleChange({
+                    ...style,
+                    gradient: { ...style.gradient!, type: 'radial' },
+                  })}
+                  className={cn(
+                    'px-3 py-1 text-xs rounded-r-md transition-colors',
+                    style.gradient.type === 'radial'
+                      ? 'bg-primary text-white'
+                      : 'bg-slate-700 text-slate-400 hover:text-white'
+                  )}
+                >
+                  Radial
+                </button>
+              </div>
+
+              {style.gradient.type === 'linear' && (
+                <div className="flex items-center gap-2 flex-1">
+                  <Label className="text-xs text-slate-400 shrink-0">Angle</Label>
+                  <Slider
+                    value={[style.gradient.angle || 0]}
+                    onValueChange={([value]) => onStyleChange({
+                      ...style,
+                      gradient: { ...style.gradient!, angle: value },
+                    })}
+                    min={0}
+                    max={360}
+                    step={15}
+                    className="flex-1"
+                  />
+                  <span className="text-xs text-slate-400 w-8">{style.gradient.angle || 0}°</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Custom Colors */}
-      <div className="space-y-4">
-        <div>
-          <Label className="text-white">QR Color</Label>
-          <div className="flex gap-2 mt-1">
-            <Input
-              type="color"
-              value={style.foregroundColor}
-              onChange={(e) => onStyleChange({ ...style, foregroundColor: e.target.value })}
-              className="w-12 h-10 p-1 bg-slate-800 border-slate-700"
-            />
-            <Input
-              type="text"
-              value={style.foregroundColor}
-              onChange={(e) => onStyleChange({ ...style, foregroundColor: e.target.value })}
-              className="flex-1 bg-slate-800 border-slate-700"
-            />
+      {/* Color Presets & Custom Colors - only shown when gradient is off */}
+      {!gradientEnabled && (
+        <>
+          <div>
+            <h4 className="text-lg font-semibold text-white mb-4">Color Presets</h4>
+            <div className="grid grid-cols-4 gap-2">
+              {COLOR_PRESETS.map((preset) => (
+                <button
+                  key={preset.name}
+                  onClick={() => onStyleChange({ ...style, foregroundColor: preset.fg, backgroundColor: preset.bg })}
+                  className={cn(
+                    'aspect-square rounded-lg border-2 transition-all overflow-hidden',
+                    style.foregroundColor === preset.fg && style.backgroundColor === preset.bg
+                      ? 'border-primary scale-105'
+                      : 'border-transparent hover:border-slate-600'
+                  )}
+                  title={preset.name}
+                >
+                  <div className="w-full h-full" style={{ backgroundColor: preset.bg }}>
+                    <div
+                      className="w-1/2 h-full"
+                      style={{ backgroundColor: preset.fg }}
+                    />
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-        <div>
-          <Label className="text-white">Background</Label>
-          <div className="flex gap-2 mt-1">
-            <Input
-              type="color"
-              value={style.backgroundColor}
-              onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value })}
-              className="w-12 h-10 p-1 bg-slate-800 border-slate-700"
-            />
-            <Input
-              type="text"
-              value={style.backgroundColor}
-              onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value })}
-              className="flex-1 bg-slate-800 border-slate-700"
-            />
+
+          {/* Custom Colors */}
+          <div className="space-y-4">
+            <div>
+              <Label className="text-white">QR Color</Label>
+              <div className="flex gap-2 mt-1">
+                <Input
+                  type="color"
+                  value={style.foregroundColor}
+                  onChange={(e) => onStyleChange({ ...style, foregroundColor: e.target.value })}
+                  className="w-12 h-10 p-1 bg-slate-800 border-slate-700"
+                />
+                <Input
+                  type="text"
+                  value={style.foregroundColor}
+                  onChange={(e) => onStyleChange({ ...style, foregroundColor: e.target.value })}
+                  className="flex-1 bg-slate-800 border-slate-700"
+                />
+              </div>
+            </div>
+            <div>
+              <Label className="text-white">Background</Label>
+              <div className="flex gap-2 mt-1">
+                <Input
+                  type="color"
+                  value={style.backgroundColor}
+                  onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value })}
+                  className="w-12 h-10 p-1 bg-slate-800 border-slate-700"
+                />
+                <Input
+                  type="text"
+                  value={style.backgroundColor}
+                  onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value })}
+                  className="flex-1 bg-slate-800 border-slate-700"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
 
       {/* Durability (Error Correction Level) */}
       <div>

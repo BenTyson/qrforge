@@ -19,6 +19,7 @@ import {
   TypeStep,
   StyleStep,
   OptionsStep,
+  WIZARD_STEPS,
 } from '../wizard';
 import type { WizardStep } from '../wizard';
 
@@ -237,7 +238,18 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
             </span>
           )}
           {state.saveError && (
-            <span className="text-sm text-red-500">{state.saveError}</span>
+            <span className="text-sm text-red-500 flex items-center gap-2">
+              {state.saveError}
+              <button
+                onClick={() => actions.clearSaveError()}
+                className="p-0.5 hover:bg-red-500/20 rounded"
+                aria-label="Dismiss error"
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </span>
           )}
 
           <Button
@@ -265,6 +277,36 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
           isExpanded={mobilePreviewExpanded}
           onToggle={() => setMobilePreviewExpanded(!mobilePreviewExpanded)}
         />
+      </div>
+
+      {/* Mobile step indicator */}
+      <div className="lg:hidden px-4 py-3 border-b border-border bg-background/50">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium">
+            Step {WIZARD_STEPS.findIndex(s => s.id === state.currentStep) + 1} of {WIZARD_STEPS.length}
+          </span>
+          <span className="text-sm text-muted-foreground">
+            {WIZARD_STEPS.find(s => s.id === state.currentStep)?.label}
+          </span>
+        </div>
+        <div className="flex gap-1.5">
+          {WIZARD_STEPS.map((step, index) => {
+            const currentIndex = WIZARD_STEPS.findIndex(s => s.id === state.currentStep);
+            const isComplete = index < currentIndex;
+            const isCurrent = index === currentIndex;
+            return (
+              <div
+                key={step.id}
+                className={cn(
+                  'h-1.5 flex-1 rounded-full transition-colors',
+                  isComplete && 'bg-primary',
+                  isCurrent && 'bg-primary/50',
+                  !isComplete && !isCurrent && 'bg-muted'
+                )}
+              />
+            );
+          })}
+        </div>
       </div>
 
       {/* Main layout */}

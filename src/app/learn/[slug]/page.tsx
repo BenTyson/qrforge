@@ -58,6 +58,8 @@ function ArticleJsonLd({ article }: { article: typeof learnArticles[0] }) {
     headline: article.title,
     description: article.description,
     image: article.image ? `${siteUrl}${article.image}` : undefined,
+    datePublished: new Date().toISOString().split('T')[0], // Learn articles are evergreen
+    dateModified: new Date().toISOString().split('T')[0],
     author: {
       '@type': 'Organization',
       name: 'QRWolf',
@@ -78,6 +80,48 @@ function ArticleJsonLd({ article }: { article: typeof learnArticles[0] }) {
     wordCount: article.metadata.wordCount,
     articleSection: article.category,
     keywords: article.tags.join(', '),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+function BreadcrumbJsonLd({ article, categoryName }: { article: typeof learnArticles[0]; categoryName: string }) {
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Learn',
+        item: `${siteUrl}/learn`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: categoryName,
+        item: `${siteUrl}/learn/category/${article.category}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 4,
+        name: article.title,
+        item: `${siteUrl}/learn/${article.slug}`,
+      },
+    ],
   };
 
   return (
@@ -119,6 +163,7 @@ export default async function LearnArticlePage({ params }: PageProps) {
   return (
     <>
       <ArticleJsonLd article={article} />
+      <BreadcrumbJsonLd article={article} categoryName={categoryInfo?.label || article.category} />
       <PublicNav showAuthButtons={true} />
       <main className="min-h-screen pt-24 pb-16 relative overflow-hidden">
         {/* Background decorations */}

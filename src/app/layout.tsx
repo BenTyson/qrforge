@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
+import PlausibleProvider from "next-plausible";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -84,28 +84,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Plausible custom script URL (includes domain, better ad-blocker bypass)
-  const plausibleScriptUrl = process.env.NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL;
-
   return (
     <html lang="en">
       <head>
-        {/* Plausible Analytics - loads in head for proper detection */}
-        {plausibleScriptUrl && (
-          <>
-            <Script
-              src={plausibleScriptUrl}
-              strategy="beforeInteractive"
-            />
-            <Script
-              id="plausible-init"
-              strategy="beforeInteractive"
-              dangerouslySetInnerHTML={{
-                __html: `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init();`,
-              }}
-            />
-          </>
-        )}
+        <PlausibleProvider
+          domain="qrwolf.com"
+          trackOutboundLinks
+          trackFileDownloads
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}

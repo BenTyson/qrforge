@@ -1,9 +1,28 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 2, 2026 (Site Audit Fixes + Gradient QR Codes)
+> **Last Updated**: January 17, 2026 (Development Environment & Data Protection)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
+
+---
+
+## ⚠️ CRITICAL: Development Safety
+
+**Local development uses a SEPARATE database to protect customer data.**
+
+```
+Local dev → Dev Supabase (fxcvxomvkgioxwbwmbsy) ✅ Safe to experiment
+Production → Prod Supabase (otdlggbhsmgqhsviazho) ⚠️ LIVE CUSTOMERS
+```
+
+**Before making any changes:**
+```bash
+npm run safety-check  # Verify dev environment (should show "SAFE")
+npm run dev           # Start dev server on port 3322
+```
+
+See `docs/DEVELOPMENT.md` for full environment setup.
 
 ---
 
@@ -23,6 +42,7 @@ git pull origin develop
 
 **After finishing work:**
 ```bash
+npm run precommit     # Run lint + type-check + test
 git push origin develop
 # Tell user: "Changes pushed to develop. Create PR to main to deploy."
 ```
@@ -30,6 +50,29 @@ git push origin develop
 **NEVER run:** `git push origin main`
 
 See `docs/WORKFLOW.md` for full details.
+
+---
+
+## ⚠️ Testing Infrastructure
+
+**159 tests** across 4 test suites ensure code quality:
+
+| Suite | Tests | Coverage |
+|-------|-------|----------|
+| API Validation | 47 | URL validation, hex colors, content types, API keys |
+| QR Generation | 58 | Content generation, WiFi, vCard, validation |
+| Subscription Plans | 31 | Tier limits, features, scan limits |
+| Environment Safety | 23 | Environment detection, safety blocks |
+
+**Commands:**
+```bash
+npm test              # Run all tests
+npm run test:watch    # Watch mode
+npm run test:coverage # With coverage report
+npm run precommit     # lint + type-check + test (before commits!)
+```
+
+See `docs/DEVELOPMENT.md` for test data factories and CI/CD info.
 
 ---
 
@@ -335,6 +378,15 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - Typical 40-70% file size reduction
   - Graceful fallback to original if optimization fails
   - Server logs show compression ratio for monitoring
+- **Development Environment & Data Protection** (January 17, 2026):
+  - Separate dev Supabase project (`qrwolf-dev`) to protect customer data
+  - Environment validation prevents dev connecting to production
+  - Startup safety check (`npm run safety-check`)
+  - Safe admin client blocks destructive operations in production
+  - Jest test suite with 159 tests across 4 suites
+  - Test data factories for consistent mock data
+  - CI/CD with GitHub Actions (lint, type-check, test, build, security-check)
+  - PR check workflow warns on migrations and env changes
 
 ### Planned Enhancements
 - Email scan alerts
@@ -343,7 +395,17 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
 
 ## Environment Setup
 
-`.env.local` is fully configured:
+### Development (`.env.development.local`)
+```
+ENVIRONMENT=development
+NEXT_PUBLIC_SUPABASE_URL=https://fxcvxomvkgioxwbwmbsy.supabase.co  # Dev database
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+STRIPE_SECRET_KEY=sk_test_...  # Test mode
+NEXT_PUBLIC_APP_URL=http://localhost:3322
+```
+
+### Production (`.env.local` - used by Railway)
 ```
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://otdlggbhsmgqhsviazho.supabase.co
@@ -720,6 +782,7 @@ Dynamic QR codes are the key lock-in:
 
 **See Also:**
 - `docs/WORKFLOW.md` - Branch workflow (develop → main)
+- `docs/DEVELOPMENT.md` - Dev environment, testing, CI/CD
 - `docs/DEPLOYMENT.md` - Railway deployment guide
 - `docs/LAUNCH-CHECKLIST.md` - Full launch checklist
 - `docs/STRIPE-SETUP.md` - Stripe configuration

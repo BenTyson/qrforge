@@ -38,7 +38,7 @@ export default function SignUpPage() {
     }
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -52,6 +52,14 @@ export default function SignUpPage() {
       return;
     }
 
+    // If email confirmation is disabled, user is auto-logged in
+    // Redirect to dashboard instead of showing "check email" message
+    if (data.session) {
+      router.push('/dashboard');
+      return;
+    }
+
+    // Only show "check email" if confirmation is actually required
     setSuccess(true);
     setLoading(false);
   };

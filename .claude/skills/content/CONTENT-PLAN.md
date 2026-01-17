@@ -2,8 +2,30 @@
 
 > **Last Updated**: January 17, 2026
 > **Total Content**: 4 blog posts, 16 learn articles
+> **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
+
+---
+
+## SEO Strategy Overview
+
+### Why This Matters
+QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acquisition channel.
+
+### Search Volume Context
+- **5.1M+ monthly searches** for QR code-related terms
+- **~1M searches/month** for QR code generator tools
+- **61K searches/month** for business card QR codes alone
+- Long-tail keywords = 91.8% of all Google searches
+- Long-tail conversion rate: **36%** (vs ~2% for head terms)
+
+### Content Priorities
+1. **High-volume head terms** - "qr code generator", "free qr code" (build authority)
+2. **Long-tail "how to" queries** - "how to create wifi qr code" (capture intent)
+3. **Type-specific keywords** - "[type] qr code generator" for each of 16 types
+4. **Use case keywords** - "qr code for restaurant menu", "qr code for business card"
+5. **Problem/solution keywords** - "qr code not scanning", "qr code too small"
 
 ---
 
@@ -11,168 +33,253 @@ This document tracks existing content and planned articles. Agents should refere
 
 ### Blog Posts (4)
 
-| Title | Category | Slug | Year |
-|-------|----------|------|------|
-| QR Codes in 2025: Trends, Innovations, and What's Next | news | qr-codes-in-2025 | 2025 |
-| How Small Businesses Can Use QR Codes to Drive Sales | guides | qr-codes-for-small-business | 2025 |
-| How to Track QR Code Scans and Measure ROI | tutorials | how-to-track-qr-code-scans | 2026 |
-| WiFi QR Codes: The Complete Guide | guides | wifi-qr-codes-complete-guide | 2026 |
+| Title | Category | Primary Keyword | Slug |
+|-------|----------|-----------------|------|
+| QR Codes in 2025: Trends and What's Next | news | qr code trends 2025 | qr-codes-in-2025 |
+| How Small Businesses Can Use QR Codes | guides | qr codes for small business | qr-codes-for-small-business |
+| How to Track QR Code Scans and Measure ROI | tutorials | qr code tracking | how-to-track-qr-code-scans |
+| WiFi QR Codes: The Complete Guide | guides | wifi qr code | wifi-qr-codes-complete-guide |
 
-### Learn Articles by Category (16)
+### Learn Articles (16)
 
 #### qr-basics (3)
-| Title | Slug |
-|-------|------|
-| What is a QR Code? The Complete Beginner's Guide | what-is-a-qr-code |
-| Static vs Dynamic QR Codes: Which Should You Use? | static-vs-dynamic-qr-codes |
-| QR Code vs Barcode: What's the Difference? | qr-code-vs-barcode |
+| Title | Primary Keyword | Slug |
+|-------|-----------------|------|
+| What is a QR Code? | what is a qr code | what-is-a-qr-code |
+| Static vs Dynamic QR Codes | static vs dynamic qr code | static-vs-dynamic-qr-codes |
+| QR Code vs Barcode | qr code vs barcode | qr-code-vs-barcode |
 
 #### how-it-works (2)
-| Title | Slug |
-|-------|------|
-| How QR Code Error Correction Works | qr-code-error-correction |
-| How QR Code Scanning Works | how-qr-code-scanning-works |
+| Title | Primary Keyword | Slug |
+|-------|-----------------|------|
+| How QR Code Error Correction Works | qr code error correction | qr-code-error-correction |
+| How QR Code Scanning Works | how qr code scanning works | how-qr-code-scanning-works |
 
 #### use-cases (4)
-| Title | Slug |
-|-------|------|
-| Restaurant QR Code Menus: The Complete Guide | restaurant-menu-qr-codes |
-| QR Code Business Cards: The Modern Networking Tool | business-card-qr-codes |
-| QR Codes for Event Marketing | qr-codes-for-event-marketing |
-| QR Codes for Product Packaging | qr-codes-for-product-packaging |
+| Title | Primary Keyword | Slug |
+|-------|-----------------|------|
+| Restaurant QR Code Menus | restaurant qr code menu | restaurant-menu-qr-codes |
+| QR Code Business Cards | qr code business card | business-card-qr-codes |
+| QR Codes for Event Marketing | qr code event marketing | qr-codes-for-event-marketing |
+| QR Codes for Product Packaging | qr code product packaging | qr-codes-for-product-packaging |
 
 #### industries (3)
-| Title | Slug |
-|-------|------|
-| QR Codes for Retail: Complete Guide | qr-codes-for-retail |
-| QR Codes for Healthcare: Applications and Best Practices | qr-codes-for-healthcare |
-| QR Codes for Real Estate | qr-codes-for-real-estate |
+| Title | Primary Keyword | Slug |
+|-------|-----------------|------|
+| QR Codes for Retail | qr codes for retail | qr-codes-for-retail |
+| QR Codes for Healthcare | qr codes for healthcare | qr-codes-for-healthcare |
+| QR Codes for Real Estate | qr codes for real estate | qr-codes-for-real-estate |
 
 #### best-practices (2)
-| Title | Slug |
-|-------|------|
-| QR Code Design Best Practices | qr-code-design-best-practices |
-| QR Code Placement Guide | qr-code-placement-guide |
+| Title | Primary Keyword | Slug |
+|-------|-----------------|------|
+| QR Code Design Best Practices | qr code design | qr-code-design-best-practices |
+| QR Code Placement Guide | qr code placement | qr-code-placement-guide |
 
 #### technical (2)
-| Title | Slug |
-|-------|------|
-| QR Code Data Capacity: How Much Can a QR Code Store? | qr-code-data-capacity |
-| QR Code Versions Explained: From 1 to 40 | qr-code-versions-explained |
+| Title | Primary Keyword | Slug |
+|-------|-----------------|------|
+| QR Code Data Capacity | qr code data capacity | qr-code-data-capacity |
+| QR Code Versions Explained | qr code versions | qr-code-versions-explained |
 
 ---
 
-## Planned Content
+## Planned Content - SEO Prioritized
 
-### Blog Posts - Priority Queue
+### TIER 1: High-Value Keywords (Create First)
 
-#### High Priority (SEO value + product alignment)
-1. **"vCard QR Codes: Digital Business Cards That Actually Work"** - guides
-   - Keywords: vcard qr code, digital business card, contact qr code
-   - Links to: business-card-qr-codes learn article
+These target high-volume, high-intent keywords directly aligned with QRWolf features.
 
-2. **"QR Codes for Instagram: Grow Your Following"** - tutorials
-   - Keywords: instagram qr code, social media qr code
-   - Covers: Instagram QR type, link-in-bio alternative
+#### Blog Posts
+| Title | Primary Keyword | Est. Volume | Intent |
+|-------|-----------------|-------------|--------|
+| **vCard QR Codes: Create Digital Business Cards** | vcard qr code | 10K+ | Transactional |
+| **Free QR Code Generator: What to Look For** | free qr code generator | 100K+ | Transactional |
+| **Dynamic QR Codes: The Complete Guide** | dynamic qr code | 20K+ | Informational |
+| **QR Code with Logo: How to Add Your Brand** | qr code with logo | 15K+ | Transactional |
+| **Menu QR Code Generator: Restaurant Guide** | menu qr code | 30K+ | Transactional |
 
-3. **"Dynamic QR Codes: Why Updatable Codes Are Worth It"** - guides
-   - Keywords: dynamic qr code, editable qr code, updateable qr code
-   - Strong conversion angle for Pro tier
+#### Learn Articles
+| Title | Category | Primary Keyword | Est. Volume |
+|-------|----------|-----------------|-------------|
+| **How to Create a QR Code (Step-by-Step)** | qr-basics | how to create qr code | 50K+ |
+| **QR Code for PDF: Share Documents Easily** | use-cases | qr code for pdf | 10K+ |
+| **QR Code for Google Maps Location** | use-cases | qr code google maps | 8K+ |
+| **Instagram QR Code: Grow Your Following** | use-cases | instagram qr code | 15K+ |
+| **WhatsApp QR Code: Direct Chat Links** | use-cases | whatsapp qr code | 20K+ |
 
-4. **"QR Code Analytics: What the Data Tells You"** - tutorials
-   - Keywords: qr code analytics, qr code statistics, scan data
-   - Promotes Pro analytics features
+### TIER 2: Long-Tail "How To" Keywords (High Conversion)
 
-5. **"How to Add a Logo to Your QR Code (Without Breaking It)"** - tutorials
-   - Keywords: qr code with logo, custom qr code, branded qr code
-   - Promotes Pro logo feature
+These target specific questions people search. Lower volume but 36% conversion rate.
 
-#### Medium Priority
-6. **"QR Codes for WhatsApp Business"** - guides
-7. **"Bulk QR Code Generation: A Complete Guide"** - tutorials (Business tier)
-8. **"QR Code API: Automate Your QR Code Workflow"** - tutorials (Business tier)
-9. **"QR Codes in 2026: What's Changed and What's Coming"** - news
-10. **"Free QR Code Generators: What You Need to Know"** - guides (comparison/SEO)
+#### Blog Posts
+| Title | Primary Keyword | Search Intent |
+|-------|-----------------|---------------|
+| **How to Make a QR Code for a Link** | how to make qr code for link | How-to |
+| **How to Create a QR Code for a Google Form** | qr code for google form | How-to |
+| **How to Print QR Codes: Size and Quality Guide** | how to print qr code | How-to |
+| **How to Share WiFi Password with QR Code** | share wifi password qr code | How-to |
+| **How to Create a QR Code for Payment** | qr code for payment | How-to |
 
-#### Seasonal/Timely
-11. **"QR Codes for Holiday Marketing Campaigns"** - guides
-12. **"QR Codes for Back-to-School Season"** - guides
-13. **"QR Codes for Trade Shows and Conferences"** - guides
+#### Learn Articles
+| Title | Category | Primary Keyword |
+|-------|----------|-----------------|
+| **How to Scan a QR Code on iPhone and Android** | qr-basics | how to scan qr code |
+| **How to Test if Your QR Code Works** | best-practices | test qr code |
+| **How to Make a QR Code Smaller** | best-practices | qr code minimum size |
+| **How to Fix a QR Code That Won't Scan** | best-practices | qr code not scanning |
+| **How to Change QR Code Destination** | how-it-works | change qr code link |
 
-### Learn Articles - By Category
+### TIER 3: Industry & Use Case Expansion
 
-#### qr-basics (add 2-3 more)
-- [ ] **"QR Code History: From Toyota to Your Phone"** - Origin story, Denso Wave
-- [ ] **"QR Code Myths Debunked"** - Security concerns, tracking misconceptions
-- [ ] **"How to Scan a QR Code"** - Beginner guide for all devices
+Build topical authority in specific verticals.
 
-#### how-it-works (add 2-3 more)
-- [ ] **"How Dynamic QR Codes Work"** - Server redirects, URL shortening
-- [ ] **"QR Code Encoding Modes Explained"** - Numeric, alphanumeric, byte, kanji
-- [ ] **"Why QR Codes Have Three Squares"** - Finder patterns, alignment patterns
+#### Industries (add 5)
+| Title | Primary Keyword | Industry Size |
+|-------|-----------------|---------------|
+| **QR Codes for Education** | qr codes education | Large |
+| **QR Codes for Hotels & Hospitality** | qr codes hotels | Large |
+| **QR Codes for Manufacturing** | qr codes manufacturing | Medium |
+| **QR Codes for Nonprofits & Donations** | qr code donations | Medium |
+| **QR Codes for Gyms & Fitness** | qr codes gym | Medium |
 
-#### use-cases (add 4-5 more)
-- [ ] **"QR Codes for PDF Sharing"** - PDF type, document distribution
-- [ ] **"QR Codes for Video Marketing"** - Video type, YouTube integration
-- [ ] **"QR Codes for Coupons and Promotions"** - Coupon type, redemption tracking
-- [ ] **"QR Codes for Social Media Links"** - Links type, Linktree alternative
-- [ ] **"QR Codes for Audio and Podcasts"** - MP3 type, Spotify links
+#### Use Cases (add 5)
+| Title | Primary Keyword | QRWolf Feature |
+|-------|-----------------|----------------|
+| **QR Codes for Video Marketing** | qr code video | Video type |
+| **QR Codes for Coupons & Discounts** | qr code coupon | Coupon type |
+| **QR Codes for Social Media Links** | social media qr code | Links type |
+| **QR Codes for Audio & Podcasts** | qr code audio | MP3 type |
+| **QR Codes for App Downloads** | qr code app store | Apps type |
 
-#### industries (add 4-5 more)
-- [ ] **"QR Codes for Education"** - Schools, universities, training
-- [ ] **"QR Codes for Hospitality"** - Hotels, tourism, travel
-- [ ] **"QR Codes for Manufacturing"** - Inventory, asset tracking
-- [ ] **"QR Codes for Nonprofits"** - Donations, awareness campaigns
-- [ ] **"QR Codes for Government Services"** - Public sector applications
+### TIER 4: Technical & Authority Content
 
-#### best-practices (add 2-3 more)
-- [ ] **"QR Code Testing: How to Ensure Your Codes Work"** - Pre-print checklist
-- [ ] **"QR Code Size Guide: Minimum Sizes for Every Use"** - Size chart
-- [ ] **"Common QR Code Mistakes and How to Avoid Them"** - Error prevention
+Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 
-#### technical (add 2-3 more)
-- [ ] **"QR Code Security: What You Need to Know"** - Phishing, best practices
-- [ ] **"QR Code File Formats: PNG vs SVG vs PDF"** - Format comparison
-- [ ] **"QR Code API Documentation Overview"** - For developers
+#### Technical Deep-Dives
+| Title | Category | Target Audience |
+|-------|----------|-----------------|
+| **QR Code Security: Risks and Best Practices** | technical | Security-conscious |
+| **QR Code API Guide for Developers** | technical | Developers |
+| **QR Code File Formats: PNG vs SVG vs PDF** | technical | Designers |
+| **QR Code Encoding Modes Explained** | technical | Technical users |
+| **QR Code Analytics: Metrics That Matter** | technical | Marketers |
+
+#### Foundational Content
+| Title | Category | Purpose |
+|-------|----------|---------|
+| **History of QR Codes: From Toyota to Today** | qr-basics | Authority |
+| **QR Code Myths Debunked** | qr-basics | Trust |
+| **QR Code Glossary: Terms You Should Know** | qr-basics | SEO (definitions) |
 
 ---
 
-## Content Guidelines Summary
+## Content Calendar Suggestion
+
+### Monthly Targets
+- **2 blog posts** (1 Tier 1, 1 Tier 2)
+- **3 learn articles** (mix of tiers)
+- **Total: 5 pieces/month** = 60 pieces/year
+
+### Priority Order (Next 10 Pieces)
+1. How to Create a QR Code (qr-basics) - TIER 1
+2. Free QR Code Generator Guide (blog) - TIER 1
+3. vCard QR Codes Guide (blog) - TIER 1
+4. How to Scan a QR Code (qr-basics) - TIER 2
+5. Dynamic QR Codes Complete Guide (blog) - TIER 1
+6. Instagram QR Code (use-cases) - TIER 1
+7. WhatsApp QR Code (use-cases) - TIER 1
+8. QR Code with Logo (blog) - TIER 1
+9. How to Fix QR Code Not Scanning (best-practices) - TIER 2
+10. QR Codes for Education (industries) - TIER 3
+
+---
+
+## Keyword Mapping by QRWolf Feature
+
+Map content to product features for conversion optimization:
+
+| QRWolf Feature | Target Keywords | Content Needed |
+|----------------|-----------------|----------------|
+| URL QR | qr code generator, qr code for link | ✅ Covered |
+| WiFi QR | wifi qr code, share wifi password | ✅ Covered |
+| vCard QR | vcard qr code, digital business card | 🔲 Needs blog |
+| Menu QR | restaurant menu qr code | ✅ Covered |
+| PDF QR | qr code for pdf | 🔲 Needs article |
+| Video QR | qr code for video, youtube qr code | 🔲 Needs article |
+| Instagram QR | instagram qr code | 🔲 Needs article |
+| WhatsApp QR | whatsapp qr code | 🔲 Needs article |
+| Coupon QR | qr code coupon, discount qr code | 🔲 Needs article |
+| Links QR | linktree alternative, link in bio qr | 🔲 Needs article |
+| Dynamic QR | dynamic qr code, editable qr code | 🔲 Needs blog |
+| Analytics | qr code tracking, qr code analytics | ✅ Covered |
+| Logo Upload | qr code with logo, custom qr code | 🔲 Needs blog |
+| Bulk QR | bulk qr code generator | 🔲 Needs blog |
+| API | qr code api | 🔲 Needs article |
+
+---
+
+## Competitor Content Gaps
+
+Common competitor content we should create:
+
+1. **"QR Code Generator" landing page** - Pure SEO play for head term
+2. **Comparison posts** - "QRWolf vs QR Code Monkey vs QR Tiger"
+3. **Free tools** - Standalone tools that rank (QR code size calculator, etc.)
+4. **Templates** - "QR Code Templates for [Industry]"
+5. **Case studies** - Customer success stories with data
+
+---
+
+## Content Creation Guidelines
 
 ### For Agents Creating Content
 
-1. **Check this document first** - Don't duplicate existing topics
-2. **Use the /content skill** - Follow the frontmatter schema
-3. **Cross-link articles** - Use `relatedSlugs` in frontmatter
-4. **Include CTAs** - Link to /signup or /plans naturally
-5. **Run build after** - Verify with `npm run build`
+1. **Check this document first** - Pick from prioritized list
+2. **Include primary keyword** - In title, H1, first paragraph, meta description
+3. **Add secondary keywords** - Naturally throughout content
+4. **Internal linking** - Link to related articles and /signup, /plans
+5. **Include CTAs** - Conversion-focused calls to action
+6. **Minimum 800 words** - Google prefers comprehensive content
+7. **Use the /content skill** - Follow frontmatter schema exactly
+8. **Run build after** - Verify with `npm run build`
 
-### SEO Priority Keywords
-Target these naturally in content:
-- qr code generator, free qr code, qr code maker
-- dynamic qr code, qr code tracking, qr code analytics
-- wifi qr code, menu qr code, vcard qr code
-- [type] qr code (for each of the 16 QR types)
-
-### Content Balance Goals
-- **Blog**: 2-3 posts per month, mix of guides/tutorials/news
-- **Learn**: Build out each category to 4-5 articles minimum
-- **Priority**: use-cases and industries drive organic traffic
+### SEO Checklist Per Article
+- [ ] Primary keyword in title (front-loaded if possible)
+- [ ] Primary keyword in meta description
+- [ ] Primary keyword in first 100 words
+- [ ] H2s include secondary keywords
+- [ ] Internal links to 2-3 related articles
+- [ ] External link to 1 authoritative source (optional)
+- [ ] CTA to /signup or /plans
+- [ ] Alt text on any images
+- [ ] URL slug matches primary keyword
 
 ---
 
-## How to Use This Document
+## How to Update This Document
 
 ### When Adding Content
 1. Pick from "Planned Content" section
-2. Mark as complete when done: `- [x] Title`
-3. Add to "Existing Content Inventory"
-4. Update "Last Updated" date
+2. Move to "Existing Content Inventory"
+3. Add primary keyword to the table
+4. Update counts at top
+5. Update "Last Updated" date
 
 ### When Planning New Content
-1. Check "Existing Content Inventory" for gaps
-2. Add to appropriate "Planned Content" section
-3. Consider keyword opportunities and product alignment
+1. Research keyword with volume estimates
+2. Classify tier (1-4)
+3. Add to appropriate section
+4. Note the search intent (informational, transactional, navigational)
+
+---
+
+## Resources
+
+- [Ahrefs Free Keyword Generator](https://ahrefs.com/keyword-generator)
+- [Google Keyword Planner](https://ads.google.com/home/tools/keyword-planner/)
+- [Google Search Console](https://search.google.com/search-console) (track actual performance)
+- [QR Code Trends 2026](https://qrcodekit.com/news/qr-code-trends/)
 
 ---
 
@@ -180,4 +287,5 @@ Target these naturally in content:
 
 | Date | Changes |
 |------|---------|
+| 2026-01-17 | Complete SEO overhaul with tiered priorities, keyword mapping, and volume estimates |
 | 2026-01-17 | Initial plan created with 4 blog + 16 learn articles |

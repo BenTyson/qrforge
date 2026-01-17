@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 17, 2026 (Development Environment & Data Protection)
+> **Last Updated**: January 17, 2026 (SEO Content Strategy & Blog Expansion)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -387,6 +387,15 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - Test data factories for consistent mock data
   - CI/CD with GitHub Actions (lint, type-check, test, build, security-check)
   - PR check workflow warns on migrations and env changes
+- **SEO Content Strategy & Blog Expansion** (January 17, 2026):
+  - Added 6 new articles: 2 blog posts + 4 learn articles
+  - Blog: QR Code Tracking/ROI, WiFi QR Codes Complete Guide
+  - Learn: Event Marketing, Product Packaging, Real Estate, QR vs Barcode
+  - Created SEO-focused content plan (`.claude/skills/content/CONTENT-PLAN.md`)
+  - 4-tier keyword priority system with search volume estimates
+  - Mapped content to QRWolf features for conversion tracking
+  - Prioritized backlog of 30+ planned articles
+  - Total content now: 4 blog posts, 16 learn articles
 
 ### Planned Enhancements
 - Email scan alerts

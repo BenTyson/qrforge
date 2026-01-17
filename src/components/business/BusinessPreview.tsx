@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import type { BusinessContent } from '@/lib/qr/types';
@@ -83,14 +84,17 @@ export function BusinessPreview({ content, className }: BusinessPreviewProps) {
               {/* Photo */}
               <div className="flex justify-center mb-3">
                 {content.photoUrl ? (
-                  <img
+                  <Image
                     src={content.photoUrl}
                     alt={name}
+                    width={64}
+                    height={64}
                     className="w-16 h-16 rounded-full object-cover border-2"
                     style={{
                       borderColor: accentColor,
                       boxShadow: `0 0 15px ${accentColor}30`
                     }}
+                    unoptimized
                   />
                 ) : (
                   <div

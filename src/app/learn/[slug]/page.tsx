@@ -26,7 +26,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!article) return {};
 
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
-  const categoryInfo = LEARN_CATEGORIES.find(c => c.slug === article.category);
 
   return {
     title: article.title,

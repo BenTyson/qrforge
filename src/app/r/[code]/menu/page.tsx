@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { MenuContent } from '@/lib/qr/types';
 import { CategoryNav } from '@/components/menu/CategoryNav';
 import { MenuItemCard } from '@/components/menu/MenuItemCard';
@@ -40,10 +41,13 @@ export default async function MenuLandingPage({ params }: PageProps) {
         <header className="text-center mb-6 animate-fade-in">
           {content.logoUrl && (
             <div className="mb-4">
-              <img
+              <Image
                 src={content.logoUrl}
                 alt={content.restaurantName}
-                className="h-24 mx-auto object-contain drop-shadow-lg"
+                width={96}
+                height={96}
+                className="h-24 w-auto mx-auto object-contain drop-shadow-lg"
+                unoptimized
               />
             </div>
           )}

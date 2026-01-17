@@ -56,7 +56,7 @@ export function PaymentFailedEmail({
 
       {retryDate && (
         <Text style={styles.mutedText}>
-          We'll automatically retry the payment on <strong>{retryDate}</strong>.
+          We&apos;ll automatically retry the payment on <strong>{retryDate}</strong>.
           Please update your payment method before then to avoid any interruption
           to your service.
         </Text>
@@ -69,8 +69,8 @@ export function PaymentFailedEmail({
       </Text>
 
       <Text style={styles.mutedText}>
-        If we're unable to collect payment after a few attempts, your subscription
-        will be downgraded to the Free plan. Your QR codes will remain, but you'll
+        If we&apos;re unable to collect payment after a few attempts, your subscription
+        will be downgraded to the Free plan. Your QR codes will remain, but you&apos;ll
         lose access to premium features like analytics and dynamic QR updates.
       </Text>
 

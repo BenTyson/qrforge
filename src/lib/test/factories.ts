@@ -63,7 +63,7 @@ export function createMockQRCode(overrides: Partial<QRCode> = {}): QRCode {
     name: `Test QR Code ${id.substring(0, 8)}`,
     type: 'static',
     content_type: 'url',
-    content: { url: 'https://example.com' },
+    content: { type: 'url', url: 'https://example.com' },
     short_code: null,
     destination_url: null,
     style: {

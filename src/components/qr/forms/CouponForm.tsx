@@ -64,7 +64,7 @@ export function CouponForm({ content, onChange }: CouponFormProps) {
           className="mt-1 bg-secondary/50 text-lg font-bold"
         />
         <p className="text-xs text-muted-foreground mt-1">
-          The main offer (e.g., "20% OFF", "Buy 1 Get 1", "Free Shipping")
+          The main offer (e.g., &quot;20% OFF&quot;, &quot;Buy 1 Get 1&quot;, &quot;Free Shipping&quot;)
         </p>
       </div>
 

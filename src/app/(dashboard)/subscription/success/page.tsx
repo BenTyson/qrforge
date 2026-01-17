@@ -1,11 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/client';
+
+const CONFETTI_COLORS = ['#22d3ee', '#a855f7', '#22c55e', '#eab308', '#ef4444'];
+
+// Pre-generate confetti configuration at module level (runs once at import time)
+const CONFETTI_CONFIG = Array.from({ length: 50 }, (_, i) => ({
+  left: `${(i * 2) % 100}%`, // Distribute evenly instead of random
+  animationDelay: `${(i * 0.04) % 2}s`,
+  animationDuration: `${2 + (i * 0.04) % 2}s`,
+  color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+}));
 
 type Tier = 'free' | 'pro' | 'business';
 
@@ -43,7 +53,6 @@ const TIER_INFO: Record<Tier, { name: string; color: string; features: string[] 
 
 export default function SubscriptionSuccessPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [tier, setTier] = useState<Tier | null>(null);
   const [loading, setLoading] = useState(true);
   const [showConfetti, setShowConfetti] = useState(true);
@@ -92,23 +101,21 @@ export default function SubscriptionSuccessPage() {
       {/* Confetti Animation */}
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50">
-          {[...Array(50)].map((_, i) => (
+          {CONFETTI_CONFIG.map((config, i) => (
             <div
               key={i}
               className="absolute animate-confetti"
               style={{
-                left: `${Math.random() * 100}%`,
+                left: config.left,
                 top: '-20px',
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${2 + Math.random() * 2}s`,
+                animationDelay: config.animationDelay,
+                animationDuration: config.animationDuration,
               }}
             >
               <div
                 className="w-3 h-3 rotate-45"
                 style={{
-                  backgroundColor: ['#22d3ee', '#a855f7', '#22c55e', '#eab308', '#ef4444'][
-                    Math.floor(Math.random() * 5)
-                  ],
+                  backgroundColor: config.color,
                 }}
               />
             </div>

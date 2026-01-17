@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -98,11 +99,13 @@ export function LogoUploader({
       {value ? (
         // Show uploaded image
         <div className="relative inline-block">
-          <div className="w-20 h-20 rounded-lg overflow-hidden border border-border bg-secondary/30">
-            <img
+          <div className="w-20 h-20 rounded-lg overflow-hidden border border-border bg-secondary/30 relative">
+            <Image
               src={value}
               alt={label}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              unoptimized
             />
           </div>
           <Button

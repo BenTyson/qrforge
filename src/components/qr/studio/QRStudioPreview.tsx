@@ -1,11 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { QRPreview } from '../QRPreview';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
-import { generateQRDataURL, downloadQRPNG, generateQRSVG, downloadQRSVG } from '@/lib/qr/generator';
 
 interface QRStudioPreviewProps {
   content: QRContent | null;

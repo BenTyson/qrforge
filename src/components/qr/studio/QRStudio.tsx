@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useQRStudioState, DEFAULT_STYLE } from './hooks/useQRStudioState';
+import { useQRStudioState } from './hooks/useQRStudioState';
 import { QRStudioSidebar } from './QRStudioSidebar';
 import { QRStudioPreview, QRStudioMiniPreview } from './QRStudioPreview';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,31 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { generateQRDataURL, downloadQRPNG, generateQRSVG, downloadQRSVG } from '@/lib/qr/generator';
-import type { QRContent, QRContentType, QRStyleOptions } from '@/lib/qr/types';
+import type {
+  QRContent,
+  QRContentType,
+  QRStyleOptions,
+  URLContent,
+  TextContent,
+  WiFiContent,
+  VCardContent,
+  EmailContent,
+  PhoneContent,
+  SMSContent,
+  WhatsAppContent,
+  FacebookContent,
+  InstagramContent,
+  AppsContent,
+  PDFContent,
+  ImagesContent,
+  VideoContent,
+  MP3Content,
+  MenuContent,
+  BusinessContent,
+  LinksContent,
+  CouponContent,
+  SocialContent,
+} from '@/lib/qr/types';
 import { PRO_ONLY_TYPES } from '@/lib/qr/types';
 
 // Import step components from wizard
@@ -433,39 +457,39 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
             {/* Show content preview for dynamic types on content step, QRStudioPreview otherwise */}
             {state.selectedType === 'menu' && state.currentStep === 'content' ? (
               <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
-                <MenuPreview content={(state.content as any) || {}} />
+                <MenuPreview content={(state.content as Partial<MenuContent>) || {}} />
               </div>
             ) : state.selectedType === 'links' && state.currentStep === 'content' ? (
               <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
-                <LinksPreview content={(state.content as any) || {}} />
+                <LinksPreview content={(state.content as Partial<LinksContent>) || {}} />
               </div>
             ) : state.selectedType === 'business' && state.currentStep === 'content' ? (
               <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
-                <BusinessPreview content={(state.content as any) || {}} />
+                <BusinessPreview content={(state.content as Partial<BusinessContent>) || {}} />
               </div>
             ) : state.selectedType === 'social' && state.currentStep === 'content' ? (
               <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
-                <SocialPreview content={(state.content as any) || {}} />
+                <SocialPreview content={(state.content as Partial<SocialContent>) || {}} />
               </div>
             ) : state.selectedType === 'coupon' && state.currentStep === 'content' ? (
               <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
-                <CouponPreview content={(state.content as any) || {}} />
+                <CouponPreview content={(state.content as Partial<CouponContent>) || {}} />
               </div>
             ) : state.selectedType === 'images' && state.currentStep === 'content' ? (
               <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
-                <GalleryPreview content={(state.content as any) || {}} />
+                <GalleryPreview content={(state.content as Partial<ImagesContent>) || {}} />
               </div>
             ) : state.selectedType === 'pdf' && state.currentStep === 'content' ? (
               <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
-                <PDFPreview content={(state.content as any) || {}} />
+                <PDFPreview content={(state.content as Partial<PDFContent>) || {}} />
               </div>
             ) : state.selectedType === 'video' && state.currentStep === 'content' ? (
               <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
-                <VideoPreview content={(state.content as any) || {}} />
+                <VideoPreview content={(state.content as Partial<VideoContent>) || {}} />
               </div>
             ) : state.selectedType === 'mp3' && state.currentStep === 'content' ? (
               <div className="h-full flex items-start justify-center p-6 bg-secondary/20">
-                <AudioPreview content={(state.content as any) || {}} />
+                <AudioPreview content={(state.content as Partial<MP3Content>) || {}} />
               </div>
             ) : (
               <QRStudioPreview
@@ -525,23 +549,23 @@ function ContentStep({
   qrName,
   onContentChange,
   onNameChange,
-  userTier,
+  userTier: _userTier,
 }: ContentStepProps) {
   // State for basic form types
-  const [urlValue, setUrlValue] = useState((content as any)?.url || '');
-  const [textValue, setTextValue] = useState((content as any)?.text || '');
-  const [wifiSSID, setWifiSSID] = useState((content as any)?.ssid || '');
-  const [wifiPassword, setWifiPassword] = useState((content as any)?.password || '');
-  const [wifiEncryption, setWifiEncryption] = useState<'WPA' | 'WEP' | 'nopass'>((content as any)?.encryption || 'WPA');
-  const [vcardFirstName, setVcardFirstName] = useState((content as any)?.firstName || '');
-  const [vcardLastName, setVcardLastName] = useState((content as any)?.lastName || '');
-  const [vcardEmail, setVcardEmail] = useState((content as any)?.email || '');
-  const [vcardPhone, setVcardPhone] = useState((content as any)?.phone || '');
-  const [emailValue, setEmailValue] = useState((content as any)?.email || '');
-  const [emailSubject, setEmailSubject] = useState((content as any)?.subject || '');
-  const [phoneValue, setPhoneValue] = useState((content as any)?.phone || '');
-  const [smsPhone, setSmsPhone] = useState((content as any)?.phone || '');
-  const [smsMessage, setSmsMessage] = useState((content as any)?.message || '');
+  const [urlValue, setUrlValue] = useState((content as URLContent | null)?.url || '');
+  const [textValue, setTextValue] = useState((content as TextContent | null)?.text || '');
+  const [wifiSSID, setWifiSSID] = useState((content as WiFiContent | null)?.ssid || '');
+  const [wifiPassword, setWifiPassword] = useState((content as WiFiContent | null)?.password || '');
+  const [wifiEncryption, setWifiEncryption] = useState<'WPA' | 'WEP' | 'nopass'>((content as WiFiContent | null)?.encryption || 'WPA');
+  const [vcardFirstName, setVcardFirstName] = useState((content as VCardContent | null)?.firstName || '');
+  const [vcardLastName, setVcardLastName] = useState((content as VCardContent | null)?.lastName || '');
+  const [vcardEmail, setVcardEmail] = useState((content as VCardContent | null)?.email || '');
+  const [vcardPhone, setVcardPhone] = useState((content as VCardContent | null)?.phone || '');
+  const [emailValue, setEmailValue] = useState((content as EmailContent | null)?.email || '');
+  const [emailSubject, setEmailSubject] = useState((content as EmailContent | null)?.subject || '');
+  const [phoneValue, setPhoneValue] = useState((content as PhoneContent | null)?.phone || '');
+  const [smsPhone, setSmsPhone] = useState((content as SMSContent | null)?.phone || '');
+  const [smsMessage, setSmsMessage] = useState((content as SMSContent | null)?.message || '');
 
   // Update content when form values change
   useEffect(() => {
@@ -797,31 +821,31 @@ function ContentStep({
 
       // Pro types use dedicated form components
       case 'whatsapp':
-        return <WhatsAppForm content={(content as any) || {}} onChange={onContentChange} />;
+        return <WhatsAppForm content={(content as Partial<WhatsAppContent>) || {}} onChange={onContentChange} />;
       case 'facebook':
-        return <FacebookForm content={(content as any) || {}} onChange={onContentChange} />;
+        return <FacebookForm content={(content as Partial<FacebookContent>) || {}} onChange={onContentChange} />;
       case 'instagram':
-        return <InstagramForm content={(content as any) || {}} onChange={onContentChange} />;
+        return <InstagramForm content={(content as Partial<InstagramContent>) || {}} onChange={onContentChange} />;
       case 'apps':
-        return <AppsForm content={(content as any) || {}} onChange={onContentChange} />;
+        return <AppsForm content={(content as Partial<AppsContent>) || {}} onChange={onContentChange} />;
       case 'pdf':
-        return <PDFForm content={(content as any) || {}} onChange={onContentChange} />;
+        return <PDFForm content={(content as Partial<PDFContent>) || {}} onChange={onContentChange} />;
       case 'images':
-        return <ImagesForm content={(content as any) || {}} onChange={onContentChange} />;
+        return <ImagesForm content={(content as Partial<ImagesContent>) || {}} onChange={onContentChange} />;
       case 'video':
-        return <VideoForm content={(content as any) || {}} onChange={onContentChange} />;
+        return <VideoForm content={(content as Partial<VideoContent>) || {}} onChange={onContentChange} />;
       case 'mp3':
-        return <MP3Form content={(content as any) || {}} onChange={onContentChange} />;
+        return <MP3Form content={(content as Partial<MP3Content>) || {}} onChange={onContentChange} />;
       case 'menu':
-        return <MenuForm content={(content as any) || {}} onChange={onContentChange} />;
+        return <MenuForm content={(content as Partial<MenuContent>) || {}} onChange={onContentChange} />;
       case 'business':
-        return <BusinessForm content={(content as any) || {}} onChange={onContentChange} />;
+        return <BusinessForm content={(content as Partial<BusinessContent>) || {}} onChange={onContentChange} />;
       case 'links':
-        return <LinksForm content={(content as any) || {}} onChange={onContentChange} />;
+        return <LinksForm content={(content as Partial<LinksContent>) || {}} onChange={onContentChange} />;
       case 'coupon':
-        return <CouponForm content={(content as any) || {}} onChange={onContentChange} />;
+        return <CouponForm content={(content as Partial<CouponContent>) || {}} onChange={onContentChange} />;
       case 'social':
-        return <SocialForm content={(content as any) || {}} onChange={onContentChange} />;
+        return <SocialForm content={(content as Partial<SocialContent>) || {}} onChange={onContentChange} />;
 
       default:
         return null;
@@ -881,8 +905,8 @@ interface DownloadStepProps {
 
 function DownloadStep({
   content,
-  style,
-  qrName,
+  style: _style,
+  qrName: _qrName,
   shortCode,
   savedQRId,
   userId,

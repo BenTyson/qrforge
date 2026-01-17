@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -279,13 +280,13 @@ export default function PlansPage() {
       <div className="text-center mt-10">
         <p className="text-sm text-muted-foreground">
           Have questions?{' '}
-          <a href="/#faq" className="text-primary hover:underline">
+          <Link href="/#faq" className="text-primary hover:underline">
             Check our FAQ
-          </a>
+          </Link>
           {' '}or{' '}
-          <a href="/contact" className="text-primary hover:underline">
+          <Link href="/contact" className="text-primary hover:underline">
             contact us
-          </a>
+          </Link>
         </p>
       </div>
     </div>

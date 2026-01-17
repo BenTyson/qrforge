@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound, redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -40,7 +41,7 @@ export default async function LandingPage({ params }: PageProps) {
   // Get destination URL
   let destinationUrl = qrCode.destination_url;
   if (!destinationUrl && qrCode.content) {
-    const content = qrCode.content as Record<string, any>;
+    const content = qrCode.content as { type?: string; url?: string };
     if (content.type === 'url' && content.url) {
       destinationUrl = content.url;
     }
@@ -63,10 +64,13 @@ export default async function LandingPage({ params }: PageProps) {
         {/* Logo */}
         {qrCode.landing_page_logo_url && (
           <div className="mb-8">
-            <img
+            <Image
               src={qrCode.landing_page_logo_url}
               alt="Logo"
-              className="h-16 mx-auto object-contain"
+              width={64}
+              height={64}
+              className="h-16 w-auto mx-auto object-contain"
+              unoptimized
             />
           </div>
         )}

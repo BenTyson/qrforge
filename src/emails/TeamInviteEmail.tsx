@@ -18,7 +18,7 @@ export function TeamInviteEmail({
   return (
     <BaseLayout preview={`${inviterName} invited you to join ${teamName} on QRWolf`}>
       <Text style={styles.heading}>
-        You're Invited!
+        You&apos;re Invited!
       </Text>
 
       <Text style={styles.paragraph}>
@@ -49,12 +49,12 @@ export function TeamInviteEmail({
       <Hr style={styles.divider} />
 
       <Text style={styles.mutedText}>
-        This invitation expires in 7 days. If you don't want to join this team,
+        This invitation expires in 7 days. If you don&apos;t want to join this team,
         you can safely ignore this email.
       </Text>
 
       <Text style={styles.mutedText}>
-        If you weren't expecting this invitation or have concerns, please contact us at{' '}
+        If you weren&apos;t expecting this invitation or have concerns, please contact us at{' '}
         <Link href="mailto:hello@qrwolf.com" style={styles.link}>
           hello@qrwolf.com
         </Link>

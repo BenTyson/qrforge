@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -15,7 +14,7 @@ export function PricingSection({ isAuthenticated = false, currentTier = 'free' }
   const [interval, setInterval] = useState<'monthly' | 'yearly'>('monthly');
   const router = useRouter();
 
-  const handleUpgrade = (plan: 'pro' | 'business') => {
+  const handleUpgrade = () => {
     if (!isAuthenticated) {
       // Not logged in - send to signup, they can upgrade after
       router.push('/signup');
@@ -122,7 +121,7 @@ export function PricingSection({ isAuthenticated = false, currentTier = 'free' }
           </ul>
           <Button
             className="w-full glow"
-            onClick={() => handleUpgrade('pro')}
+            onClick={() => handleUpgrade()}
             disabled={currentTier === 'pro'}
           >
             {currentTier === 'pro' ? 'Current Plan' : isAuthenticated ? 'Select Plan' : 'Get Started'}
@@ -156,7 +155,7 @@ export function PricingSection({ isAuthenticated = false, currentTier = 'free' }
           <Button
             variant="outline"
             className="w-full"
-            onClick={() => handleUpgrade('business')}
+            onClick={() => handleUpgrade()}
             disabled={currentTier === 'business'}
           >
             {currentTier === 'business' ? 'Current Plan' : isAuthenticated ? 'Select Plan' : 'Get Started'}

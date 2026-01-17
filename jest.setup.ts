@@ -26,12 +26,13 @@ process.env.RESEND_API_KEY = 're_test_mock';
 
 // Mock crypto for Node.js environment
 if (typeof global.crypto === 'undefined') {
-  const crypto = require('crypto');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const nodeCrypto = require('crypto');
   Object.defineProperty(global, 'crypto', {
     value: {
-      randomBytes: crypto.randomBytes,
-      createHash: crypto.createHash,
-      getRandomValues: (arr: Uint8Array) => crypto.randomFillSync(arr),
+      randomBytes: nodeCrypto.randomBytes,
+      createHash: nodeCrypto.createHash,
+      getRandomValues: (arr: Uint8Array) => nodeCrypto.randomFillSync(arr),
     },
   });
 }

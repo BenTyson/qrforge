@@ -1,10 +1,33 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { contentToString } from '@/lib/qr/generator';
-import type { QRContent, QRContentType, QRStyleOptions } from '@/lib/qr/types';
+import type {
+  QRContent,
+  QRContentType,
+  QRStyleOptions,
+  URLContent,
+  TextContent,
+  WiFiContent,
+  VCardContent,
+  EmailContent,
+  PhoneContent,
+  SMSContent,
+  WhatsAppContent,
+  FacebookContent,
+  InstagramContent,
+  AppsContent,
+  PDFContent,
+  ImagesContent,
+  VideoContent,
+  MP3Content,
+  MenuContent,
+  BusinessContent,
+  LinksContent,
+  CouponContent,
+  SocialContent,
+} from '@/lib/qr/types';
 import { DYNAMIC_REQUIRED_TYPES } from '@/lib/qr/types';
 import type { WizardStep } from '../../wizard';
 
@@ -112,8 +135,6 @@ interface UseQRStudioStateProps {
 }
 
 export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QRStudioState, QRStudioActions] {
-  const router = useRouter();
-
   // Core state
   const [currentStep, setCurrentStep] = useState<WizardStep>(mode === 'edit' ? 'content' : 'type');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -191,45 +212,47 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
 
     switch (selectedType) {
       case 'url':
-        return !!(content as any).url?.trim();
+        return !!(content as URLContent).url?.trim();
       case 'text':
-        return !!(content as any).text?.trim();
+        return !!(content as TextContent).text?.trim();
       case 'wifi':
-        return !!(content as any).ssid?.trim();
+        return !!(content as WiFiContent).ssid?.trim();
       case 'vcard':
-        return !!((content as any).firstName?.trim() || (content as any).lastName?.trim());
+        return !!((content as VCardContent).firstName?.trim() || (content as VCardContent).lastName?.trim());
       case 'email':
-        return !!(content as any).email?.trim();
+        return !!(content as EmailContent).email?.trim();
       case 'phone':
-        return !!(content as any).phone?.trim();
+        return !!(content as PhoneContent).phone?.trim();
       case 'sms':
-        return !!(content as any).phone?.trim();
+        return !!(content as SMSContent).phone?.trim();
       case 'whatsapp':
-        return !!(content as any).phone?.trim();
+        return !!(content as WhatsAppContent).phone?.trim();
       case 'facebook':
-        return !!(content as any).profileUrl?.trim();
+        return !!(content as FacebookContent).profileUrl?.trim();
       case 'instagram':
-        return !!(content as any).username?.trim();
-      case 'apps':
-        return !!((content as any).appStoreUrl?.trim() || (content as any).playStoreUrl?.trim() || (content as any).fallbackUrl?.trim());
+        return !!(content as InstagramContent).username?.trim();
+      case 'apps': {
+        const appsContent = content as AppsContent;
+        return !!(appsContent.appStoreUrl?.trim() || appsContent.playStoreUrl?.trim() || appsContent.fallbackUrl?.trim());
+      }
       case 'pdf':
-        return !!(content as any).fileUrl?.trim() || !!(content as any).fileName?.trim();
+        return !!(content as PDFContent).fileUrl?.trim() || !!(content as PDFContent).fileName?.trim();
       case 'images':
-        return (content as any).images?.length > 0;
+        return (content as ImagesContent).images?.length > 0;
       case 'video':
-        return !!(content as any).videoUrl?.trim() || !!(content as any).embedUrl?.trim();
+        return !!(content as VideoContent).videoUrl?.trim() || !!(content as VideoContent).embedUrl?.trim();
       case 'mp3':
-        return !!(content as any).audioUrl?.trim() || !!(content as any).embedUrl?.trim();
+        return !!(content as MP3Content).audioUrl?.trim() || !!(content as MP3Content).embedUrl?.trim();
       case 'menu':
-        return !!(content as any).restaurantName?.trim();
+        return !!(content as MenuContent).restaurantName?.trim();
       case 'business':
-        return !!(content as any).name?.trim();
+        return !!(content as BusinessContent).name?.trim();
       case 'links':
-        return !!(content as any).title?.trim();
+        return !!(content as LinksContent).title?.trim();
       case 'coupon':
-        return !!(content as any).businessName?.trim() && !!(content as any).headline?.trim();
+        return !!(content as CouponContent).businessName?.trim() && !!(content as CouponContent).headline?.trim();
       case 'social':
-        return !!(content as any).name?.trim();
+        return !!(content as SocialContent).name?.trim();
       default:
         return false;
     }

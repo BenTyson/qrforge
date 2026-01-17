@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import type { MenuContent } from '@/lib/qr/types';
 
@@ -40,10 +41,13 @@ export function MenuPreview({ content, className }: MenuPreviewProps) {
             {/* Header */}
             <div className="text-center mb-4">
               {content.logoUrl && (
-                <img
+                <Image
                   src={content.logoUrl}
                   alt={restaurantName}
-                  className="h-12 mx-auto mb-2 object-contain"
+                  width={48}
+                  height={48}
+                  className="h-12 w-auto mx-auto mb-2 object-contain"
+                  unoptimized
                 />
               )}
               <h1 className="text-lg font-bold text-white">{restaurantName}</h1>
@@ -94,11 +98,13 @@ export function MenuPreview({ content, className }: MenuPreviewProps) {
                         >
                           {/* Item Image */}
                           {item.image && (
-                            <div className="aspect-[16/9] overflow-hidden">
-                              <img
+                            <div className="aspect-[16/9] overflow-hidden relative">
+                              <Image
                                 src={item.image}
                                 alt={item.name}
-                                className="w-full h-full object-cover"
+                                fill
+                                className="object-cover"
+                                unoptimized
                               />
                             </div>
                           )}

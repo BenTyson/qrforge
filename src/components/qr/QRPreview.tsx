@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import { generateQRDataURL } from '@/lib/qr/generator';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
@@ -126,14 +127,17 @@ export function QRPreview({
     >
       {/* QR Code Display */}
       {qrDataURL && (
-        <img
+        <Image
           src={qrDataURL}
           alt="QR Code"
+          width={300}
+          height={300}
           className={cn(
             'max-w-full max-h-full rounded-lg transition-all duration-300',
             isGenerating && 'opacity-50'
           )}
           style={{ imageRendering: 'pixelated' }}
+          unoptimized
         />
       )}
 

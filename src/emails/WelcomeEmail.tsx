@@ -33,7 +33,7 @@ export function WelcomeEmail({ userName }: WelcomeEmailProps) {
       <Hr style={styles.divider} />
 
       <Text style={{ ...styles.paragraph, fontWeight: 'bold' }}>
-        Here's what you can do:
+        Here&apos;s what you can do:
       </Text>
 
       <Section style={styles.highlight}>

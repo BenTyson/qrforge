@@ -149,7 +149,7 @@ export const mdxComponents = {
       {children}
     </pre>
   ),
-  img: ({ src, alt, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => {
+  img: ({ src, alt }: React.ImgHTMLAttributes<HTMLImageElement>) => {
     if (typeof src !== 'string') return null;
     return (
       <figure className="my-8">

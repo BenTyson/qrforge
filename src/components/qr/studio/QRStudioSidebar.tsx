@@ -131,7 +131,7 @@ export function QRStudioSidebar({
 
       {/* Steps */}
       <nav className="flex-1 p-4 space-y-1">
-        {visibleSteps.map((step, index) => {
+        {visibleSteps.map((step) => {
           const isCurrent = currentStep === step.id;
           const isComplete = isStepComplete(step.id);
           const isClickable = isStepClickable(step.id);

@@ -97,8 +97,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File is required' }, { status: 400 });
     }
 
-    const validMediaTypes = ['pdf', 'image', 'video', 'audio'] as const;
-    if (!mediaType || !validMediaTypes.includes(mediaType as any)) {
+    const validMediaTypes: readonly string[] = ['pdf', 'image', 'video', 'audio'];
+    if (!mediaType || !validMediaTypes.includes(mediaType)) {
       return NextResponse.json(
         { error: 'Invalid media type. Must be: pdf, image, video, or audio' },
         { status: 400 }
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
     const path = `${user.id}/${mediaType}/${filename}`;
 
     // Upload to Supabase Storage
-    const { data, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('qr-media')
       .upload(path, fileBuffer, {
         contentType,

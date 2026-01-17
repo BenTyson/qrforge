@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { SocialContent } from '@/lib/qr/types';
 import type { ReactNode } from 'react';
 import { normalizeUrl } from '@/lib/utils';
@@ -173,14 +174,17 @@ export default async function SocialLandingPage({ params }: PageProps) {
                 className="absolute inset-0 rounded-full blur-xl opacity-50"
                 style={{ backgroundColor: accentColor }}
               />
-              <img
+              <Image
                 src={content.avatarUrl}
                 alt={content.name}
+                width={112}
+                height={112}
                 className="relative w-28 h-28 rounded-full object-cover border-4 shadow-2xl"
                 style={{
                   borderColor: accentColor,
                   boxShadow: `0 0 30px ${accentColor}40`,
                 }}
+                unoptimized
               />
             </div>
           ) : (

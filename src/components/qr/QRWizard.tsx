@@ -11,11 +11,36 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { QRPreview } from './QRPreview';
 import { generateQRDataURL, downloadQRPNG, generateQRSVG, downloadQRSVG, contentToString } from '@/lib/qr/generator';
-import type { QRContent, QRContentType, QRStyleOptions } from '@/lib/qr/types';
+import type {
+  QRContent,
+  QRContentType,
+  QRStyleOptions,
+  URLContent,
+  TextContent,
+  WiFiContent,
+  VCardContent,
+  EmailContent,
+  PhoneContent,
+  SMSContent,
+  WhatsAppContent,
+  FacebookContent,
+  InstagramContent,
+  AppsContent,
+  PDFContent,
+  ImagesContent,
+  VideoContent,
+  MP3Content,
+  MenuContent,
+  BusinessContent,
+  LinksContent,
+  CouponContent,
+  SocialContent,
+} from '@/lib/qr/types';
 import { PRO_ONLY_TYPES, DYNAMIC_REQUIRED_TYPES } from '@/lib/qr/types';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -45,11 +70,6 @@ import {
   TYPE_CATEGORIES,
   COLOR_PRESETS,
   PREVIEWABLE_TYPES,
-  WIZARD_STEPS,
-  TypeStep,
-  StyleStep,
-  OptionsStep,
-  DownloadStep,
 } from './wizard';
 import type { WizardStep } from './wizard';
 
@@ -92,10 +112,6 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
   const [scheduledEnabled, setScheduledEnabled] = useState(false);
   const [activeFrom, setActiveFrom] = useState<string>('');
   const [activeUntil, setActiveUntil] = useState<string>('');
-  const [landingPageEnabled, setLandingPageEnabled] = useState(false);
-  const [landingPageTitle, setLandingPageTitle] = useState('');
-  const [landingPageDescription, setLandingPageDescription] = useState('');
-  const [landingPageButtonText, setLandingPageButtonText] = useState('Continue');
 
   const router = useRouter();
 
@@ -162,10 +178,6 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
     setScheduledEnabled(false);
     setActiveFrom('');
     setActiveUntil('');
-    setLandingPageEnabled(false);
-    setLandingPageTitle('');
-    setLandingPageDescription('');
-    setLandingPageButtonText('Continue');
     // Reset form fields
     setUrlValue('');
     setTextValue('');
@@ -188,47 +200,49 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
 
     switch (selectedType) {
       case 'url':
-        return !!(content as any).url?.trim();
+        return !!(content as URLContent).url?.trim();
       case 'text':
-        return !!(content as any).text?.trim();
+        return !!(content as TextContent).text?.trim();
       case 'wifi':
-        return !!(content as any).ssid?.trim();
+        return !!(content as WiFiContent).ssid?.trim();
       case 'vcard':
-        return !!((content as any).firstName?.trim() || (content as any).lastName?.trim());
+        return !!((content as VCardContent).firstName?.trim() || (content as VCardContent).lastName?.trim());
       case 'email':
-        return !!(content as any).email?.trim();
+        return !!(content as EmailContent).email?.trim();
       case 'phone':
-        return !!(content as any).phone?.trim();
+        return !!(content as PhoneContent).phone?.trim();
       case 'sms':
-        return !!(content as any).phone?.trim();
+        return !!(content as SMSContent).phone?.trim();
       case 'whatsapp':
-        return !!(content as any).phone?.trim();
+        return !!(content as WhatsAppContent).phone?.trim();
       case 'facebook':
-        return !!(content as any).profileUrl?.trim();
+        return !!(content as FacebookContent).profileUrl?.trim();
       case 'instagram':
-        return !!(content as any).username?.trim();
-      case 'apps':
-        return !!((content as any).appStoreUrl?.trim() || (content as any).playStoreUrl?.trim() || (content as any).fallbackUrl?.trim());
+        return !!(content as InstagramContent).username?.trim();
+      case 'apps': {
+        const appsContent = content as AppsContent;
+        return !!(appsContent.appStoreUrl?.trim() || appsContent.playStoreUrl?.trim() || appsContent.fallbackUrl?.trim());
+      }
       // Media File Types
       case 'pdf':
-        return !!(content as any).fileUrl?.trim() || !!(content as any).fileName?.trim();
+        return !!(content as PDFContent).fileUrl?.trim() || !!(content as PDFContent).fileName?.trim();
       case 'images':
-        return (content as any).images?.length > 0;
+        return (content as ImagesContent).images?.length > 0;
       case 'video':
-        return !!(content as any).videoUrl?.trim() || !!(content as any).embedUrl?.trim();
+        return !!(content as VideoContent).videoUrl?.trim() || !!(content as VideoContent).embedUrl?.trim();
       case 'mp3':
-        return !!(content as any).audioUrl?.trim() || !!(content as any).embedUrl?.trim();
+        return !!(content as MP3Content).audioUrl?.trim() || !!(content as MP3Content).embedUrl?.trim();
       // Business & Landing Page Types
       case 'menu':
-        return !!(content as any).restaurantName?.trim();
+        return !!(content as MenuContent).restaurantName?.trim();
       case 'business':
-        return !!(content as any).name?.trim();
+        return !!(content as BusinessContent).name?.trim();
       case 'links':
-        return !!(content as any).title?.trim();
+        return !!(content as LinksContent).title?.trim();
       case 'coupon':
-        return !!(content as any).businessName?.trim() && !!(content as any).headline?.trim();
+        return !!(content as CouponContent).businessName?.trim() && !!(content as CouponContent).headline?.trim();
       case 'social':
-        return !!(content as any).name?.trim();
+        return !!(content as SocialContent).name?.trim();
       default:
         return false;
     }
@@ -1028,28 +1042,28 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
               {/* Social Media Forms */}
               {selectedType === 'whatsapp' && (
                 <WhatsAppForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<WhatsAppContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {selectedType === 'facebook' && (
                 <FacebookForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<FacebookContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {selectedType === 'instagram' && (
                 <InstagramForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<InstagramContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {selectedType === 'apps' && (
                 <AppsForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<AppsContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
@@ -1057,28 +1071,28 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
               {/* Media File Forms */}
               {selectedType === 'pdf' && (
                 <PDFForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<PDFContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {selectedType === 'images' && (
                 <ImagesForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<ImagesContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {selectedType === 'video' && (
                 <VideoForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<VideoContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {selectedType === 'mp3' && (
                 <MP3Form
-                  content={(content as any) || {}}
+                  content={(content as Partial<MP3Content>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
@@ -1086,35 +1100,35 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
               {/* Business & Landing Page Forms */}
               {selectedType === 'menu' && (
                 <MenuForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<MenuContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {selectedType === 'business' && (
                 <BusinessForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<BusinessContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {selectedType === 'links' && (
                 <LinksForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<LinksContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {selectedType === 'coupon' && (
                 <CouponForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<CouponContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {selectedType === 'social' && (
                 <SocialForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<SocialContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
@@ -1153,7 +1167,7 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
                 {/* Preview Column - only for menu type */}
                 {selectedType === 'menu' && (
                   <div className="hidden lg:block sticky top-8">
-                    <MenuPreview content={(content as any) || {}} />
+                    <MenuPreview content={(content as Partial<MenuContent>) || {}} />
                   </div>
                 )}
               </div>
@@ -1875,18 +1889,18 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
                 <div className="h-full overflow-y-auto">
                   {/* Menu Preview */}
                   {selectedType === 'menu' && (
-                    <div className="min-h-full" style={{ backgroundColor: (content as any).accentColor || '#14b8a6' }}>
+                    <div className="min-h-full" style={{ backgroundColor: (content as MenuContent).accentColor || '#14b8a6' }}>
                       <div className="p-6 text-center text-white">
-                        {(content as any).logoUrl && (
-                          <img src={(content as any).logoUrl} alt="Logo" className="w-20 h-20 mx-auto mb-4 rounded-full object-cover bg-white/10" />
+                        {(content as MenuContent).logoUrl && (
+                          <Image src={(content as MenuContent).logoUrl!} alt="Logo" width={80} height={80} className="w-20 h-20 mx-auto mb-4 rounded-full object-cover bg-white/10" unoptimized />
                         )}
-                        <h1 className="text-2xl font-bold">{(content as any).restaurantName || 'Restaurant Name'}</h1>
+                        <h1 className="text-2xl font-bold">{(content as MenuContent).restaurantName || 'Restaurant Name'}</h1>
                       </div>
                       <div className="bg-white rounded-t-3xl p-6 min-h-[400px]">
-                        {((content as any).categories || []).map((cat: any, i: number) => (
+                        {((content as MenuContent).categories || []).map((cat, i: number) => (
                           <div key={i} className="mb-6">
                             <h2 className="text-lg font-bold text-slate-800 mb-3 pb-2 border-b">{cat.name || 'Category'}</h2>
-                            {(cat.items || []).map((item: any, j: number) => (
+                            {(cat.items || []).map((item, j: number) => (
                               <div key={j} className="flex justify-between py-2">
                                 <span className="text-slate-700">{item.name || 'Item'}</span>
                                 <span className="font-semibold text-slate-900">{item.price || '$0'}</span>
@@ -1901,25 +1915,25 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
                   {/* Business Card Preview */}
                   {selectedType === 'business' && (
                     <div className="min-h-full bg-slate-50">
-                      <div className="p-6 text-center" style={{ backgroundColor: (content as any).accentColor || '#14b8a6' }}>
-                        {(content as any).photoUrl ? (
-                          <img src={(content as any).photoUrl} alt="Photo" className="w-24 h-24 mx-auto mb-4 rounded-full object-cover border-4 border-white" />
+                      <div className="p-6 text-center" style={{ backgroundColor: (content as BusinessContent).accentColor || '#14b8a6' }}>
+                        {(content as BusinessContent).photoUrl ? (
+                          <Image src={(content as BusinessContent).photoUrl!} alt="Photo" width={96} height={96} className="w-24 h-24 mx-auto mb-4 rounded-full object-cover border-4 border-white" unoptimized />
                         ) : (
                           <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-white/20 flex items-center justify-center">
                             <span className="text-3xl text-white font-bold">
-                              {((content as any).name || 'N')[0].toUpperCase()}
+                              {((content as BusinessContent).name || 'N')[0].toUpperCase()}
                             </span>
                           </div>
                         )}
-                        <h1 className="text-2xl font-bold text-white">{(content as any).name || 'Your Name'}</h1>
-                        {(content as any).title && <p className="text-white/80">{(content as any).title}</p>}
-                        {(content as any).company && <p className="text-white/60 text-sm">{(content as any).company}</p>}
+                        <h1 className="text-2xl font-bold text-white">{(content as BusinessContent).name || 'Your Name'}</h1>
+                        {(content as BusinessContent).title && <p className="text-white/80">{(content as BusinessContent).title}</p>}
+                        {(content as BusinessContent).company && <p className="text-white/60 text-sm">{(content as BusinessContent).company}</p>}
                       </div>
                       <div className="p-6 space-y-4">
-                        {(content as any).bio && (
-                          <p className="text-slate-600 text-center">{(content as any).bio}</p>
+                        {(content as BusinessContent).bio && (
+                          <p className="text-slate-600 text-center">{(content as BusinessContent).bio}</p>
                         )}
-                        {(content as any).email && (
+                        {(content as BusinessContent).email && (
                           <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm">
                             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
                               <svg className="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1927,20 +1941,20 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
                                 <polyline points="22,6 12,13 2,6" />
                               </svg>
                             </div>
-                            <span className="text-slate-700">{(content as any).email}</span>
+                            <span className="text-slate-700">{(content as BusinessContent).email}</span>
                           </div>
                         )}
-                        {(content as any).phone && (
+                        {(content as BusinessContent).phone && (
                           <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm">
                             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
                               <svg className="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72" />
                               </svg>
                             </div>
-                            <span className="text-slate-700">{(content as any).phone}</span>
+                            <span className="text-slate-700">{(content as BusinessContent).phone}</span>
                           </div>
                         )}
-                        {(content as any).website && (
+                        {(content as BusinessContent).website && (
                           <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm">
                             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
                               <svg className="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1949,10 +1963,10 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
                                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
                               </svg>
                             </div>
-                            <span className="text-slate-700 truncate">{(content as any).website}</span>
+                            <span className="text-slate-700 truncate">{(content as BusinessContent).website}</span>
                           </div>
                         )}
-                        <button className="w-full py-3 rounded-xl text-white font-semibold" style={{ backgroundColor: (content as any).accentColor || '#14b8a6' }}>
+                        <button className="w-full py-3 rounded-xl text-white font-semibold" style={{ backgroundColor: (content as BusinessContent).accentColor || '#14b8a6' }}>
                           Save Contact
                         </button>
                       </div>
@@ -1961,24 +1975,24 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
 
                   {/* Links Preview */}
                   {selectedType === 'links' && (
-                    <div className="min-h-full p-6" style={{ backgroundColor: (content as any).accentColor || '#14b8a6' }}>
+                    <div className="min-h-full p-6" style={{ backgroundColor: (content as LinksContent).accentColor || '#14b8a6' }}>
                       <div className="text-center mb-8">
-                        {(content as any).avatarUrl ? (
-                          <img src={(content as any).avatarUrl} alt="Avatar" className="w-20 h-20 mx-auto mb-4 rounded-full object-cover border-4 border-white/20" />
+                        {(content as LinksContent).avatarUrl ? (
+                          <Image src={(content as LinksContent).avatarUrl!} alt="Avatar" width={80} height={80} className="w-20 h-20 mx-auto mb-4 rounded-full object-cover border-4 border-white/20" unoptimized />
                         ) : (
                           <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-white/20 flex items-center justify-center">
                             <span className="text-2xl text-white font-bold">
-                              {((content as any).title || 'L')[0].toUpperCase()}
+                              {((content as LinksContent).title || 'L')[0].toUpperCase()}
                             </span>
                           </div>
                         )}
-                        <h1 className="text-xl font-bold text-white">{(content as any).title || 'My Links'}</h1>
-                        {(content as any).description && (
-                          <p className="text-white/80 text-sm mt-1">{(content as any).description}</p>
+                        <h1 className="text-xl font-bold text-white">{(content as LinksContent).title || 'My Links'}</h1>
+                        {(content as LinksContent).description && (
+                          <p className="text-white/80 text-sm mt-1">{(content as LinksContent).description}</p>
                         )}
                       </div>
                       <div className="space-y-3">
-                        {((content as any).links || []).map((link: any, i: number) => (
+                        {((content as LinksContent).links || []).map((link, i: number) => (
                           <button key={i} className="w-full py-3 px-4 bg-white/90 hover:bg-white rounded-xl text-slate-800 font-medium text-center transition-colors">
                             {link.title || 'Link'}
                           </button>
@@ -1991,32 +2005,32 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
                   {selectedType === 'coupon' && (
                     <div className="min-h-full bg-slate-100 p-4">
                       <div className="bg-white rounded-2xl overflow-hidden shadow-lg">
-                        <div className="p-6 text-center" style={{ backgroundColor: (content as any).accentColor || '#14b8a6' }}>
-                          {(content as any).logoUrl && (
-                            <img src={(content as any).logoUrl} alt="Logo" className="w-16 h-16 mx-auto mb-3 rounded-full object-cover bg-white" />
+                        <div className="p-6 text-center" style={{ backgroundColor: (content as CouponContent).accentColor || '#14b8a6' }}>
+                          {(content as CouponContent).logoUrl && (
+                            <Image src={(content as CouponContent).logoUrl!} alt="Logo" width={64} height={64} className="w-16 h-16 mx-auto mb-3 rounded-full object-cover bg-white" unoptimized />
                           )}
-                          <p className="text-white/80 font-medium">{(content as any).businessName || 'Business Name'}</p>
+                          <p className="text-white/80 font-medium">{(content as CouponContent).businessName || 'Business Name'}</p>
                         </div>
                         <div className="p-6 text-center border-b-2 border-dashed border-slate-200">
-                          <h1 className="text-4xl font-bold text-slate-800 mb-2">{(content as any).headline || '20% OFF'}</h1>
-                          <p className="text-slate-600">{(content as any).description || 'Your entire purchase'}</p>
+                          <h1 className="text-4xl font-bold text-slate-800 mb-2">{(content as CouponContent).headline || '20% OFF'}</h1>
+                          <p className="text-slate-600">{(content as CouponContent).description || 'Your entire purchase'}</p>
                         </div>
-                        {(content as any).code && (
+                        {(content as CouponContent).code && (
                           <div className="p-4 bg-slate-50">
                             <p className="text-xs text-slate-500 text-center mb-2">Promo Code</p>
                             <div className="bg-white border-2 border-dashed border-slate-300 rounded-lg py-3 px-4 text-center">
-                              <span className="font-mono text-xl font-bold text-slate-800">{(content as any).code}</span>
+                              <span className="font-mono text-xl font-bold text-slate-800">{(content as CouponContent).code}</span>
                             </div>
                           </div>
                         )}
-                        {(content as any).validUntil && (
+                        {(content as CouponContent).validUntil && (
                           <p className="text-xs text-slate-500 text-center py-2">
-                            Valid until {new Date((content as any).validUntil).toLocaleDateString()}
+                            Valid until {new Date((content as CouponContent).validUntil!).toLocaleDateString()}
                           </p>
                         )}
-                        {(content as any).terms && (
+                        {(content as CouponContent).terms && (
                           <p className="text-xs text-slate-400 text-center p-4 border-t border-slate-100">
-                            {(content as any).terms}
+                            {(content as CouponContent).terms}
                           </p>
                         )}
                       </div>
@@ -2025,24 +2039,24 @@ export function QRWizard({ isOpen, onClose }: QRWizardProps) {
 
                   {/* Social Preview */}
                   {selectedType === 'social' && (
-                    <div className="min-h-full p-6" style={{ backgroundColor: (content as any).accentColor || '#14b8a6' }}>
+                    <div className="min-h-full p-6" style={{ backgroundColor: (content as SocialContent).accentColor || '#14b8a6' }}>
                       <div className="text-center mb-8">
-                        {(content as any).avatarUrl ? (
-                          <img src={(content as any).avatarUrl} alt="Avatar" className="w-24 h-24 mx-auto mb-4 rounded-full object-cover border-4 border-white/20" />
+                        {(content as SocialContent).avatarUrl ? (
+                          <Image src={(content as SocialContent).avatarUrl!} alt="Avatar" width={96} height={96} className="w-24 h-24 mx-auto mb-4 rounded-full object-cover border-4 border-white/20" unoptimized />
                         ) : (
                           <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-white/20 flex items-center justify-center">
                             <span className="text-3xl text-white font-bold">
-                              {((content as any).name || 'S')[0].toUpperCase()}
+                              {((content as SocialContent).name || 'S')[0].toUpperCase()}
                             </span>
                           </div>
                         )}
-                        <h1 className="text-2xl font-bold text-white">{(content as any).name || 'Your Name'}</h1>
-                        {(content as any).bio && (
-                          <p className="text-white/80 text-sm mt-2 max-w-xs mx-auto">{(content as any).bio}</p>
+                        <h1 className="text-2xl font-bold text-white">{(content as SocialContent).name || 'Your Name'}</h1>
+                        {(content as SocialContent).bio && (
+                          <p className="text-white/80 text-sm mt-2 max-w-xs mx-auto">{(content as SocialContent).bio}</p>
                         )}
                       </div>
                       <div className="space-y-3">
-                        {((content as any).links || []).map((link: any, i: number) => (
+                        {((content as SocialContent).links || []).map((link, i: number) => (
                           <button key={i} className="w-full py-3 px-4 bg-white/90 hover:bg-white rounded-xl text-slate-800 font-medium flex items-center justify-center gap-2 transition-colors">
                             <span className="capitalize">{link.platform}</span>
                             <span className="text-slate-500">@{link.handle || 'username'}</span>

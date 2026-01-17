@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function UnlockPage() {
-  const router = useRouter();
   const params = useParams();
   const code = params.code as string;
 
@@ -88,9 +88,9 @@ export default function UnlockPage() {
         <div className="mt-6 pt-6 border-t border-border text-center">
           <p className="text-xs text-muted-foreground">
             Protected by{' '}
-            <a href="/" className="text-primary hover:underline">
+            <Link href="/" className="text-primary hover:underline">
               QRWolf
-            </a>
+            </Link>
           </p>
         </div>
       </Card>

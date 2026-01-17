@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import type { CouponContent } from '@/lib/qr/types';
 
@@ -130,10 +131,13 @@ export default function CouponLandingPage({ params }: PageProps) {
                     boxShadow: `0 8px 24px ${accentColor}20`,
                   }}
                 >
-                  <img
+                  <Image
                     src={content.logoUrl}
                     alt={content.businessName}
+                    width={80}
+                    height={80}
                     className="max-h-full max-w-full object-contain"
+                    unoptimized
                   />
                 </div>
               ) : (

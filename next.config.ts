@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
+import type { Compiler } from 'webpack';
 import { build } from 'velite';
 
 class VeliteWebpackPlugin {
   static started = false;
-  apply(compiler: any) {
+  apply(compiler: Compiler) {
     compiler.hooks.beforeCompile.tapPromise('VeliteWebpackPlugin', async () => {
       if (VeliteWebpackPlugin.started) return;
       VeliteWebpackPlugin.started = true;

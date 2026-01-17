@@ -4,6 +4,8 @@ import { headers } from 'next/headers';
 import crypto from 'crypto';
 import { SCAN_LIMITS } from '@/lib/stripe/config';
 
+type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
+
 // Get the base URL for redirects (supports ngrok/proxy scenarios)
 function getBaseUrl(request: Request): string {
   // Check for forwarded host (ngrok, proxies)
@@ -156,7 +158,7 @@ export async function GET(
 
   // If no destination URL, construct from content
   if (!destinationUrl && qrCode.content) {
-    const content = qrCode.content as Record<string, any>;
+    const content = qrCode.content as { type?: string; url?: string };
     if (content.type === 'url' && content.url) {
       destinationUrl = content.url;
     }
@@ -174,9 +176,9 @@ export async function GET(
 }
 
 async function recordScan(
-  supabase: any,
+  supabase: SupabaseClient,
   qrCodeId: string,
-  request: Request
+  _request: Request
 ) {
   try {
     const headersList = await headers();

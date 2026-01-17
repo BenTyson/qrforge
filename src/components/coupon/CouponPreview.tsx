@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import type { CouponContent } from '@/lib/qr/types';
 
 interface CouponPreviewProps {
@@ -71,10 +72,13 @@ export function CouponPreview({ content, className }: CouponPreviewProps) {
                 {/* Logo & Business Name */}
                 <div className="text-center mb-4">
                   {logoUrl ? (
-                    <img
+                    <Image
                       src={logoUrl}
                       alt={businessName}
-                      className="h-10 mx-auto mb-2 object-contain"
+                      width={40}
+                      height={40}
+                      className="h-10 w-auto mx-auto mb-2 object-contain"
+                      unoptimized
                     />
                   ) : (
                     <div

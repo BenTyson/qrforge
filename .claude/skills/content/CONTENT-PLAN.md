@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
 > **Last Updated**: January 17, 2026
-> **Total Content**: 4 blog posts, 16 learn articles
+> **Total Content**: 6 blog posts, 20 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -31,7 +31,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 
 ## Existing Content Inventory
 
-### Blog Posts (4)
+### Blog Posts (6)
 
 | Title | Category | Primary Keyword | Slug |
 |-------|----------|-----------------|------|
@@ -39,15 +39,19 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How Small Businesses Can Use QR Codes | guides | qr codes for small business | qr-codes-for-small-business |
 | How to Track QR Code Scans and Measure ROI | tutorials | qr code tracking | how-to-track-qr-code-scans |
 | WiFi QR Codes: The Complete Guide | guides | wifi qr code | wifi-qr-codes-complete-guide |
+| vCard QR Codes: Create Digital Business Cards That Work | guides | vcard qr code | vcard-qr-codes-digital-business-cards |
+| Dynamic QR Codes: The Complete Guide | guides | dynamic qr code | dynamic-qr-codes-complete-guide |
 
-### Learn Articles (16)
+### Learn Articles (20)
 
-#### qr-basics (3)
+#### qr-basics (5)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | What is a QR Code? | what is a qr code | what-is-a-qr-code |
 | Static vs Dynamic QR Codes | static vs dynamic qr code | static-vs-dynamic-qr-codes |
 | QR Code vs Barcode | qr code vs barcode | qr-code-vs-barcode |
+| How to Create a QR Code: Step-by-Step Guide | how to create qr code | how-to-create-a-qr-code |
+| How to Scan a QR Code on iPhone and Android | how to scan qr code | how-to-scan-a-qr-code |
 
 #### how-it-works (2)
 | Title | Primary Keyword | Slug |
@@ -55,13 +59,15 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How QR Code Error Correction Works | qr code error correction | qr-code-error-correction |
 | How QR Code Scanning Works | how qr code scanning works | how-qr-code-scanning-works |
 
-#### use-cases (4)
+#### use-cases (6)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | Restaurant QR Code Menus | restaurant qr code menu | restaurant-menu-qr-codes |
 | QR Code Business Cards | qr code business card | business-card-qr-codes |
 | QR Codes for Event Marketing | qr code event marketing | qr-codes-for-event-marketing |
 | QR Codes for Product Packaging | qr code product packaging | qr-codes-for-product-packaging |
+| Instagram QR Code: Grow Your Following | instagram qr code | instagram-qr-code |
+| WhatsApp QR Code: Connect with Customers | whatsapp qr code | whatsapp-qr-code |
 
 #### industries (3)
 | Title | Primary Keyword | Slug |
@@ -93,20 +99,20 @@ These target high-volume, high-intent keywords directly aligned with QRWolf feat
 #### Blog Posts
 | Title | Primary Keyword | Est. Volume | Intent |
 |-------|-----------------|-------------|--------|
-| **vCard QR Codes: Create Digital Business Cards** | vcard qr code | 10K+ | Transactional |
+| ~~vCard QR Codes: Create Digital Business Cards~~ | vcard qr code | 10K+ | ✅ Created |
 | **Free QR Code Generator: What to Look For** | free qr code generator | 100K+ | Transactional |
-| **Dynamic QR Codes: The Complete Guide** | dynamic qr code | 20K+ | Informational |
+| ~~Dynamic QR Codes: The Complete Guide~~ | dynamic qr code | 20K+ | ✅ Created |
 | **QR Code with Logo: How to Add Your Brand** | qr code with logo | 15K+ | Transactional |
 | **Menu QR Code Generator: Restaurant Guide** | menu qr code | 30K+ | Transactional |
 
 #### Learn Articles
 | Title | Category | Primary Keyword | Est. Volume |
 |-------|----------|-----------------|-------------|
-| **How to Create a QR Code (Step-by-Step)** | qr-basics | how to create qr code | 50K+ |
+| ~~How to Create a QR Code (Step-by-Step)~~ | qr-basics | how to create qr code | ✅ Created |
 | **QR Code for PDF: Share Documents Easily** | use-cases | qr code for pdf | 10K+ |
 | **QR Code for Google Maps Location** | use-cases | qr code google maps | 8K+ |
-| **Instagram QR Code: Grow Your Following** | use-cases | instagram qr code | 15K+ |
-| **WhatsApp QR Code: Direct Chat Links** | use-cases | whatsapp qr code | 20K+ |
+| ~~Instagram QR Code: Grow Your Following~~ | use-cases | instagram qr code | ✅ Created |
+| ~~WhatsApp QR Code: Direct Chat Links~~ | use-cases | whatsapp qr code | ✅ Created |
 
 ### TIER 2: Long-Tail "How To" Keywords (High Conversion)
 
@@ -124,7 +130,7 @@ These target specific questions people search. Lower volume but 36% conversion r
 #### Learn Articles
 | Title | Category | Primary Keyword |
 |-------|----------|-----------------|
-| **How to Scan a QR Code on iPhone and Android** | qr-basics | how to scan qr code |
+| ~~How to Scan a QR Code on iPhone and Android~~ | qr-basics | ✅ Created |
 | **How to Test if Your QR Code Works** | best-practices | test qr code |
 | **How to Make a QR Code Smaller** | best-practices | qr code minimum size |
 | **How to Fix a QR Code That Won't Scan** | best-practices | qr code not scanning |
@@ -182,16 +188,24 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 - **Total: 5 pieces/month** = 60 pieces/year
 
 ### Priority Order (Next 10 Pieces)
-1. How to Create a QR Code (qr-basics) - TIER 1
+1. ~~How to Create a QR Code (qr-basics)~~ - ✅ Done
 2. Free QR Code Generator Guide (blog) - TIER 1
-3. vCard QR Codes Guide (blog) - TIER 1
-4. How to Scan a QR Code (qr-basics) - TIER 2
-5. Dynamic QR Codes Complete Guide (blog) - TIER 1
-6. Instagram QR Code (use-cases) - TIER 1
-7. WhatsApp QR Code (use-cases) - TIER 1
+3. ~~vCard QR Codes Guide (blog)~~ - ✅ Done
+4. ~~How to Scan a QR Code (qr-basics)~~ - ✅ Done
+5. ~~Dynamic QR Codes Complete Guide (blog)~~ - ✅ Done
+6. ~~Instagram QR Code (use-cases)~~ - ✅ Done
+7. ~~WhatsApp QR Code (use-cases)~~ - ✅ Done
 8. QR Code with Logo (blog) - TIER 1
 9. How to Fix QR Code Not Scanning (best-practices) - TIER 2
 10. QR Codes for Education (industries) - TIER 3
+
+### Updated Priority (Next 6 Pieces)
+1. Free QR Code Generator Guide (blog) - TIER 1
+2. QR Code with Logo: How to Add Your Brand (blog) - TIER 1
+3. Menu QR Code Generator: Restaurant Guide (blog) - TIER 1
+4. QR Code for PDF: Share Documents Easily (use-cases) - TIER 1
+5. How to Fix a QR Code That Won't Scan (best-practices) - TIER 2
+6. QR Codes for Education (industries) - TIER 3
 
 ---
 
@@ -203,15 +217,15 @@ Map content to product features for conversion optimization:
 |----------------|-----------------|----------------|
 | URL QR | qr code generator, qr code for link | ✅ Covered |
 | WiFi QR | wifi qr code, share wifi password | ✅ Covered |
-| vCard QR | vcard qr code, digital business card | 🔲 Needs blog |
+| vCard QR | vcard qr code, digital business card | ✅ Covered |
 | Menu QR | restaurant menu qr code | ✅ Covered |
 | PDF QR | qr code for pdf | 🔲 Needs article |
 | Video QR | qr code for video, youtube qr code | 🔲 Needs article |
-| Instagram QR | instagram qr code | 🔲 Needs article |
-| WhatsApp QR | whatsapp qr code | 🔲 Needs article |
+| Instagram QR | instagram qr code | ✅ Covered |
+| WhatsApp QR | whatsapp qr code | ✅ Covered |
 | Coupon QR | qr code coupon, discount qr code | 🔲 Needs article |
 | Links QR | linktree alternative, link in bio qr | 🔲 Needs article |
-| Dynamic QR | dynamic qr code, editable qr code | 🔲 Needs blog |
+| Dynamic QR | dynamic qr code, editable qr code | ✅ Covered |
 | Analytics | qr code tracking, qr code analytics | ✅ Covered |
 | Logo Upload | qr code with logo, custom qr code | 🔲 Needs blog |
 | Bulk QR | bulk qr code generator | 🔲 Needs blog |
@@ -287,5 +301,6 @@ Common competitor content we should create:
 
 | Date | Changes |
 |------|---------|
+| 2026-01-17 | Added 6 new articles: vCard blog, Dynamic QR blog, How to Create, How to Scan, Instagram QR, WhatsApp QR |
 | 2026-01-17 | Complete SEO overhaul with tiered priorities, keyword mapping, and volume estimates |
 | 2026-01-17 | Initial plan created with 4 blog + 16 learn articles |

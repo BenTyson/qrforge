@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 type DietaryTag = 'vegetarian' | 'vegan' | 'gluten-free';
@@ -88,12 +89,13 @@ export function MenuItemCard({ item, accentColor, className, style }: MenuItemCa
     >
       {/* Item Image */}
       {hasImage && (
-        <div className="aspect-[16/10] overflow-hidden">
-          <img
-            src={item.image}
+        <div className="aspect-[16/10] overflow-hidden relative">
+          <Image
+            src={item.image!}
             alt={item.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            loading="lazy"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            unoptimized
           />
         </div>
       )}

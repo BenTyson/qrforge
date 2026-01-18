@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { BusinessContent } from '@/lib/qr/types';
 import type { ReactNode } from 'react';
 import { normalizeUrl } from '@/lib/utils';
@@ -76,14 +77,17 @@ export default async function BusinessLandingPage({ params }: PageProps) {
                   className="absolute inset-0 rounded-full blur-xl opacity-50"
                   style={{ backgroundColor: accentColor }}
                 />
-                <img
+                <Image
                   src={content.photoUrl}
                   alt={content.name}
+                  width={112}
+                  height={112}
                   className="relative w-28 h-28 rounded-full object-cover border-4 shadow-2xl"
                   style={{
                     borderColor: accentColor,
                     boxShadow: `0 0 30px ${accentColor}40`,
                   }}
+                  unoptimized
                 />
               </div>
             ) : (
@@ -309,19 +313,6 @@ export default async function BusinessLandingPage({ params }: PageProps) {
     </div>
   );
 }
-
-// Platform colors for hover states
-const PLATFORM_COLORS: Record<string, string> = {
-  twitter: '#1DA1F2',
-  instagram: '#E4405F',
-  youtube: '#FF0000',
-  linkedin: '#0A66C2',
-  tiktok: '#000000',
-  github: '#ffffff',
-  facebook: '#1877F2',
-  twitch: '#9146FF',
-  discord: '#5865F2',
-};
 
 function SocialIcon({ platform }: { platform: string }) {
   const icons: Record<string, ReactNode> = {

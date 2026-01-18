@@ -69,7 +69,7 @@ export default function InvitePage({ params }: PageProps) {
       }
 
       setInvite({
-        team_name: (data.team as any)?.name || 'Unknown Team',
+        team_name: (data.team as unknown as { name: string } | null)?.name || 'Unknown Team',
         role: data.role,
         email: data.email,
       });
@@ -137,7 +137,7 @@ export default function InvitePage({ params }: PageProps) {
 
         <h1 className="text-2xl font-bold mb-2">Team Invitation</h1>
         <p className="text-muted-foreground mb-6">
-          You've been invited to join{' '}
+          You&apos;ve been invited to join{' '}
           <span className="font-medium text-foreground">{invite?.team_name}</span>{' '}
           as a{' '}
           <span className="font-medium text-foreground">{invite?.role}</span>.
@@ -161,7 +161,7 @@ export default function InvitePage({ params }: PageProps) {
             <div className="space-y-4">
               <p className="text-sm text-amber-500">
                 This invite was sent to <strong>{invite?.email}</strong>.
-                You're logged in as <strong>{user.email}</strong>.
+                You&apos;re logged in as <strong>{user.email}</strong>.
               </p>
               <p className="text-sm text-muted-foreground">
                 Please log in with the correct account or ask for a new invite.
@@ -179,7 +179,7 @@ export default function InvitePage({ params }: PageProps) {
               </Button>
             </Link>
             <p className="text-xs text-muted-foreground">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href={`/signup?redirect=/invite/${token}`} className="text-primary hover:underline">
                 Sign up
               </Link>

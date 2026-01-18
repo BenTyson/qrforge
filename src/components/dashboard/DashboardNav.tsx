@@ -42,6 +42,7 @@ export function DashboardNav({ user }: DashboardNavProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- setMounted(true) is a standard hydration pattern
     setMounted(true);
 
     // Fetch subscription tier
@@ -63,6 +64,7 @@ export function DashboardNav({ user }: DashboardNavProps) {
 
   // Close mobile menu on route change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: close menu when navigating
     setMobileMenuOpen(false);
   }, [pathname]);
 

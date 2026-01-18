@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { QRPreview } from '@/components/qr/QRPreview';
 import { QRStyleEditor } from '@/components/qr/QRStyleEditor';
 import { QRLogoUploader } from '@/components/qr/QRLogoUploader';
 import { generateQRDataURL, downloadQRPNG, downloadQRSVG, generateQRSVG } from '@/lib/qr/generator';
-import type { QRContent, QRContentType, QRStyleOptions } from '@/lib/qr/types';
+import type { QRContent, QRContentType, QRStyleOptions, MenuContent, BusinessContent, LinksContent, CouponContent, SocialContent } from '@/lib/qr/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,7 +22,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { PLANS } from '@/lib/stripe/plans';
 
 // Form components for new QR types
 import { MenuForm } from '@/components/qr/forms/MenuForm';
@@ -168,7 +168,7 @@ export default function EditQRCodePage() {
       }
 
       // Build update object
-      const updateData: Record<string, any> = {
+      const updateData: Record<string, unknown> = {
         name: name.trim(),
         style: {
           foregroundColor: style.foregroundColor,
@@ -339,35 +339,35 @@ export default function EditQRCodePage() {
 
               {contentType === 'menu' && (
                 <MenuForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<MenuContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {contentType === 'business' && (
                 <BusinessForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<BusinessContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {contentType === 'links' && (
                 <LinksForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<LinksContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {contentType === 'coupon' && (
                 <CouponForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<CouponContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
 
               {contentType === 'social' && (
                 <SocialForm
-                  content={(content as any) || {}}
+                  content={(content as Partial<SocialContent>) || {}}
                   onChange={(c) => setContent(c)}
                 />
               )}
@@ -651,10 +651,13 @@ export default function EditQRCodePage() {
             <div className="max-w-lg w-full text-center">
               {style.logoUrl && (
                 <div className="mb-8">
-                  <img
+                  <Image
                     src={style.logoUrl}
                     alt="Logo"
-                    className="h-16 mx-auto object-contain"
+                    width={64}
+                    height={64}
+                    className="h-16 w-auto mx-auto object-contain"
+                    unoptimized
                   />
                 </div>
               )}

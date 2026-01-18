@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
     const path = `${user.id}/${filename}`;
 
     // Upload to Supabase Storage
-    const { data, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('qr-logos')
       .upload(path, fileBuffer, {
         contentType,

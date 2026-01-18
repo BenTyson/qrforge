@@ -2,11 +2,30 @@
 
 import { useState } from 'react';
 import { QRCodeCard } from './QRCodeCard';
+import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
+
+interface QRCodeInBatch {
+  id: string;
+  name: string;
+  type: 'static' | 'dynamic';
+  content_type: string;
+  content: QRContent | Record<string, unknown>;
+  short_code: string | null;
+  destination_url: string | null;
+  style: QRStyleOptions | Record<string, unknown>;
+  scan_count: number;
+  created_at: string;
+  expires_at: string | null;
+  active_from: string | null;
+  active_until: string | null;
+  password_hash: string | null;
+  folder_id?: string | null;
+}
 
 interface BulkBatchCardProps {
   batch: {
     id: string;
-    codes: any[];
+    codes: QRCodeInBatch[];
     createdAt: string;
     totalScans: number;
   };

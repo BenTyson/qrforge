@@ -49,7 +49,7 @@ export function SubscriptionConfirmEmail({
       </Section>
 
       <Text style={styles.heading}>
-        You're All Set!
+        You&apos;re All Set!
       </Text>
 
       <Text style={styles.paragraph}>
@@ -76,7 +76,7 @@ export function SubscriptionConfirmEmail({
       <Hr style={styles.divider} />
 
       <Text style={{ ...styles.paragraph, fontWeight: 'bold' }}>
-        What's included in your {planName} plan:
+        What&apos;s included in your {planName} plan:
       </Text>
 
       <Section style={{ marginBottom: '24px' }}>

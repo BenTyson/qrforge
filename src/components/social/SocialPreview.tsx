@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import type { SocialContent } from '@/lib/qr/types';
@@ -128,10 +129,12 @@ export function SocialPreview({ content, className }: SocialPreviewProps) {
                 }}
               >
                 {content.avatarUrl ? (
-                  <img
+                  <Image
                     src={content.avatarUrl}
                     alt={name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    unoptimized
                   />
                 ) : (
                   <svg className="w-8 h-8 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

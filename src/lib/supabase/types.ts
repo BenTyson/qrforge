@@ -1,4 +1,4 @@
-import type { QRContentType } from '@/lib/qr/types';
+import type { QRContentType, QRContent } from '@/lib/qr/types';
 
 export type SubscriptionTier = 'free' | 'pro' | 'business';
 
@@ -29,7 +29,7 @@ export interface QRCode {
   name: string;
   type: 'static' | 'dynamic';
   content_type: QRContentType;
-  content: Record<string, any>;
+  content: QRContent;
   short_code: string | null;
   destination_url: string | null;
   style: {

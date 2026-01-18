@@ -136,7 +136,7 @@ export function BillingSection({
 
           {cancelAtPeriodEnd && (
             <div className="mt-2 p-2 bg-yellow-500/10 border border-yellow-500/20 rounded text-sm text-yellow-400">
-              Your subscription is set to cancel. You'll retain access until the end of your billing period.
+              Your subscription is set to cancel. You&apos;ll retain access until the end of your billing period.
             </div>
           )}
         </div>

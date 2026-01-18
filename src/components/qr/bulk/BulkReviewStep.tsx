@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { QRPreview } from '@/components/qr/QRPreview';
@@ -68,7 +69,7 @@ export function BulkReviewStep({
   onSetSaveError,
   onDone,
 }: BulkReviewStepProps) {
-  const [previewsGenerated, setPreviewsGenerated] = useState(false);
+  const [, setPreviewsGenerated] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [saveComplete, setSaveComplete] = useState(false);
   const isMountedRef = useRef(true);
@@ -107,7 +108,7 @@ export function BulkReviewStep({
               if (isMountedRef.current) {
                 onEntryStatusChange(entry.id, 'done', previewUrl);
               }
-            } catch (error) {
+            } catch {
               if (isMountedRef.current) {
                 onEntryStatusChange(entry.id, 'error', undefined, 'Failed to generate preview');
               }
@@ -215,14 +216,7 @@ export function BulkReviewStep({
     onSetIsSaving, onSetSaveError, onSetSavedCount,
   ]);
 
-  const handleDownloadAll = useCallback(async () => {
-    // For now, just show a message - ZIP download can be added later
-    toast.info('Individual downloads available by clicking each QR code');
-  }, []);
-
   // Calculate stats
-  const pendingCount = entries.filter(e => e.status === 'pending').length;
-  const generatingCount = entries.filter(e => e.status === 'generating').length;
   const doneCount = entries.filter(e => e.status === 'done').length;
   const errorCount = entries.filter(e => e.status === 'error').length;
 
@@ -338,10 +332,12 @@ export function BulkReviewStep({
               {/* Preview */}
               <div className="aspect-square p-4 bg-white relative">
                 {entry.previewUrl ? (
-                  <img
+                  <Image
                     src={entry.previewUrl}
                     alt={entry.name}
-                    className="w-full h-full object-contain"
+                    fill
+                    className="object-contain"
+                    unoptimized
                   />
                 ) : entry.status === 'generating' ? (
                   <div className="w-full h-full flex items-center justify-center">

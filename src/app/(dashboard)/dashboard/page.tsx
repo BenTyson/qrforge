@@ -1,8 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { SCAN_LIMITS, PLANS } from '@/lib/stripe/config';
+import { SCAN_LIMITS } from '@/lib/stripe/config';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -73,14 +72,11 @@ export default async function DashboardPage() {
     scansThisMonth: scansThisMonth.length,
   };
 
-  // Calculate trend (compare to last month)
-  const lastMonthStart = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
-  const lastMonthEnd = new Date(new Date().getFullYear(), new Date().getMonth(), 0);
   // For now, just show the current month count - would need another query for last month comparison
 
   const recentActivity = (recentScansResult.data || []).map(scan => ({
     id: scan.id,
-    qrName: (scan.qr_codes as any)?.name || 'Unknown',
+    qrName: (scan.qr_codes as unknown as { name: string } | null)?.name || 'Unknown',
     scannedAt: scan.scanned_at,
     deviceType: scan.device_type,
     country: scan.country,

@@ -54,6 +54,7 @@ export function TeamSection({ tier }: TeamSectionProps) {
     } else {
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchTeams is stable, only need to run when tier changes
   }, [tier]);
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import type { MP3Content } from '@/lib/qr/types';
 
 interface AudioPreviewProps {
@@ -10,7 +11,6 @@ interface AudioPreviewProps {
 export function AudioPreview({ content, className }: AudioPreviewProps) {
   const title = content.title || 'My Track';
   const artist = content.artist || 'Artist';
-  const hasAudio = !!(content.audioUrl || content.embedUrl);
   const isSpotify = content.embedUrl?.includes('spotify');
   const isSoundCloud = content.embedUrl?.includes('soundcloud');
   const hasCover = !!content.coverImage;
@@ -43,10 +43,12 @@ export function AudioPreview({ content, className }: AudioPreviewProps) {
               }}
             >
               {hasCover ? (
-                <img
-                  src={content.coverImage}
+                <Image
+                  src={content.coverImage!}
                   alt={title}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
               ) : (
                 <div

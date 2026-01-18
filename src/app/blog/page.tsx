@@ -67,7 +67,7 @@ export default function BlogPage() {
                 All Posts
               </Badge>
             </Link>
-            {BLOG_CATEGORIES.map((cat, index) => (
+            {BLOG_CATEGORIES.map((cat) => (
               <Link key={cat.slug} href={`/blog/category/${cat.slug}`}>
                 <Badge
                   variant="outline"

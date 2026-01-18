@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { PDFContent } from '@/lib/qr/types';
 
 interface PageProps {
@@ -82,10 +83,13 @@ export default async function PDFLandingPage({ params }: PageProps) {
             {/* File Info */}
             <div className="flex-1 min-w-0">
               {style?.logoUrl && (
-                <img
+                <Image
                   src={style.logoUrl}
                   alt="Logo"
-                  className="h-8 mb-3 object-contain"
+                  width={32}
+                  height={32}
+                  className="h-8 w-auto mb-3 object-contain"
+                  unoptimized
                 />
               )}
               <h1 className="text-xl font-bold text-white truncate">

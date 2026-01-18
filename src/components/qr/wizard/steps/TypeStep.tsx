@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { TYPE_CATEGORIES } from '../constants';
-import type { QRContentType } from '@/lib/qr/types';
 
 interface TypeStepProps {
   selectedCategory: string | null;

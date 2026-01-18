@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import type { MP3Content } from '@/lib/qr/types';
 
@@ -212,10 +213,12 @@ export default function AudioLandingPage({ params }: PageProps) {
                 style={{ boxShadow: `0 20px 60px rgba(0,0,0,0.4)` }}
               >
                 {content.coverImage ? (
-                  <img
+                  <Image
                     src={content.coverImage}
                     alt={content.title || 'Cover'}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    unoptimized
                   />
                 ) : (
                   <div

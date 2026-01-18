@@ -1,9 +1,11 @@
 # Development Workflow
 
-> **Last Updated**: December 30, 2025
+> **Last Updated**: January 17, 2026
 > **Live URL**: https://qrwolf.com
 
-See also: `docs/SESSION-START.md` for full project context
+See also:
+- `docs/SESSION-START.md` - Full project context
+- `docs/DEVELOPMENT.md` - Dev environment setup & testing
 
 ## Branch Strategy
 
@@ -77,16 +79,33 @@ git push origin main
 
 ## Environment Setup
 
-### Local Development
-- Uses `.env.local` for environment variables
-- Supabase: Connected to production database (be careful!)
+### Local Development (Safe Mode)
+
+**IMPORTANT**: Development now uses a **separate dev Supabase database** to protect customer data.
+
+```
+Local dev → Dev Supabase (fxcvxomvkgioxwbwmbsy)
+Production → Prod Supabase (otdlggbhsmgqhsviazho)
+```
+
+- Uses `.env.development.local` for dev credentials
+- Supabase: **Development database** (safe to experiment!)
 - Stripe: Uses test mode keys
 - Run: `npm run dev` (port 3322)
+- Safety check runs automatically on startup
+
+**Before Starting:**
+```bash
+npm run safety-check   # Verify dev environment is configured
+npm run dev            # Start dev server
+```
+
+See `docs/DEVELOPMENT.md` for full environment setup.
 
 ### Production (Railway)
 - Environment variables set in Railway dashboard
-- Supabase: Production database
-- Stripe: Switch to live keys when ready
+- Supabase: **Production database** (LIVE CUSTOMERS)
+- Stripe: Live mode keys
 - URL: https://qrwolf.com
 
 ## Railway Configuration
@@ -107,18 +126,29 @@ git push origin main
 3. Never commit directly to `main`
 4. After finishing work, remind user to create PR to deploy
 5. Do NOT run `git push origin main` unless explicitly merging a PR
+6. **Run tests before committing**: `npm run precommit`
 
 ### Agent Workflow
 ```bash
 # At start of session
 git checkout develop
 git pull origin develop
+npm run safety-check  # Verify dev environment
 
 # After making changes
+npm run precommit     # Run lint + type-check + test
 git add .
 git commit -m "Description of changes"
 git push origin develop
 
 # Tell user:
 # "Changes pushed to develop. Create a PR to main when ready to deploy."
+```
+
+### Testing Commands
+```bash
+npm test              # Run all tests (159 tests)
+npm run test:watch    # Watch mode
+npm run test:coverage # With coverage report
+npm run precommit     # lint + type-check + test (run before commits)
 ```

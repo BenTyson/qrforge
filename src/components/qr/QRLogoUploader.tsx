@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -140,10 +141,12 @@ export function QRLogoUploader({ style, onChange, userTier = 'free' }: QRLogoUpl
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-secondary/50 border border-border/50">
-                  <img
+                  <Image
                     src={style.logoUrl}
                     alt="Logo preview"
-                    className="w-full h-full object-contain"
+                    fill
+                    className="object-contain"
+                    unoptimized
                   />
                 </div>
                 <Button

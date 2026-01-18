@@ -28,11 +28,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   'technical': <Code2 className="w-6 h-6" />,
 };
 
-export default function LearnPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ category?: string }>;
-}) {
+export default function LearnPage() {
   const publishedArticles = learnArticles
     .filter(article => !article.draft)
     .sort((a, b) => a.order - b.order);

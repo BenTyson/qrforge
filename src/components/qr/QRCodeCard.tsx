@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -11,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { generateQRDataURL, generateQRSVG, downloadQRPNG, downloadQRSVG } from '@/lib/qr/generator';
+import { generateQRDataURL, downloadQRPNG } from '@/lib/qr/generator';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
 import type { Folder } from '@/lib/supabase/types';
 import { toast } from 'sonner';
@@ -22,10 +23,10 @@ interface QRCodeData {
   name: string;
   type: 'static' | 'dynamic';
   content_type: string;
-  content: QRContent | Record<string, any>;
+  content: QRContent | Record<string, unknown>;
   short_code: string | null;
   destination_url: string | null;
-  style: QRStyleOptions | Record<string, any>;
+  style: QRStyleOptions | Record<string, unknown>;
   scan_count: number;
   created_at: string;
   expires_at: string | null;
@@ -44,7 +45,7 @@ interface QRCodeCardProps {
   onFolderChange?: (qrCodeId: string, folderId: string | null) => void;
 }
 
-export function QRCodeCard({ qrCode, index = 0, compact = false, folderColor, folders = [], onFolderChange }: QRCodeCardProps) {
+export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folderColor, folders = [], onFolderChange }: QRCodeCardProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showActions, setShowActions] = useState(false);
@@ -87,18 +88,8 @@ export function QRCodeCard({ qrCode, index = 0, compact = false, folderColor, fo
       const dataURL = await generateQRDataURL(qrCode.content as QRContent, { ...(qrCode.style as QRStyleOptions), width: 1024 });
       downloadQRPNG(dataURL, `qrwolf-${(qrCode.name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
       toast.success('PNG downloaded');
-    } catch (error) {
+    } catch {
       toast.error('Failed to download PNG');
-    }
-  };
-
-  const handleDownloadSVG = async () => {
-    try {
-      const svg = await generateQRSVG(qrCode.content as QRContent, qrCode.style as QRStyleOptions);
-      downloadQRSVG(svg, `qrwolf-${(qrCode.name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
-      toast.success('SVG downloaded');
-    } catch (error) {
-      toast.error('Failed to download SVG');
     }
   };
 
@@ -288,7 +279,7 @@ export function QRCodeCard({ qrCode, index = 0, compact = false, folderColor, fo
           {/* QR Preview */}
           <div className="relative w-20 h-20 bg-white rounded-xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
             {qrDataURL ? (
-              <img src={qrDataURL} alt={qrCode.name} className="w-full h-full object-contain p-1" />
+              <Image src={qrDataURL} alt={qrCode.name} width={80} height={80} className="w-full h-full object-contain p-1" unoptimized />
             ) : (
               <div className="w-10 h-10 bg-gray-100 animate-pulse rounded" />
             )}
@@ -495,17 +486,6 @@ function TextIcon({ className }: { className?: string }) {
       <path d="M17 6.1H3" />
       <path d="M21 12.1H3" />
       <path d="M15.1 18H3" />
-    </svg>
-  );
-}
-
-function ScanIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M3 7V5a2 2 0 0 1 2-2h2" />
-      <path d="M17 3h2a2 2 0 0 1 2 2v2" />
-      <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
-      <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
     </svg>
   );
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import type { ImagesContent } from '@/lib/qr/types';
 
 interface GalleryPreviewProps {
@@ -45,10 +46,12 @@ export function GalleryPreview({ content, className }: GalleryPreviewProps) {
                     className="aspect-square rounded-lg overflow-hidden bg-slate-800/50 border border-white/5"
                     style={{ animationDelay: `${100 + index * 50}ms` }}
                   >
-                    <img
+                    <Image
                       src={image.url}
                       alt={image.caption || `Image ${index + 1}`}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      unoptimized
                     />
                   </div>
                 ))

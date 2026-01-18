@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState, useCallback } from 'react';
 import type { ImagesContent } from '@/lib/qr/types';
 
@@ -144,10 +145,12 @@ export default function GalleryLandingPage({ params }: PageProps) {
                 boxShadow: `0 8px 32px ${accentColor}10`,
               }}
             >
-              <img
+              <Image
                 src={image.url}
                 alt={image.caption || `Image ${index + 1}`}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                unoptimized
               />
               {/* Overlay on hover */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -234,10 +237,13 @@ export default function GalleryLandingPage({ params }: PageProps) {
             className="relative max-w-[90vw] max-h-[90vh] animate-scale-up"
             onClick={(e) => e.stopPropagation()}
           >
-            <img
+            <Image
               src={content.images[selectedIndex].url}
               alt={content.images[selectedIndex].caption || `Image ${selectedIndex + 1}`}
+              width={800}
+              height={600}
               className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+              unoptimized
             />
             {content.images[selectedIndex].caption && (
               <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-full text-center">
@@ -286,10 +292,12 @@ export default function GalleryLandingPage({ params }: PageProps) {
                       : 'opacity-50 hover:opacity-100'
                   }`}
                 >
-                  <img
+                  <Image
                     src={image.url}
                     alt={`Thumbnail ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    unoptimized
                   />
                 </button>
               ))}

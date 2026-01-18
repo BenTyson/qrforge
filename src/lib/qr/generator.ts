@@ -1,5 +1,5 @@
 import QRCode from 'qrcode';
-import type { QRContent, QRStyleOptions, DEFAULT_STYLE } from './types';
+import type { QRContent, QRStyleOptions } from './types';
 
 /**
  * Converts QR content to a string that can be encoded in a QR code

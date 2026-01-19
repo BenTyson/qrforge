@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 17, 2026 (SEO Content Strategy & Blog Expansion)
+> **Last Updated**: January 18, 2026 (Analytics Charts & Content Expansion)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -396,6 +396,30 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - Mapped content to QRWolf features for conversion tracking
   - Prioritized backlog of 30+ planned articles
   - Total content now: 4 blog posts, 16 learn articles
+- **Branding Cleanup & Link Sharing Metadata** (January 18, 2026):
+  - Replaced all "QRForge" references with "QRWolf" across codebase
+  - Updated package.json, supabase config, schema, docs, CSS comments
+  - Enhanced Open Graph metadata with explicit image URLs (1200x630)
+  - Updated opengraph-image.tsx to include QRWolf wolf logo
+  - Added Twitter card metadata with explicit image references
+  - Added icons metadata (favicon, apple-touch-icon) to layout.tsx
+  - Added applicationName for better PWA/sharing support
+  - Clean branded preview when sharing links via SMS/social media
+- **Analytics Charts & Content Expansion** (January 18, 2026):
+  - Added Recharts library for interactive analytics visualizations
+  - LineChart for scans over time with date range filtering (7d/30d/All)
+  - PieChart for device distribution breakdown
+  - BarChart for top browsers horizontal view
+  - Date range selector tabs for filtering analytics data
+  - CSV export button for downloading scan data
+  - New AnalyticsCharts client component with responsive design
+  - Code cleanup: Removed deprecated QRWizard.tsx file
+  - 4 new SEO content articles:
+    - Learn: How WiFi QR Codes Work (how-it-works category)
+    - Learn: QR Codes for Education (industries category)
+    - Learn: QR Code Size Requirements (best-practices category)
+    - Blog: QR Code Marketing Strategies for 2026
+  - Total content now: 7 blog posts, 24 learn articles
 
 ### Planned Enhancements
 - Email scan alerts
@@ -582,6 +606,8 @@ src/
 │   │   └── VideoPreview.tsx        # Phone mockup preview for video
 │   ├── audio/
 │   │   └── AudioPreview.tsx        # Phone mockup preview for audio
+│   ├── analytics/
+│   │   └── AnalyticsCharts.tsx     # Recharts (Line/Pie/Bar) with date range + CSV export
 │   ├── content/                    # Blog/Learn content components
 │   │   ├── ArticleCard.tsx         # Card for article listings
 │   │   ├── TableOfContents.tsx     # Sticky TOC with scroll-spy
@@ -635,6 +661,12 @@ The analytics dashboard (`/analytics`) includes:
 - Scans today
 - Top country
 - Time period breakdowns (This Week, This Month, Avg Daily)
+- **Interactive Charts (Recharts)**:
+  - LineChart for scans over time
+  - PieChart for device distribution
+  - BarChart for browser breakdown
+  - Date range selector (7 Days / 30 Days / All Time)
+  - CSV export button for data download
 - Top QR codes by scan count
 - Device type breakdown (mobile/desktop/tablet)
 - Browser breakdown (Chrome/Safari/Firefox/Edge)
@@ -744,7 +776,7 @@ Test card: `4242 4242 4242 4242` (any future expiry, any CVC)
 
 Dynamic QR codes are the key lock-in:
 - User prints QR code on menus/cards/materials
-- QR points to our short URL (qrforge.com/r/abc123)
+- QR points to our short URL (qrwolf.com/r/abc123)
 - We redirect to their destination
 - User CAN'T churn without reprinting all materials
 
@@ -828,6 +860,7 @@ npm run dev               # Dev server on port 3322
 - **Custom eye patterns** - Different finder pattern styles
 
 ### SEO & Content (Ongoing)
+- Current: 7 blog posts, 24 learn articles
 - Expand blog to 20-30 articles
 - Expand learn section to 30+ articles
 - Add FAQ schema to knowledge base pages

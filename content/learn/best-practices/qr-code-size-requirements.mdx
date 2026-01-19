@@ -1,0 +1,181 @@
+---
+title: "QR Code Size Requirements: Minimum Sizes for Printing"
+description: "Learn the minimum QR code size for reliable scanning, how to calculate dimensions for different distances, and sizing guidelines for print materials."
+category: "best-practices"
+order: 3
+tags: ["qr code size", "qr code printing", "minimum qr code size", "qr code dimensions"]
+relatedSlugs: ["qr-code-design-best-practices", "qr-code-placement-guide", "qr-code-error-correction"]
+draft: false
+---
+
+The most common reason QR codes fail to scan isn't damage or poor design—it's **size**. A QR code that's too small for its intended scanning distance becomes unreadable, no matter how perfect everything else is.
+
+## The Golden Rule: 10:1 Ratio
+
+Here's the fundamental principle: **the scanning distance should be roughly 10 times the QR code's width**.
+
+| QR Code Size | Optimal Scanning Distance |
+|--------------|---------------------------|
+| 2 cm (0.8 in) | 20 cm (8 in) |
+| 5 cm (2 in) | 50 cm (20 in) |
+| 10 cm (4 in) | 1 meter (3.3 ft) |
+| 30 cm (12 in) | 3 meters (10 ft) |
+| 1 meter (3.3 ft) | 10 meters (33 ft) |
+
+This ratio accounts for average camera quality and lighting conditions. In poor lighting or with lower-quality cameras, increase the size by 25-50%.
+
+<Callout type="tip" title="Quick Calculation">
+Divide your expected scanning distance by 10 to get the minimum QR code width. Then add 20% as a safety margin.
+</Callout>
+
+## Absolute Minimum Sizes
+
+Regardless of scanning distance, QR codes have absolute minimums based on printing technology and scanner capability:
+
+### Digital Screens
+- **Minimum**: 2 cm × 2 cm (72+ pixels)
+- Works for phones held close to screen
+- Increase for tablets and monitors viewed from further away
+
+### Standard Printing (300 DPI)
+- **Minimum**: 2 cm × 2 cm (about 0.8 inches)
+- Each module (tiny square) must be at least 0.3mm
+- Lower quality printers may need larger sizes
+
+### Large Format Printing
+- **Minimum module size**: 6mm for outdoor viewing
+- Weather and distance both factor in
+- Always test with actual materials before mass production
+
+## Sizing by Application
+
+### Business Cards
+**Recommended**: 2-2.5 cm (0.8-1 inch)
+
+Business cards are viewed at arm's length or closer. A 2cm QR code leaves room for other content while remaining scannable. Don't go smaller than 1.5cm even on premium card stock.
+
+### Flyers and Brochures
+**Recommended**: 3-4 cm (1.2-1.6 inches)
+
+These materials are often viewed on tables or held at reading distance. Larger sizes also catch the eye better, encouraging scans.
+
+### Posters and Signage
+**Recommended**: Calculate based on viewing distance
+
+For a poster viewed from 2 meters away:
+- Minimum: 20 cm (8 inches)
+- Recommended: 25 cm (10 inches)
+
+<Callout type="warning" title="Common Mistake">
+Don't assume everyone will walk up close to scan your poster. Size for the distance where people first notice and decide to interact.
+</Callout>
+
+### Product Packaging
+
+| Package Type | Recommended Size |
+|--------------|------------------|
+| Small boxes (cosmetics, electronics) | 1.5-2 cm |
+| Medium boxes (food, household) | 2-3 cm |
+| Large boxes (appliances) | 3-5 cm |
+| Bottles and jars | 1.5-2.5 cm |
+
+Consider the curved surface of bottles—QR codes may need to be larger to compensate for distortion.
+
+### Restaurant Table Tents
+**Recommended**: 4-5 cm (1.6-2 inches)
+
+Diners scan from a seated position, roughly 50cm away. Account for low lighting in many restaurant environments by using high-contrast colors.
+
+### Billboards and Outdoor Advertising
+**Recommended**: 30+ cm minimum, often 50-100 cm
+
+These require special consideration:
+- Scanning from vehicles is unsafe and impractical
+- Pedestrians might be 5-10 meters away
+- Use QR codes only in pedestrian-friendly locations
+- Consider shortened URLs as alternatives for drive-by visibility
+
+## Data Density Affects Size
+
+QR codes with more data have more modules (the tiny squares), which means each module is smaller at the same overall size. This directly impacts scannability.
+
+| Content Type | Approximate Characters | Minimum Size at 300 DPI |
+|--------------|------------------------|-------------------------|
+| Short URL | 20-30 | 2 cm |
+| Long URL with tracking | 50-100 | 2.5 cm |
+| vCard | 150-300 | 3 cm |
+| WiFi credentials | 50-80 | 2 cm |
+| Paragraph of text | 500+ | 4+ cm |
+
+<Callout type="info" title="Pro Tip">
+Use URL shorteners or [dynamic QR codes](/learn/static-vs-dynamic-qr-codes) to reduce data density. A shorter URL means fewer modules and more reliable scanning at smaller sizes.
+</Callout>
+
+## Error Correction and Size
+
+Higher [error correction levels](/learn/qr-code-error-correction) add redundancy but also increase the number of modules:
+
+- **Level L (7%)**: Smallest possible size
+- **Level M (15%)**: Good balance, recommended for most uses
+- **Level Q (25%)**: Better for printed materials
+- **Level H (30%)**: Required if adding logos, increases size by ~25%
+
+If you're adding a logo to your QR code, you need Level H error correction, which means the code needs to be proportionally larger.
+
+## Testing Your QR Codes
+
+Before printing at scale, always test:
+
+1. **Print a sample** at actual size on the actual material
+2. **Test with multiple devices** (old phones, new phones, tablets)
+3. **Test in realistic lighting** (not just your well-lit office)
+4. **Test at intended distance** and a bit further
+5. **Test the actual scan flow** to ensure the landing page works
+
+### Quick Test Checklist
+
+- [ ] Scans on iPhone (older model)
+- [ ] Scans on Android (budget model if possible)
+- [ ] Scans at minimum expected distance
+- [ ] Scans at maximum expected distance
+- [ ] Scans in low light
+- [ ] Scans under fluorescent lighting
+- [ ] Landing page loads correctly on mobile
+
+## Quiet Zone Requirements
+
+Every QR code needs a **quiet zone**—blank space around the code that helps scanners identify where the code begins and ends.
+
+**Minimum quiet zone**: 4 modules wide on all sides
+
+For a QR code with 1mm modules, that's 4mm of blank space. This is non-negotiable; QR codes placed too close to other design elements or edges will fail to scan.
+
+## Resolution for Digital Use
+
+When creating QR codes for screens or digital distribution:
+
+| Use Case | Minimum Resolution |
+|----------|-------------------|
+| Social media | 500 × 500 px |
+| Website display | 300 × 300 px |
+| Email signatures | 150 × 150 px |
+| Print at 300 DPI | Vector (SVG) preferred |
+
+Always export at higher resolution than you think you need. Scaling up low-resolution QR codes causes scanning failures.
+
+## Summary: Size Guidelines
+
+| Application | Minimum Size | Recommended |
+|-------------|--------------|-------------|
+| Business card | 1.5 cm | 2 cm |
+| Flyer/brochure | 2.5 cm | 3.5 cm |
+| Poster (indoor) | 10 cm | 15 cm |
+| Table tent | 3 cm | 4.5 cm |
+| Product packaging | 1.5 cm | 2.5 cm |
+| Banner/signage | 20 cm | 30 cm |
+
+When in doubt, go bigger. An oversized QR code is slightly less elegant but always works. An undersized QR code is useless.
+
+## Create Perfectly Sized QR Codes
+
+QRWolf generates QR codes in vector format (SVG), which means you can scale them to any size without quality loss. [Create your QR code](/signup) and download in SVG for print or PNG for digital use—both at publication-ready quality.

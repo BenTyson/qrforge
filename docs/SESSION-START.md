@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 19, 2026 (Superadmin Dashboard Overhaul)
+> **Last Updated**: January 19, 2026 (Admin Financials & Content Expansion)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -449,6 +449,20 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
     - Date range filtering for scans export
     - Export buttons added to Users, QR Codes, Analytics pages
   - Row links added to Users and QR Codes list pages for drill-down
+- **Admin Financials Section** (January 19, 2026):
+  - Added Financials section to `/admin` overview page
+  - Monthly Revenue (MRR) with emerald gradient card
+  - Yearly Projection (ARR) with primary gradient card
+  - Revenue breakdown by tier (Pro × $9, Business × $29)
+  - Link to detailed `/admin/subscriptions` page
+- **SEO Content Expansion** (January 19, 2026):
+  - Added 5 new learn articles across multiple categories and tiers:
+    - `qr-code-for-pdf` (use-cases) - PDF sharing with 15+ use cases
+    - `qr-code-not-scanning` (best-practices) - Troubleshooting 12 common issues
+    - `qr-codes-for-hotels` (industries) - 15 hospitality use cases with ROI
+    - `qr-codes-for-video` (use-cases) - Video marketing strategies
+    - `qr-code-security` (technical) - Security risks and best practices
+  - Total content now: 6 blog posts, 28 learn articles
 
 ### Planned Enhancements
 - Email scan alerts
@@ -910,7 +924,7 @@ npm run dev               # Dev server on port 3322
 - **Custom eye patterns** - Different finder pattern styles
 
 ### SEO & Content (Ongoing)
-- Current: 7 blog posts, 24 learn articles
+- Current: 6 blog posts, 28 learn articles
 - Expand blog to 20-30 articles
 - Expand learn section to 30+ articles
 - Add FAQ schema to knowledge base pages

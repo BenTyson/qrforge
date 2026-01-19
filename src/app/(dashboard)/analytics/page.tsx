@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
+import { AnalyticsCharts } from '@/components/analytics/AnalyticsCharts';
 
 // Pagination constants
 const SCANS_PER_PAGE = 10;
@@ -110,6 +111,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
               browserBreakdown={MOCK_DATA.browserBreakdown}
               countryBreakdown={MOCK_DATA.countryBreakdown}
               recentScans={MOCK_DATA.recentScans}
+              allScans={[]}
               totalPages={1}
               currentPage={1}
               isPro={false}
@@ -237,6 +239,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
         browserBreakdown={browserBreakdown}
         countryBreakdown={countryBreakdown}
         recentScans={recentScans}
+        allScans={allScans}
         totalPages={totalPages}
         currentPage={currentPage}
         isPro={true}
@@ -246,6 +249,14 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
 }
 
 // Extracted analytics content component for reuse
+interface ScanData {
+  scanned_at: string;
+  device_type?: string;
+  browser?: string;
+  country?: string;
+  city?: string;
+}
+
 interface AnalyticsContentProps {
   totalScans: number;
   uniqueVisitors: number;
@@ -266,6 +277,7 @@ interface AnalyticsContentProps {
     city?: string;
     country?: string;
   }>;
+  allScans: ScanData[];
   totalPages: number;
   currentPage: number;
   isPro: boolean;
@@ -283,6 +295,7 @@ function AnalyticsContent({
   browserBreakdown,
   countryBreakdown,
   recentScans,
+  allScans,
   totalPages,
   currentPage,
   isPro,
@@ -364,6 +377,17 @@ function AnalyticsContent({
           </div>
         </div>
       </div>
+
+      {/* Charts Section */}
+      {isPro && (
+        <div className="mb-8">
+          <AnalyticsCharts
+            scans={allScans}
+            deviceBreakdown={deviceBreakdown}
+            browserBreakdown={browserBreakdown}
+          />
+        </div>
+      )}
 
       {/* Top QR Codes - Full Width with ranking */}
       <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6 mb-8">

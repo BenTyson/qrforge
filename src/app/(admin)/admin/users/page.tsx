@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/admin/auth';
 import { AdminStatsCard } from '@/components/admin/AdminStatsCard';
+import { AdminExportButton } from '@/components/admin/AdminExportButton';
 import Link from 'next/link';
 
 const ITEMS_PER_PAGE = 20;
@@ -61,9 +62,12 @@ export default async function AdminUsersPage({
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">Users</h1>
-        <p className="text-muted-foreground mt-1">Manage all registered users</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Users</h1>
+          <p className="text-muted-foreground mt-1">Manage all registered users</p>
+        </div>
+        <AdminExportButton type="users" />
       </div>
 
       {/* Stats */}
@@ -140,6 +144,7 @@ export default async function AdminUsersPage({
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">QR Codes</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Scans</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Joined</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/30">
@@ -147,10 +152,10 @@ export default async function AdminUsersPage({
                 users.map((user) => (
                   <tr key={user.id} className="hover:bg-secondary/30 transition-colors">
                     <td className="px-6 py-4">
-                      <div>
-                        <p className="text-sm font-medium">{user.email}</p>
+                      <Link href={`/admin/users/${user.id}`} className="block">
+                        <p className="text-sm font-medium hover:text-primary transition-colors">{user.email}</p>
                         <p className="text-xs text-muted-foreground">{user.full_name || 'No name'}</p>
-                      </div>
+                      </Link>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
@@ -175,11 +180,19 @@ export default async function AdminUsersPage({
                     <td className="px-6 py-4 text-sm text-muted-foreground">
                       {new Date(user.created_at).toLocaleDateString()}
                     </td>
+                    <td className="px-6 py-4">
+                      <Link
+                        href={`/admin/users/${user.id}`}
+                        className="text-sm text-primary hover:underline"
+                      >
+                        View
+                      </Link>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
+                  <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">
                     No users found
                   </td>
                 </tr>

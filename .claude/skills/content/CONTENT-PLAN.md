@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
-> **Last Updated**: January 17, 2026
-> **Total Content**: 6 blog posts, 20 learn articles
+> **Last Updated**: January 19, 2026
+> **Total Content**: 6 blog posts, 28 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -59,7 +59,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How QR Code Error Correction Works | qr code error correction | qr-code-error-correction |
 | How QR Code Scanning Works | how qr code scanning works | how-qr-code-scanning-works |
 
-#### use-cases (6)
+#### use-cases (8)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | Restaurant QR Code Menus | restaurant qr code menu | restaurant-menu-qr-codes |
@@ -68,25 +68,30 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Codes for Product Packaging | qr code product packaging | qr-codes-for-product-packaging |
 | Instagram QR Code: Grow Your Following | instagram qr code | instagram-qr-code |
 | WhatsApp QR Code: Connect with Customers | whatsapp qr code | whatsapp-qr-code |
+| QR Code for PDF: Share Documents Instantly | qr code for pdf | qr-code-for-pdf |
+| QR Codes for Video Marketing | video qr code | qr-codes-for-video |
 
-#### industries (3)
+#### industries (4)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Codes for Retail | qr codes for retail | qr-codes-for-retail |
 | QR Codes for Healthcare | qr codes for healthcare | qr-codes-for-healthcare |
 | QR Codes for Real Estate | qr codes for real estate | qr-codes-for-real-estate |
+| QR Codes for Hotels & Hospitality | qr codes for hotels | qr-codes-for-hotels |
 
-#### best-practices (2)
+#### best-practices (3)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Code Design Best Practices | qr code design | qr-code-design-best-practices |
 | QR Code Placement Guide | qr code placement | qr-code-placement-guide |
+| How to Fix a QR Code That Won't Scan | qr code not scanning | qr-code-not-scanning |
 
-#### technical (2)
+#### technical (3)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Code Data Capacity | qr code data capacity | qr-code-data-capacity |
 | QR Code Versions Explained | qr code versions | qr-code-versions-explained |
+| QR Code Security: Risks and Best Practices | qr code security | qr-code-security |
 
 ---
 
@@ -109,7 +114,7 @@ These target high-volume, high-intent keywords directly aligned with QRWolf feat
 | Title | Category | Primary Keyword | Est. Volume |
 |-------|----------|-----------------|-------------|
 | ~~How to Create a QR Code (Step-by-Step)~~ | qr-basics | how to create qr code | ✅ Created |
-| **QR Code for PDF: Share Documents Easily** | use-cases | qr code for pdf | 10K+ |
+| ~~QR Code for PDF: Share Documents Easily~~ | use-cases | qr code for pdf | ✅ Created |
 | **QR Code for Google Maps Location** | use-cases | qr code google maps | 8K+ |
 | ~~Instagram QR Code: Grow Your Following~~ | use-cases | instagram qr code | ✅ Created |
 | ~~WhatsApp QR Code: Direct Chat Links~~ | use-cases | whatsapp qr code | ✅ Created |
@@ -133,7 +138,7 @@ These target specific questions people search. Lower volume but 36% conversion r
 | ~~How to Scan a QR Code on iPhone and Android~~ | qr-basics | ✅ Created |
 | **How to Test if Your QR Code Works** | best-practices | test qr code |
 | **How to Make a QR Code Smaller** | best-practices | qr code minimum size |
-| **How to Fix a QR Code That Won't Scan** | best-practices | qr code not scanning |
+| ~~How to Fix a QR Code That Won't Scan~~ | best-practices | ✅ Created |
 | **How to Change QR Code Destination** | how-it-works | change qr code link |
 
 ### TIER 3: Industry & Use Case Expansion
@@ -144,7 +149,7 @@ Build topical authority in specific verticals.
 | Title | Primary Keyword | Industry Size |
 |-------|-----------------|---------------|
 | **QR Codes for Education** | qr codes education | Large |
-| **QR Codes for Hotels & Hospitality** | qr codes hotels | Large |
+| ~~QR Codes for Hotels & Hospitality~~ | qr codes hotels | ✅ Created |
 | **QR Codes for Manufacturing** | qr codes manufacturing | Medium |
 | **QR Codes for Nonprofits & Donations** | qr code donations | Medium |
 | **QR Codes for Gyms & Fitness** | qr codes gym | Medium |
@@ -152,7 +157,7 @@ Build topical authority in specific verticals.
 #### Use Cases (add 5)
 | Title | Primary Keyword | QRWolf Feature |
 |-------|-----------------|----------------|
-| **QR Codes for Video Marketing** | qr code video | Video type |
+| ~~QR Codes for Video Marketing~~ | qr code video | ✅ Created |
 | **QR Codes for Coupons & Discounts** | qr code coupon | Coupon type |
 | **QR Codes for Social Media Links** | social media qr code | Links type |
 | **QR Codes for Audio & Podcasts** | qr code audio | MP3 type |
@@ -165,7 +170,7 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 #### Technical Deep-Dives
 | Title | Category | Target Audience |
 |-------|----------|-----------------|
-| **QR Code Security: Risks and Best Practices** | technical | Security-conscious |
+| ~~QR Code Security: Risks and Best Practices~~ | technical | ✅ Created |
 | **QR Code API Guide for Developers** | technical | Developers |
 | **QR Code File Formats: PNG vs SVG vs PDF** | technical | Designers |
 | **QR Code Encoding Modes Explained** | technical | Technical users |
@@ -203,9 +208,9 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 1. Free QR Code Generator Guide (blog) - TIER 1
 2. QR Code with Logo: How to Add Your Brand (blog) - TIER 1
 3. Menu QR Code Generator: Restaurant Guide (blog) - TIER 1
-4. QR Code for PDF: Share Documents Easily (use-cases) - TIER 1
-5. How to Fix a QR Code That Won't Scan (best-practices) - TIER 2
-6. QR Codes for Education (industries) - TIER 3
+4. QR Code for Google Maps Location (use-cases) - TIER 1
+5. How to Test if Your QR Code Works (best-practices) - TIER 2
+6. QR Codes for Coupons & Discounts (use-cases) - TIER 3
 
 ---
 
@@ -219,8 +224,8 @@ Map content to product features for conversion optimization:
 | WiFi QR | wifi qr code, share wifi password | ✅ Covered |
 | vCard QR | vcard qr code, digital business card | ✅ Covered |
 | Menu QR | restaurant menu qr code | ✅ Covered |
-| PDF QR | qr code for pdf | 🔲 Needs article |
-| Video QR | qr code for video, youtube qr code | 🔲 Needs article |
+| PDF QR | qr code for pdf | ✅ Covered |
+| Video QR | qr code for video, youtube qr code | ✅ Covered |
 | Instagram QR | instagram qr code | ✅ Covered |
 | WhatsApp QR | whatsapp qr code | ✅ Covered |
 | Coupon QR | qr code coupon, discount qr code | 🔲 Needs article |
@@ -301,6 +306,7 @@ Common competitor content we should create:
 
 | Date | Changes |
 |------|---------|
+| 2026-01-19 | Added 5 learn articles: QR Code for PDF, QR Code Not Scanning, Hotels & Hospitality, Video Marketing, QR Code Security |
 | 2026-01-17 | Added 6 new articles: vCard blog, Dynamic QR blog, How to Create, How to Scan, Instagram QR, WhatsApp QR |
 | 2026-01-17 | Complete SEO overhaul with tiered priorities, keyword mapping, and volume estimates |
 | 2026-01-17 | Initial plan created with 4 blog + 16 learn articles |

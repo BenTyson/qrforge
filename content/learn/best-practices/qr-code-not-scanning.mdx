@@ -1,0 +1,319 @@
+---
+title: "How to Fix a QR Code That Won't Scan"
+description: "QR code not scanning? Learn the 12 most common reasons QR codes fail and how to fix them. Troubleshoot size, contrast, damage, and technical issues fast."
+category: "best-practices"
+order: 3
+tags: ["qr code troubleshooting", "qr code not working", "fix qr code", "qr code problems", "scanning issues"]
+relatedSlugs: ["qr-code-design-best-practices", "qr-code-size-requirements", "how-qr-code-scanning-works"]
+draft: false
+---
+
+Few things are more frustrating than a **QR code that won't scan**. You've designed it, printed it, placed it perfectly - and customers just stare at their phones in confusion. Whether you're troubleshooting your own QR code or trying to scan someone else's, this guide covers every reason QR codes fail and exactly how to fix them.
+
+We'll start with quick fixes for users trying to scan codes, then dive deep into solutions for creators whose QR codes aren't working properly.
+
+## Quick Fixes for Scanning Problems
+
+If you're trying to scan a QR code right now and it's not working, try these steps in order:
+
+### 1. Check Your Camera App
+
+Most modern smartphones scan QR codes automatically through the default camera app. Make sure you're:
+
+- Using the **rear camera** (not selfie camera)
+- Holding the phone **8-12 inches** from the code
+- Keeping the phone **steady** for 2-3 seconds
+- Pointing the camera **directly** at the code (not at an angle)
+
+<Callout type="tip" title="iPhone Tip">
+On iPhone, ensure QR code scanning is enabled: Settings → Camera → Scan QR Codes (toggle on).
+</Callout>
+
+### 2. Improve Lighting
+
+QR codes need adequate light to be read. If you're in a dark environment:
+
+- Move to better lighting
+- Use your phone's flashlight
+- Ask someone to shine a light on the code
+- Avoid glare from direct sunlight or reflections
+
+### 3. Try a Dedicated QR Scanner App
+
+If your camera app isn't working, download a dedicated QR scanner:
+
+- **iOS**: QR Reader for iPhone, Scanbot
+- **Android**: QR & Barcode Scanner, Google Lens
+
+These apps often have better scanning algorithms and can read damaged or low-quality codes.
+
+### 4. Clean the Code Surface
+
+Dirt, smudges, or condensation can block the scanner. If the QR code is on:
+
+- **Glass**: Wipe with a cloth
+- **Paper**: Brush off debris
+- **Screen**: Clean fingerprints
+
+### 5. Check Your Internet Connection
+
+QR codes themselves don't need internet to scan, but the destination URL does. If the code scans but nothing loads:
+
+- Check your WiFi or cellular connection
+- Try switching from WiFi to cellular (or vice versa)
+- The website might be down - try again later
+
+## Why QR Codes Fail: The Complete List
+
+Now let's examine every reason a QR code might not work, organized from most common to least common.
+
+### Problem 1: Code Is Too Small
+
+**The Issue**: QR codes have minimum size requirements. Below a certain size, phone cameras can't resolve the individual modules (the black and white squares).
+
+**Minimum Sizes by Use Case**:
+
+| Scanning Distance | Minimum QR Size |
+|-------------------|-----------------|
+| Close-up (business card) | 2cm × 2cm (0.8" × 0.8") |
+| Arm's length (poster) | 3cm × 3cm (1.2" × 1.2") |
+| 1-2 meters (signage) | 10cm × 10cm (4" × 4") |
+| 3+ meters (billboard) | 30cm+ × 30cm+ (12"+ × 12"+) |
+
+**The Fix**: Follow the 10:1 rule - for every 10 units of scanning distance, the QR code needs 1 unit of size. A code meant to be scanned from 2 meters away should be at least 20cm wide.
+
+Learn more in our [QR code size requirements guide](/learn/qr-code-size-requirements).
+
+### Problem 2: Poor Contrast
+
+**The Issue**: QR scanners detect the difference between dark and light areas. Low contrast makes this difficult.
+
+**Common Contrast Mistakes**:
+
+- Dark blue on black background
+- Yellow on white background
+- Pastel colors that are too similar
+- Gradient backgrounds behind the code
+- Patterned backgrounds that compete visually
+
+**The Fix**: Maintain at least 40% contrast difference. The safest choice is dark code on light background. If you use colors, test extensively before printing.
+
+<Callout type="warning" title="Color Rule">
+The foreground (modules) must always be darker than the background. A white QR code on a dark background may look cool but often fails to scan.
+</Callout>
+
+### Problem 3: Damaged or Obscured Code
+
+**The Issue**: QR codes have error correction built in, but severe damage will still cause failures.
+
+**Types of Damage**:
+
+- Physical tears or creases in printed codes
+- Fading from UV exposure
+- Water damage or staining
+- Stickers or labels placed over the code
+- Graffiti or vandalism
+
+**The Fix**: QR codes can tolerate up to 30% damage with maximum error correction (Level H). If your code is getting damaged:
+
+- Use higher error correction levels
+- Laminate printed codes
+- Place codes in protected locations
+- Use more durable materials
+
+### Problem 4: Missing Quiet Zone
+
+**The Issue**: The quiet zone is the white border around a QR code. Without it, scanners can't detect where the code begins and ends.
+
+**How Much Space You Need**:
+
+- Minimum: 4 modules wide (the width of 4 small squares)
+- Recommended: 8+ modules for reliability
+
+**The Fix**: Never crop a QR code tight to its edge. Always include adequate white space around all four sides. If placing on a colored background, ensure the quiet zone remains white (or very light).
+
+### Problem 5: Distorted or Stretched Code
+
+**The Issue**: QR codes must be square. If stretched into a rectangle, the scanner can't interpret the pattern correctly.
+
+**Common Causes**:
+
+- Incorrect aspect ratio when resizing
+- Wrapping around curved surfaces (bottles, cups)
+- Printing on stretchy materials
+- Poor-quality image scaling
+
+**The Fix**: Always maintain 1:1 aspect ratio. Lock aspect ratio in design software before resizing. For curved surfaces, test extensively or consider alternative placements.
+
+### Problem 6: Low Print Quality
+
+**The Issue**: Blurry, pixelated, or low-resolution printing makes individual modules unreadable.
+
+**Quality Requirements**:
+
+- Minimum 300 DPI for print
+- Use vector formats (SVG) when possible
+- Avoid multiple generations of compression (don't screenshot a QR code)
+
+**The Fix**: Always download QR codes at the highest resolution available. Use SVG format for large-format printing. Never enlarge a small raster image.
+
+### Problem 7: URL Issues
+
+**The Issue**: The QR code scans correctly, but the destination doesn't work.
+
+**Common URL Problems**:
+
+- Typo in the URL when creating the code
+- Website is down or moved
+- URL requires login/authentication
+- URL blocked by firewall (corporate networks)
+- SSL certificate expired
+- Dynamic code destination was changed accidentally
+
+**The Fix**: Test your QR code immediately after creation. For dynamic codes, periodically verify the destination still works. Keep URLs simple and permanent.
+
+### Problem 8: Code Expired or Deactivated
+
+**The Issue**: Dynamic QR codes can be set to expire or disabled by the owner.
+
+**Symptoms**:
+
+- Code scans but shows "expired" message
+- Code scans but redirects to error page
+- Code worked before but stopped working
+
+**The Fix**: If you created the code, check your QR code dashboard for expiration settings. If you're trying to scan someone else's code, contact the business - they may have accidentally deactivated it.
+
+### Problem 9: Too Much Data Encoded
+
+**The Issue**: QR codes have data limits. More data = more modules = smaller modules = harder to scan.
+
+**Data Limits by Version**:
+
+| Data Type | Maximum Capacity |
+|-----------|------------------|
+| Numeric only | 7,089 characters |
+| Alphanumeric | 4,296 characters |
+| Binary/byte | 2,953 bytes |
+| Kanji/Kana | 1,817 characters |
+
+**The Fix**: Keep encoded data minimal. Use URL shorteners. For [static vs dynamic QR codes](/learn/static-vs-dynamic-qr-codes), consider dynamic codes which encode only a short redirect URL regardless of final destination complexity.
+
+### Problem 10: Reflective or Glossy Surface
+
+**The Issue**: Highly reflective surfaces create glare that obscures parts of the QR code.
+
+**Problem Materials**:
+
+- Glossy photo paper
+- Metallic surfaces
+- Glass
+- Laminated surfaces in direct light
+
+**The Fix**: Use matte finishes when possible. Position codes to avoid direct light sources. Test in actual deployment conditions.
+
+### Problem 11: Camera or Software Issues
+
+**The Issue**: Sometimes the problem is the scanning device, not the code.
+
+**Device Problems**:
+
+- Dirty camera lens
+- Outdated operating system
+- Camera app bugs
+- Accessibility settings interfering
+- Low memory causing camera app to crash
+
+**The Fix**: Clean the camera lens. Update your phone's operating system. Try a different scanning app. Restart your phone.
+
+### Problem 12: Inverted Colors
+
+**The Issue**: QR codes with inverted colors (light modules on dark background) often fail because many scanners expect dark-on-light.
+
+**The Fix**: Always design with dark modules on a light background. If brand requirements demand a dark background, test extensively with multiple devices and scanning apps.
+
+## Testing Your QR Code
+
+Before deploying any QR code, follow this testing checklist:
+
+### Pre-Print Testing
+
+1. Scan on at least 3 different phones (mix of iPhone and Android)
+2. Test with both camera app and dedicated scanner
+3. Verify the destination URL loads correctly
+4. Check the destination displays properly on mobile
+
+### Post-Print Testing
+
+1. Scan the actual printed code (not the screen version)
+2. Test at the intended scanning distance
+3. Test in the actual lighting conditions
+4. Have others test (don't just use your own phone)
+
+<Callout type="info" title="Testing Tip">
+Ask someone unfamiliar with QR codes to test. If they struggle, regular customers will too. Watch where they point their phone and how long it takes.
+</Callout>
+
+## Preventing QR Code Failures
+
+### Design Phase
+
+- Use a reputable [QR code generator](/signup) with error correction options
+- Choose high contrast colors
+- Include adequate quiet zone
+- Keep data payload minimal
+
+### Production Phase
+
+- Download highest resolution available
+- Use vector (SVG) for scalability
+- Maintain exact 1:1 aspect ratio
+- Print at 300+ DPI
+
+### Deployment Phase
+
+- Position at appropriate height and angle
+- Ensure adequate lighting
+- Protect from environmental damage
+- Include "Scan here" instructions
+
+### Maintenance Phase
+
+- Test codes regularly (monthly for important codes)
+- Monitor analytics for sudden drop-offs
+- Update dynamic code destinations promptly
+- Replace damaged physical codes
+
+## When to Regenerate Your QR Code
+
+Sometimes fixing a QR code means creating a new one. Regenerate if:
+
+- The static code points to the wrong URL (no way to fix)
+- Print quality is fundamentally poor
+- Error correction level is too low for your use case
+- You need to add a logo but didn't leave space originally
+
+With dynamic QR codes, you can usually fix destination issues without regenerating. This is one of the key benefits of [dynamic QR codes](/learn/static-vs-dynamic-qr-codes).
+
+## Summary: Quick Reference
+
+| Problem | Quick Fix |
+|---------|-----------|
+| Too small | Increase size, follow 10:1 rule |
+| Low contrast | Dark code on light background |
+| Damaged | Replace, use higher error correction |
+| No quiet zone | Add white border around code |
+| Stretched | Maintain 1:1 square ratio |
+| Blurry print | Use 300+ DPI, vector formats |
+| URL broken | Test destination, check dynamic dashboard |
+| Expired | Check expiration settings |
+| Too much data | Shorten URL, use dynamic code |
+| Glare | Use matte finish, adjust lighting |
+| Device issue | Clean lens, try different app |
+| Inverted colors | Redesign with dark on light |
+
+## Need Help?
+
+If you've tried everything and your QR code still won't scan, the issue is almost always one of the twelve problems above. Work through them systematically.
+
+For QR codes created with QRWolf, our [design best practices guide](/learn/qr-code-design-best-practices) covers how to avoid these issues from the start. Ready to create a QR code that actually works? [Get started free](/signup) with QRWolf.

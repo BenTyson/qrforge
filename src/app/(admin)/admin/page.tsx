@@ -2,6 +2,12 @@ import { createAdminClient } from '@/lib/admin/auth';
 import { AdminStatsCard } from '@/components/admin/AdminStatsCard';
 import Link from 'next/link';
 
+// Pricing from plans.ts
+const PRICING = {
+  pro: { monthly: 9, yearly: 90 },
+  business: { monthly: 29, yearly: 290 },
+};
+
 export default async function AdminOverviewPage() {
   const supabase = createAdminClient();
 
@@ -20,6 +26,8 @@ export default async function AdminOverviewPage() {
     { count: newUsersThisWeek },
     { data: recentUsers },
     { data: recentScans },
+    { count: proUsers },
+    { count: businessUsers },
   ] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('qr_codes').select('*', { count: 'exact', head: true }),
@@ -35,7 +43,13 @@ export default async function AdminOverviewPage() {
       device_type,
       qr_codes!inner(name, user_id, profiles!inner(email))
     `).order('scanned_at', { ascending: false }).limit(5),
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_tier', 'pro'),
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_tier', 'business'),
   ]);
+
+  // Calculate revenue (assuming monthly billing - in production you'd query Stripe for actual intervals)
+  const monthlyRevenue = ((proUsers || 0) * PRICING.pro.monthly) + ((businessUsers || 0) * PRICING.business.monthly);
+  const yearlyProjection = monthlyRevenue * 12;
 
   return (
     <div className="space-y-8">
@@ -83,6 +97,54 @@ export default async function AdminOverviewPage() {
           icon={UserPlusIcon}
           color="violet"
         />
+      </div>
+
+      {/* Financials Section */}
+      <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-emerald-500/20">
+              <DollarIcon className="w-5 h-5 text-emerald-500" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold">Financials</h2>
+              <p className="text-sm text-muted-foreground">Revenue overview based on active subscriptions</p>
+            </div>
+          </div>
+          <Link href="/admin/subscriptions" className="text-sm text-primary hover:underline">
+            View details
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Monthly Revenue */}
+          <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 via-emerald-500/10 to-transparent border border-emerald-500/20">
+            <p className="text-sm text-muted-foreground mb-1">Monthly Revenue</p>
+            <p className="text-3xl font-bold text-emerald-400">${monthlyRevenue.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground mt-1">Current MRR</p>
+          </div>
+
+          {/* Yearly Projection */}
+          <div className="p-4 rounded-xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20">
+            <p className="text-sm text-muted-foreground mb-1">Yearly Projection</p>
+            <p className="text-3xl font-bold text-primary">${yearlyProjection.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground mt-1">ARR at current rate</p>
+          </div>
+
+          {/* Pro Revenue */}
+          <div className="p-4 rounded-xl bg-secondary/30">
+            <p className="text-sm text-muted-foreground mb-1">Pro Revenue</p>
+            <p className="text-2xl font-bold">${((proUsers || 0) * PRICING.pro.monthly).toLocaleString()}<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
+            <p className="text-xs text-muted-foreground mt-1">{proUsers || 0} subscribers × ${PRICING.pro.monthly}</p>
+          </div>
+
+          {/* Business Revenue */}
+          <div className="p-4 rounded-xl bg-secondary/30">
+            <p className="text-sm text-muted-foreground mb-1">Business Revenue</p>
+            <p className="text-2xl font-bold">${((businessUsers || 0) * PRICING.business.monthly).toLocaleString()}<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
+            <p className="text-xs text-muted-foreground mt-1">{businessUsers || 0} subscribers × ${PRICING.business.monthly}</p>
+          </div>
+        </div>
       </div>
 
       {/* Recent Activity */}
@@ -269,6 +331,15 @@ function ChartIcon({ className }: { className?: string }) {
       <line x1="18" y1="20" x2="18" y2="10" />
       <line x1="12" y1="20" x2="12" y2="4" />
       <line x1="6" y1="20" x2="6" y2="14" />
+    </svg>
+  );
+}
+
+function DollarIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="12" y1="1" x2="12" y2="23" />
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
     </svg>
   );
 }

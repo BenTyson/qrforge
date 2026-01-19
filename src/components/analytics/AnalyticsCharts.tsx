@@ -14,7 +14,6 @@ import {
   Cell,
   BarChart,
   Bar,
-  Legend,
 } from 'recharts';
 
 type DateRange = '7d' | '30d' | 'all';
@@ -33,7 +32,19 @@ interface AnalyticsChartsProps {
   browserBreakdown: Record<string, number>;
 }
 
-const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899'];
+// Chart colors - explicit values for dark theme compatibility
+const CHART_COLORS = {
+  primary: '#14b8a6', // teal-500 - brand color
+  axis: '#94a3b8', // slate-400 - readable on dark bg
+  grid: 'rgba(148, 163, 184, 0.2)', // subtle grid lines
+  tooltip: {
+    bg: '#1e293b', // slate-800
+    border: '#334155', // slate-700
+    text: '#f1f5f9', // slate-100
+  },
+};
+
+const PIE_COLORS = ['#14b8a6', '#8b5cf6', '#f59e0b', '#ec4899', '#3b82f6', '#ef4444'];
 
 export function AnalyticsCharts({ scans, deviceBreakdown, browserBreakdown }: AnalyticsChartsProps) {
   const [dateRange, setDateRange] = useState<DateRange>('7d');
@@ -191,17 +202,17 @@ export function AnalyticsCharts({ scans, deviceBreakdown, browserBreakdown }: An
           {scansByDay.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={scansByDay}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+                <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
                 <XAxis
                   dataKey="label"
-                  stroke="hsl(var(--muted-foreground))"
+                  stroke={CHART_COLORS.axis}
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
                   interval={dateRange === '7d' ? 0 : 'preserveStartEnd'}
                 />
                 <YAxis
-                  stroke="hsl(var(--muted-foreground))"
+                  stroke={CHART_COLORS.axis}
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
@@ -209,19 +220,20 @@ export function AnalyticsCharts({ scans, deviceBreakdown, browserBreakdown }: An
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    borderColor: 'hsl(var(--border))',
+                    backgroundColor: CHART_COLORS.tooltip.bg,
+                    borderColor: CHART_COLORS.tooltip.border,
                     borderRadius: '8px',
+                    color: CHART_COLORS.tooltip.text,
                   }}
-                  labelStyle={{ color: 'hsl(var(--foreground))' }}
+                  labelStyle={{ color: CHART_COLORS.tooltip.text }}
                 />
                 <Line
                   type="monotone"
                   dataKey="scans"
-                  stroke="hsl(var(--primary))"
+                  stroke={CHART_COLORS.primary}
                   strokeWidth={2}
-                  dot={{ fill: 'hsl(var(--primary))', strokeWidth: 0, r: 4 }}
-                  activeDot={{ r: 6, strokeWidth: 0 }}
+                  dot={{ fill: CHART_COLORS.primary, strokeWidth: 0, r: 4 }}
+                  activeDot={{ r: 6, strokeWidth: 0, fill: CHART_COLORS.primary }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -256,14 +268,15 @@ export function AnalyticsCharts({ scans, deviceBreakdown, browserBreakdown }: An
                     labelLine={false}
                   >
                     {deviceData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'hsl(var(--card))',
-                      borderColor: 'hsl(var(--border))',
+                      backgroundColor: CHART_COLORS.tooltip.bg,
+                      borderColor: CHART_COLORS.tooltip.border,
                       borderRadius: '8px',
+                      color: CHART_COLORS.tooltip.text,
                     }}
                   />
                 </PieChart>
@@ -283,10 +296,10 @@ export function AnalyticsCharts({ scans, deviceBreakdown, browserBreakdown }: An
             {browserData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={browserData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} horizontal={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} horizontal={false} />
                   <XAxis
                     type="number"
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke={CHART_COLORS.axis}
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
@@ -295,7 +308,7 @@ export function AnalyticsCharts({ scans, deviceBreakdown, browserBreakdown }: An
                   <YAxis
                     type="category"
                     dataKey="name"
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke={CHART_COLORS.axis}
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
@@ -303,14 +316,15 @@ export function AnalyticsCharts({ scans, deviceBreakdown, browserBreakdown }: An
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'hsl(var(--card))',
-                      borderColor: 'hsl(var(--border))',
+                      backgroundColor: CHART_COLORS.tooltip.bg,
+                      borderColor: CHART_COLORS.tooltip.border,
                       borderRadius: '8px',
+                      color: CHART_COLORS.tooltip.text,
                     }}
                   />
                   <Bar
                     dataKey="scans"
-                    fill="hsl(var(--primary))"
+                    fill={CHART_COLORS.primary}
                     radius={[0, 4, 4, 0]}
                   />
                 </BarChart>

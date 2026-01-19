@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { AdminNav } from '@/components/admin/AdminNav';
-import { ADMIN_EMAIL } from '@/lib/admin/auth';
+import { isAdmin } from '@/lib/admin/auth';
 
 export default async function AdminLayout({
   children,
@@ -17,7 +17,7 @@ export default async function AdminLayout({
   }
 
   // Redirect if not admin
-  if (user.email !== ADMIN_EMAIL) {
+  if (!isAdmin(user.email)) {
     redirect('/dashboard');
   }
 

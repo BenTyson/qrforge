@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/admin/auth';
 import { AdminStatsCard } from '@/components/admin/AdminStatsCard';
+import { AdminExportButton } from '@/components/admin/AdminExportButton';
 
 export default async function AdminAnalyticsPage() {
   const supabase = createAdminClient();
@@ -69,9 +70,12 @@ export default async function AdminAnalyticsPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">Analytics</h1>
-        <p className="text-muted-foreground mt-1">Site-wide scan analytics and insights</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Analytics</h1>
+          <p className="text-muted-foreground mt-1">Site-wide scan analytics and insights</p>
+        </div>
+        <AdminExportButton type="scans" />
       </div>
 
       {/* Stats */}

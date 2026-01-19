@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 18, 2026 (Analytics Charts & Content Expansion)
+> **Last Updated**: January 19, 2026 (Superadmin Dashboard Overhaul)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -420,6 +420,35 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
     - Learn: QR Code Size Requirements (best-practices category)
     - Blog: QR Code Marketing Strategies for 2026
   - Total content now: 7 blog posts, 24 learn articles
+- **Superadmin Dashboard Overhaul** (January 19, 2026):
+  - Fixed admin access: Added `ADMIN_EMAIL` to env files, fixed `isAdmin()` usage in layout
+  - User detail pages (`/admin/users/[id]`):
+    - Full user profile with avatar, tier/status badges
+    - Stats cards (QR codes, scans, monthly usage, member since)
+    - Account details with Stripe customer link
+    - User's QR codes table with drill-down links
+    - Analytics charts (reusing AnalyticsCharts component)
+  - QR code detail pages (`/admin/qr-codes/[id]`):
+    - QR header with preview, type/content badges
+    - Owner info with link to user detail
+    - Full QR details (short code, destination, expiration, password, style)
+    - Content data display and style settings
+    - Paginated scan history table
+    - Analytics section with charts
+  - Shared admin components:
+    - `AdminBreadcrumb.tsx` - Navigation breadcrumbs
+    - `AdminDetailSection.tsx` - Key-value detail cards
+    - `AdminTabs.tsx` - URL-based tab navigation
+    - `AdminExportButton.tsx` - CSV/JSON export button
+  - Admin actions API:
+    - `/api/admin/users/[id]` - Reset scans, update tier/status
+    - `/api/admin/qr-codes/[id]` - Reset scans, disable/enable, transfer ownership, delete
+    - Audit logging table (`admin_audit_log`) for tracking admin actions
+  - Data export API (`/api/admin/export`):
+    - Export users, QR codes, or scans as CSV/JSON
+    - Date range filtering for scans export
+    - Export buttons added to Users, QR Codes, Analytics pages
+  - Row links added to Users and QR Codes list pages for drill-down
 
 ### Planned Enhancements
 - Email scan alerts
@@ -486,12 +515,16 @@ src/
 │   │   ├── [slug]/page.tsx         # Individual wiki article
 │   │   └── category/[category]/page.tsx # Category listing
 │   ├── (admin)/
-│   │   ├── layout.tsx              # Admin layout with auth guard
+│   │   ├── layout.tsx              # Admin layout with auth guard (uses isAdmin())
 │   │   └── admin/
 │   │       ├── page.tsx            # Admin overview dashboard
-│   │       ├── users/page.tsx      # User management
-│   │       ├── qr-codes/page.tsx   # All QR codes site-wide
-│   │       ├── analytics/page.tsx  # Site-wide scan analytics
+│   │       ├── users/
+│   │       │   ├── page.tsx        # User list with drill-down links + export
+│   │       │   └── [id]/page.tsx   # User detail page with QR codes + analytics
+│   │       ├── qr-codes/
+│   │       │   ├── page.tsx        # QR code list with drill-down links + export
+│   │       │   └── [id]/page.tsx   # QR code detail page with scans + analytics
+│   │       ├── analytics/page.tsx  # Site-wide scan analytics + export
 │   │       └── subscriptions/page.tsx # Revenue tracking
 │   ├── (auth)/
 │   │   ├── login/page.tsx          # Login (+ Google OAuth)
@@ -530,6 +563,10 @@ src/
 │   │   ├── api-keys/               # API key management
 │   │   │   ├── route.ts            # Create/list keys
 │   │   │   └── [id]/route.ts       # Revoke key
+│   │   ├── admin/                  # Admin API endpoints
+│   │   │   ├── users/[id]/route.ts # Admin user actions (reset scans, update tier/status)
+│   │   │   ├── qr-codes/[id]/route.ts # Admin QR actions (reset, disable, transfer, delete)
+│   │   │   └── export/route.ts     # Data export (users, qr-codes, scans as CSV/JSON)
 │   │   └── v1/                     # Public REST API (Business)
 │   │       └── qr-codes/
 │   │           ├── route.ts        # List/create QR codes
@@ -555,7 +592,11 @@ src/
 ├── components/
 │   ├── admin/
 │   │   ├── AdminNav.tsx            # Admin sidebar navigation
-│   │   └── AdminStatsCard.tsx      # Reusable stats card
+│   │   ├── AdminStatsCard.tsx      # Reusable stats card
+│   │   ├── AdminBreadcrumb.tsx     # Breadcrumb navigation for detail pages
+│   │   ├── AdminDetailSection.tsx  # Key-value detail section cards
+│   │   ├── AdminTabs.tsx           # URL-based tab navigation
+│   │   └── AdminExportButton.tsx   # CSV/JSON export button with format selector
 │   ├── ui/                         # shadcn components
 │   ├── qr/
 │   │   ├── QRGenerator.tsx         # QR generation form (homepage)
@@ -728,6 +769,7 @@ Scan tracking in `/r/[code]/route.ts`:
 - `teams` - Team management for Business tier
 - `team_members` - Team membership with roles
 - `team_invites` - Pending team invitations
+- `admin_audit_log` - Admin action audit trail (admin_id, action_type, target_type, target_id, details)
 
 **Storage buckets:**
 - `qr-logos` - Logo uploads for QR code branding
@@ -818,8 +860,16 @@ Dynamic QR codes are the key lock-in:
 
 **Admin Access:**
 - URL: https://qrwolf.com/admin
-- Restricted to: ideaswithben@gmail.com
-- Features: User management, site-wide analytics, revenue tracking
+- Restricted to: ideaswithben@gmail.com (set via `ADMIN_EMAIL` env var)
+- Features:
+  - Dashboard overview with site-wide metrics
+  - User list with drill-down to user detail pages
+  - QR code list with drill-down to QR detail pages
+  - Site-wide scan analytics with charts
+  - Revenue/subscription tracking
+  - Admin actions (reset scans, update tiers, disable QRs, transfer ownership)
+  - Data export (users, QR codes, scans as CSV/JSON)
+  - Audit logging for admin actions
 
 **See Also:**
 - `docs/WORKFLOW.md` - Branch workflow (develop → main)

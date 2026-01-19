@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/admin/auth';
 import { AdminStatsCard } from '@/components/admin/AdminStatsCard';
+import { AdminExportButton } from '@/components/admin/AdminExportButton';
 import Link from 'next/link';
 
 const ITEMS_PER_PAGE = 20;
@@ -63,9 +64,12 @@ export default async function AdminQRCodesPage({
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">QR Codes</h1>
-        <p className="text-muted-foreground mt-1">All QR codes across the platform</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">QR Codes</h1>
+          <p className="text-muted-foreground mt-1">All QR codes across the platform</p>
+        </div>
+        <AdminExportButton type="qr-codes" />
       </div>
 
       {/* Stats */}
@@ -155,6 +159,7 @@ export default async function AdminQRCodesPage({
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Scans</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Created</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/30">
@@ -165,10 +170,14 @@ export default async function AdminQRCodesPage({
                   return (
                     <tr key={qr.id} className="hover:bg-secondary/30 transition-colors">
                       <td className="px-6 py-4">
-                        <p className="text-sm font-medium">{qr.name || 'Unnamed'}</p>
+                        <Link href={`/admin/qr-codes/${qr.id}`} className="block">
+                          <p className="text-sm font-medium hover:text-primary transition-colors">{qr.name || 'Unnamed'}</p>
+                        </Link>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-sm text-muted-foreground">{qr.profiles?.email || 'Unknown'}</p>
+                        <Link href={`/admin/users/${qr.user_id}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                          {qr.profiles?.email || 'Unknown'}
+                        </Link>
                       </td>
                       <td className="px-6 py-4">
                         <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
@@ -193,12 +202,20 @@ export default async function AdminQRCodesPage({
                       <td className="px-6 py-4 text-sm text-muted-foreground">
                         {new Date(qr.created_at).toLocaleDateString()}
                       </td>
+                      <td className="px-6 py-4">
+                        <Link
+                          href={`/admin/qr-codes/${qr.id}`}
+                          className="text-sm text-primary hover:underline"
+                        >
+                          View
+                        </Link>
+                      </td>
                     </tr>
                   );
                 })
               ) : (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">
+                  <td colSpan={8} className="px-6 py-12 text-center text-muted-foreground">
                     No QR codes found
                   </td>
                 </tr>

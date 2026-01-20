@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 19, 2026 (Admin Financials & Content Expansion)
+> **Last Updated**: January 20, 2026 (QR Pattern & Shape Customization)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -463,6 +463,17 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
     - `qr-codes-for-video` (use-cases) - Video marketing strategies
     - `qr-code-security` (technical) - Security risks and best practices
   - Total content now: 6 blog posts, 28 learn articles
+- **QR Pattern & Shape Customization** (January 20, 2026):
+  - Switched from `qrcode` library to `qr-code-styling` for advanced pattern support
+  - 6 module patterns: Square, Dots, Rounded, Extra Rounded, Classy, Classy Rounded
+  - 6 corner square styles with independent customization
+  - 6 corner dot styles with linkable or independent control
+  - Decorative frames with thickness, color, radius, and top/bottom text
+  - PatternSelector, EyeStyleSelector, and FrameEditor components
+  - StyleStep refactored with Pattern | Colors | Logo | Frame tabs
+  - Pro feature tier gating (Square pattern free, all others Pro+)
+  - Server-side generation support via JSDOM
+  - Backward compatible: existing QR codes render identically
 
 ### Planned Enhancements
 - Email scan alerts
@@ -918,10 +929,7 @@ npm run dev               # Dev server on port 3322
 | **Bluetooth** | Bluetooth pairing | Free |
 
 ### QR Technology Enhancements (Planned)
-- **Custom module shapes** - Dots, rounded squares, custom patterns
 - **Logo background styles** - Circle, square, rounded, transparent
-- **Decorative frames** - Border designs around QR code
-- **Custom eye patterns** - Different finder pattern styles
 
 ### SEO & Content (Ongoing)
 - Current: 6 blog posts, 28 learn articles

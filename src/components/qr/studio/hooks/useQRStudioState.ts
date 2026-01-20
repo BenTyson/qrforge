@@ -175,16 +175,17 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
 
       if (user) {
         setUserId(user.id);
-        const { data: profile } = await supabase
+        const { data: profile, error } = await supabase
           .from('profiles')
           .select('subscription_tier')
           .eq('id', user.id)
           .single();
 
-        setUserTier((profile?.subscription_tier || 'free') as 'free' | 'pro' | 'business');
+        const tier = (profile?.subscription_tier || 'free') as 'free' | 'pro' | 'business';
+        setUserTier(tier);
       } else {
         setUserId(null);
-        setUserTier(null);
+        setUserTier('free'); // Default to free instead of null for unauthenticated
       }
     };
 
@@ -357,14 +358,8 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         content: content as unknown as Record<string, unknown>,
         destination_url: destinationUrl,
         short_code: newShortCode,
-        style: {
-          foregroundColor: style.foregroundColor,
-          backgroundColor: style.backgroundColor,
-          errorCorrectionLevel: style.errorCorrectionLevel,
-          margin: style.margin,
-          logoUrl: style.logoUrl,
-          logoSize: style.logoSize,
-        },
+        // Save entire style object to preserve all properties (gradient, patterns, frame, etc.)
+        style: style as unknown as Record<string, unknown>,
       };
 
       // Add Pro options

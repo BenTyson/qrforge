@@ -32,6 +32,52 @@ export interface GradientOptions {
   angle?: number; // For linear gradient, in degrees (0-360)
 }
 
+// Module patterns (6 options from qr-code-styling)
+export type ModuleShape =
+  | 'square'       // Standard square modules (default)
+  | 'dots'         // Circular dots
+  | 'rounded'      // Rounded squares
+  | 'extraRounded' // More pronounced rounding
+  | 'classy'       // Classy square pattern
+  | 'classyRounded'; // Classy with rounded corners
+
+// Corner square styles (finder pattern outer)
+export type CornerSquareShape =
+  | 'square'       // Standard square (default)
+  | 'dot'          // Circular
+  | 'extraRounded' // Extra rounded corners
+  | 'dots'         // Dots style
+  | 'rounded'      // Rounded corners
+  | 'classy'       // Classy style
+  | 'classyRounded'; // Classy rounded
+
+// Corner dot styles (finder pattern inner)
+export type CornerDotShape =
+  | 'square'       // Standard square (default)
+  | 'dot'          // Circular dot
+  | 'dots'         // Dots style
+  | 'rounded'      // Rounded
+  | 'extraRounded' // Extra rounded
+  | 'classy'       // Classy style
+  | 'classyRounded'; // Classy rounded
+
+// Frame configuration (decorative border)
+export interface FrameOptions {
+  enabled: boolean;
+  thickness: number;       // 10-50px
+  color: string;           // Hex color
+  radius: string;          // '0%' to '50%' (corner rounding)
+  backgroundColor?: string;
+  text?: {
+    top?: string;
+    bottom?: string;
+  };
+  textStyle?: {
+    fontColor: string;
+    fontSize: number;      // 10-24px
+  };
+}
+
 export interface QRStyleOptions {
   foregroundColor: string;
   backgroundColor: string;
@@ -41,7 +87,25 @@ export interface QRStyleOptions {
   logoUrl?: string;    // URL to uploaded logo image
   logoSize?: number;   // Logo size as % of QR code (10-30, default 20)
   gradient?: GradientOptions; // Optional gradient for foreground
+  // Advanced pattern options (Pro feature)
+  moduleShape?: ModuleShape;              // Data dot shape
+  cornerSquareShape?: CornerSquareShape;  // Finder pattern outer shape
+  cornerDotShape?: CornerDotShape;        // Finder pattern inner shape
+  frame?: FrameOptions;                   // Decorative frame (Pro feature)
 }
+
+// Pro-only style features
+export const PRO_STYLE_FEATURES = [
+  'moduleShape',
+  'cornerSquareShape',
+  'cornerDotShape',
+  'frame',
+  'gradient',
+  'logoUrl',
+] as const;
+
+// Patterns that may benefit from higher error correction for reliable scanning
+export const HIGH_EC_PATTERNS: ModuleShape[] = [];
 
 export interface URLContent {
   type: 'url';

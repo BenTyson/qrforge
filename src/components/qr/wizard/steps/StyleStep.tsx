@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Image as ImageIcon, Crown } from 'lucide-react';
+import { Image as ImageIcon, Crown, Palette, Grid3X3, Frame } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,6 +12,9 @@ import { cn } from '@/lib/utils';
 import { QRPreview } from '@/components/qr/QRPreview';
 import { LogoUploader } from '@/components/qr/LogoUploader';
 import { LogoBestPractices } from '@/components/qr/LogoBestPractices';
+import { PatternSelector } from '@/components/qr/PatternSelector';
+import { EyeStyleSelector } from '@/components/qr/EyeStyleSelector';
+import { FrameEditor } from '@/components/qr/FrameEditor';
 import { COLOR_PRESETS } from '../constants';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
 
@@ -30,6 +33,8 @@ const DURABILITY_OPTIONS = [
   { level: 'H' as const, name: 'Maximum', desc: 'Outdoor & rough use' },
 ];
 
+type TabType = 'pattern' | 'colors' | 'logo' | 'frame';
+
 export function StyleStep({
   content,
   style,
@@ -37,7 +42,14 @@ export function StyleStep({
   onContinue,
   canAccessProTypes,
 }: StyleStepProps) {
-  const [activeTab, setActiveTab] = useState<'colors' | 'logo'>('colors');
+  const [activeTab, setActiveTab] = useState<TabType>('pattern');
+
+  const tabs: { id: TabType; label: string; icon: React.ReactNode; proBadge?: boolean; indicator?: boolean }[] = [
+    { id: 'pattern', label: 'Pattern', icon: <Grid3X3 className="w-4 h-4" />, proBadge: true },
+    { id: 'colors', label: 'Colors', icon: <Palette className="w-4 h-4" /> },
+    { id: 'logo', label: 'Logo', icon: <ImageIcon className="w-4 h-4" />, proBadge: true, indicator: !!style.logoUrl },
+    { id: 'frame', label: 'Frame', icon: <Frame className="w-4 h-4" />, proBadge: true, indicator: style.frame?.enabled },
+  ];
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -48,83 +60,93 @@ export function StyleStep({
             <QRPreview content={content} style={style} className="w-full h-full" />
           </div>
 
-          {/* Logo link under preview */}
-          <button
-            onClick={() => setActiveTab('logo')}
-            className={cn(
-              "mt-4 text-xs flex items-center gap-2 px-3 py-1.5 rounded-full transition-all",
-              style.logoUrl
-                ? "text-primary bg-primary/10 hover:bg-primary/20"
-                : "text-slate-400 hover:text-primary hover:bg-slate-800"
+          {/* Quick style indicators under preview */}
+          <div className="mt-4 flex flex-wrap gap-2 justify-center">
+            {style.moduleShape && style.moduleShape !== 'square' && (
+              <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                {style.moduleShape}
+              </span>
             )}
-          >
-            <ImageIcon className="w-3.5 h-3.5" />
-            {style.logoUrl ? (
-              <span>Logo applied ({style.logoSize || 20}%)</span>
-            ) : (
-              <span>Add a logo</span>
+            {style.logoUrl && (
+              <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                Logo
+              </span>
             )}
-            {!style.logoUrl && (
-              <Badge variant="secondary" className="text-[9px] px-1 py-0 h-3.5 bg-primary/20 text-primary border-0">
-                Pro
-              </Badge>
+            {style.gradient?.enabled && (
+              <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                Gradient
+              </span>
             )}
-          </button>
+            {style.frame?.enabled && (
+              <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                Frame
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Style Options with Tabs */}
         <div className="space-y-6">
           {/* Tabs */}
-          <div className="flex border-b border-slate-700">
-            <button
-              onClick={() => setActiveTab('colors')}
-              className={cn(
-                "px-4 py-2 text-sm font-medium transition-colors relative",
-                activeTab === 'colors'
-                  ? "text-primary"
-                  : "text-slate-400 hover:text-white"
-              )}
-            >
-              Colors
-              {activeTab === 'colors' && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-              )}
-            </button>
-            <button
-              onClick={() => setActiveTab('logo')}
-              className={cn(
-                "px-4 py-2 text-sm font-medium transition-colors relative flex items-center gap-2",
-                activeTab === 'logo'
-                  ? "text-primary"
-                  : "text-slate-400 hover:text-white"
-              )}
-            >
-              Logo
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-primary/20 text-primary border-0">
-                Pro
-              </Badge>
-              {style.logoUrl && (
-                <span className="w-2 h-2 rounded-full bg-primary" />
-              )}
-              {activeTab === 'logo' && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-              )}
-            </button>
+          <div className="flex border-b border-slate-700 overflow-x-auto">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "px-3 py-2 text-sm font-medium transition-colors relative flex items-center gap-1.5 whitespace-nowrap",
+                  activeTab === tab.id
+                    ? "text-primary"
+                    : "text-slate-400 hover:text-white"
+                )}
+              >
+                {tab.icon}
+                {tab.label}
+                {tab.proBadge && (
+                  <Badge variant="secondary" className="text-[9px] px-1 py-0 h-3.5 bg-primary/20 text-primary border-0">
+                    Pro
+                  </Badge>
+                )}
+                {tab.indicator && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                )}
+                {activeTab === tab.id && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                )}
+              </button>
+            ))}
           </div>
 
           {/* Tab Content */}
-          {activeTab === 'colors' ? (
-            <ColorsTabContent
-              style={style}
-              onStyleChange={onStyleChange}
-            />
-          ) : (
-            <LogoTabContent
-              style={style}
-              onStyleChange={onStyleChange}
-              canAccessProTypes={canAccessProTypes}
-            />
-          )}
+          <div className="min-h-[300px]">
+            {activeTab === 'pattern' && (
+              <PatternTabContent
+                style={style}
+                onStyleChange={onStyleChange}
+                canAccessProTypes={canAccessProTypes}
+              />
+            )}
+            {activeTab === 'colors' && (
+              <ColorsTabContent
+                style={style}
+                onStyleChange={onStyleChange}
+              />
+            )}
+            {activeTab === 'logo' && (
+              <LogoTabContent
+                style={style}
+                onStyleChange={onStyleChange}
+                canAccessProTypes={canAccessProTypes}
+              />
+            )}
+            {activeTab === 'frame' && (
+              <FrameTabContent
+                style={style}
+                onStyleChange={onStyleChange}
+                canAccessProTypes={canAccessProTypes}
+              />
+            )}
+          </div>
 
           {/* Continue Button */}
           <Button onClick={onContinue} className="w-full" size="lg">
@@ -135,6 +157,35 @@ export function StyleStep({
           </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Pattern Tab Content
+interface PatternTabContentProps {
+  style: QRStyleOptions;
+  onStyleChange: (style: QRStyleOptions) => void;
+  canAccessProTypes: boolean;
+}
+
+function PatternTabContent({ style, onStyleChange, canAccessProTypes }: PatternTabContentProps) {
+  return (
+    <div className="space-y-6">
+      {/* Module Pattern */}
+      <PatternSelector
+        value={style.moduleShape}
+        onChange={(shape) => onStyleChange({ ...style, moduleShape: shape })}
+        canAccessPro={canAccessProTypes}
+      />
+
+      {/* Eye Style */}
+      <EyeStyleSelector
+        cornerSquareValue={style.cornerSquareShape}
+        cornerDotValue={style.cornerDotShape}
+        onCornerSquareChange={(shape) => onStyleChange({ ...style, cornerSquareShape: shape })}
+        onCornerDotChange={(shape) => onStyleChange({ ...style, cornerDotShape: shape })}
+        canAccessPro={canAccessProTypes}
+      />
     </div>
   );
 }
@@ -556,5 +607,22 @@ function LogoTabContent({ style, onStyleChange, canAccessProTypes }: LogoTabCont
       {/* Best Practices - visible to all users */}
       <LogoBestPractices />
     </div>
+  );
+}
+
+// Frame Tab Content
+interface FrameTabContentProps {
+  style: QRStyleOptions;
+  onStyleChange: (style: QRStyleOptions) => void;
+  canAccessProTypes: boolean;
+}
+
+function FrameTabContent({ style, onStyleChange, canAccessProTypes }: FrameTabContentProps) {
+  return (
+    <FrameEditor
+      value={style.frame}
+      onChange={(frame) => onStyleChange({ ...style, frame })}
+      canAccessPro={canAccessProTypes}
+    />
   );
 }

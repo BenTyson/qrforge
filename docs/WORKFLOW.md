@@ -1,11 +1,28 @@
 # Development Workflow
 
-> **Last Updated**: January 17, 2026
+> **Last Updated**: January 19, 2026
 > **Live URL**: https://qrwolf.com
 
 See also:
 - `docs/SESSION-START.md` - Full project context
 - `docs/DEVELOPMENT.md` - Dev environment setup & testing
+
+---
+
+## ⛔ LIVE PAYING USERS - READ FIRST
+
+> **Production contains REAL CUSTOMER DATA from paying subscribers.**
+>
+> Their QR codes are printed on physical materials. Breaking production breaks their businesses.
+
+**Consequences of production mistakes:**
+- Customer QR codes stop working → their printed menus/cards become useless
+- Data corruption → customers lose their analytics and QR code history
+- Payment data issues → legal and trust implications
+
+**Always use the dev database for development:** `npm run safety-check`
+
+---
 
 ## Branch Strategy
 
@@ -47,7 +64,7 @@ git push origin develop
 ### Deploying to Production
 1. Ensure all changes are committed and pushed to `develop`
 2. Run `npm run build` locally to verify no errors
-3. Go to GitHub: https://github.com/BenTyson/qrforge
+3. Go to GitHub: https://github.com/BenTyson/qrwolf
 4. Click "Pull requests" → "New pull request"
 5. Set: `base: main` ← `compare: develop`
 6. Create PR with descriptive title
@@ -102,17 +119,18 @@ npm run dev            # Start dev server
 
 See `docs/DEVELOPMENT.md` for full environment setup.
 
-### Production (Railway)
+### Production (Railway) ⛔ LIVE CUSTOMERS
 - Environment variables set in Railway dashboard
-- Supabase: **Production database** (LIVE CUSTOMERS)
-- Stripe: Live mode keys
+- Supabase: **Production database** → REAL CUSTOMER DATA
+- Stripe: **Live mode keys** → REAL PAYMENTS
 - URL: https://qrwolf.com
+- **NEVER test against production. NEVER run scripts against production.**
 
 ## Railway Configuration
 
 **IMPORTANT**: Verify Railway is set to deploy from `main` branch:
 
-1. Go to Railway dashboard → QRForge project
+1. Go to Railway dashboard → QRWolf project
 2. Click on the service → Settings
 3. Under "Source", ensure "Branch" is set to `main`
 4. If it shows `develop`, change it to `main`

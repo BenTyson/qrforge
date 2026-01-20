@@ -19,6 +19,7 @@ interface BulkReviewStepProps {
   password: string;
   scheduledEnabled: boolean;
   activeFrom: string;
+  activeUntil: string;
   showLandingPage: boolean;
   landingPageTitle: string;
   landingPageDescription: string;
@@ -54,6 +55,7 @@ export function BulkReviewStep({
   password,
   scheduledEnabled,
   activeFrom,
+  activeUntil,
   showLandingPage,
   landingPageTitle,
   landingPageDescription,
@@ -180,7 +182,7 @@ export function BulkReviewStep({
         expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
         password_hash: passwordHash,
         active_from: scheduledEnabled && activeFrom ? new Date(activeFrom).toISOString() : null,
-        active_until: null,
+        active_until: scheduledEnabled && activeUntil ? new Date(activeUntil).toISOString() : null,
         show_landing_page: showLandingPage,
         landing_page_title: showLandingPage ? (landingPageTitle || 'Welcome') : null,
         landing_page_description: showLandingPage ? landingPageDescription : null,
@@ -211,7 +213,7 @@ export function BulkReviewStep({
     }
   }, [
     entries, userId, style, expiresAt, passwordEnabled, password,
-    scheduledEnabled, activeFrom, showLandingPage, landingPageTitle,
+    scheduledEnabled, activeFrom, activeUntil, showLandingPage, landingPageTitle,
     landingPageDescription, landingPageButtonText, landingPageTheme,
     onSetIsSaving, onSetSaveError, onSetSavedCount,
   ]);

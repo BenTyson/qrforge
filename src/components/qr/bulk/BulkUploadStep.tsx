@@ -9,6 +9,7 @@ interface BulkUploadStepProps {
   rawInput: string;
   entries: BulkEntry[];
   parseError: string | null;
+  parseHint: string | null;
   onInputChange: (input: string) => void;
   onRemoveEntry: (id: string) => void;
   onClear: () => void;
@@ -21,6 +22,7 @@ export function BulkUploadStep({
   rawInput,
   entries,
   parseError,
+  parseHint,
   onInputChange,
   onRemoveEntry,
   onClear,
@@ -147,27 +149,52 @@ Contact, https://example.com/contact`}
         />
 
         {/* Entry count / Error */}
-        <div className="flex items-center justify-between mt-2">
-          <div>
-            {parseError ? (
-              <p className="text-sm text-red-500 whitespace-pre-line">{parseError}</p>
-            ) : entries.length > 0 ? (
-              <p className="text-sm text-muted-foreground">
-                <span className="text-primary font-medium">{entries.length}</span> / {maxEntries} entries parsed
-              </p>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                Format: Name, URL (one per line)
-              </p>
+        <div className="mt-2">
+          <div className="flex items-center justify-between">
+            <div>
+              {!parseError && entries.length > 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  <span className="text-primary font-medium">{entries.length}</span> / {maxEntries} entries parsed
+                </p>
+              ) : !parseError ? (
+                <p className="text-sm text-muted-foreground">
+                  Format: Name, URL (one per line)
+                </p>
+              ) : null}
+            </div>
+            {(entries.length > 0 || rawInput) && (
+              <button
+                onClick={onClear}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Clear all
+              </button>
             )}
           </div>
-          {(entries.length > 0 || rawInput) && (
-            <button
-              onClick={onClear}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Clear all
-            </button>
+
+          {/* Error display with hint */}
+          {parseError && (
+            <div className="mt-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg className="w-4 h-4 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-red-500">Format Error</p>
+                  <p className="text-sm text-red-400/80 whitespace-pre-line mt-1">{parseError}</p>
+                  {parseHint && (
+                    <div className="mt-3 p-3 rounded-lg bg-background/50 border border-border">
+                      <p className="text-xs font-medium text-muted-foreground mb-1">How to fix:</p>
+                      <p className="text-sm text-foreground whitespace-pre-line">{parseHint}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </div>

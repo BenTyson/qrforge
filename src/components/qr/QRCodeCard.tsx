@@ -86,7 +86,7 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
   const handleDownloadPNG = async () => {
     try {
       const dataURL = await generateQRDataURL(qrCode.content as QRContent, { ...(qrCode.style as QRStyleOptions), width: 1024 });
-      downloadQRPNG(dataURL, `qrwolf-${(qrCode.name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
+      await downloadQRPNG(dataURL, `qrwolf-${(qrCode.name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
       toast.success('PNG downloaded');
     } catch {
       toast.error('Failed to download PNG');

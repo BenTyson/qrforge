@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { learnArticles } from '#content';
 import { PublicNav } from '@/components/layout/PublicNav';
 import { Footer } from '@/components/layout/Footer';
-import { TableOfContents, LearnSidebar, RelatedArticles, MDXContent } from '@/components/content';
+import { LearnSidebar, RelatedArticles, MDXContent } from '@/components/content';
 import { Badge } from '@/components/ui/badge';
 import { getReadingTime, LEARN_CATEGORIES } from '@/lib/content/utils';
 import { Clock, ChevronRight, BookOpen } from 'lucide-react';
@@ -182,7 +182,7 @@ export default async function LearnArticlePage({ params }: PageProps) {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 relative">
-          <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_250px] gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
             {/* Left Sidebar - Category Navigation */}
             <aside className="hidden lg:block">
               <LearnSidebar articles={allArticles} />
@@ -252,11 +252,6 @@ export default async function LearnArticlePage({ params }: PageProps) {
               {/* Related Articles */}
               <RelatedArticles articles={relatedArticles} type="learn" />
             </article>
-
-            {/* Right Sidebar - Table of Contents */}
-            <aside className="hidden lg:block">
-              <TableOfContents toc={article.toc} />
-            </aside>
           </div>
         </div>
       </main>

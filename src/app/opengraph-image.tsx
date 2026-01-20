@@ -10,6 +10,9 @@ export const size = {
 export const contentType = 'image/png';
 
 export default async function Image() {
+  // Fetch the logo image
+  const logoUrl = new URL('/QRWolf_Logo_Color.png', process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com');
+
   return new ImageResponse(
     (
       <div
@@ -48,31 +51,25 @@ export default async function Image() {
           }}
         />
 
-        {/* QR Code icon */}
+        {/* Wolf Logo */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            marginBottom: '30px',
+            marginBottom: '24px',
           }}
         >
-          <svg
-            width="100"
-            height="100"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#22d3ee"
-            strokeWidth="1.5"
-          >
-            <rect x="3" y="3" width="7" height="7" rx="1" />
-            <rect x="14" y="3" width="7" height="7" rx="1" />
-            <rect x="3" y="14" width="7" height="7" rx="1" />
-            <rect x="14" y="14" width="3" height="3" />
-            <rect x="18" y="14" width="3" height="3" />
-            <rect x="14" y="18" width="3" height="3" />
-            <rect x="18" y="18" width="3" height="3" />
-          </svg>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={logoUrl.toString()}
+            alt="QRWolf Logo"
+            width={140}
+            height={140}
+            style={{
+              objectFit: 'contain',
+            }}
+          />
         </div>
 
         {/* Title */}
@@ -81,7 +78,7 @@ export default async function Image() {
             display: 'flex',
             alignItems: 'center',
             gap: '16px',
-            marginBottom: '20px',
+            marginBottom: '16px',
           }}
         >
           <span
@@ -116,7 +113,7 @@ export default async function Image() {
           style={{
             display: 'flex',
             gap: '40px',
-            marginTop: '40px',
+            marginTop: '36px',
           }}
         >
           {['Custom Styling', 'Analytics', 'Dynamic URLs', 'Logo Support'].map((feature) => (

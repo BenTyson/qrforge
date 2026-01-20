@@ -125,6 +125,11 @@ export function BulkStudio() {
     };
   }, [router]);
 
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [state.currentStep]);
+
   // Check if step is complete
   const isStepComplete = useCallback((step: BulkStep): boolean => {
     switch (step) {
@@ -251,6 +256,7 @@ export function BulkStudio() {
                 rawInput={state.rawInput}
                 entries={state.entries}
                 parseError={state.parseError}
+                parseHint={state.parseHint}
                 onInputChange={actions.parseInput}
                 onRemoveEntry={actions.removeEntry}
                 onClear={actions.clearEntries}
@@ -269,7 +275,6 @@ export function BulkStudio() {
                   </p>
                 </div>
                 <StyleStep
-                  content={previewContent}
                   style={state.style as QRStyleOptions}
                   onStyleChange={(newStyle) => actions.setStyle(newStyle)}
                   onContinue={actions.nextStep}
@@ -287,6 +292,10 @@ export function BulkStudio() {
                   </p>
                 </div>
                 <OptionsStep
+                  errorCorrectionLevel={(state.style as QRStyleOptions).errorCorrectionLevel}
+                  onErrorCorrectionChange={(level) => actions.setStyle({ ...(state.style as QRStyleOptions), errorCorrectionLevel: level })}
+                  margin={(state.style as QRStyleOptions).margin}
+                  onMarginChange={(margin) => actions.setStyle({ ...(state.style as QRStyleOptions), margin })}
                   expiresAt={state.expiresAt}
                   onExpiresAtChange={actions.setExpiresAt}
                   passwordEnabled={state.passwordEnabled}
@@ -297,8 +306,8 @@ export function BulkStudio() {
                   onScheduledEnabledChange={actions.setScheduledEnabled}
                   activeFrom={state.activeFrom}
                   onActiveFromChange={actions.setActiveFrom}
-                  activeUntil=""
-                  onActiveUntilChange={() => {}}
+                  activeUntil={state.activeUntil}
+                  onActiveUntilChange={actions.setActiveUntil}
                   canAccessProTypes={canAccessProTypes}
                   userTier={userData?.tier || null}
                   onContinue={actions.nextStep}
@@ -315,6 +324,7 @@ export function BulkStudio() {
                 password={state.password}
                 scheduledEnabled={state.scheduledEnabled}
                 activeFrom={state.activeFrom}
+                activeUntil={state.activeUntil}
                 showLandingPage={state.showLandingPage}
                 landingPageTitle={state.landingPageTitle}
                 landingPageDescription={state.landingPageDescription}

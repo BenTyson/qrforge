@@ -57,7 +57,7 @@ When deploying to Railway:
    - Copy the signing secret to `STRIPE_WEBHOOK_SECRET`
 
 3. **Update Railway Environment Variables**
-   - Go to Railway dashboard → QRForge → Variables
+   - Go to Railway dashboard → QRWolf → Variables
    - Set all Stripe env vars with live credentials:
      - `STRIPE_SECRET_KEY=sk_live_...`
      - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...`

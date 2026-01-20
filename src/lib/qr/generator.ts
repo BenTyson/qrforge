@@ -1,5 +1,8 @@
-import QRCode from 'qrcode';
-import type { QRContent, QRStyleOptions } from './types';
+'use client';
+
+import QRCodeStyling from 'qr-code-styling';
+import type { QRContent, QRStyleOptions, ModuleShape, CornerSquareShape, CornerDotShape } from './types';
+import type { Options as QRCodeStylingOptions, DotType, CornerSquareType, CornerDotType } from 'qr-code-styling';
 
 /**
  * Converts QR content to a string that can be encoded in a QR code
@@ -135,115 +138,225 @@ function generateVCard(content: {
 }
 
 /**
- * Loads an image from a URL and returns it as an HTMLImageElement
+ * Maps our module shape types to the library's dot type strings
  */
-function loadImage(url: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error('Failed to load logo image'));
-    img.src = url;
-  });
-}
-
-/**
- * Parses a hex color to RGB values
- */
-function hexToRgb(hex: string): { r: number; g: number; b: number } {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
-    : { r: 0, g: 0, b: 0 };
-}
-
-/**
- * Interpolates between two colors based on a position (0-1)
- */
-function interpolateColor(
-  start: { r: number; g: number; b: number },
-  end: { r: number; g: number; b: number },
-  t: number
-): { r: number; g: number; b: number } {
-  return {
-    r: Math.round(start.r + (end.r - start.r) * t),
-    g: Math.round(start.g + (end.g - start.g) * t),
-    b: Math.round(start.b + (end.b - start.b) * t),
+function mapModuleShape(shape?: ModuleShape): DotType {
+  if (!shape) return 'square';
+  // The library uses kebab-case for some types
+  const mapping: Record<ModuleShape, DotType> = {
+    square: 'square',
+    dots: 'dots',
+    rounded: 'rounded',
+    extraRounded: 'extra-rounded',
+    classy: 'classy',
+    classyRounded: 'classy-rounded',
   };
+  return mapping[shape] || 'square';
 }
 
 /**
- * Applies a gradient to the dark pixels of a QR code canvas
+ * Maps our corner square shape types to the library's corner square type
  */
-function applyGradientToCanvas(
-  canvas: HTMLCanvasElement,
-  gradient: { type: 'linear' | 'radial'; startColor: string; endColor: string; angle?: number },
-  backgroundColor: string
-): void {
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-
-  const width = canvas.width;
-  const height = canvas.height;
-  const imageData = ctx.getImageData(0, 0, width, height);
-  const data = imageData.data;
-
-  const startRgb = hexToRgb(gradient.startColor);
-  const endRgb = hexToRgb(gradient.endColor);
-  const bgRgb = hexToRgb(backgroundColor);
-
-  // Determine if a pixel is "dark" (part of the QR code)
-  const isDark = (r: number, g: number, b: number) => {
-    const brightness = (r + g + b) / 3;
-    const bgBrightness = (bgRgb.r + bgRgb.g + bgRgb.b) / 3;
-    return brightness < bgBrightness - 50 || (bgBrightness > 200 && brightness < 128);
+function mapCornerSquareShape(shape?: CornerSquareShape): CornerSquareType {
+  if (!shape) return 'square';
+  const mapping: Record<CornerSquareShape, CornerSquareType> = {
+    square: 'square',
+    dot: 'dot',
+    extraRounded: 'extra-rounded',
+    dots: 'dots',
+    rounded: 'rounded',
+    classy: 'classy',
+    classyRounded: 'classy-rounded',
   };
+  return mapping[shape] || 'square';
+}
 
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const i = (y * width + x) * 4;
-      const r = data[i];
-      const g = data[i + 1];
-      const b = data[i + 2];
+/**
+ * Maps our corner dot shape types to the library's corner dot type
+ */
+function mapCornerDotShape(shape?: CornerDotShape): CornerDotType {
+  if (!shape) return 'square';
+  const mapping: Record<CornerDotShape, CornerDotType> = {
+    square: 'square',
+    dot: 'dot',
+    dots: 'dots',
+    rounded: 'rounded',
+    extraRounded: 'extra-rounded',
+    classy: 'classy',
+    classyRounded: 'classy-rounded',
+  };
+  return mapping[shape] || 'square';
+}
 
-      if (isDark(r, g, b)) {
-        let t: number;
-
-        if (gradient.type === 'radial') {
-          // Radial gradient from center
-          const centerX = width / 2;
-          const centerY = height / 2;
-          const maxDist = Math.sqrt(centerX * centerX + centerY * centerY);
-          const dist = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
-          t = dist / maxDist;
-        } else {
-          // Linear gradient based on angle
-          const angle = ((gradient.angle || 0) * Math.PI) / 180;
-          const cos = Math.cos(angle);
-          const sin = Math.sin(angle);
-          // Project point onto gradient line
-          const proj = (x * cos + y * sin) / (width * Math.abs(cos) + height * Math.abs(sin));
-          t = Math.max(0, Math.min(1, (proj + 0.5)));
-        }
-
-        const color = interpolateColor(startRgb, endRgb, t);
-        data[i] = color.r;
-        data[i + 1] = color.g;
-        data[i + 2] = color.b;
-      }
-    }
+/**
+ * Determines the effective error correction level based on style options.
+ * Logo presence requires higher error correction.
+ */
+function getEffectiveErrorCorrection(style: QRStyleOptions): 'L' | 'M' | 'Q' | 'H' {
+  // Auto-bump to H when logo is present
+  if (style.logoUrl) {
+    return 'H';
   }
 
-  ctx.putImageData(imageData, 0, 0);
+  // Auto-bump to Q for frames
+  if (style.frame?.enabled) {
+    const levels = ['L', 'M', 'Q', 'H'] as const;
+    const currentIndex = levels.indexOf(style.errorCorrectionLevel);
+    if (currentIndex < 2) return 'Q';
+  }
+
+  return style.errorCorrectionLevel;
+}
+
+/**
+ * Builds the QR code configuration options for the library
+ */
+function buildQROptions(style: QRStyleOptions): QRCodeStylingOptions {
+  const options: QRCodeStylingOptions = {
+    type: 'svg',
+    width: style.width,
+    height: style.width,
+    margin: style.margin * 4, // Library uses pixels, our margin is in modules
+    data: '', // Will be set by caller
+    qrOptions: {
+      errorCorrectionLevel: getEffectiveErrorCorrection(style),
+    },
+    dotsOptions: {
+      type: mapModuleShape(style.moduleShape),
+      color: style.foregroundColor,
+    },
+    backgroundOptions: {
+      color: style.backgroundColor,
+    },
+    cornersSquareOptions: {
+      type: mapCornerSquareShape(style.cornerSquareShape),
+      color: style.foregroundColor,
+    },
+    cornersDotOptions: {
+      type: mapCornerDotShape(style.cornerDotShape),
+      color: style.foregroundColor,
+    },
+  };
+
+  // Add gradient if enabled
+  if (style.gradient?.enabled) {
+    const gradientConfig = {
+      type: style.gradient.type as 'linear' | 'radial',
+      rotation: style.gradient.angle ? (style.gradient.angle * Math.PI) / 180 : 0,
+      colorStops: [
+        { offset: 0, color: style.gradient.startColor },
+        { offset: 1, color: style.gradient.endColor },
+      ],
+    };
+
+    options.dotsOptions = {
+      ...options.dotsOptions,
+      gradient: gradientConfig,
+    };
+    options.cornersSquareOptions = {
+      ...options.cornersSquareOptions,
+      gradient: gradientConfig,
+    };
+    options.cornersDotOptions = {
+      ...options.cornersDotOptions,
+      gradient: gradientConfig,
+    };
+  }
+
+  // Add logo if present
+  if (style.logoUrl) {
+    const logoSizePercent = style.logoSize || 20;
+    options.image = style.logoUrl;
+    options.imageOptions = {
+      imageSize: logoSizePercent / 100,
+      margin: 4,
+      crossOrigin: 'anonymous',
+    };
+  }
+
+  return options;
+}
+
+/**
+ * Adds a decorative frame around an SVG QR code
+ */
+function addFrameToSVG(svgString: string, style: QRStyleOptions): string {
+  if (!style.frame?.enabled) return svgString;
+
+  const frame = style.frame;
+  const thickness = frame.thickness || 20;
+  const radius = parseInt(frame.radius || '0');
+  const frameColor = frame.color || '#0f172a';
+  const textColor = frame.textStyle?.fontColor || '#ffffff';
+  const fontSize = frame.textStyle?.fontSize || 14;
+
+  // Parse the SVG to get dimensions
+  const widthMatch = svgString.match(/width="(\d+)"/);
+  const heightMatch = svgString.match(/height="(\d+)"/);
+  const qrWidth = widthMatch ? parseInt(widthMatch[1]) : style.width;
+  const qrHeight = heightMatch ? parseInt(heightMatch[1]) : style.width;
+
+  // Calculate new dimensions - add extra padding for text areas
+  const textPadding = 16;
+  const topSpace = frame.text?.top ? thickness + fontSize + textPadding : thickness;
+  const bottomSpace = frame.text?.bottom ? thickness + fontSize + textPadding : thickness;
+  const newWidth = qrWidth + thickness * 2;
+  const newHeight = qrHeight + topSpace + bottomSpace;
+
+  // Create wrapper SVG with frame
+  let framedSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="${newWidth}" height="${newHeight}" viewBox="0 0 ${newWidth} ${newHeight}">
+    <!-- Frame background -->
+    <rect x="0" y="0" width="${newWidth}" height="${newHeight}" rx="${radius}" fill="${frameColor}"/>
+
+    <!-- QR code background -->
+    <rect x="${thickness}" y="${topSpace}" width="${qrWidth}" height="${qrHeight}" rx="${Math.max(0, radius - 4)}" fill="${style.backgroundColor}"/>
+
+    <!-- QR code -->
+    <g transform="translate(${thickness}, ${topSpace})">
+      ${svgString.replace(/<\?xml[^?]*\?>/g, '').replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '')}
+    </g>`;
+
+  // Add top text - centered vertically in the top space area
+  if (frame.text?.top) {
+    framedSVG += `
+    <text x="${newWidth / 2}" y="${topSpace / 2 + fontSize / 3}"
+          fill="${textColor}"
+          font-family="Inter, system-ui, sans-serif"
+          font-size="${fontSize}"
+          font-weight="600"
+          text-anchor="middle">${escapeXml(frame.text.top)}</text>`;
+  }
+
+  // Add bottom text - centered vertically in the bottom space area
+  if (frame.text?.bottom) {
+    framedSVG += `
+    <text x="${newWidth / 2}" y="${topSpace + qrHeight + bottomSpace / 2 + fontSize / 3}"
+          fill="${textColor}"
+          font-family="Inter, system-ui, sans-serif"
+          font-size="${fontSize}"
+          font-weight="600"
+          text-anchor="middle">${escapeXml(frame.text.bottom)}</text>`;
+  }
+
+  framedSVG += '\n</svg>';
+  return framedSVG;
+}
+
+/**
+ * Escapes XML special characters
+ */
+function escapeXml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
 }
 
 /**
  * Generates a QR code as a Data URL (base64 encoded image)
- * Supports optional logo overlay in the center
+ * Supports patterns, eye styles, gradients, logos, and frames
  */
 export async function generateQRDataURL(
   content: QRContent,
@@ -261,77 +374,33 @@ export async function generateQRDataURL(
     throw new Error('No content to encode');
   }
 
-  const hasGradient = style.gradient?.enabled;
-  const hasLogo = !!style.logoUrl;
+  const options = buildQROptions(style);
+  options.data = text;
 
-  // If no logo and no gradient, use the simple method
-  if (!hasLogo && !hasGradient) {
-    const dataURL = await QRCode.toDataURL(text, {
-      errorCorrectionLevel: style.errorCorrectionLevel,
-      margin: style.margin,
-      width: style.width,
-      color: {
-        dark: style.foregroundColor,
-        light: style.backgroundColor,
-      },
-    });
-    return dataURL;
+  const qrCode = new QRCodeStyling(options);
+
+  // Get SVG blob
+  const blob = await qrCode.getRawData('svg');
+  if (!blob) {
+    throw new Error('Failed to generate QR code');
   }
 
-  // With logo or gradient: generate to canvas, apply effects, export
-  const canvas = document.createElement('canvas');
-  canvas.width = style.width;
-  canvas.height = style.width;
-
-  await QRCode.toCanvas(canvas, text, {
-    errorCorrectionLevel: style.errorCorrectionLevel,
-    margin: style.margin,
-    width: style.width,
-    color: {
-      dark: hasGradient ? '#000000' : style.foregroundColor, // Use black for gradient processing
-      light: style.backgroundColor,
-    },
-  });
-
-  // Apply gradient if enabled
-  if (hasGradient && style.gradient) {
-    applyGradientToCanvas(canvas, style.gradient, style.backgroundColor);
+  // Convert blob to string (handle both Blob and Buffer)
+  let svgString: string;
+  if (blob instanceof Blob) {
+    svgString = await blob.text();
+  } else if (Buffer.isBuffer(blob)) {
+    svgString = blob.toString('utf-8');
+  } else {
+    svgString = new TextDecoder().decode(blob as ArrayBuffer);
   }
 
-  // Load and draw logo if present
-  if (hasLogo && style.logoUrl) {
-    try {
-      const logo = await loadImage(style.logoUrl);
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        const logoSizePercent = style.logoSize || 20;
-        const logoSize = (style.width * logoSizePercent) / 100;
-        const logoX = (style.width - logoSize) / 2;
-        const logoY = (style.width - logoSize) / 2;
+  // Add frame if enabled
+  const finalSvg = addFrameToSVG(svgString, style);
 
-        // Draw white background circle behind logo for contrast
-        const padding = logoSize * 0.1;
-        ctx.fillStyle = style.backgroundColor;
-        ctx.beginPath();
-        ctx.arc(
-          style.width / 2,
-          style.width / 2,
-          logoSize / 2 + padding,
-          0,
-          Math.PI * 2
-        );
-        ctx.fill();
-
-        // Draw the logo
-        ctx.drawImage(logo, logoX, logoY, logoSize, logoSize);
-      }
-    } catch (error) {
-      console.error('Failed to draw logo:', error);
-      // Continue without logo if it fails to load
-    }
-  }
-
-  return canvas.toDataURL('image/png');
+  // Convert to data URL
+  const base64 = btoa(unescape(encodeURIComponent(finalSvg)));
+  return `data:image/svg+xml;base64,${base64}`;
 }
 
 /**
@@ -353,18 +422,29 @@ export async function generateQRSVG(
     throw new Error('No content to encode');
   }
 
-  const svg = await QRCode.toString(text, {
-    type: 'svg',
-    errorCorrectionLevel: style.errorCorrectionLevel,
-    margin: style.margin,
-    width: style.width,
-    color: {
-      dark: style.foregroundColor,
-      light: style.backgroundColor,
-    },
-  });
+  const options = buildQROptions(style);
+  options.data = text;
 
-  return svg;
+  const qrCode = new QRCodeStyling(options);
+
+  // Get SVG blob
+  const blob = await qrCode.getRawData('svg');
+  if (!blob) {
+    throw new Error('Failed to generate QR code SVG');
+  }
+
+  // Convert blob to string (handle both Blob and Buffer)
+  let svgString: string;
+  if (blob instanceof Blob) {
+    svgString = await blob.text();
+  } else if (Buffer.isBuffer(blob)) {
+    svgString = blob.toString('utf-8');
+  } else {
+    svgString = new TextDecoder().decode(blob as ArrayBuffer);
+  }
+
+  // Add frame if enabled
+  return addFrameToSVG(svgString, style);
 }
 
 /**
@@ -387,27 +467,107 @@ export async function generateQRCanvas(
     throw new Error('No content to encode');
   }
 
-  await QRCode.toCanvas(canvas, text, {
-    errorCorrectionLevel: style.errorCorrectionLevel,
-    margin: style.margin,
-    width: style.width,
-    color: {
-      dark: style.foregroundColor,
-      light: style.backgroundColor,
-    },
-  });
+  // For framed QR codes, we need to generate SVG and render to canvas
+  if (style.frame?.enabled) {
+    const svgString = await generateQRSVG(content, style);
+    const img = new Image();
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0);
+          URL.revokeObjectURL(url);
+          resolve();
+        } else {
+          URL.revokeObjectURL(url);
+          reject(new Error('Failed to get canvas context'));
+        }
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Failed to load SVG image'));
+      };
+
+      img.src = url;
+    });
+    return;
+  }
+
+  // For non-framed QR codes, use the library's canvas rendering
+  const options = buildQROptions(style);
+  options.data = text;
+  options.type = 'canvas';
+
+  const qrCode = new QRCodeStyling(options);
+  await qrCode.append(canvas.parentElement || document.body);
+
+  // The library creates its own canvas, we need to copy to our canvas
+  const generatedCanvas = canvas.parentElement?.querySelector('canvas:not(:scope)') || null;
+  if (generatedCanvas && generatedCanvas !== canvas) {
+    canvas.width = style.width;
+    canvas.height = style.width;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(generatedCanvas as HTMLCanvasElement, 0, 0);
+    }
+    generatedCanvas.remove();
+  }
 }
 
 /**
- * Downloads a QR code as PNG
+ * Downloads a QR code as PNG by converting SVG to canvas first
  */
-export function downloadQRPNG(dataURL: string, filename: string = 'qrcode'): void {
-  const link = document.createElement('a');
-  link.href = dataURL;
-  link.download = `${filename}.png`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+export async function downloadQRPNG(dataURL: string, filename: string = 'qrcode'): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    img.onload = () => {
+      // Create canvas with the image dimensions
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Failed to get canvas context'));
+        return;
+      }
+
+      // Draw the SVG image onto the canvas
+      ctx.drawImage(img, 0, 0);
+
+      // Convert canvas to PNG blob and download
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error('Failed to create PNG blob'));
+          return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${filename}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        resolve();
+      }, 'image/png');
+    };
+
+    img.onerror = () => {
+      reject(new Error('Failed to load QR code image'));
+    };
+
+    img.src = dataURL;
+  });
 }
 
 /**

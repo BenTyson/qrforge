@@ -131,9 +131,9 @@ export function QRPreview({
           src={qrDataURL}
           alt="QR Code"
           width={300}
-          height={300}
+          height={400}
           className={cn(
-            'max-w-full max-h-full rounded-lg transition-all duration-300',
+            'w-full h-auto rounded-lg transition-all duration-300',
             isGenerating && 'opacity-50'
           )}
           style={{ imageRendering: 'pixelated' }}

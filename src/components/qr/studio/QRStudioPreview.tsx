@@ -13,6 +13,7 @@ interface QRStudioPreviewProps {
   userTier: 'free' | 'pro' | 'business' | null;
   isSaving: boolean;
   isDownloading: boolean;
+  canDownload: boolean;
   onDownloadPNG: () => void;
   onDownloadSVG: () => void;
   className?: string;
@@ -26,6 +27,7 @@ export function QRStudioPreview({
   userTier,
   isSaving,
   isDownloading,
+  canDownload,
   onDownloadPNG,
   onDownloadSVG,
   className,
@@ -51,11 +53,11 @@ export function QRStudioPreview({
 
       {/* Preview */}
       <div className="flex-1 p-5 flex flex-col items-center justify-center">
-        <div className="w-full max-w-[240px] aspect-square">
+        <div className="w-full max-w-[240px] p-3 bg-muted/30 rounded-2xl">
           <QRPreview
             content={content}
             style={style}
-            className="w-full h-full rounded-xl shadow-lg"
+            className="w-full rounded-xl shadow-lg"
             showPlaceholder={true}
           />
         </div>
@@ -87,54 +89,62 @@ export function QRStudioPreview({
 
       {/* Download buttons */}
       <div className="p-5 border-t border-border space-y-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full"
-          onClick={onDownloadPNG}
-          disabled={!content || isDownloading || isSaving}
-        >
-          {isDownloading ? (
-            <span className="flex items-center gap-2">
-              <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
-                <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
-              </svg>
-              Downloading...
-            </span>
-          ) : (
-            <span className="flex items-center gap-2">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              Download PNG
-            </span>
-          )}
-        </Button>
+        {!canDownload ? (
+          <p className="text-xs text-muted-foreground text-center py-2">
+            Complete all steps to download your QR code
+          </p>
+        ) : (
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full"
+              onClick={onDownloadPNG}
+              disabled={!content || isDownloading || isSaving}
+            >
+              {isDownloading ? (
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                    <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
+                  </svg>
+                  Downloading...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  Download PNG
+                </span>
+              )}
+            </Button>
 
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full"
-          onClick={onDownloadSVG}
-          disabled={!content || !canDownloadSVG || isDownloading || isSaving}
-        >
-          <span className="flex items-center gap-2">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Download SVG
-            {!canDownloadSVG && (
-              <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full ml-1">
-                Pro
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full"
+              onClick={onDownloadSVG}
+              disabled={!content || !canDownloadSVG || isDownloading || isSaving}
+            >
+              <span className="flex items-center gap-2">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Download SVG
+                {!canDownloadSVG && (
+                  <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full ml-1">
+                    Pro
+                  </span>
+                )}
               </span>
-            )}
-          </span>
-        </Button>
+            </Button>
+          </>
+        )}
       </div>
     </aside>
   );
@@ -188,11 +198,11 @@ export function QRStudioMiniPreview({
 
       {isExpanded && (
         <div className="px-3 pb-3">
-          <div className="w-48 h-48 mx-auto">
+          <div className="w-48 mx-auto p-2 bg-muted/30 rounded-xl">
             <QRPreview
               content={content}
               style={style}
-              className="w-full h-full rounded-xl shadow-lg"
+              className="w-full rounded-xl shadow-lg"
               showPlaceholder={true}
             />
           </div>

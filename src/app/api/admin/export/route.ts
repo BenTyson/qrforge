@@ -33,9 +33,10 @@ export async function GET(request: NextRequest) {
 
     switch (type) {
       case 'users': {
+        // Note: stripe_customer_id intentionally excluded for security
         const { data: users, error } = await adminClient
           .from('profiles')
-          .select('id, email, full_name, subscription_tier, subscription_status, monthly_scan_count, stripe_customer_id, created_at, updated_at')
+          .select('id, email, full_name, subscription_tier, subscription_status, monthly_scan_count, created_at, updated_at')
           .order('created_at', { ascending: false });
 
         if (error) throw error;

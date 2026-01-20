@@ -2,139 +2,142 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Image as ImageIcon, Crown } from 'lucide-react';
+import { Image as ImageIcon, Crown, Palette, Grid3X3, Frame } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { QRPreview } from '@/components/qr/QRPreview';
 import { LogoUploader } from '@/components/qr/LogoUploader';
 import { LogoBestPractices } from '@/components/qr/LogoBestPractices';
+import { PatternSelector } from '@/components/qr/PatternSelector';
+import { EyeStyleSelector } from '@/components/qr/EyeStyleSelector';
+import { FrameEditor } from '@/components/qr/FrameEditor';
 import { COLOR_PRESETS } from '../constants';
-import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
+import type { QRStyleOptions } from '@/lib/qr/types';
 
 interface StyleStepProps {
-  content: QRContent | null;
   style: QRStyleOptions;
   onStyleChange: (style: QRStyleOptions) => void;
   onContinue: () => void;
   canAccessProTypes: boolean;
 }
 
-const DURABILITY_OPTIONS = [
-  { level: 'L' as const, name: 'Basic', desc: 'Screens & digital' },
-  { level: 'M' as const, name: 'Standard', desc: 'General print', recommended: true },
-  { level: 'Q' as const, name: 'Enhanced', desc: 'Logos & busy designs' },
-  { level: 'H' as const, name: 'Maximum', desc: 'Outdoor & rough use' },
-];
+type TabType = 'pattern' | 'colors' | 'logo' | 'frame';
 
 export function StyleStep({
-  content,
   style,
   onStyleChange,
   onContinue,
   canAccessProTypes,
 }: StyleStepProps) {
-  const [activeTab, setActiveTab] = useState<'colors' | 'logo'>('colors');
+  const [activeTab, setActiveTab] = useState<TabType>('colors');
+
+  const tabs: { id: TabType; label: string; icon: React.ReactNode; proBadge?: boolean; indicator?: boolean }[] = [
+    { id: 'colors', label: 'Colors', icon: <Palette className="w-5 h-5" /> },
+    { id: 'pattern', label: 'Pattern', icon: <Grid3X3 className="w-5 h-5" />, proBadge: true },
+    { id: 'frame', label: 'Frame', icon: <Frame className="w-5 h-5" />, proBadge: true, indicator: style.frame?.enabled },
+    { id: 'logo', label: 'Logo', icon: <ImageIcon className="w-5 h-5" />, proBadge: true, indicator: !!style.logoUrl },
+  ];
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Preview */}
-        <div className="flex flex-col items-center">
-          <div className="w-full max-w-xs aspect-square">
-            <QRPreview content={content} style={style} className="w-full h-full" />
-          </div>
-
-          {/* Logo link under preview */}
+      {/* Prominent Tab Bar */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
+        {tabs.map((tab) => (
           <button
-            onClick={() => setActiveTab('logo')}
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "mt-4 text-xs flex items-center gap-2 px-3 py-1.5 rounded-full transition-all",
-              style.logoUrl
-                ? "text-primary bg-primary/10 hover:bg-primary/20"
-                : "text-slate-400 hover:text-primary hover:bg-slate-800"
+              "flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all relative",
+              activeTab === tab.id
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-white/10 bg-white/5 text-slate-400 hover:border-white/20 hover:bg-white/10"
             )}
           >
-            <ImageIcon className="w-3.5 h-3.5" />
-            {style.logoUrl ? (
-              <span>Logo applied ({style.logoSize || 20}%)</span>
-            ) : (
-              <span>Add a logo</span>
-            )}
-            {!style.logoUrl && (
-              <Badge variant="secondary" className="text-[9px] px-1 py-0 h-3.5 bg-primary/20 text-primary border-0">
+            {tab.icon}
+            <span className="text-sm font-medium">{tab.label}</span>
+            {tab.proBadge && (
+              <Badge variant="secondary" className="text-[9px] px-1.5 py-0 h-4 bg-primary/20 text-primary border-0">
                 Pro
               </Badge>
+            )}
+            {tab.indicator && (
+              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary" />
             )}
           </button>
-        </div>
-
-        {/* Style Options with Tabs */}
-        <div className="space-y-6">
-          {/* Tabs */}
-          <div className="flex border-b border-slate-700">
-            <button
-              onClick={() => setActiveTab('colors')}
-              className={cn(
-                "px-4 py-2 text-sm font-medium transition-colors relative",
-                activeTab === 'colors'
-                  ? "text-primary"
-                  : "text-slate-400 hover:text-white"
-              )}
-            >
-              Colors
-              {activeTab === 'colors' && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-              )}
-            </button>
-            <button
-              onClick={() => setActiveTab('logo')}
-              className={cn(
-                "px-4 py-2 text-sm font-medium transition-colors relative flex items-center gap-2",
-                activeTab === 'logo'
-                  ? "text-primary"
-                  : "text-slate-400 hover:text-white"
-              )}
-            >
-              Logo
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-primary/20 text-primary border-0">
-                Pro
-              </Badge>
-              {style.logoUrl && (
-                <span className="w-2 h-2 rounded-full bg-primary" />
-              )}
-              {activeTab === 'logo' && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-              )}
-            </button>
-          </div>
-
-          {/* Tab Content */}
-          {activeTab === 'colors' ? (
-            <ColorsTabContent
-              style={style}
-              onStyleChange={onStyleChange}
-            />
-          ) : (
-            <LogoTabContent
-              style={style}
-              onStyleChange={onStyleChange}
-              canAccessProTypes={canAccessProTypes}
-            />
-          )}
-
-          {/* Continue Button */}
-          <Button onClick={onContinue} className="w-full" size="lg">
-            Continue to Options
-            <svg className="w-5 h-5 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </Button>
-        </div>
+        ))}
       </div>
+
+      {/* Tab Content - Full Width */}
+      <div className="min-h-[400px]">
+        {activeTab === 'colors' && (
+          <ColorsTabContent
+            style={style}
+            onStyleChange={onStyleChange}
+            canAccessProTypes={canAccessProTypes}
+          />
+        )}
+        {activeTab === 'pattern' && (
+          <PatternTabContent
+            style={style}
+            onStyleChange={onStyleChange}
+            canAccessProTypes={canAccessProTypes}
+          />
+        )}
+        {activeTab === 'frame' && (
+          <FrameTabContent
+            style={style}
+            onStyleChange={onStyleChange}
+            canAccessProTypes={canAccessProTypes}
+          />
+        )}
+        {activeTab === 'logo' && (
+          <LogoTabContent
+            style={style}
+            onStyleChange={onStyleChange}
+            canAccessProTypes={canAccessProTypes}
+          />
+        )}
+      </div>
+
+      {/* Continue Button */}
+      <Button onClick={onContinue} className="w-full mt-6" size="lg">
+        Continue to Options
+        <svg className="w-5 h-5 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </Button>
+    </div>
+  );
+}
+
+// Pattern Tab Content
+interface PatternTabContentProps {
+  style: QRStyleOptions;
+  onStyleChange: (style: QRStyleOptions) => void;
+  canAccessProTypes: boolean;
+}
+
+function PatternTabContent({ style, onStyleChange, canAccessProTypes }: PatternTabContentProps) {
+  return (
+    <div className="space-y-6">
+      {/* Module Pattern */}
+      <PatternSelector
+        value={style.moduleShape}
+        onChange={(shape) => onStyleChange({ ...style, moduleShape: shape })}
+        canAccessPro={canAccessProTypes}
+      />
+
+      {/* Eye Style */}
+      <EyeStyleSelector
+        cornerSquareValue={style.cornerSquareShape}
+        cornerDotValue={style.cornerDotShape}
+        onCornerSquareChange={(shape) => onStyleChange({ ...style, cornerSquareShape: shape })}
+        onCornerDotChange={(shape) => onStyleChange({ ...style, cornerDotShape: shape })}
+        canAccessPro={canAccessProTypes}
+      />
     </div>
   );
 }
@@ -153,12 +156,14 @@ const GRADIENT_PRESETS = [
 interface ColorsTabContentProps {
   style: QRStyleOptions;
   onStyleChange: (style: QRStyleOptions) => void;
+  canAccessProTypes: boolean;
 }
 
-function ColorsTabContent({ style, onStyleChange }: ColorsTabContentProps) {
+function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTabContentProps) {
   const gradientEnabled = style.gradient?.enabled || false;
 
   const toggleGradient = (enabled: boolean) => {
+    if (!canAccessProTypes) return;
     if (enabled) {
       onStyleChange({
         ...style,
@@ -179,6 +184,7 @@ function ColorsTabContent({ style, onStyleChange }: ColorsTabContentProps) {
   };
 
   const applyGradientPreset = (preset: typeof GRADIENT_PRESETS[0]) => {
+    if (!canAccessProTypes) return;
     onStyleChange({
       ...style,
       gradient: {
@@ -191,21 +197,39 @@ function ColorsTabContent({ style, onStyleChange }: ColorsTabContentProps) {
     });
   };
 
+  // Show gradient preview values (either actual or demo values)
+  const previewGradient = style.gradient || {
+    type: 'linear' as const,
+    startColor: '#06b6d4',
+    endColor: '#3b82f6',
+    angle: 135,
+  };
+
   return (
     <div className="space-y-6">
-      {/* Gradient Toggle */}
-      <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700">
+      {/* Gradient Section - Always visible */}
+      <div className={cn(
+        "p-4 rounded-xl border relative",
+        canAccessProTypes
+          ? "bg-slate-800/50 border-slate-700"
+          : "bg-slate-800/30 border-slate-700/50"
+      )}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-white">Gradient Colors</span>
+            <span className={cn(
+              "text-sm font-medium",
+              canAccessProTypes ? "text-white" : "text-slate-400"
+            )}>Gradient Colors</span>
             <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-primary/20 text-primary border-0">
               Pro
             </Badge>
           </div>
           <button
             onClick={() => toggleGradient(!gradientEnabled)}
+            disabled={!canAccessProTypes}
             className={cn(
               'relative w-10 h-5 rounded-full transition-colors',
+              !canAccessProTypes && 'opacity-50 cursor-not-allowed',
               gradientEnabled ? 'bg-primary' : 'bg-slate-600'
             )}
           >
@@ -218,131 +242,153 @@ function ColorsTabContent({ style, onStyleChange }: ColorsTabContentProps) {
           </button>
         </div>
 
-        {gradientEnabled && style.gradient && (
-          <div className="space-y-4 pt-3 border-t border-slate-700">
-            {/* Gradient Presets */}
-            <div className="grid grid-cols-6 gap-2">
-              {GRADIENT_PRESETS.map((preset) => (
-                <button
-                  key={preset.name}
-                  onClick={() => applyGradientPreset(preset)}
-                  className={cn(
-                    'aspect-square rounded-lg border-2 transition-all overflow-hidden',
-                    style.gradient?.startColor === preset.start && style.gradient?.endColor === preset.end
-                      ? 'border-primary scale-105'
-                      : 'border-transparent hover:border-slate-600'
-                  )}
-                  title={preset.name}
-                  style={{
-                    background: preset.type === 'radial'
-                      ? `radial-gradient(circle, ${preset.start}, ${preset.end})`
-                      : `linear-gradient(${preset.angle}deg, ${preset.start}, ${preset.end})`,
-                  }}
+        {/* Always show gradient presets preview */}
+        <div className={cn(
+          "space-y-4 pt-3 border-t border-slate-700",
+          !canAccessProTypes && "opacity-50 pointer-events-none"
+        )}>
+          {/* Gradient Presets */}
+          <div className="grid grid-cols-6 gap-2">
+            {GRADIENT_PRESETS.map((preset) => (
+              <button
+                key={preset.name}
+                onClick={() => applyGradientPreset(preset)}
+                disabled={!canAccessProTypes}
+                className={cn(
+                  'aspect-square rounded-lg border-2 transition-all overflow-hidden',
+                  canAccessProTypes && style.gradient?.startColor === preset.start && style.gradient?.endColor === preset.end
+                    ? 'border-primary scale-105'
+                    : 'border-transparent hover:border-slate-600'
+                )}
+                title={preset.name}
+                style={{
+                  background: preset.type === 'radial'
+                    ? `radial-gradient(circle, ${preset.start}, ${preset.end})`
+                    : `linear-gradient(${preset.angle}deg, ${preset.start}, ${preset.end})`,
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Custom Gradient Colors */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs text-slate-400">Start Color</Label>
+              <div className="flex gap-1 mt-1">
+                <Input
+                  type="color"
+                  value={gradientEnabled ? style.gradient!.startColor : previewGradient.startColor}
+                  onChange={(e) => canAccessProTypes && onStyleChange({
+                    ...style,
+                    gradient: { ...style.gradient!, startColor: e.target.value },
+                  })}
+                  disabled={!canAccessProTypes}
+                  className="w-10 h-8 p-0.5 bg-slate-800 border-slate-700 disabled:opacity-50"
                 />
-              ))}
-            </div>
-
-            {/* Custom Gradient Colors */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs text-slate-400">Start Color</Label>
-                <div className="flex gap-1 mt-1">
-                  <Input
-                    type="color"
-                    value={style.gradient.startColor}
-                    onChange={(e) => onStyleChange({
-                      ...style,
-                      gradient: { ...style.gradient!, startColor: e.target.value },
-                    })}
-                    className="w-10 h-8 p-0.5 bg-slate-800 border-slate-700"
-                  />
-                  <Input
-                    type="text"
-                    value={style.gradient.startColor}
-                    onChange={(e) => onStyleChange({
-                      ...style,
-                      gradient: { ...style.gradient!, startColor: e.target.value },
-                    })}
-                    className="flex-1 h-8 text-xs bg-slate-800 border-slate-700"
-                  />
-                </div>
-              </div>
-              <div>
-                <Label className="text-xs text-slate-400">End Color</Label>
-                <div className="flex gap-1 mt-1">
-                  <Input
-                    type="color"
-                    value={style.gradient.endColor}
-                    onChange={(e) => onStyleChange({
-                      ...style,
-                      gradient: { ...style.gradient!, endColor: e.target.value },
-                    })}
-                    className="w-10 h-8 p-0.5 bg-slate-800 border-slate-700"
-                  />
-                  <Input
-                    type="text"
-                    value={style.gradient.endColor}
-                    onChange={(e) => onStyleChange({
-                      ...style,
-                      gradient: { ...style.gradient!, endColor: e.target.value },
-                    })}
-                    className="flex-1 h-8 text-xs bg-slate-800 border-slate-700"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Gradient Type & Angle */}
-            <div className="flex items-center gap-4">
-              <div className="flex gap-1">
-                <button
-                  onClick={() => onStyleChange({
+                <Input
+                  type="text"
+                  value={gradientEnabled ? style.gradient!.startColor : previewGradient.startColor}
+                  onChange={(e) => canAccessProTypes && onStyleChange({
                     ...style,
-                    gradient: { ...style.gradient!, type: 'linear' },
+                    gradient: { ...style.gradient!, startColor: e.target.value },
                   })}
-                  className={cn(
-                    'px-3 py-1 text-xs rounded-l-md transition-colors',
-                    style.gradient.type === 'linear'
-                      ? 'bg-primary text-white'
-                      : 'bg-slate-700 text-slate-400 hover:text-white'
-                  )}
-                >
-                  Linear
-                </button>
-                <button
-                  onClick={() => onStyleChange({
-                    ...style,
-                    gradient: { ...style.gradient!, type: 'radial' },
-                  })}
-                  className={cn(
-                    'px-3 py-1 text-xs rounded-r-md transition-colors',
-                    style.gradient.type === 'radial'
-                      ? 'bg-primary text-white'
-                      : 'bg-slate-700 text-slate-400 hover:text-white'
-                  )}
-                >
-                  Radial
-                </button>
+                  disabled={!canAccessProTypes}
+                  className="flex-1 h-8 text-xs bg-slate-800 border-slate-700 disabled:opacity-50"
+                />
               </div>
-
-              {style.gradient.type === 'linear' && (
-                <div className="flex items-center gap-2 flex-1">
-                  <Label className="text-xs text-slate-400 shrink-0">Angle</Label>
-                  <Slider
-                    value={[style.gradient.angle || 0]}
-                    onValueChange={([value]) => onStyleChange({
-                      ...style,
-                      gradient: { ...style.gradient!, angle: value },
-                    })}
-                    min={0}
-                    max={360}
-                    step={15}
-                    className="flex-1"
-                  />
-                  <span className="text-xs text-slate-400 w-8">{style.gradient.angle || 0}°</span>
-                </div>
-              )}
             </div>
+            <div>
+              <Label className="text-xs text-slate-400">End Color</Label>
+              <div className="flex gap-1 mt-1">
+                <Input
+                  type="color"
+                  value={gradientEnabled ? style.gradient!.endColor : previewGradient.endColor}
+                  onChange={(e) => canAccessProTypes && onStyleChange({
+                    ...style,
+                    gradient: { ...style.gradient!, endColor: e.target.value },
+                  })}
+                  disabled={!canAccessProTypes}
+                  className="w-10 h-8 p-0.5 bg-slate-800 border-slate-700 disabled:opacity-50"
+                />
+                <Input
+                  type="text"
+                  value={gradientEnabled ? style.gradient!.endColor : previewGradient.endColor}
+                  onChange={(e) => canAccessProTypes && onStyleChange({
+                    ...style,
+                    gradient: { ...style.gradient!, endColor: e.target.value },
+                  })}
+                  disabled={!canAccessProTypes}
+                  className="flex-1 h-8 text-xs bg-slate-800 border-slate-700 disabled:opacity-50"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Gradient Type & Angle */}
+          <div className="flex items-center gap-4">
+            <div className="flex gap-1">
+              <button
+                onClick={() => canAccessProTypes && onStyleChange({
+                  ...style,
+                  gradient: { ...style.gradient!, type: 'linear' },
+                })}
+                disabled={!canAccessProTypes}
+                className={cn(
+                  'px-3 py-1 text-xs rounded-l-md transition-colors',
+                  (gradientEnabled ? style.gradient!.type : previewGradient.type) === 'linear'
+                    ? 'bg-primary text-white'
+                    : 'bg-slate-700 text-slate-400 hover:text-white'
+                )}
+              >
+                Linear
+              </button>
+              <button
+                onClick={() => canAccessProTypes && onStyleChange({
+                  ...style,
+                  gradient: { ...style.gradient!, type: 'radial' },
+                })}
+                disabled={!canAccessProTypes}
+                className={cn(
+                  'px-3 py-1 text-xs rounded-r-md transition-colors',
+                  (gradientEnabled ? style.gradient!.type : previewGradient.type) === 'radial'
+                    ? 'bg-primary text-white'
+                    : 'bg-slate-700 text-slate-400 hover:text-white'
+                )}
+              >
+                Radial
+              </button>
+            </div>
+
+            {(gradientEnabled ? style.gradient!.type : previewGradient.type) === 'linear' && (
+              <div className="flex items-center gap-2 flex-1">
+                <Label className="text-xs text-slate-400 shrink-0">Angle</Label>
+                <Slider
+                  value={[gradientEnabled ? (style.gradient!.angle || 0) : (previewGradient.angle || 0)]}
+                  onValueChange={([value]) => canAccessProTypes && onStyleChange({
+                    ...style,
+                    gradient: { ...style.gradient!, angle: value },
+                  })}
+                  disabled={!canAccessProTypes}
+                  min={0}
+                  max={360}
+                  step={15}
+                  className="flex-1"
+                />
+                <span className="text-xs text-slate-400 w-8">{gradientEnabled ? (style.gradient!.angle || 0) : (previewGradient.angle || 0)}°</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Upgrade overlay for non-pro users */}
+        {!canAccessProTypes && (
+          <div className="absolute inset-0 flex items-end justify-center rounded-xl bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-transparent">
+            <Link href="/plans" className="mb-4">
+              <Button size="sm" className="bg-gradient-to-r from-primary to-cyan-500 hover:from-primary/90 hover:to-cyan-500/90">
+                <Crown className="w-3.5 h-3.5 mr-1.5" />
+                Upgrade to Unlock
+              </Button>
+            </Link>
           </div>
         )}
       </div>
@@ -416,66 +462,6 @@ function ColorsTabContent({ style, onStyleChange }: ColorsTabContentProps) {
         </>
       )}
 
-      {/* Durability (Error Correction Level) */}
-      <div>
-        <Label className="text-white mb-3 block">Durability</Label>
-        <div className="grid grid-cols-2 gap-2">
-          {DURABILITY_OPTIONS.map((option) => (
-            <button
-              key={option.level}
-              onClick={() => onStyleChange({ ...style, errorCorrectionLevel: option.level })}
-              className={cn(
-                'flex items-start gap-2 p-3 rounded-lg text-left transition-all border',
-                style.errorCorrectionLevel === option.level
-                  ? 'border-primary bg-primary/10'
-                  : 'border-slate-700 bg-slate-800/50 hover:border-slate-600'
-              )}
-            >
-              <div className={cn(
-                'w-2 h-2 rounded-full mt-1.5 shrink-0',
-                style.errorCorrectionLevel === option.level ? 'bg-primary' : 'bg-slate-600'
-              )} />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className={cn(
-                    'text-sm font-medium',
-                    style.errorCorrectionLevel === option.level ? 'text-primary' : 'text-white'
-                  )}>
-                    {option.name}
-                  </span>
-                  {option.recommended && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-medium">
-                      Default
-                    </span>
-                  )}
-                </div>
-                <span className="text-xs text-slate-400">{option.desc}</span>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Border Space (Margin) */}
-      <div>
-        <div className="flex items-center justify-between mb-1">
-          <Label className="text-white">Border Space</Label>
-          <span className="text-sm text-slate-400">
-            {style.margin === 0 ? 'None' : style.margin <= 2 ? 'Tight' : style.margin <= 4 ? 'Normal' : 'Wide'}
-          </span>
-        </div>
-        <p className="text-xs text-slate-400 mb-3">
-          Empty space around the QR helps scanners read it reliably
-        </p>
-        <Slider
-          value={[style.margin]}
-          onValueChange={([value]) => onStyleChange({ ...style, margin: value })}
-          min={0}
-          max={6}
-          step={1}
-          className="w-full"
-        />
-      </div>
     </div>
   );
 }
@@ -556,5 +542,22 @@ function LogoTabContent({ style, onStyleChange, canAccessProTypes }: LogoTabCont
       {/* Best Practices - visible to all users */}
       <LogoBestPractices />
     </div>
+  );
+}
+
+// Frame Tab Content
+interface FrameTabContentProps {
+  style: QRStyleOptions;
+  onStyleChange: (style: QRStyleOptions) => void;
+  canAccessProTypes: boolean;
+}
+
+function FrameTabContent({ style, onStyleChange, canAccessProTypes }: FrameTabContentProps) {
+  return (
+    <FrameEditor
+      value={style.frame}
+      onChange={(frame) => onStyleChange({ ...style, frame })}
+      canAccessPro={canAccessProTypes}
+    />
   );
 }

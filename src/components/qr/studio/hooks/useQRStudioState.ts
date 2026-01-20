@@ -175,16 +175,17 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
 
       if (user) {
         setUserId(user.id);
-        const { data: profile } = await supabase
+        const { data: profile, error } = await supabase
           .from('profiles')
           .select('subscription_tier')
           .eq('id', user.id)
           .single();
 
-        setUserTier((profile?.subscription_tier || 'free') as 'free' | 'pro' | 'business');
+        const tier = (profile?.subscription_tier || 'free') as 'free' | 'pro' | 'business';
+        setUserTier(tier);
       } else {
         setUserId(null);
-        setUserTier(null);
+        setUserTier('free'); // Default to free instead of null for unauthenticated
       }
     };
 
@@ -357,14 +358,8 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         content: content as unknown as Record<string, unknown>,
         destination_url: destinationUrl,
         short_code: newShortCode,
-        style: {
-          foregroundColor: style.foregroundColor,
-          backgroundColor: style.backgroundColor,
-          errorCorrectionLevel: style.errorCorrectionLevel,
-          margin: style.margin,
-          logoUrl: style.logoUrl,
-          logoSize: style.logoSize,
-        },
+        // Save entire style object to preserve all properties (gradient, patterns, frame, etc.)
+        style: style as unknown as Record<string, unknown>,
       };
 
       // Add Pro options
@@ -372,7 +367,22 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         insertData.expires_at = new Date(expiresAt).toISOString();
       }
       if (passwordEnabled && password) {
-        insertData.password_hash = password;
+        // Hash the password before saving
+        const hashResponse = await fetch('/api/qr/hash-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password }),
+        });
+        if (!hashResponse.ok) {
+          throw new Error('Failed to hash password');
+        }
+        const hashData = await hashResponse.json();
+        if (hashData.hash) {
+          insertData.password_hash = hashData.hash;
+        }
+      } else if (!passwordEnabled) {
+        // Clear password if protection is disabled
+        insertData.password_hash = null;
       }
       if (scheduledEnabled) {
         if (activeFrom) {
@@ -448,8 +458,11 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         setExpiresAt(new Date(data.expires_at).toISOString().slice(0, 16));
       }
       if (data.password_hash) {
+        // Just enable password protection indicator, don't populate the password field
+        // The hash should never be shown to the user or saved back
         setPasswordEnabled(true);
-        setPassword(data.password_hash);
+        // Leave password field empty - user can enter a new one if they want to change it
+        setPassword('');
       }
       if (data.active_from || data.active_until) {
         setScheduledEnabled(true);

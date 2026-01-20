@@ -1,19 +1,57 @@
-# QRForge
+# QRWolf
 
-A modern, premium QR code generator with analytics and dynamic codes. Built for passive income through SEO-driven traffic and recurring subscriptions.
+A premium QR code generator with analytics, dynamic codes, and landing pages. Built for passive income through SEO-driven traffic and recurring subscriptions.
+
+**Live:** https://qrwolf.com
+
+---
+
+## ⚠️ CRITICAL: Production Safety - LIVE PAYING USERS
+
+> **This application has LIVE PAYING CUSTOMERS in production.**
+>
+> The production database at https://qrwolf.com contains real customer data, payment information, and QR codes that are actively being scanned. Corrupting or destroying this data would directly harm paying users.
+
+### Development Safety
+
+| Environment | Database | Safe to Experiment? |
+|-------------|----------|---------------------|
+| **Local Dev** | Dev Supabase (`fxcvxomvkgioxwbwmbsy`) | ✅ Yes |
+| **Production** | Prod Supabase (`otdlggbhsmgqhsviazho`) | ⛔ NO - LIVE CUSTOMERS |
+
+**Before making any changes:**
+```bash
+npm run safety-check  # Verify you're connected to DEV database (should show "SAFE")
+npm run dev           # Start dev server on port 3322
+```
+
+**Critical rules:**
+- NEVER run destructive database operations against production
+- NEVER push directly to `main` branch (use PR from `develop`)
+- ALWAYS verify environment before running migrations or data scripts
+- ALWAYS run tests before committing: `npm run precommit`
+
+**Full documentation:** See `docs/SESSION-START.md` for complete development context.
+
+---
 
 ## Features
 
-- **7 QR Code Types**: URL, Text, WiFi, vCard, Email, Phone, SMS
-- **Real-time Preview**: Instant QR code generation as you type
-- **Custom Styling**: Color presets, custom colors, error correction levels
+- **16 QR Code Types**: URL, Text, WiFi, vCard, Email, Phone, SMS, WhatsApp, Facebook, Instagram, Apps, PDF, Images, Video, MP3, Menu, Business, Links, Coupon, Social
+- **Dynamic QR Codes**: Editable destinations with scan tracking
+- **Real-time Analytics**: Device, location, and browser tracking
+- **Custom Styling**: Colors, logos, presets
+- **Landing Pages**: Menu, business card, links, coupon, social profiles
 - **Multiple Formats**: PNG and SVG downloads
-- **Dark Mode**: Premium dark-first design with Indigo/Violet accents
+- **Dark Theme**: Premium dark navy design with teal/cyan accents
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 (App Router)
+- **Framework**: Next.js 15 (App Router)
 - **Styling**: Tailwind CSS v4 + shadcn/ui
+- **Database**: Supabase (PostgreSQL)
+- **Payments**: Stripe
+- **Deployment**: Railway
 - **QR Generation**: qrcode library
 - **Language**: TypeScript
 
@@ -54,15 +92,23 @@ docs/
 
 ## Environment Variables
 
-```env
-# Supabase (for auth/database - coming soon)
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+See `.env.local.example` for the full template. Key variables:
 
-# Stripe (for payments - coming soon)
-STRIPE_SECRET_KEY=
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+```env
+# Environment (CRITICAL - controls database safety)
+ENVIRONMENT=development
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# Stripe
+STRIPE_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
+
+**See also:** `docs/DEVELOPMENT.md` for environment setup details.
 
 ## Deployment
 

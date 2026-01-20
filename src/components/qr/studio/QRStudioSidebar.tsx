@@ -112,13 +112,10 @@ export function QRStudioSidebar({
 
   return (
     <aside className="w-60 border-r border-border bg-card/50 backdrop-blur flex flex-col h-full">
-      {/* Header */}
-      <div className="p-5 border-b border-border">
-        <h2 className="font-semibold text-lg">
-          {mode === 'create' ? 'Create QR Code' : 'Edit QR Code'}
-        </h2>
-        {mode === 'edit' && selectedType && (
-          <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded-md">
+      {/* Type badge header - only in edit mode */}
+      {mode === 'edit' && selectedType && (
+        <div className="p-4 border-b border-border">
+          <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded-md">
             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="3" y="3" width="7" height="7" rx="1" />
               <rect x="14" y="3" width="7" height="7" rx="1" />
@@ -126,15 +123,17 @@ export function QRStudioSidebar({
             </svg>
             {TYPE_LABELS[selectedType] || selectedType}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Steps */}
       <nav className="flex-1 p-4 space-y-1">
-        {visibleSteps.map((step) => {
+        {visibleSteps.map((step, index) => {
           const isCurrent = currentStep === step.id;
           const isComplete = isStepComplete(step.id);
           const isClickable = isStepClickable(step.id);
+          const isFuture = !isCurrent && !isComplete;
+          const stepNumber = index + 1;
 
           return (
             <button
@@ -144,9 +143,10 @@ export function QRStudioSidebar({
               className={cn(
                 'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200',
                 isCurrent && 'bg-primary/10 text-primary',
-                !isCurrent && isComplete && 'text-muted-foreground hover:bg-secondary/50',
-                !isCurrent && !isComplete && isClickable && 'text-muted-foreground hover:bg-secondary/50',
-                !isClickable && 'opacity-40 cursor-not-allowed',
+                isComplete && !isCurrent && 'text-foreground hover:bg-secondary/50',
+                isFuture && 'text-muted-foreground/60',
+                isFuture && isClickable && 'hover:bg-secondary/30',
+                !isClickable && 'cursor-not-allowed',
               )}
             >
               {/* Step indicator */}
@@ -154,14 +154,16 @@ export function QRStudioSidebar({
                 className={cn(
                   'w-8 h-8 rounded-lg flex items-center justify-center transition-colors',
                   isCurrent && 'bg-primary text-primary-foreground',
-                  !isCurrent && isComplete && 'bg-primary/20 text-primary',
-                  !isCurrent && !isComplete && 'bg-secondary text-muted-foreground',
+                  isComplete && !isCurrent && 'bg-primary/20 text-primary',
+                  isFuture && 'bg-secondary/50 text-muted-foreground/60',
                 )}
               >
                 {isComplete && !isCurrent ? (
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
+                ) : isFuture ? (
+                  <span className="text-sm font-medium">{stepNumber}</span>
                 ) : (
                   step.icon
                 )}
@@ -171,6 +173,8 @@ export function QRStudioSidebar({
               <span className={cn(
                 'font-medium text-sm',
                 isCurrent && 'text-primary',
+                isComplete && !isCurrent && 'text-foreground',
+                isFuture && 'text-muted-foreground/60',
               )}>
                 {step.label}
               </span>

@@ -1,4 +1,4 @@
--- QRForge Database Schema
+-- QRWolf Database Schema
 -- Run this in your Supabase SQL editor
 
 -- Enable UUID extension
@@ -25,7 +25,7 @@ CREATE TABLE qr_codes (
   type TEXT NOT NULL CHECK (type IN ('static', 'dynamic')),
   content_type TEXT NOT NULL CHECK (content_type IN ('url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms')),
   content JSONB NOT NULL,
-  short_code TEXT UNIQUE, -- for dynamic codes: qrforge.link/abc123
+  short_code TEXT UNIQUE, -- for dynamic codes: qrwolf.com/r/abc123
   destination_url TEXT, -- current destination for dynamic codes
   style JSONB DEFAULT '{"foregroundColor": "#000000", "backgroundColor": "#ffffff", "errorCorrectionLevel": "M", "margin": 2}',
   scan_count INTEGER DEFAULT 0,

@@ -95,23 +95,40 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
     }
   }, [mode, qrCodeId, isLoaded, actions, router]);
 
-  // Check if step is complete
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [state.currentStep]);
+
+  // Check if step is complete (user has passed through it)
   const isStepComplete = useCallback((step: WizardStep): boolean => {
+    const stepOrder: WizardStep[] = mode === 'edit'
+      ? ['content', 'style', 'options', 'download']
+      : ['type', 'content', 'style', 'options', 'download'];
+
+    const currentIndex = stepOrder.indexOf(state.currentStep);
+    const stepIndex = stepOrder.indexOf(step);
+
+    // A step is complete only if the user has moved past it
+    if (stepIndex >= currentIndex) {
+      return false; // Current step or future steps are not complete
+    }
+
+    // For past steps, also verify they have valid data
     switch (step) {
       case 'type':
         return !!state.selectedType;
       case 'content':
         return actions.isContentValid();
       case 'style':
-        return true; // Style always has defaults
       case 'options':
-        return true; // Options are optional
+        return true; // Past style/options steps are complete (they have defaults)
       case 'download':
         return state.hasDownloaded;
       default:
         return false;
     }
-  }, [state.selectedType, state.hasDownloaded, actions]);
+  }, [state.selectedType, state.currentStep, state.hasDownloaded, actions, mode]);
 
   // Check if step is clickable
   const isStepClickable = useCallback((step: WizardStep): boolean => {
@@ -164,7 +181,7 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
       };
 
       const dataURL = await generateQRDataURL(qrContent, { ...state.style, width: 1024 });
-      downloadQRPNG(dataURL, actions.getFilename());
+      await downloadQRPNG(dataURL, actions.getFilename());
       actions.setHasDownloaded(true);
     } finally {
       actions.setIsDownloading(false);
@@ -283,13 +300,16 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
           >
             Cancel
           </Button>
-          <Button
-            size="sm"
-            onClick={handleSave}
-            disabled={!actions.isContentValid() || state.isSaving || !state.userId}
-          >
-            {state.isSaving ? 'Saving...' : mode === 'edit' ? 'Save Changes' : 'Save'}
-          </Button>
+          {/* Only show save button in edit mode - create mode saves at final step */}
+          {mode === 'edit' && (
+            <Button
+              size="sm"
+              onClick={handleSave}
+              disabled={!actions.isContentValid() || state.isSaving || !state.userId}
+            >
+              {state.isSaving ? 'Saving...' : 'Save Changes'}
+            </Button>
+          )}
         </div>
       </header>
 
@@ -376,13 +396,14 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
                 qrName={state.qrName}
                 onContentChange={actions.setContent}
                 onNameChange={actions.setQrName}
+                onContinue={actions.goForward}
+                canContinue={actions.canGoForward()}
                 userTier={state.userTier}
               />
             )}
 
             {state.currentStep === 'style' && (
               <StyleStep
-                content={state.content}
                 style={state.style}
                 onStyleChange={actions.setStyle}
                 onContinue={actions.goForward}
@@ -392,6 +413,10 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
 
             {state.currentStep === 'options' && (
               <OptionsStep
+                errorCorrectionLevel={state.style.errorCorrectionLevel}
+                onErrorCorrectionChange={(level) => actions.setStyle({ ...state.style, errorCorrectionLevel: level })}
+                margin={state.style.margin}
+                onMarginChange={(margin) => actions.setStyle({ ...state.style, margin })}
                 expiresAt={state.expiresAt}
                 onExpiresAtChange={actions.setExpiresAt}
                 passwordEnabled={state.passwordEnabled}
@@ -423,6 +448,7 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
                 isDownloading={state.isDownloading}
                 hasDownloaded={state.hasDownloaded}
                 saveError={state.saveError}
+                onSave={handleSave}
                 onDownloadPNG={handleDownloadPNG}
                 onDownloadSVG={handleDownloadSVG}
                 onDone={() => router.push('/qr-codes')}
@@ -500,6 +526,7 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
                 userTier={state.userTier}
                 isSaving={state.isSaving}
                 isDownloading={state.isDownloading}
+                canDownload={state.currentStep === 'download'}
                 onDownloadPNG={handleDownloadPNG}
                 onDownloadSVG={handleDownloadSVG}
                 className="h-full"
@@ -540,6 +567,8 @@ interface ContentStepProps {
   qrName: string;
   onContentChange: (content: QRContent | null) => void;
   onNameChange: (name: string) => void;
+  onContinue: () => void;
+  canContinue: boolean;
   userTier: 'free' | 'pro' | 'business' | null;
 }
 
@@ -549,6 +578,8 @@ function ContentStep({
   qrName,
   onContentChange,
   onNameChange,
+  onContinue,
+  canContinue,
   userTier: _userTier,
 }: ContentStepProps) {
   // State for basic form types
@@ -880,6 +911,19 @@ function ContentStep({
       <div className="pt-4 border-t border-border">
         {renderForm()}
       </div>
+
+      {/* Continue Button */}
+      <Button
+        onClick={onContinue}
+        disabled={!canContinue}
+        className="w-full mt-6"
+        size="lg"
+      >
+        Continue to Style
+        <svg className="w-5 h-5 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </Button>
     </div>
   );
 }
@@ -897,6 +941,7 @@ interface DownloadStepProps {
   isDownloading: boolean;
   hasDownloaded: boolean;
   saveError: string | null;
+  onSave: () => void;
   onDownloadPNG: () => void;
   onDownloadSVG: () => void;
   onDone: () => void;
@@ -906,7 +951,7 @@ interface DownloadStepProps {
 function DownloadStep({
   content,
   style: _style,
-  qrName: _qrName,
+  qrName,
   shortCode,
   savedQRId,
   userId,
@@ -915,41 +960,127 @@ function DownloadStep({
   isDownloading,
   hasDownloaded,
   saveError,
+  onSave,
   onDownloadPNG,
   onDownloadSVG,
   onDone,
   onCreateAnother,
 }: DownloadStepProps) {
   const canDownloadSVG = userTier === 'pro' || userTier === 'business';
+  const isSaved = !!savedQRId;
 
+  // Phase 1: Not saved yet - show save prompt
+  if (!isSaved) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <svg className="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold mb-2">Save Your QR Code</h2>
+          <p className="text-muted-foreground">
+            {qrName ? `"${qrName}" is ready to be saved` : 'Your QR code is ready to be saved'}
+          </p>
+        </div>
+
+        {/* Sign up prompt for non-logged in users */}
+        {!userId && (
+          <div className="p-5 bg-primary/10 border border-primary/20 rounded-xl text-center">
+            <h3 className="font-semibold mb-2">Create a free account</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Sign up to save your QR code and access it anytime from your dashboard.
+            </p>
+            <Link href="/signup">
+              <Button>Sign up free</Button>
+            </Link>
+          </div>
+        )}
+
+        {/* Save error */}
+        {saveError && (
+          <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-center">
+            {saveError}
+          </div>
+        )}
+
+        {/* Save button - only for logged in users */}
+        {userId && (
+          <Button
+            className="w-full"
+            size="lg"
+            onClick={onSave}
+            disabled={!content || isSaving}
+          >
+            {isSaving ? (
+              <span className="flex items-center gap-2">
+                <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                  <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
+                </svg>
+                Saving...
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                  <polyline points="17 21 17 13 7 13 7 21" />
+                  <polyline points="7 3 7 8 15 8" />
+                </svg>
+                Save & Create QR Code
+              </span>
+            )}
+          </Button>
+        )}
+
+        <p className="text-xs text-muted-foreground text-center">
+          After saving, you&apos;ll be able to download your QR code in PNG or SVG format
+        </p>
+      </div>
+    );
+  }
+
+  // Phase 2: Saved - show success and download options
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold mb-1">Download Your QR Code</h2>
-        <p className="text-muted-foreground text-sm">
+      {/* Success header */}
+      <div className="text-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/10 flex items-center justify-center">
+          <svg className="w-8 h-8 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+        <h2 className="text-2xl font-bold mb-2">
+          {hasDownloaded ? 'Downloaded!' : 'QR Code Created!'}
+        </h2>
+        <p className="text-muted-foreground">
           {hasDownloaded
-            ? 'Your QR code has been saved and downloaded!'
-            : 'Save your QR code and download it in your preferred format'}
+            ? 'Your QR code has been saved and downloaded'
+            : 'Your QR code is saved and ready to download'}
         </p>
       </div>
 
-      {/* Sign up prompt for non-logged in users */}
-      {!userId && (
-        <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl">
-          <h3 className="font-medium mb-1">Create an account to save</h3>
-          <p className="text-sm text-muted-foreground mb-3">
-            Sign up to save your QR code and access it anytime.
-          </p>
-          <Link href="/signup">
-            <Button size="sm">Sign up free</Button>
-          </Link>
-        </div>
-      )}
-
-      {/* Save error */}
-      {saveError && (
-        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500">
-          {saveError}
+      {/* Short URL */}
+      {shortCode && (
+        <div className="p-4 bg-secondary/50 rounded-xl">
+          <p className="text-sm font-medium mb-2">Your QR Code URL</p>
+          <div className="flex items-center gap-2">
+            <code className="flex-1 text-sm bg-background px-3 py-2 rounded-lg truncate">
+              https://qrwolf.com/r/{shortCode}
+            </code>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                navigator.clipboard.writeText(`https://qrwolf.com/r/${shortCode}`);
+              }}
+            >
+              Copy
+            </Button>
+          </div>
         </div>
       )}
 
@@ -959,7 +1090,7 @@ function DownloadStep({
           className="w-full"
           size="lg"
           onClick={onDownloadPNG}
-          disabled={!content || isDownloading || isSaving}
+          disabled={!content || isDownloading}
         >
           {isDownloading ? (
             <span className="flex items-center gap-2">
@@ -967,7 +1098,7 @@ function DownloadStep({
                 <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
                 <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
               </svg>
-              {savedQRId ? 'Downloading...' : 'Saving & Downloading...'}
+              Downloading...
             </span>
           ) : (
             <span className="flex items-center gap-2">
@@ -976,7 +1107,7 @@ function DownloadStep({
                 <polyline points="7 10 12 15 17 10" />
                 <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
-              {savedQRId ? 'Download PNG' : 'Save & Download PNG'}
+              Download PNG
             </span>
           )}
         </Button>
@@ -986,7 +1117,7 @@ function DownloadStep({
           className="w-full"
           size="lg"
           onClick={onDownloadSVG}
-          disabled={!content || !canDownloadSVG || isDownloading || isSaving}
+          disabled={!content || !canDownloadSVG || isDownloading}
         >
           <span className="flex items-center gap-2">
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1004,50 +1135,20 @@ function DownloadStep({
         </Button>
       </div>
 
-      {/* Short URL */}
-      {shortCode && (
-        <div className="p-4 bg-secondary/50 rounded-xl">
-          <p className="text-sm font-medium mb-2">Your QR Code URL</p>
-          <div className="flex items-center gap-2">
-            <code className="flex-1 text-sm bg-background px-3 py-2 rounded-lg">
-              https://qrwolf.com/r/{shortCode}
-            </code>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigator.clipboard.writeText(`https://qrwolf.com/r/${shortCode}`)}
-            >
-              Copy
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* Actions */}
-      {hasDownloaded && (
-        <div className="flex gap-3 pt-4">
-          <Button variant="outline" className="flex-1" onClick={onCreateAnother}>
-            Create Another
-          </Button>
-          <Button className="flex-1" onClick={onDone}>
-            <span className="flex items-center gap-2">
-              Done
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            </span>
-          </Button>
-        </div>
-      )}
-
-      {/* Dashboard link */}
-      {savedQRId && (
-        <div className="text-center pt-4">
-          <Link href="/qr-codes" className="text-sm text-primary hover:underline">
-            View in Dashboard
-          </Link>
-        </div>
-      )}
+      <div className="flex gap-3 pt-4">
+        <Button variant="outline" className="flex-1" onClick={onCreateAnother}>
+          Create Another
+        </Button>
+        <Button className="flex-1" onClick={onDone}>
+          <span className="flex items-center gap-2">
+            Go to Dashboard
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </span>
+        </Button>
+      </div>
     </div>
   );
 }

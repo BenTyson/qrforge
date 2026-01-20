@@ -30,6 +30,11 @@ const config: Config = {
     '<rootDir>/.next/',
   ],
 
+  // Transform node_modules that use ESM (like @upstash/redis and its deps)
+  transformIgnorePatterns: [
+    '/node_modules/(?!(uncrypto|@upstash)/)',
+  ],
+
   // Coverage configuration
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

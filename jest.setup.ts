@@ -1,7 +1,13 @@
 import '@testing-library/jest-dom';
 
+// Mock Redis rate limiter before any imports that depend on it
+jest.mock('@/lib/redis/rate-limiter');
+
 // Set test environment variables
 process.env.ENVIRONMENT = 'test';
+
+// Ensure Redis rate limiting is disabled in tests
+process.env.ENABLE_REDIS_RATE_LIMIT = 'false';
 // NODE_ENV is already set by Jest
 
 // Mock Supabase URL for tests - uses local or test database

@@ -296,9 +296,10 @@ function addFrameToSVG(svgString: string, style: QRStyleOptions): string {
   const qrWidth = widthMatch ? parseInt(widthMatch[1]) : style.width;
   const qrHeight = heightMatch ? parseInt(heightMatch[1]) : style.width;
 
-  // Calculate new dimensions
-  const topSpace = frame.text?.top ? thickness + fontSize + 8 : thickness;
-  const bottomSpace = frame.text?.bottom ? thickness + fontSize + 8 : thickness;
+  // Calculate new dimensions - add extra padding for text areas
+  const textPadding = 16;
+  const topSpace = frame.text?.top ? thickness + fontSize + textPadding : thickness;
+  const bottomSpace = frame.text?.bottom ? thickness + fontSize + textPadding : thickness;
   const newWidth = qrWidth + thickness * 2;
   const newHeight = qrHeight + topSpace + bottomSpace;
 
@@ -315,10 +316,10 @@ function addFrameToSVG(svgString: string, style: QRStyleOptions): string {
       ${svgString.replace(/<\?xml[^?]*\?>/g, '').replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '')}
     </g>`;
 
-  // Add top text
+  // Add top text - centered vertically in the top space area
   if (frame.text?.top) {
     framedSVG += `
-    <text x="${newWidth / 2}" y="${thickness / 2 + fontSize / 3}"
+    <text x="${newWidth / 2}" y="${topSpace / 2 + fontSize / 3}"
           fill="${textColor}"
           font-family="Inter, system-ui, sans-serif"
           font-size="${fontSize}"
@@ -326,10 +327,10 @@ function addFrameToSVG(svgString: string, style: QRStyleOptions): string {
           text-anchor="middle">${escapeXml(frame.text.top)}</text>`;
   }
 
-  // Add bottom text
+  // Add bottom text - centered vertically in the bottom space area
   if (frame.text?.bottom) {
     framedSVG += `
-    <text x="${newWidth / 2}" y="${newHeight - thickness / 2 + fontSize / 3}"
+    <text x="${newWidth / 2}" y="${topSpace + qrHeight + bottomSpace / 2 + fontSize / 3}"
           fill="${textColor}"
           font-family="Inter, system-ui, sans-serif"
           font-size="${fontSize}"
@@ -520,15 +521,53 @@ export async function generateQRCanvas(
 }
 
 /**
- * Downloads a QR code as PNG
+ * Downloads a QR code as PNG by converting SVG to canvas first
  */
-export function downloadQRPNG(dataURL: string, filename: string = 'qrcode'): void {
-  const link = document.createElement('a');
-  link.href = dataURL;
-  link.download = `${filename}.png`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+export async function downloadQRPNG(dataURL: string, filename: string = 'qrcode'): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    img.onload = () => {
+      // Create canvas with the image dimensions
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Failed to get canvas context'));
+        return;
+      }
+
+      // Draw the SVG image onto the canvas
+      ctx.drawImage(img, 0, 0);
+
+      // Convert canvas to PNG blob and download
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error('Failed to create PNG blob'));
+          return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${filename}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        resolve();
+      }, 'image/png');
+    };
+
+    img.onerror = () => {
+      reject(new Error('Failed to load QR code image'));
+    };
+
+    img.src = dataURL;
+  });
 }
 
 /**

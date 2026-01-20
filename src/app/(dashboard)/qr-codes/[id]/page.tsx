@@ -243,7 +243,7 @@ export default function EditQRCodePage() {
   const handleDownloadPNG = async () => {
     if (!content) return;
     const dataURL = await generateQRDataURL(content, { ...style, width: 1024 });
-    downloadQRPNG(dataURL, `qrwolf-${(name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
+    await downloadQRPNG(dataURL, `qrwolf-${(name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
   };
 
   const handleDownloadSVG = async () => {

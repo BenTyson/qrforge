@@ -43,7 +43,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* QRForge V2 - Dark Navy theme with Teal/Cyan accent */
+/* QRWolf V2 - Dark Navy theme with Teal/Cyan accent */
 :root {
   --radius: 0.625rem;
   /* Dark navy theme as default */
@@ -119,7 +119,7 @@
   }
 }
 
-/* Custom animations for QRForge */
+/* Custom animations for QRWolf */
 @keyframes qr-pulse {
   0%, 100% {
     transform: scale(1);

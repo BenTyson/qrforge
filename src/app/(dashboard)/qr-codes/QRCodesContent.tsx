@@ -233,22 +233,24 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
             Manage, organize, and track all your QR codes
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          {tier === 'business' && (
-            <Link href="/qr-codes/bulk">
-              <Button variant="outline" size="lg" className="gap-2">
-                <BulkIcon className="w-5 h-5" />
-                Bulk Generate
-              </Button>
-            </Link>
-          )}
-          <Link href="/qr-codes/new">
-            <Button size="lg" className="gap-2">
-              <PlusIcon className="w-5 h-5" />
-              New QR Code
+        {tier === 'business' ? (
+          <Link href="/qr-codes/bulk">
+            <Button variant="outline" size="lg" className="gap-2">
+              <BulkIcon className="w-5 h-5" />
+              Bulk Generate
             </Button>
           </Link>
-        </div>
+        ) : (
+          <Link href="/plans">
+            <Button variant="outline" size="lg" className="gap-2 opacity-70 hover:opacity-100">
+              <BulkIcon className="w-5 h-5" />
+              Bulk Generate
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-medium">
+                Business
+              </span>
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Stats Cards */}

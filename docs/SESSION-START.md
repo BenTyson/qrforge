@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 20, 2026 (QR Pattern & Shape Customization)
+> **Last Updated**: January 20, 2026 (QR Studio UX Polish & Bug Fixes)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -474,6 +474,30 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - Pro feature tier gating (Square pattern free, all others Pro+)
   - Server-side generation support via JSDOM
   - Backward compatible: existing QR codes render identically
+- **QR Studio UX Polish & Bug Fixes** (January 20, 2026):
+  - **Password protection bug fix**: Was storing plaintext passwords instead of bcrypt hashes. Fixed `useQRStudioState.ts` to call `/api/qr/hash-password` before saving. Fixed `loadQRCode` to not populate password field with hash on edit.
+  - **Sidebar step indicator fix**: Steps were incorrectly showing checkmarks for future uncompleted steps. Fixed `isStepComplete` logic to only mark steps complete if user has passed through them. Future steps now show step numbers instead of icons with dimmed styling.
+  - **Removed duplicate UI elements**:
+    - Removed duplicate "Create QR Code" title from sidebar (already in top nav)
+    - Removed duplicate "+ New QR Code" button from /qr-codes page content (already in nav)
+  - **Bulk Generate button visibility**: Now visible for all tiers with "Business" badge. Non-business users see upgrade CTA linking to /plans.
+  - **StyleStep tab reorder**: Changed tab order to Colors → Pattern → Frame → Logo (Colors first as most commonly used). Made Colors the default active tab.
+  - **Gradient section visibility**: Gradient color options now always visible but disabled/greyed out for non-Pro users with upgrade overlay.
+  - **Durability & Border Space moved**: Moved from Colors tab to Options tab for better organization. Added "Default" badge when Border Space is at default value (2).
+  - **Save flow redesign**: Hidden save button in create mode. Final step now shows "Save & Create QR Code" button, then reveals download options after save completes.
+  - **Scroll to top on step change**: Added useEffect to scroll to top when navigating between wizard steps.
+  - **PNG download fix**: Downloads were saving SVG data as .png (unopenable). Fixed by converting SVG to canvas then exporting as PNG blob.
+  - **Frame preview padding**: Increased text padding in frame generator for better spacing.
+  - **Bulk Studio sync with QR Studio**:
+    - Both now share same `StyleStep` and `OptionsStep` components (updates apply to both)
+    - Fixed default margin (was 4 in bulk, now 2 to match normal)
+    - Added `activeUntil` support to bulk generator for full scheduling options
+  - **Bulk upload error handling**: Improved format detection with helpful guidance:
+    - Detects binary/Excel files: "Save as CSV or copy/paste directly"
+    - Detects JSON format: "Use CSV format instead"
+    - Detects URLs without names: "Each line needs a name AND URL"
+    - Shows "How to fix" hints for all error types
+    - Auto-skips header rows containing "name" and "url"
 
 ### Planned Enhancements
 - Email scan alerts

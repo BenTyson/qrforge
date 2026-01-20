@@ -101,9 +101,10 @@ function addFrameToSVG(svgString: string, style: Partial<QRStyleOptions>): strin
   const qrWidth = style.width || 512;
   const qrHeight = style.width || 512;
 
-  // Calculate new dimensions
-  const topSpace = frame.text?.top ? thickness + fontSize + 8 : thickness;
-  const bottomSpace = frame.text?.bottom ? thickness + fontSize + 8 : thickness;
+  // Calculate new dimensions - add extra padding for text areas
+  const textPadding = 16;
+  const topSpace = frame.text?.top ? thickness + fontSize + textPadding : thickness;
+  const bottomSpace = frame.text?.bottom ? thickness + fontSize + textPadding : thickness;
   const newWidth = qrWidth + thickness * 2;
   const newHeight = qrHeight + topSpace + bottomSpace;
 
@@ -120,10 +121,10 @@ function addFrameToSVG(svgString: string, style: Partial<QRStyleOptions>): strin
       ${svgString.replace(/<\?xml[^?]*\?>/g, '').replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '')}
     </g>`;
 
-  // Add top text
+  // Add top text - centered vertically in the top space area
   if (frame.text?.top) {
     framedSVG += `
-    <text x="${newWidth / 2}" y="${thickness / 2 + fontSize / 3}"
+    <text x="${newWidth / 2}" y="${topSpace / 2 + fontSize / 3}"
           fill="${textColor}"
           font-family="Inter, system-ui, sans-serif"
           font-size="${fontSize}"
@@ -131,10 +132,10 @@ function addFrameToSVG(svgString: string, style: Partial<QRStyleOptions>): strin
           text-anchor="middle">${escapeXml(frame.text.top)}</text>`;
   }
 
-  // Add bottom text
+  // Add bottom text - centered vertically in the bottom space area
   if (frame.text?.bottom) {
     framedSVG += `
-    <text x="${newWidth / 2}" y="${newHeight - thickness / 2 + fontSize / 3}"
+    <text x="${newWidth / 2}" y="${topSpace + qrHeight + bottomSpace / 2 + fontSize / 3}"
           fill="${textColor}"
           font-family="Inter, system-ui, sans-serif"
           font-size="${fontSize}"

@@ -25,6 +25,7 @@ export interface BulkState {
   entries: BulkEntry[];
   rawInput: string;
   parseError: string | null;
+  parseHint: string | null;
 
   // Style (shared across all)
   style: QRStyleOptions;
@@ -35,6 +36,7 @@ export interface BulkState {
   password: string;
   scheduledEnabled: boolean;
   activeFrom: string;
+  activeUntil: string;
   showLandingPage: boolean;
   landingPageTitle: string;
   landingPageDescription: string;
@@ -77,6 +79,7 @@ export interface BulkActions {
   setPassword: (password: string) => void;
   setScheduledEnabled: (enabled: boolean) => void;
   setActiveFrom: (date: string) => void;
+  setActiveUntil: (date: string) => void;
   setShowLandingPage: (show: boolean) => void;
   setLandingPageTitle: (title: string) => void;
   setLandingPageDescription: (desc: string) => void;
@@ -100,9 +103,9 @@ const MAX_ENTRIES = 100;
 
 const DEFAULT_STYLE: QRStyleOptions = {
   foregroundColor: '#000000',
-  backgroundColor: '#FFFFFF',
+  backgroundColor: '#ffffff',
   errorCorrectionLevel: 'M',
-  margin: 4,
+  margin: 2,  // Match normal QR studio default
   width: 256,
   logoUrl: undefined,
   logoSize: 20,
@@ -113,12 +116,14 @@ const initialState: BulkState = {
   entries: [],
   rawInput: '',
   parseError: null,
+  parseHint: null,
   style: DEFAULT_STYLE,
   expiresAt: '',
   passwordEnabled: false,
   password: '',
   scheduledEnabled: false,
   activeFrom: '',
+  activeUntil: '',
   showLandingPage: true,
   landingPageTitle: '',
   landingPageDescription: '',
@@ -141,8 +146,52 @@ function isValidUrl(string: string): boolean {
   }
 }
 
+// Detect if input looks like JSON
+function looksLikeJSON(input: string): boolean {
+  const trimmed = input.trim();
+  return (trimmed.startsWith('{') && trimmed.endsWith('}')) ||
+         (trimmed.startsWith('[') && trimmed.endsWith(']'));
+}
+
+// Detect if input looks like it might be binary/Excel
+function looksLikeBinary(input: string): boolean {
+  // Check for common binary file signatures or unusual characters
+  const nonPrintable = input.slice(0, 100).split('').filter(c => {
+    const code = c.charCodeAt(0);
+    return code < 32 && code !== 9 && code !== 10 && code !== 13;
+  });
+  return nonPrintable.length > 5;
+}
+
+// Check if lines look like URLs only (no names)
+function looksLikeURLsOnly(lines: string[]): boolean {
+  const urlPattern = /^(https?:\/\/|www\.)/i;
+  const urlOnlyLines = lines.filter(line => {
+    const trimmed = line.trim();
+    return urlPattern.test(trimmed) && !trimmed.includes(',') && !trimmed.includes('\t');
+  });
+  return urlOnlyLines.length > lines.length * 0.7; // More than 70% look like URLs only
+}
+
 // CSV parsing helper
-function parseCSVInput(input: string): { entries: BulkEntry[]; error: string | null } {
+function parseCSVInput(input: string): { entries: BulkEntry[]; error: string | null; hint?: string } {
+  // Check for wrong file types first
+  if (looksLikeBinary(input)) {
+    return {
+      entries: [],
+      error: 'This file appears to be in a binary format (possibly Excel .xlsx).',
+      hint: 'Please save your spreadsheet as a CSV file, or copy and paste the data directly.'
+    };
+  }
+
+  if (looksLikeJSON(input)) {
+    return {
+      entries: [],
+      error: 'JSON format detected. Please use CSV format instead.',
+      hint: 'Each line should be: Name, URL (e.g., "My Website, https://example.com")'
+    };
+  }
+
   const lines = input
     .split('\n')
     .map(line => line.trim())
@@ -152,36 +201,63 @@ function parseCSVInput(input: string): { entries: BulkEntry[]; error: string | n
     return { entries: [], error: null };
   }
 
+  // Check if it looks like URLs without names
+  if (looksLikeURLsOnly(lines)) {
+    return {
+      entries: [],
+      error: 'It looks like you pasted URLs without names.',
+      hint: 'Each line needs a name AND a URL separated by a comma.\nExample: My Website, https://example.com'
+    };
+  }
+
   if (lines.length > MAX_ENTRIES) {
     return {
       entries: [],
-      error: `Maximum ${MAX_ENTRIES} entries allowed. You have ${lines.length}.`
+      error: `Maximum ${MAX_ENTRIES} entries allowed. You have ${lines.length}.`,
+      hint: 'Please reduce the number of entries and try again.'
+    };
+  }
+
+  // Check if first line looks like a header row
+  const firstLine = lines[0].toLowerCase();
+  const isHeaderRow = (firstLine.includes('name') && firstLine.includes('url')) ||
+                      (firstLine.includes('title') && firstLine.includes('link'));
+
+  const dataLines = isHeaderRow ? lines.slice(1) : lines;
+
+  if (dataLines.length === 0) {
+    return {
+      entries: [],
+      error: 'No data found after header row.',
+      hint: 'Add your entries below the header row.'
     };
   }
 
   const entries: BulkEntry[] = [];
   const errors: string[] = [];
 
-  lines.forEach((line, index) => {
+  dataLines.forEach((line, index) => {
+    const lineNum = isHeaderRow ? index + 2 : index + 1;
+
     // Support both comma and tab delimiters
     const parts = line.includes('\t')
       ? line.split('\t').map(p => p.trim())
       : line.split(',').map(p => p.trim());
 
     if (parts.length < 2) {
-      errors.push(`Line ${index + 1}: Missing name or URL`);
+      errors.push(`Line ${lineNum}: Missing comma separator between name and URL`);
       return;
     }
 
     const [name, url] = parts;
 
     if (!name) {
-      errors.push(`Line ${index + 1}: Name is empty`);
+      errors.push(`Line ${lineNum}: Name is empty`);
       return;
     }
 
     if (!url) {
-      errors.push(`Line ${index + 1}: URL is empty`);
+      errors.push(`Line ${lineNum}: URL is empty`);
       return;
     }
 
@@ -192,7 +268,7 @@ function parseCSVInput(input: string): { entries: BulkEntry[]; error: string | n
     }
 
     if (!isValidUrl(normalizedUrl)) {
-      errors.push(`Line ${index + 1}: Invalid URL "${url}"`);
+      errors.push(`Line ${lineNum}: Invalid URL "${url}"`);
       return;
     }
 
@@ -205,9 +281,12 @@ function parseCSVInput(input: string): { entries: BulkEntry[]; error: string | n
   });
 
   if (errors.length > 0) {
+    const errorList = errors.slice(0, 5).join('\n') +
+      (errors.length > 5 ? `\n...and ${errors.length - 5} more errors` : '');
     return {
       entries: [],
-      error: errors.slice(0, 5).join('\n') + (errors.length > 5 ? `\n...and ${errors.length - 5} more errors` : '')
+      error: errorList,
+      hint: 'Format each line as: Name, URL'
     };
   }
 
@@ -267,12 +346,13 @@ export function useBulkState(): [BulkState, BulkActions] {
   }, []);
 
   const parseInput = useCallback((input: string) => {
-    const { entries, error } = parseCSVInput(input);
+    const { entries, error, hint } = parseCSVInput(input);
     setState(prev => ({
       ...prev,
       rawInput: input,
       entries,
       parseError: error,
+      parseHint: hint || null,
     }));
   }, []);
 
@@ -289,6 +369,7 @@ export function useBulkState(): [BulkState, BulkActions] {
       entries: [],
       rawInput: '',
       parseError: null,
+      parseHint: null,
     }));
   }, []);
 
@@ -369,6 +450,10 @@ export function useBulkState(): [BulkState, BulkActions] {
 
   const setActiveFrom = useCallback((date: string) => {
     setState(prev => ({ ...prev, activeFrom: date }));
+  }, []);
+
+  const setActiveUntil = useCallback((date: string) => {
+    setState(prev => ({ ...prev, activeUntil: date }));
   }, []);
 
   const setShowLandingPage = useCallback((show: boolean) => {
@@ -454,6 +539,7 @@ export function useBulkState(): [BulkState, BulkActions] {
     setPassword,
     setScheduledEnabled,
     setActiveFrom,
+    setActiveUntil,
     setShowLandingPage,
     setLandingPageTitle,
     setLandingPageDescription,
@@ -472,7 +558,7 @@ export function useBulkState(): [BulkState, BulkActions] {
     setStyle, setForegroundColor, setBackgroundColor, setErrorCorrectionLevel,
     setMargin, setLogoUrl, setLogoSize,
     setExpiresAt, setPasswordEnabled, setPassword, setScheduledEnabled,
-    setActiveFrom, setShowLandingPage, setLandingPageTitle,
+    setActiveFrom, setActiveUntil, setShowLandingPage, setLandingPageTitle,
     setLandingPageDescription, setLandingPageButtonText, setLandingPageTheme,
     setEntryStatus, setIsGenerating, setIsSaving, setGenerationProgress,
     setSavedCount, setSaveError, reset,

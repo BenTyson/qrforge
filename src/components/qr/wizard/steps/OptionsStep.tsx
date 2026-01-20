@@ -4,9 +4,22 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
 
+const DURABILITY_OPTIONS = [
+  { level: 'L' as const, name: 'Basic', desc: 'Screens & digital' },
+  { level: 'M' as const, name: 'Standard', desc: 'General print', recommended: true },
+  { level: 'Q' as const, name: 'Enhanced', desc: 'Logos & busy designs' },
+  { level: 'H' as const, name: 'Maximum', desc: 'Outdoor & rough use' },
+];
+
 interface OptionsStepProps {
+  // QR Settings
+  errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
+  onErrorCorrectionChange: (level: 'L' | 'M' | 'Q' | 'H') => void;
+  margin: number;
+  onMarginChange: (margin: number) => void;
   // Expiration
   expiresAt: string;
   onExpiresAtChange: (value: string) => void;
@@ -30,6 +43,10 @@ interface OptionsStepProps {
 }
 
 export function OptionsStep({
+  errorCorrectionLevel,
+  onErrorCorrectionChange,
+  margin,
+  onMarginChange,
   expiresAt,
   onExpiresAtChange,
   passwordEnabled,
@@ -49,12 +66,107 @@ export function OptionsStep({
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold text-white mb-2">Advanced Options</h3>
-        <p className="text-slate-400">Configure expiration, password protection, and more</p>
+        <h3 className="text-2xl font-bold text-white mb-2">Options</h3>
+        <p className="text-slate-400">Configure QR settings and advanced features</p>
       </div>
 
-      {/* Pro Feature Cards */}
+      {/* QR Settings Section */}
       <div className="space-y-4">
+        <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wide">QR Settings</h4>
+
+        {/* Durability (Error Correction Level) */}
+        <div className="p-4 rounded-xl border border-slate-700 bg-slate-800/50">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-lg bg-slate-700/50 flex items-center justify-center shrink-0">
+              <svg className="w-5 h-5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-semibold text-white mb-1">Durability</h4>
+              <p className="text-xs text-slate-400 mb-3">Higher durability helps QR codes scan even when damaged or obscured</p>
+              <div className="grid grid-cols-2 gap-2">
+                {DURABILITY_OPTIONS.map((option) => (
+                  <button
+                    key={option.level}
+                    onClick={() => onErrorCorrectionChange(option.level)}
+                    className={cn(
+                      'flex items-start gap-2 p-3 rounded-lg text-left transition-all border',
+                      errorCorrectionLevel === option.level
+                        ? 'border-primary bg-primary/10'
+                        : 'border-slate-700 bg-slate-800/50 hover:border-slate-600'
+                    )}
+                  >
+                    <div className={cn(
+                      'w-2 h-2 rounded-full mt-1.5 shrink-0',
+                      errorCorrectionLevel === option.level ? 'bg-primary' : 'bg-slate-600'
+                    )} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={cn(
+                          'text-sm font-medium',
+                          errorCorrectionLevel === option.level ? 'text-primary' : 'text-white'
+                        )}>
+                          {option.name}
+                        </span>
+                        {option.recommended && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-medium">
+                            Default
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-xs text-slate-400">{option.desc}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Border Space (Margin) */}
+        <div className="p-4 rounded-xl border border-slate-700 bg-slate-800/50">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-lg bg-slate-700/50 flex items-center justify-center shrink-0">
+              <svg className="w-5 h-5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <rect x="7" y="7" width="10" height="10" rx="1" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-1">
+                <h4 className="font-semibold text-white">Border Space</h4>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-400">
+                    {margin === 0 ? 'None' : margin === 1 ? 'Minimal' : margin === 2 ? 'Standard' : margin <= 4 ? 'Normal' : 'Wide'}
+                  </span>
+                  {margin === 2 && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-medium">
+                      Default
+                    </span>
+                  )}
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 mb-3">
+                Empty space around the QR helps scanners read it reliably
+              </p>
+              <Slider
+                value={[margin]}
+                onValueChange={([value]) => onMarginChange(value)}
+                min={0}
+                max={6}
+                step={1}
+                className="w-full"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Pro Features Section */}
+      <div className="space-y-4">
+        <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wide">Pro Features</h4>
+
         {/* Expiration Date */}
         <div className={cn(
           'p-4 rounded-xl border transition-all',

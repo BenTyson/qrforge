@@ -53,7 +53,9 @@ async function optimizeImage(
   }
 
   // For JPEG, PNG, WebP - convert to WebP for best compression
+  // .rotate() without args auto-orients based on EXIF and strips all EXIF metadata (privacy protection)
   const optimized = await sharp(buffer)
+    .rotate() // Auto-orient and strip EXIF metadata (removes GPS, camera info, etc.)
     .resize(IMAGE_MAX_DIMENSION, IMAGE_MAX_DIMENSION, {
       fit: 'inside',
       withoutEnlargement: true,

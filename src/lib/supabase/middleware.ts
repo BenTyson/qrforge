@@ -1,6 +1,21 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+/**
+ * Supabase Session Middleware
+ *
+ * CSRF Protection Notes:
+ * -----------------------
+ * This application is inherently CSRF-resistant because:
+ * 1. All mutations use fetch() with Content-Type: application/json
+ * 2. Browsers enforce CORS on cross-origin JSON requests
+ * 3. Supabase SSR sets SameSite=Lax cookies by default (prevents cross-site cookie sending)
+ *
+ * Routes that are CSRF-exempt (use alternative authentication):
+ * - /api/stripe/webhook - Uses Stripe signature verification
+ * - /api/v1/* - Uses API key authentication (Bearer token)
+ * - /api/qr/verify-password - Public QR password check (stateless)
+ */
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,

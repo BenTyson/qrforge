@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+import { checkRateLimit as checkDistributedRateLimit } from '@/lib/redis/rate-limiter';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -10,47 +11,21 @@ export interface ApiUser {
   keyHash: string; // Added to track which key was used
 }
 
-// Rate limit configuration
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+// Rate limit configuration (now defined in rate-limiter.ts)
 const RATE_LIMIT_MAX_REQUESTS = 60; // 60 requests per minute per key
 const MONTHLY_REQUEST_LIMIT = 10000; // 10,000 requests per month
 
-// In-memory rate limiter with fallback
-// Note: This resets on server restart - acceptable for per-minute limits
-// Monthly limits are enforced via database
-const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
-
 /**
  * Check per-minute rate limit for an API key
+ * Uses distributed Redis rate limiting with graceful fallback to in-memory
  */
-function checkRateLimit(keyHash: string): { allowed: boolean; remaining: number; resetAt: number } {
-  const now = Date.now();
-  const entry = rateLimitStore.get(keyHash);
-
-  if (!entry || entry.resetAt < now) {
-    const resetAt = now + RATE_LIMIT_WINDOW_MS;
-    rateLimitStore.set(keyHash, { count: 1, resetAt });
-    return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - 1, resetAt };
-  }
-
-  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) {
-    return { allowed: false, remaining: 0, resetAt: entry.resetAt };
-  }
-
-  entry.count++;
-  return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - entry.count, resetAt: entry.resetAt };
-}
-
-// Clean up old rate limit entries periodically (only in long-running processes)
-if (typeof setInterval !== 'undefined') {
-  setInterval(() => {
-    const now = Date.now();
-    for (const [key, entry] of rateLimitStore.entries()) {
-      if (entry.resetAt < now) {
-        rateLimitStore.delete(key);
-      }
-    }
-  }, 60000);
+async function checkRateLimit(keyHash: string): Promise<{ allowed: boolean; remaining: number; resetAt: number }> {
+  const result = await checkDistributedRateLimit(keyHash);
+  return {
+    allowed: result.allowed,
+    remaining: result.remaining,
+    resetAt: result.resetAt,
+  };
 }
 
 /**
@@ -74,8 +49,8 @@ export async function validateApiKey(
   // Hash the key
   const keyHash = crypto.createHash('sha256').update(apiKey).digest('hex');
 
-  // Check per-minute rate limit first
-  const rateLimitInfo = checkRateLimit(keyHash);
+  // Check per-minute rate limit first (distributed with fallback)
+  const rateLimitInfo = await checkRateLimit(keyHash);
   if (!rateLimitInfo.allowed) {
     return { user: null, rateLimitInfo };
   }
@@ -249,9 +224,65 @@ export function rateLimitError(resetAt: number) {
   });
 }
 
+// Private IP ranges that should be blocked for SSRF prevention
+const PRIVATE_IP_RANGES = [
+  /^127\./, // Localhost
+  /^10\./, // Class A private
+  /^172\.(1[6-9]|2[0-9]|3[0-1])\./, // Class B private
+  /^192\.168\./, // Class C private
+  /^169\.254\./, // Link-local
+  /^0\./, // Current network
+  /^224\./, // Multicast
+  /^240\./, // Reserved
+  /^::1$/, // IPv6 localhost
+  /^fc00:/, // IPv6 unique local
+  /^fe80:/, // IPv6 link-local
+];
+
 // Input validation helpers
 export const validators = {
+  /**
+   * Validate URL is safe and well-formed
+   * Blocks: javascript:, data:, private IPs, localhost
+   */
   isValidUrl(url: string): boolean {
+    try {
+      const parsed = new URL(url);
+
+      // Only allow http/https protocols
+      if (!['http:', 'https:'].includes(parsed.protocol)) {
+        return false;
+      }
+
+      // Block javascript: and data: (redundant but explicit)
+      if (parsed.protocol === 'javascript:' || parsed.protocol === 'data:') {
+        return false;
+      }
+
+      // Block localhost variations
+      const hostname = parsed.hostname.toLowerCase();
+      if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1') {
+        return false;
+      }
+
+      // Block private IP ranges (SSRF prevention)
+      for (const pattern of PRIVATE_IP_RANGES) {
+        if (pattern.test(hostname)) {
+          return false;
+        }
+      }
+
+      return true;
+    } catch {
+      return false;
+    }
+  },
+
+  /**
+   * Basic URL format check (less strict, for display purposes)
+   * Use isValidUrl for security-critical validation
+   */
+  isValidUrlFormat(url: string): boolean {
     try {
       const parsed = new URL(url);
       return ['http:', 'https:'].includes(parsed.protocol);

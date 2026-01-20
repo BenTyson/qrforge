@@ -1,11 +1,12 @@
+import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { stripe } from '@/lib/stripe/config';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { BillingSection } from '@/components/billing';
 import { APIKeysSection } from '@/components/APIKeysSection';
+import { DataPrivacySection } from '@/components/settings/DataPrivacySection';
 // Teams feature removed for launch - database ready for future implementation
 
 export default async function SettingsPage() {
@@ -116,21 +117,15 @@ export default async function SettingsPage() {
       {/* API Keys Section */}
       <APIKeysSection tier={tier} />
 
-      {/* Danger Zone */}
-      <Card className="p-6 glass border-red-500/20">
-        <h2 className="text-lg font-semibold mb-4 text-red-500">Danger Zone</h2>
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-medium">Delete Account</p>
-            <p className="text-sm text-muted-foreground">
-              Permanently delete your account and all data
-            </p>
-          </div>
-          <Button variant="outline" className="text-red-500 border-red-500/50 hover:bg-red-500/10">
-            Delete Account
-          </Button>
-        </div>
-      </Card>
+      {/* Data & Privacy Section (includes Danger Zone) */}
+      <Suspense fallback={
+        <Card className="p-6 glass mb-6 animate-pulse">
+          <div className="h-6 bg-secondary/50 rounded w-1/4 mb-4"></div>
+          <div className="h-4 bg-secondary/50 rounded w-3/4"></div>
+        </Card>
+      }>
+        <DataPrivacySection userEmail={user?.email || ''} />
+      </Suspense>
     </div>
   );
 }

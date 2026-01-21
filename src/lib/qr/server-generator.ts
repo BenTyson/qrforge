@@ -157,7 +157,7 @@ function buildServerQROptions(style: Partial<QRStyleOptions>): Record<string, un
     data: '',
     width: style.width || 512,
     height: style.width || 512,
-    margin: (style.margin ?? 2) * 4,
+    margin: (style.margin ?? 4) * 4,
     qrOptions: {
       errorCorrectionLevel: getEffectiveErrorCorrection(style),
     },

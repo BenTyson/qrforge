@@ -36,6 +36,9 @@ const TIER_INFO: Record<Tier, { name: string; color: string; features: string[] 
       'SVG & PNG downloads',
       'Password protection',
       'Expiration & scheduling',
+      'Custom patterns & shapes',
+      'Gradient colors',
+      'Decorative frames',
     ],
   },
   business: {

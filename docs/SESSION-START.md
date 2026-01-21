@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 20, 2026 (QR Studio UX Polish & Bug Fixes)
+> **Last Updated**: January 20, 2026 (Creative Design Section, Scan Limit Emails)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -498,9 +498,26 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
     - Detects URLs without names: "Each line needs a name AND URL"
     - Shows "How to fix" hints for all error types
     - Auto-skips header rows containing "name" and "url"
+- **Creative Design Homepage Section** (January 20, 2026):
+  - Added stunning "Creative Design" section to homepage showcasing Pro styling features
+  - 2-panel visual showcase using actual QR code images (gradient dots, connected pattern)
+  - Updated Branding Showcase section with real QR code images
+  - Updated Pro plan features across 8 files with new creative features:
+    - "Custom patterns & shapes", "Gradient colors", "Decorative frames"
+  - Added features to JSON-LD structured data for SEO
+- **Scan Limit Email Notifications** (January 20, 2026):
+  - Email notification when free/pro users hit their monthly scan limit
+  - `ScanLimitReachedEmail` template with congratulatory tone and upgrade CTAs
+  - One notification per month (tracked via `scan_limit_notified_at` column)
+  - Non-blocking async email send in scan redirect route
+  - Migration: `20260120000001_add_scan_limit_notified.sql`
+- **QR Code Default Margin Increase** (January 20, 2026):
+  - Increased default quiet zone from 2 to 4 modules
+  - Better visual spacing between QR code and artboard edge
+  - Applied to all future QR codes (existing codes unaffected)
+  - Updated in types.ts, generator.ts, server-generator.ts, useQRStudioState.ts
 
 ### Planned Enhancements
-- Email scan alerts
 - Webhooks for scan notifications
 - Custom domain for short URLs
 
@@ -739,7 +756,8 @@ src/
 │   ├── WelcomeEmail.tsx            # New user welcome
 │   ├── TeamInviteEmail.tsx         # Team invitation
 │   ├── SubscriptionConfirmEmail.tsx # Subscription confirmation
-│   └── PaymentFailedEmail.tsx      # Payment failure alert
+│   ├── PaymentFailedEmail.tsx      # Payment failure alert
+│   └── ScanLimitReachedEmail.tsx   # Scan limit notification
 └── middleware.ts                   # Auth protection
 ```
 
@@ -801,7 +819,7 @@ Scan tracking in `/r/[code]/route.ts`:
 ## Database (Supabase)
 
 **Tables deployed:**
-- `profiles` - User profiles with subscription_tier, stripe_customer_id, subscription_status, **monthly_scan_count**, **scan_count_reset_at**
+- `profiles` - User profiles with subscription_tier, stripe_customer_id, subscription_status, **monthly_scan_count**, **scan_count_reset_at**, **scan_limit_notified_at**
 - `qr_codes` - QR codes with content, style, short_code, scan_count, **expires_at**, **password_hash**, **active_from**, **active_until**, **show_landing_page**, **landing_page_title/description/button_text/theme**, **bulk_batch_id**, **media_files**, **folder_id**
 - `folders` - QR code organization (user_id, name, color) - Pro+ feature
 - `scans` - Scan analytics (device_type, os, browser, country, city, region, referrer)

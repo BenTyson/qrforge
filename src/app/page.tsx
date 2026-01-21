@@ -57,6 +57,9 @@ const jsonLd = {
     'Branded landing pages',
     'Bulk CSV generation',
     'REST API access',
+    'Custom patterns and shapes',
+    'Gradient colors',
+    'Decorative frames',
   ],
   aggregateRating: {
     '@type': 'AggregateRating',
@@ -823,65 +826,28 @@ export default async function Home() {
                 <div className="grid grid-cols-2 gap-6">
                   {/* Generic QR */}
                   <div className="text-center">
-                    <div className="bg-white p-4 rounded-xl mb-3 aspect-square flex items-center justify-center">
-                      <svg viewBox="0 0 100 100" className="w-full h-full">
-                        {/* Simplified QR pattern */}
-                        <rect fill="#000" x="10" y="10" width="25" height="25" />
-                        <rect fill="#000" x="65" y="10" width="25" height="25" />
-                        <rect fill="#000" x="10" y="65" width="25" height="25" />
-                        <rect fill="#fff" x="15" y="15" width="15" height="15" />
-                        <rect fill="#fff" x="70" y="15" width="15" height="15" />
-                        <rect fill="#fff" x="15" y="70" width="15" height="15" />
-                        <rect fill="#000" x="18" y="18" width="9" height="9" />
-                        <rect fill="#000" x="73" y="18" width="9" height="9" />
-                        <rect fill="#000" x="18" y="73" width="9" height="9" />
-                        {/* Data pattern */}
-                        <rect fill="#000" x="40" y="10" width="5" height="5" />
-                        <rect fill="#000" x="50" y="10" width="5" height="5" />
-                        <rect fill="#000" x="40" y="20" width="5" height="5" />
-                        <rect fill="#000" x="10" y="40" width="5" height="5" />
-                        <rect fill="#000" x="20" y="45" width="5" height="5" />
-                        <rect fill="#000" x="40" y="40" width="20" height="20" />
-                        <rect fill="#000" x="65" y="40" width="5" height="5" />
-                        <rect fill="#000" x="80" y="50" width="5" height="5" />
-                        <rect fill="#000" x="70" y="70" width="5" height="5" />
-                        <rect fill="#000" x="85" y="75" width="5" height="5" />
-                        <rect fill="#000" x="75" y="85" width="5" height="5" />
-                      </svg>
+                    <div className="bg-white p-3 rounded-xl mb-3 aspect-square">
+                      <Image
+                        src="/codes/qrwolf-qr-wolf-4.png"
+                        alt="Generic black and white QR code"
+                        width={200}
+                        height={200}
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                     <p className="text-xs text-muted-foreground">Generic</p>
                   </div>
 
                   {/* Branded QR */}
                   <div className="text-center">
-                    <div className="bg-white p-4 rounded-xl mb-3 aspect-square flex items-center justify-center relative">
-                      <svg viewBox="0 0 100 100" className="w-full h-full">
-                        {/* Branded QR pattern with teal color */}
-                        <rect fill="#14b8a6" x="10" y="10" width="25" height="25" />
-                        <rect fill="#14b8a6" x="65" y="10" width="25" height="25" />
-                        <rect fill="#14b8a6" x="10" y="65" width="25" height="25" />
-                        <rect fill="#fff" x="15" y="15" width="15" height="15" />
-                        <rect fill="#fff" x="70" y="15" width="15" height="15" />
-                        <rect fill="#fff" x="15" y="70" width="15" height="15" />
-                        <rect fill="#14b8a6" x="18" y="18" width="9" height="9" />
-                        <rect fill="#14b8a6" x="73" y="18" width="9" height="9" />
-                        <rect fill="#14b8a6" x="18" y="73" width="9" height="9" />
-                        {/* Data pattern */}
-                        <rect fill="#14b8a6" x="40" y="10" width="5" height="5" />
-                        <rect fill="#14b8a6" x="50" y="10" width="5" height="5" />
-                        <rect fill="#14b8a6" x="40" y="20" width="5" height="5" />
-                        <rect fill="#14b8a6" x="10" y="40" width="5" height="5" />
-                        <rect fill="#14b8a6" x="20" y="45" width="5" height="5" />
-                        <rect fill="#14b8a6" x="65" y="40" width="5" height="5" />
-                        <rect fill="#14b8a6" x="80" y="50" width="5" height="5" />
-                        <rect fill="#14b8a6" x="70" y="70" width="5" height="5" />
-                        <rect fill="#14b8a6" x="85" y="75" width="5" height="5" />
-                        <rect fill="#14b8a6" x="75" y="85" width="5" height="5" />
-                        {/* Center logo area */}
-                        <circle cx="50" cy="50" r="15" fill="#fff" />
-                        <circle cx="50" cy="50" r="12" fill="#14b8a6" opacity="0.1" />
-                        <text x="50" y="55" textAnchor="middle" fontSize="12" fontWeight="bold" fill="#14b8a6">W</text>
-                      </svg>
+                    <div className="rounded-xl mb-3 aspect-square bg-white p-3">
+                      <Image
+                        src="/codes/qrwolf-qrwolf-2.png"
+                        alt="Branded QR code with custom logo"
+                        width={200}
+                        height={200}
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                     <p className="text-xs text-primary font-medium">Branded</p>
                   </div>
@@ -904,8 +870,142 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Creative Design Showcase */}
+      <section className="py-24 px-4 bg-secondary/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* LEFT: Visual Showcase Card */}
+            <Card className="p-10 glass glow overflow-hidden">
+              {/* Header */}
+              <div className="text-center mb-8">
+                <p className="text-sm text-muted-foreground">Same QR code, infinite styles</p>
+              </div>
+
+              {/* 2-panel Grid of Styled QR Codes */}
+              <div className="grid grid-cols-2 gap-8">
+                {/* Panel 1: Gradient Dots */}
+                <div className="w-full aspect-square rounded-xl bg-white p-4">
+                  <Image
+                    src="/codes/qrwolf-qr-wolf.png"
+                    alt="QR code with gradient and dots pattern"
+                    width={300}
+                    height={300}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+
+                {/* Panel 2: Custom Pattern */}
+                <div className="w-full aspect-square rounded-xl bg-[#0f172a] p-4">
+                  <Image
+                    src="/codes/qrwolf-qrwolf-3.png"
+                    alt="QR code with custom pattern style"
+                    width={300}
+                    height={300}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
+
+              {/* Bottom stat bar */}
+              <div className="mt-6 pt-6 border-t border-border/50 text-center">
+                <p className="text-sm text-muted-foreground">
+                  <span className="text-2xl font-bold text-primary">∞</span> style combinations
+                </p>
+              </div>
+            </Card>
+
+            {/* RIGHT: Copy + Features + CTA */}
+            <div>
+              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+                Pro Feature
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                What if your QR code was a{' '}
+                <span className="gradient-text">work of art?</span>
+              </h2>
+              <p className="text-muted-foreground mb-8">
+                Go beyond basic squares. With Pro, unlock creative styling options that make
+                your QR codes truly stand out and match your brand perfectly.
+              </p>
+
+              <ul className="space-y-4 mb-8">
+                {/* 1. Module Patterns */}
+                <li className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="7" height="7" rx="1"/>
+                      <rect x="14" y="3" width="7" height="7" rx="1"/>
+                      <rect x="3" y="14" width="7" height="7" rx="1"/>
+                      <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-medium">6 unique patterns</p>
+                    <p className="text-sm text-muted-foreground">From classic squares to elegant dots</p>
+                  </div>
+                </li>
+
+                {/* 2. Corner Styles */}
+                <li className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M4 4h4v4H4z"/>
+                      <path d="M4 16h4v4H4z"/>
+                      <path d="M16 4h4v4h-4z"/>
+                      <circle cx="18" cy="18" r="2"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-medium">Custom corner styles</p>
+                    <p className="text-sm text-muted-foreground">6 eye shapes, mix and match</p>
+                  </div>
+                </li>
+
+                {/* 3. Gradients */}
+                <li className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <path d="M12 2a10 10 0 0 1 0 20"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-medium">Stunning gradients</p>
+                    <p className="text-sm text-muted-foreground">6 presets or create your own blend</p>
+                  </div>
+                </li>
+
+                {/* 4. Frames */}
+                <li className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/>
+                      <rect x="7" y="7" width="10" height="10"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-medium">Decorative frames</p>
+                    <p className="text-sm text-muted-foreground">Add call-to-action text around your code</p>
+                  </div>
+                </li>
+              </ul>
+
+              <Link href="/plans">
+                <Button size="lg" className="glow-hover">
+                  Unlock Creative Design
+                  <svg className="ml-2 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Use Cases - Detailed */}
-      <section id="use-cases" className="py-24 px-4 bg-secondary/30">
+      <section id="use-cases" className="py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">

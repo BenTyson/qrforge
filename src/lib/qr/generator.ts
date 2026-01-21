@@ -364,7 +364,7 @@ export async function generateQRDataURL(
     foregroundColor: '#000000',
     backgroundColor: '#ffffff',
     errorCorrectionLevel: 'M',
-    margin: 2,
+    margin: 4,
     width: 256,
   }
 ): Promise<string> {
@@ -412,7 +412,7 @@ export async function generateQRSVG(
     foregroundColor: '#000000',
     backgroundColor: '#ffffff',
     errorCorrectionLevel: 'M',
-    margin: 2,
+    margin: 4,
     width: 256,
   }
 ): Promise<string> {
@@ -457,7 +457,7 @@ export async function generateQRCanvas(
     foregroundColor: '#000000',
     backgroundColor: '#ffffff',
     errorCorrectionLevel: 'M',
-    margin: 2,
+    margin: 4,
     width: 256,
   }
 ): Promise<void> {

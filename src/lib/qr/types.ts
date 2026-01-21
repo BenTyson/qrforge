@@ -334,7 +334,7 @@ export const DEFAULT_STYLE: QRStyleOptions = {
   foregroundColor: '#000000',
   backgroundColor: '#ffffff',
   errorCorrectionLevel: 'M',
-  margin: 2,
+  margin: 4,
   width: 256,
 };
 

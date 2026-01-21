@@ -3,6 +3,7 @@ import { WelcomeEmail } from '@/emails/WelcomeEmail';
 import { TeamInviteEmail } from '@/emails/TeamInviteEmail';
 import { SubscriptionConfirmEmail } from '@/emails/SubscriptionConfirmEmail';
 import { PaymentFailedEmail } from '@/emails/PaymentFailedEmail';
+import { ScanLimitReachedEmail } from '@/emails/ScanLimitReachedEmail';
 
 // Lazy initialization of Resend client
 let resendClient: Resend | null = null;
@@ -157,6 +158,37 @@ export async function sendPaymentFailedEmail(
     return { success: true, id: data?.id };
   } catch (err) {
     console.error('Error sending payment failed email:', err);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+/**
+ * Send scan limit reached email
+ */
+export async function sendScanLimitReachedEmail(
+  to: string,
+  userName: string | undefined,
+  currentPlan: 'free' | 'pro',
+  scanLimit: number
+): Promise<EmailResult> {
+  try {
+    const resend = getResend();
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      replyTo: REPLY_TO,
+      subject: `Your QR codes reached ${scanLimit.toLocaleString()} scans this month`,
+      react: ScanLimitReachedEmail({ userName, currentPlan, scanLimit }),
+    });
+
+    if (error) {
+      console.error('Failed to send scan limit reached email:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, id: data?.id };
+  } catch (err) {
+    console.error('Error sending scan limit reached email:', err);
     return { success: false, error: 'Failed to send email' };
   }
 }

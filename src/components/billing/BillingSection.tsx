@@ -76,7 +76,7 @@ export function BillingSection({
             <p className="font-medium">{tierInfo.name} Plan</p>
             <p className="text-sm text-muted-foreground">
               {tier === 'free' && 'Basic features with static QR codes'}
-              {tier === 'pro' && '50 dynamic QR codes with analytics'}
+              {tier === 'pro' && '50 dynamic QR codes with analytics & custom styling'}
               {tier === 'business' && 'Unlimited dynamic QR codes + API access'}
             </p>
           </div>

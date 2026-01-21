@@ -199,6 +199,7 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
 
   // Show gradient preview values (either actual or demo values)
   const previewGradient = style.gradient || {
+    enabled: true,
     type: 'linear' as const,
     startColor: '#06b6d4',
     endColor: '#3b82f6',
@@ -277,20 +278,20 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
               <div className="flex gap-1 mt-1">
                 <Input
                   type="color"
-                  value={gradientEnabled ? style.gradient!.startColor : previewGradient.startColor}
+                  value={style.gradient?.startColor ?? previewGradient.startColor}
                   onChange={(e) => canAccessProTypes && onStyleChange({
                     ...style,
-                    gradient: { ...style.gradient!, startColor: e.target.value },
+                    gradient: { ...previewGradient, ...style.gradient, startColor: e.target.value },
                   })}
                   disabled={!canAccessProTypes}
                   className="w-10 h-8 p-0.5 bg-slate-800 border-slate-700 disabled:opacity-50"
                 />
                 <Input
                   type="text"
-                  value={gradientEnabled ? style.gradient!.startColor : previewGradient.startColor}
+                  value={style.gradient?.startColor ?? previewGradient.startColor}
                   onChange={(e) => canAccessProTypes && onStyleChange({
                     ...style,
-                    gradient: { ...style.gradient!, startColor: e.target.value },
+                    gradient: { ...previewGradient, ...style.gradient, startColor: e.target.value },
                   })}
                   disabled={!canAccessProTypes}
                   className="flex-1 h-8 text-xs bg-slate-800 border-slate-700 disabled:opacity-50"
@@ -302,20 +303,20 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
               <div className="flex gap-1 mt-1">
                 <Input
                   type="color"
-                  value={gradientEnabled ? style.gradient!.endColor : previewGradient.endColor}
+                  value={style.gradient?.endColor ?? previewGradient.endColor}
                   onChange={(e) => canAccessProTypes && onStyleChange({
                     ...style,
-                    gradient: { ...style.gradient!, endColor: e.target.value },
+                    gradient: { ...previewGradient, ...style.gradient, endColor: e.target.value },
                   })}
                   disabled={!canAccessProTypes}
                   className="w-10 h-8 p-0.5 bg-slate-800 border-slate-700 disabled:opacity-50"
                 />
                 <Input
                   type="text"
-                  value={gradientEnabled ? style.gradient!.endColor : previewGradient.endColor}
+                  value={style.gradient?.endColor ?? previewGradient.endColor}
                   onChange={(e) => canAccessProTypes && onStyleChange({
                     ...style,
-                    gradient: { ...style.gradient!, endColor: e.target.value },
+                    gradient: { ...previewGradient, ...style.gradient, endColor: e.target.value },
                   })}
                   disabled={!canAccessProTypes}
                   className="flex-1 h-8 text-xs bg-slate-800 border-slate-700 disabled:opacity-50"
@@ -330,12 +331,12 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
               <button
                 onClick={() => canAccessProTypes && onStyleChange({
                   ...style,
-                  gradient: { ...style.gradient!, type: 'linear' },
+                  gradient: { ...previewGradient, ...style.gradient, type: 'linear' },
                 })}
                 disabled={!canAccessProTypes}
                 className={cn(
                   'px-3 py-1 text-xs rounded-l-md transition-colors',
-                  (gradientEnabled ? style.gradient!.type : previewGradient.type) === 'linear'
+                  (style.gradient?.type ?? previewGradient.type) === 'linear'
                     ? 'bg-primary text-white'
                     : 'bg-slate-700 text-slate-400 hover:text-white'
                 )}
@@ -345,12 +346,12 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
               <button
                 onClick={() => canAccessProTypes && onStyleChange({
                   ...style,
-                  gradient: { ...style.gradient!, type: 'radial' },
+                  gradient: { ...previewGradient, ...style.gradient, type: 'radial' },
                 })}
                 disabled={!canAccessProTypes}
                 className={cn(
                   'px-3 py-1 text-xs rounded-r-md transition-colors',
-                  (gradientEnabled ? style.gradient!.type : previewGradient.type) === 'radial'
+                  (style.gradient?.type ?? previewGradient.type) === 'radial'
                     ? 'bg-primary text-white'
                     : 'bg-slate-700 text-slate-400 hover:text-white'
                 )}
@@ -359,14 +360,14 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
               </button>
             </div>
 
-            {(gradientEnabled ? style.gradient!.type : previewGradient.type) === 'linear' && (
+            {(style.gradient?.type ?? previewGradient.type) === 'linear' && (
               <div className="flex items-center gap-2 flex-1">
                 <Label className="text-xs text-slate-400 shrink-0">Angle</Label>
                 <Slider
-                  value={[gradientEnabled ? (style.gradient!.angle || 0) : (previewGradient.angle || 0)]}
+                  value={[style.gradient?.angle ?? previewGradient.angle ?? 0]}
                   onValueChange={([value]) => canAccessProTypes && onStyleChange({
                     ...style,
-                    gradient: { ...style.gradient!, angle: value },
+                    gradient: { ...previewGradient, ...style.gradient, angle: value },
                   })}
                   disabled={!canAccessProTypes}
                   min={0}
@@ -374,7 +375,7 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
                   step={15}
                   className="flex-1"
                 />
-                <span className="text-xs text-slate-400 w-8">{gradientEnabled ? (style.gradient!.angle || 0) : (previewGradient.angle || 0)}°</span>
+                <span className="text-xs text-slate-400 w-8">{style.gradient?.angle ?? previewGradient.angle ?? 0}°</span>
               </div>
             )}
           </div>

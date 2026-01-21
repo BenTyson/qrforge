@@ -1,0 +1,285 @@
+---
+title: "QR Code Glossary: 50+ Terms You Should Know"
+description: "Complete glossary of QR code terminology. From alphanumeric mode to quiet zone, understand every term used in QR code generation and scanning."
+category: "qr-basics"
+order: 8
+tags: ["glossary", "terminology", "definitions", "reference", "qr code terms"]
+relatedSlugs: ["what-is-a-qr-code", "qr-code-versions-explained", "qr-code-error-correction"]
+draft: false
+---
+
+Understanding QR codes means understanding the language around them. Whether you're creating codes for a marketing campaign, implementing them in a product, or simply curious about how they work, this glossary covers the essential terminology you'll encounter.
+
+Terms are organized alphabetically for easy reference. Each definition explains not just what the term means, but why it matters in practical QR code applications.
+
+---
+
+## A
+
+### Alignment Pattern
+Small square patterns that appear in larger QR codes (version 2 and above) to help scanners correct for image distortion. These patterns look like smaller versions of the finder patterns and are positioned at regular intervals throughout the code. More alignment patterns appear as QR code versions increase, ensuring reliable scanning even when the code is photographed at an angle or on a curved surface.
+
+### Alphanumeric Mode
+One of four encoding modes in QR codes, optimized for uppercase letters (A-Z), digits (0-9), and nine special characters (space, $, %, *, +, -, ., /, :). Alphanumeric mode uses 5.5 bits per character, making it more efficient than byte mode for text that fits within its character set. URLs converted to uppercase can use this mode for smaller codes.
+
+### API (Application Programming Interface)
+A set of protocols that allows software applications to generate, read, or manage QR codes programmatically. QR code APIs enable developers to integrate QR code functionality into websites, apps, and business systems without building the generation logic from scratch.
+
+---
+
+## B
+
+### Barcode
+A machine-readable representation of data using parallel lines of varying widths. Traditional barcodes are one-dimensional (1D), reading data horizontally only. QR codes are sometimes called 2D barcodes because they encode data in both horizontal and vertical dimensions, dramatically increasing capacity.
+
+### Batch Generation
+Creating multiple QR codes at once, typically from a spreadsheet or database of destinations. Batch generation is essential for businesses that need hundreds or thousands of unique codes for products, inventory, or marketing campaigns.
+
+### Binary Mode
+See [Byte Mode](#byte-mode).
+
+### Bit
+The smallest unit of data in computing, representing either 0 or 1. QR codes encode information as sequences of bits, with different encoding modes using different numbers of bits per character. Understanding bit efficiency helps explain why some content produces smaller codes than others.
+
+### Byte Mode
+The most flexible QR code encoding mode, using 8 bits per character to represent any byte value (0-255). Byte mode handles UTF-8 text, URLs with lowercase letters, and any content that doesn't fit the more restrictive numeric or alphanumeric modes. Most modern QR codes use byte mode.
+
+---
+
+## C
+
+### Capacity
+The maximum amount of data a QR code can store, which varies by version and error correction level. The largest QR code (version 40 with low error correction) can hold 7,089 numeric characters, 4,296 alphanumeric characters, or 2,953 bytes. Higher error correction reduces capacity because redundant data takes up space.
+
+### Character Count Indicator
+A field within the QR code's data stream that specifies how many characters follow. The length of this indicator varies by encoding mode and QR code version, which is why the same content can require different-sized codes depending on other factors.
+
+### Codeword
+A unit of data in QR code encoding, typically 8 bits. QR codes organize their data into codewords before applying error correction. The number of codewords varies by version and determines both data capacity and error correction capability.
+
+### Contrast
+The visual difference between the dark modules and light background of a QR code. Sufficient contrast is essential for reliable scanning—the ISO standard specifies a minimum contrast ratio. Low contrast (such as light gray on white) causes scanning failures.
+
+### Corner Detection
+See [Finder Pattern](#finder-pattern).
+
+---
+
+## D
+
+### Data Matrix
+A two-dimensional barcode standard distinct from QR codes, commonly used in industrial and healthcare applications. While visually similar, Data Matrix codes use different encoding and don't have the distinctive finder patterns that QR codes use. The two formats are not interchangeable.
+
+### Decode
+The process of reading and interpreting the data encoded in a QR code. Decoding involves detecting the code in an image, identifying its orientation, reading the module pattern, applying error correction, and converting the resulting bits into usable data.
+
+### Denso Wave
+The Japanese company that invented QR codes in 1994. Denso Wave, a subsidiary of automotive supplier Denso Corporation, developed QR codes to track parts in vehicle manufacturing. They released the specification publicly and chose not to enforce their patent rights, enabling widespread adoption.
+
+### Destination URL
+The web address that a QR code links to. For dynamic QR codes, the destination can be changed without modifying the printed code itself, because the code points to an intermediate redirect URL rather than the final destination.
+
+### Dynamic QR Code
+A QR code that points to an intermediate URL controlled by the creator, allowing the destination to be changed after printing. Dynamic codes enable analytics tracking, destination updates, and features like expiration dates. They require a redirect service to function, unlike static codes that encode the destination directly.
+
+---
+
+## E
+
+### ECI (Extended Channel Interpretation)
+A QR code feature that specifies character encoding beyond the default. ECI indicators tell scanners how to interpret byte data—for example, specifying that bytes should be read as UTF-8, Shift JIS, or another encoding. Most scanners default to ISO 8859-1 or UTF-8 when no ECI is specified.
+
+### Encode
+The process of converting data into the pattern of modules that forms a QR code. Encoding involves selecting the appropriate mode, converting characters to bits, adding error correction, and arranging everything according to the QR code specification.
+
+### Error Correction
+Redundant data added to QR codes that allows them to be read even when partially damaged or obscured. QR codes offer four error correction levels: L (7% recovery), M (15%), Q (25%), and H (30%). Higher correction means more reliable scanning but reduces data capacity.
+
+### Error Correction Level
+The amount of redundancy built into a QR code, specified as L, M, Q, or H. Level L offers minimum redundancy and maximum capacity; level H offers maximum redundancy and minimum capacity. Most QR code generators default to M or Q as a balance between reliability and efficiency.
+
+---
+
+## F
+
+### Finder Pattern
+The three large square patterns in the corners of every QR code that help scanners locate and orient the code. Each finder pattern consists of a 7×7 module square with alternating dark and light rings. The pattern appears in three corners; the empty fourth corner indicates the code's orientation.
+
+### Format Information
+Data encoded around the finder patterns that tells scanners which error correction level and mask pattern the code uses. Format information appears twice in every QR code (for redundancy) and must be read before the main data can be decoded.
+
+---
+
+## G
+
+### Generator
+Software or service that creates QR codes from input data. Generators range from simple free tools that produce basic codes to full platforms offering customization, analytics, and management features.
+
+---
+
+## H
+
+### High-Density
+Describes QR codes that pack maximum data into minimum space, typically using higher versions and lower error correction. High-density codes require more precise printing and optimal scanning conditions.
+
+---
+
+## I
+
+### ISO/IEC 18004
+The international standard that defines QR code specifications. First published in 2000 and subsequently revised, this standard ensures that QR codes generated by any compliant system can be read by any compliant scanner. The standard covers encoding, error correction, symbol structure, and quality requirements.
+
+---
+
+## K
+
+### Kanji Mode
+An encoding mode specific to Japanese kanji and kana characters, using the Shift JIS character set. Kanji mode uses 13 bits per character, which is more efficient than the 16+ bits that UTF-8 would typically require for these characters. This mode exists because QR codes were invented in Japan.
+
+---
+
+## L
+
+### Logo Insertion
+Adding a brand image or icon to the center of a QR code. This works because error correction allows portions of the code to be obscured while remaining scannable. Logo insertion typically requires medium or high error correction levels to ensure reliability.
+
+---
+
+## M
+
+### Mask Pattern
+One of eight patterns applied to QR code data to improve scannability by avoiding problematic module arrangements. The encoding process tests all eight mask patterns and selects the one that produces the most balanced result (avoiding large solid areas, patterns that might confuse scanners, etc.).
+
+### Micro QR Code
+A smaller variant of the standard QR code, designed for applications where space is extremely limited. Micro QR codes have only one finder pattern (instead of three) and top out at 35 numeric characters. They're less common than standard QR codes and not all scanners support them.
+
+### Module
+A single square unit in a QR code—either dark or light. The entire QR code is built from a grid of modules. Module size relative to the overall code size affects minimum print dimensions and maximum scanning distance.
+
+---
+
+## N
+
+### Numeric Mode
+The most efficient QR code encoding mode, using just 3.33 bits per digit for numbers 0-9 only. Numeric mode packs three digits into 10 bits, enabling QR codes to store long number sequences (like serial numbers or phone numbers without formatting) very compactly.
+
+---
+
+## P
+
+### Payload
+The actual data content encoded in a QR code, as opposed to the structural elements (finder patterns, timing patterns, etc.) that enable scanning. Payload capacity varies by version and error correction level.
+
+### PNG (Portable Network Graphics)
+A raster image format commonly used for QR code downloads. PNG supports transparency and uses lossless compression, making it suitable for QR codes that need to maintain precise module boundaries. PNG files have fixed resolution and may appear pixelated when enlarged significantly.
+
+---
+
+## Q
+
+### QR (Quick Response)
+The name given to these codes by their inventors, referring to their ability to be scanned faster than traditional barcodes. The two-dimensional structure and finder patterns enable rapid detection and decoding.
+
+### Quiet Zone
+The mandatory margin of empty space surrounding a QR code. The quiet zone helps scanners distinguish the code from its surroundings and must be at least four modules wide on all sides. Insufficient quiet zone is a common cause of scanning failures, especially when codes are placed near other visual elements.
+
+---
+
+## R
+
+### Reader
+Software or hardware that detects and decodes QR codes. Modern smartphones include QR readers in their camera apps; dedicated hardware readers exist for industrial and point-of-sale applications. Reader quality affects how reliably codes scan under various conditions.
+
+### Redirect
+The process of sending a user who scans a dynamic QR code to a different URL than the one encoded in the code itself. Redirects enable tracking, destination changes, and advanced features without modifying the physical code.
+
+### Resolution
+For QR code images, the number of pixels used to represent the code. Higher resolution enables larger print sizes and more reliable scanning. For print applications, resolution is typically measured in DPI (dots per inch), with 300 DPI considered standard for quality printing.
+
+---
+
+## S
+
+### Scan
+The act of pointing a camera or dedicated reader at a QR code to read its contents. Scanning involves image capture, code detection, perspective correction, module reading, error correction application, and data interpretation.
+
+### Short URL
+A condensed URL that redirects to a longer destination address. QR codes that link to short URLs produce smaller, simpler codes than those encoding long URLs directly. Dynamic QR code services typically provide short URLs automatically.
+
+### Static QR Code
+A QR code that directly encodes its destination or content, with no intermediate redirect. Static codes cannot be changed after creation—modifying the destination requires generating and printing a new code. They work indefinitely without depending on external services.
+
+### Structured Append
+A QR code feature that allows data to be split across multiple codes, which are then combined when all are scanned. Structured append supports up to 16 linked codes and is used when data exceeds single-code capacity. Few applications use this feature in practice.
+
+### SVG (Scalable Vector Graphics)
+A vector image format ideal for QR codes because it scales to any size without quality loss. SVG files define shapes mathematically rather than as pixels, making them perfect for large-format printing where raster formats might appear pixelated.
+
+---
+
+## T
+
+### Timing Pattern
+Alternating dark and light modules that appear between finder patterns, helping scanners determine module size and alignment. Timing patterns run both horizontally and vertically, creating the characteristic lines visible in QR codes.
+
+### Tracking
+Monitoring scans of a dynamic QR code to collect analytics data. Tracking can capture scan counts, timestamps, geographic locations, device types, and other information useful for measuring campaign performance.
+
+---
+
+## U
+
+### URI (Uniform Resource Identifier)
+A string that identifies a resource, including URLs (web addresses) and other schemes. QR codes can encode various URI schemes: `http://` and `https://` for websites, `tel:` for phone numbers, `mailto:` for email, `wifi:` for network credentials, and others.
+
+### URL (Uniform Resource Locator)
+A specific type of URI that specifies a web address. URLs are the most common content type for QR codes, directing scanners to websites, landing pages, or web applications.
+
+---
+
+## V
+
+### vCard
+A standard file format for electronic business cards, commonly encoded in QR codes for easy contact sharing. Scanning a vCard QR code allows the recipient to add contact information directly to their phone's address book. The format supports name, phone, email, address, and other contact fields.
+
+### Vector Graphics
+See [SVG](#svg-scalable-vector-graphics).
+
+### Version
+A number from 1 to 40 that indicates a QR code's size, measured in modules per side. Version 1 is 21×21 modules; each subsequent version adds 4 modules per side, up to version 40 at 177×177 modules. Higher versions hold more data but require more precise printing and scanning.
+
+---
+
+## W
+
+### WiFi QR Code
+A QR code that encodes wireless network credentials (network name, password, security type) in a standardized format. Scanning a WiFi QR code allows automatic network connection without manually typing the password. Most modern smartphones support this feature natively.
+
+---
+
+## Quick Reference
+
+| Term | One-Line Definition |
+|------|---------------------|
+| Alignment Pattern | Positioning markers in larger QR codes |
+| Byte Mode | Encoding mode for any 8-bit data |
+| Capacity | Maximum data a QR code can hold |
+| Dynamic QR Code | Code with changeable destination |
+| Error Correction | Redundancy enabling damaged code reading |
+| Finder Pattern | Corner squares for code detection |
+| Module | Single square unit in a QR code |
+| Quiet Zone | Required margin around the code |
+| Static QR Code | Code with fixed, unchangeable content |
+| Version | Size indicator (1-40) |
+
+---
+
+## Learn More
+
+Now that you understand the terminology, explore how these concepts work together:
+
+- [What is a QR Code?](/learn/what-is-a-qr-code) - Foundational overview
+- [QR Code Versions Explained](/learn/qr-code-versions-explained) - Deep dive into versions
+- [Error Correction Guide](/learn/qr-code-error-correction) - Understanding redundancy
+
+Ready to create? [Generate a QR code](/qr-codes/new) with QRWolf and put this knowledge into practice.

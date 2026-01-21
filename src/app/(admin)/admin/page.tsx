@@ -1,4 +1,4 @@
-import { createAdminClient } from '@/lib/admin/auth';
+import { createAdminClient, ADMIN_EMAIL } from '@/lib/admin/auth';
 import { AdminStatsCard } from '@/components/admin/AdminStatsCard';
 import Link from 'next/link';
 
@@ -8,6 +8,9 @@ const PRICING = {
   business: { monthly: 29, yearly: 290 },
 };
 
+// Exclude admin account from revenue calculations
+const EXCLUDED_EMAILS = [ADMIN_EMAIL].filter(Boolean);
+
 export default async function AdminOverviewPage() {
   const supabase = createAdminClient();
 
@@ -15,6 +18,9 @@ export default async function AdminOverviewPage() {
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  // Build exclude filter for admin emails (for revenue calculations)
+  const excludeFilter = EXCLUDED_EMAILS.length > 0 ? EXCLUDED_EMAILS : ['__none__'];
 
   // Fetch all metrics in parallel
   const [
@@ -33,7 +39,8 @@ export default async function AdminOverviewPage() {
     supabase.from('qr_codes').select('*', { count: 'exact', head: true }),
     supabase.from('scans').select('*', { count: 'exact', head: true }),
     supabase.from('scans').select('*', { count: 'exact', head: true }).gte('scanned_at', todayStart),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).neq('subscription_tier', 'free'),
+    // Exclude admin from paid user count
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).neq('subscription_tier', 'free').not('email', 'in', `(${excludeFilter.join(',')})`),
     supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', weekAgo),
     supabase.from('profiles').select('id, email, full_name, subscription_tier, created_at').order('created_at', { ascending: false }).limit(5),
     supabase.from('scans').select(`
@@ -43,8 +50,10 @@ export default async function AdminOverviewPage() {
       device_type,
       qr_codes!inner(name, user_id, profiles!inner(email))
     `).order('scanned_at', { ascending: false }).limit(5),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_tier', 'pro'),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_tier', 'business'),
+    // Exclude admin from Pro count (for revenue)
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_tier', 'pro').not('email', 'in', `(${excludeFilter.join(',')})`),
+    // Exclude admin from Business count (for revenue)
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_tier', 'business').not('email', 'in', `(${excludeFilter.join(',')})`),
   ]);
 
   // Calculate revenue (assuming monthly billing - in production you'd query Stripe for actual intervals)

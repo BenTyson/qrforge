@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
 > **Last Updated**: January 21, 2026
-> **Total Content**: 14 blog posts, 37 learn articles
+> **Total Content**: 17 blog posts, 46 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -31,7 +31,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 
 ## Existing Content Inventory
 
-### Blog Posts (14)
+### Blog Posts (17)
 
 | Title | Category | Primary Keyword | Slug |
 |-------|----------|-----------------|------|
@@ -49,10 +49,13 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | Bulk QR Code Generator Guide | guides | bulk qr code generator | bulk-qr-code-generator |
 | QR Code with Logo: How to Add Your Brand | tutorials | qr code with logo | qr-code-with-logo |
 | QR Code Marketing Strategies for 2026 | guides | qr code marketing | qr-code-marketing-strategies |
+| How to Share WiFi Password with QR Code | tutorials | share wifi password qr code | share-wifi-password-qr-code |
+| How to Create a QR Code for Payment | tutorials | qr code for payment | qr-code-for-payment |
+| Best Free QR Code Generators in 2026 | guides | best free qr code generator | best-free-qr-code-generators |
 
-### Learn Articles (37)
+### Learn Articles (46)
 
-#### qr-basics (5)
+#### qr-basics (10)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | What is a QR Code? | what is a qr code | what-is-a-qr-code |
@@ -60,6 +63,11 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Code vs Barcode | qr code vs barcode | qr-code-vs-barcode |
 | How to Create a QR Code: Step-by-Step Guide | how to create qr code | how-to-create-a-qr-code |
 | How to Scan a QR Code on iPhone and Android | how to scan qr code | how-to-scan-a-qr-code |
+| History of QR Codes: From Toyota to Today | qr code history | history-of-qr-codes |
+| QR Code Myths Debunked | qr code myths | qr-code-myths-debunked |
+| QR Code Glossary: 50+ Terms You Should Know | qr code glossary | qr-code-glossary |
+| Types of QR Codes: Complete Guide to All 16 | types of qr codes | types-of-qr-codes |
+| QR Code FAQs: 30 Common Questions Answered | qr code faq | qr-code-faqs |
 
 #### how-it-works (3)
 | Title | Primary Keyword | Slug |
@@ -85,7 +93,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Code for Google Maps Location | qr code google maps | qr-code-for-google-maps |
 | QR Codes for Coupons & Discounts | qr code coupon | qr-codes-for-coupons |
 
-#### industries (7)
+#### industries (8)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Codes for Retail | qr codes for retail | qr-codes-for-retail |
@@ -95,6 +103,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Codes for Education | qr codes for education | qr-codes-for-education |
 | QR Codes for Gyms & Fitness | qr codes for gym, fitness qr code | qr-codes-for-gyms |
 | QR Codes for Nonprofits & Donations | nonprofit qr code, donation qr code | qr-codes-for-nonprofits |
+| QR Codes for Manufacturing | qr codes manufacturing | qr-codes-for-manufacturing |
 
 #### best-practices (5)
 | Title | Primary Keyword | Slug |
@@ -105,13 +114,16 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Code Size Guide | qr code size, minimum qr code size | qr-code-size-guide |
 | QR Code Size Requirements | qr code size requirements | qr-code-size-requirements |
 
-#### technical (4)
+#### technical (7)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Code Data Capacity | qr code data capacity | qr-code-data-capacity |
 | QR Code Versions Explained | qr code versions | qr-code-versions-explained |
 | QR Code Security: Risks and Best Practices | qr code security | qr-code-security |
 | QR Code API Guide for Developers | qr code api | qr-code-api-guide |
+| QR Code File Formats: PNG vs SVG vs PDF | qr code file format | qr-code-file-formats |
+| QR Code Encoding Modes Explained | qr code encoding | qr-code-encoding-modes |
+| QR Code Analytics: Metrics That Matter | qr code analytics | qr-code-analytics-metrics |
 
 ---
 
@@ -168,11 +180,11 @@ These target specific questions people search. Lower volume but 36% conversion r
 #### Blog Posts
 | Title | Primary Keyword | Search Intent |
 |-------|-----------------|---------------|
-| **How to Make a QR Code for a Link** | how to make qr code for link | How-to |
-| **How to Create a QR Code for a Google Form** | qr code for google form | How-to |
-| **How to Print QR Codes: Size and Quality Guide** | how to print qr code | How-to |
-| **How to Share WiFi Password with QR Code** | share wifi password qr code | How-to |
-| **How to Create a QR Code for Payment** | qr code for payment | How-to |
+| ~~How to Make a QR Code for a Link~~ | how to make qr code for link | ✅ Created |
+| ~~How to Create a QR Code for a Google Form~~ | qr code for google form | ✅ Created |
+| ~~How to Print QR Codes: Size and Quality Guide~~ | how to print qr code | ✅ Created |
+| ~~How to Share WiFi Password with QR Code~~ | share wifi password qr code | ✅ Created |
+| ~~How to Create a QR Code for Payment~~ | qr code for payment | ✅ Created |
 
 #### Learn Articles
 | Title | Category | Primary Keyword |
@@ -190,11 +202,11 @@ Build topical authority in specific verticals.
 #### Industries (add 5)
 | Title | Primary Keyword | Industry Size |
 |-------|-----------------|---------------|
-| **QR Codes for Education** | qr codes education | Large |
+| ~~QR Codes for Education~~ | qr codes education | ✅ Created |
 | ~~QR Codes for Hotels & Hospitality~~ | qr codes hotels | ✅ Created |
-| **QR Codes for Manufacturing** | qr codes manufacturing | Medium |
-| **QR Codes for Nonprofits & Donations** | qr code donations | Medium |
-| **QR Codes for Gyms & Fitness** | qr codes gym | Medium |
+| ~~QR Codes for Manufacturing~~ | qr codes manufacturing | ✅ Created |
+| ~~QR Codes for Nonprofits & Donations~~ | qr code donations | ✅ Created |
+| ~~QR Codes for Gyms & Fitness~~ | qr codes gym | ✅ Created |
 
 #### Use Cases (add 5)
 | Title | Primary Keyword | QRWolf Feature |
@@ -213,17 +225,17 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 | Title | Category | Target Audience |
 |-------|----------|-----------------|
 | ~~QR Code Security: Risks and Best Practices~~ | technical | ✅ Created |
-| **QR Code API Guide for Developers** | technical | Developers |
-| **QR Code File Formats: PNG vs SVG vs PDF** | technical | Designers |
-| **QR Code Encoding Modes Explained** | technical | Technical users |
-| **QR Code Analytics: Metrics That Matter** | technical | Marketers |
+| ~~QR Code API Guide for Developers~~ | technical | ✅ Created |
+| ~~QR Code File Formats: PNG vs SVG vs PDF~~ | technical | ✅ Created |
+| ~~QR Code Encoding Modes Explained~~ | technical | ✅ Created |
+| ~~QR Code Analytics: Metrics That Matter~~ | technical | ✅ Created |
 
 #### Foundational Content
 | Title | Category | Purpose |
 |-------|----------|---------|
-| **History of QR Codes: From Toyota to Today** | qr-basics | Authority |
-| **QR Code Myths Debunked** | qr-basics | Trust |
-| **QR Code Glossary: Terms You Should Know** | qr-basics | SEO (definitions) |
+| ~~History of QR Codes: From Toyota to Today~~ | qr-basics | ✅ Created |
+| ~~QR Code Myths Debunked~~ | qr-basics | ✅ Created |
+| ~~QR Code Glossary: Terms You Should Know~~ | qr-basics | ✅ Created |
 
 ---
 
@@ -278,17 +290,257 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 19. ~~QR Codes for App Downloads (use-cases)~~ - ✅ Created
 20. ~~How to Print QR Codes: Size and Quality Guide (blog)~~ - ✅ Created
 
-**NEXT PRIORITIES:**
-21. QR Codes for Manufacturing (industries) - TIER 3
-22. How to Share WiFi Password with QR Code (blog) - TIER 2
-23. QR Code File Formats: PNG vs SVG vs PDF (technical) - TIER 4
-24. History of QR Codes: From Toyota to Today (qr-basics) - TIER 4
+**COMPLETED:**
+21. ~~QR Codes for Manufacturing (industries)~~ - ✅ Created
+22. ~~How to Share WiFi Password with QR Code (blog)~~ - ✅ Created
+23. ~~QR Code File Formats: PNG vs SVG vs PDF (technical)~~ - ✅ Created
+24. ~~History of QR Codes: From Toyota to Today (qr-basics)~~ - ✅ Created
+
+**COMPLETED:**
+25. ~~How to Create a QR Code for Payment (blog)~~ - ✅ Created
+26. ~~QR Code Encoding Modes Explained (technical)~~ - ✅ Created
+27. ~~QR Code Analytics: Metrics That Matter (technical)~~ - ✅ Created
+28. ~~QR Code Myths Debunked (qr-basics)~~ - ✅ Created
+
+**COMPLETED:**
+29. ~~QR Code Glossary: 50+ Terms Explained (qr-basics)~~ - ✅ Created
+30. ~~Types of QR Codes: Complete Guide to All 16 (qr-basics)~~ - ✅ Created
+31. ~~QR Code FAQs: 30 Common Questions Answered (qr-basics)~~ - ✅ Created
+32. ~~Best Free QR Code Generators in 2026 (blog)~~ - ✅ Created
+
+**NEXT PRIORITIES (from Expansion Plan Month 1-2):**
+33. How to Create QR Code for Google Reviews (blog) - High volume
+34. How to Create QR Code for YouTube (blog) - High volume
+35. Text QR Codes: When and How to Use Them (use-cases)
+36. Email QR Codes: Pre-filled Messages (use-cases)
+37. Phone Number QR Codes: Click-to-Call (use-cases)
+38. SMS QR Codes: Pre-written Text Messages (use-cases)
+39. How to Test if Your QR Code Works (best-practices)
+40. How to Make a QR Code Smaller (best-practices)
 
 **ALL REWRITES COMPLETE!**
 - ~~static-vs-dynamic-qr-codes.mdx~~ - ✅ Done
 - ~~qr-codes-for-video.mdx~~ - ✅ Done
 - ~~qr-codes-for-education.mdx~~ - ✅ Done
 - ~~qr-codes-for-retail.mdx~~ - ✅ Done
+
+---
+
+## EXPANSION PLAN: Road to 150 Pieces
+
+> **Goal**: 125-150 total pieces for topical authority leadership
+> **Current**: 59 pieces (16 blog, 43 learn)
+> **Target**: 150 pieces (50 blog, 100 learn)
+> **Gap**: ~85-90 new pieces
+
+### PHASE 1: Platform-Specific "How To" Content (High Conversion)
+
+These target specific platform searches with 36% conversion rate.
+
+#### Blog Posts (12 new)
+| Title | Primary Keyword | Est. Volume | Priority |
+|-------|-----------------|-------------|----------|
+| How to Create a QR Code for YouTube Video | youtube qr code | 8K+ | HIGH |
+| How to Create a QR Code for Spotify | spotify qr code | 5K+ | HIGH |
+| How to Create a QR Code for LinkedIn | linkedin qr code | 6K+ | HIGH |
+| How to Create a QR Code for TikTok | tiktok qr code | 4K+ | HIGH |
+| How to Create a QR Code for Google Reviews | google review qr code | 10K+ | HIGH |
+| How to Create a QR Code for Google Docs | google docs qr code | 3K+ | MEDIUM |
+| How to Create a QR Code for Zoom Meeting | zoom qr code | 3K+ | MEDIUM |
+| How to Create a QR Code for Email Signature | email signature qr code | 2K+ | MEDIUM |
+| How to Create a QR Code for Survey | survey qr code | 4K+ | MEDIUM |
+| How to Create a QR Code for Feedback Form | feedback qr code | 2K+ | MEDIUM |
+| How to Create a QR Code for Twitter/X | twitter qr code | 3K+ | MEDIUM |
+| How to Create a QR Code for Facebook Page | facebook page qr code | 5K+ | MEDIUM |
+
+#### Learn Articles (8 new)
+| Title | Category | Primary Keyword | Priority |
+|-------|----------|-----------------|----------|
+| How to Test if Your QR Code Works | best-practices | test qr code | HIGH |
+| How to Make a QR Code Smaller | best-practices | qr code minimum size | HIGH |
+| How to Change QR Code Destination | how-it-works | change qr code link | HIGH |
+| How Dynamic QR Code Redirects Work | how-it-works | qr code redirect | MEDIUM |
+| How to Add QR Code to Business Card | best-practices | qr code business card design | MEDIUM |
+| How to Create QR Code for Multiple Links | how-it-works | multiple links qr code | MEDIUM |
+| How QR Code Tracking Works | how-it-works | qr code tracking explained | MEDIUM |
+| How to Password Protect a QR Code | how-it-works | password protected qr code | MEDIUM |
+
+### PHASE 2: Industry Vertical Expansion (Topical Authority)
+
+Build comprehensive coverage across all major industries.
+
+#### Learn Articles (12 new industries)
+| Title | Primary Keyword | Industry Size | Priority |
+|-------|-----------------|---------------|----------|
+| QR Codes for Restaurants (Beyond Menus) | qr codes restaurants | Large | HIGH |
+| QR Codes for Construction Sites | qr codes construction | Large | HIGH |
+| QR Codes for Law Firms & Legal | qr codes legal | Medium | MEDIUM |
+| QR Codes for Automotive & Car Dealerships | qr codes automotive | Large | MEDIUM |
+| QR Codes for Travel & Tourism | qr codes tourism | Large | MEDIUM |
+| QR Codes for Beauty Salons & Spas | qr codes salon | Medium | MEDIUM |
+| QR Codes for Churches & Religious Organizations | qr codes church | Medium | MEDIUM |
+| QR Codes for Museums & Galleries | qr codes museum | Medium | MEDIUM |
+| QR Codes for Libraries | qr codes library | Medium | LOW |
+| QR Codes for Government & Public Sector | qr codes government | Large | LOW |
+| QR Codes for Insurance Agencies | qr codes insurance | Medium | LOW |
+| QR Codes for Financial Services | qr codes banking | Large | LOW |
+
+### PHASE 3: Use Case Deep Dives (Feature Alignment)
+
+Comprehensive coverage for each QR type and application.
+
+#### Learn Articles (17 new use cases)
+| Title | Category | QRWolf Feature | Priority |
+|-------|----------|----------------|----------|
+| Text QR Codes: When and How to Use Them | use-cases | Text type | HIGH |
+| Email QR Codes: Pre-filled Messages | use-cases | Email type | HIGH |
+| Phone Number QR Codes: Click-to-Call | use-cases | Phone type | HIGH |
+| SMS QR Codes: Pre-written Text Messages | use-cases | SMS type | HIGH |
+| Facebook QR Code: Connect Your Page | use-cases | Facebook type | MEDIUM |
+| Image Gallery QR Codes | use-cases | Images type | MEDIUM |
+| Social Profile QR Codes | use-cases | Social type | MEDIUM |
+| QR Codes for Portfolios & Resumes | use-cases | Links/PDF type | MEDIUM |
+| QR Codes for Wedding Invitations | use-cases | Various | MEDIUM |
+| QR Codes for Flyers & Posters | use-cases | URL type | MEDIUM |
+| QR Codes for Packaging Labels | use-cases | URL/PDF type | MEDIUM |
+| QR Codes for Conference Badges | use-cases | vCard type | MEDIUM |
+| QR Codes for Inventory Management | use-cases | Text/URL type | MEDIUM |
+| QR Codes for Employee ID Cards | use-cases | vCard type | LOW |
+| QR Codes for Loyalty Programs | use-cases | Coupon type | LOW |
+| QR Codes for Warranty Registration | use-cases | URL type | LOW |
+| QR Codes for Asset Tagging | use-cases | Text type | LOW |
+
+### PHASE 4: Comparison & Competitive Content (SEO Authority)
+
+Capture comparison searches and position against competitors.
+
+#### Blog Posts (8 new)
+| Title | Primary Keyword | Est. Volume | Priority |
+|-------|-----------------|-------------|----------|
+| ~~Best Free QR Code Generators in 2026~~ | best qr code generator | 15K+ | ✅ Created |
+| QR Code Generator Comparison: Top 10 Tools | qr code generator comparison | 5K+ | HIGH |
+| Free vs Paid QR Code Generators: Which to Choose | free vs paid qr code | 3K+ | MEDIUM |
+| QR Code Monkey Alternative | qr code monkey alternative | 2K+ | MEDIUM |
+| QR Tiger Alternative | qr tiger alternative | 1K+ | MEDIUM |
+| Beaconstac Alternative | beaconstac alternative | 1K+ | LOW |
+| QR Code Generator for Business: Complete Guide | qr code generator business | 5K+ | MEDIUM |
+| QR Code Generator API Comparison | qr code api comparison | 1K+ | LOW |
+
+### PHASE 5: Technical Deep Dives (E-E-A-T Authority)
+
+Build expertise signals for Google ranking.
+
+#### Learn Articles (8 new technical)
+| Title | Category | Target Audience | Priority |
+|-------|----------|-----------------|----------|
+| ~~QR Code Glossary: 50+ Terms Explained~~ | qr-basics | All | ✅ Created |
+| QR Code Colors: Contrast and Readability Guide | technical | Designers | HIGH |
+| QR Code Quiet Zone: Why Margins Matter | technical | Designers | MEDIUM |
+| QR Code Structured Append: Linking Multiple Codes | technical | Developers | LOW |
+| QR Code ECI Mode: Extended Channel Interpretation | technical | Developers | LOW |
+| Micro QR Codes vs Standard QR Codes | technical | Technical | MEDIUM |
+| QR Code Reed-Solomon Error Correction Deep Dive | technical | Developers | LOW |
+| QR Code Generation Algorithms Explained | technical | Developers | LOW |
+
+### PHASE 6: Foundational & Trust Content (Brand Authority)
+
+Build trust signals and capture informational searches.
+
+#### Blog Posts (8 new)
+| Title | Primary Keyword | Purpose | Priority |
+|-------|-----------------|---------|----------|
+| QR Code Statistics 2026: Usage & Trends | qr code statistics | Authority | HIGH |
+| QR Code Case Studies: Real Business Results | qr code case study | Trust | HIGH |
+| QR Code ROI Calculator: Measure Your Success | qr code roi | Conversion | MEDIUM |
+| The Future of QR Codes: What's Next | future of qr codes | Authority | MEDIUM |
+| QR Code Best Practices Checklist | qr code checklist | Utility | MEDIUM |
+| QR Code Fails: What Not to Do | qr code mistakes | Entertainment | LOW |
+| QR Code Success Stories from Small Businesses | qr code success | Trust | LOW |
+| QR Code Trends to Watch in 2026 | qr code trends | Authority | MEDIUM |
+
+#### Learn Articles (6 new foundational)
+| Title | Category | Purpose | Priority |
+|-------|----------|---------|----------|
+| ~~Types of QR Codes: Complete Guide to All 16~~ | qr-basics | Foundational | ✅ Created |
+| ~~QR Code FAQs: 30 Common Questions Answered~~ | qr-basics | SEO (featured snippets) | ✅ Created |
+| QR Code Landing Page Best Practices | best-practices | Conversion | MEDIUM |
+| QR Code A/B Testing Guide | best-practices | Advanced | LOW |
+| QR Code Campaign Planning Template | best-practices | Utility | MEDIUM |
+| QR Code Accessibility: Making Codes Inclusive | best-practices | Trust | MEDIUM |
+
+### PHASE 7: Print & Physical World Integration
+
+Content for offline use cases and print considerations.
+
+#### Blog Posts (6 new)
+| Title | Primary Keyword | Est. Volume | Priority |
+|-------|-----------------|-------------|----------|
+| QR Codes on Business Cards: Design Guide | qr code business card | 10K+ | HIGH |
+| QR Codes for Print Materials: Complete Guide | qr code print | 5K+ | HIGH |
+| QR Codes for Product Labels | qr code label | 3K+ | MEDIUM |
+| QR Codes for Signage: Indoor & Outdoor Guide | qr code signage | 2K+ | MEDIUM |
+| QR Codes for Brochures & Catalogs | qr code brochure | 2K+ | LOW |
+| QR Codes for Trade Shows & Events | qr code trade show | 2K+ | MEDIUM |
+
+---
+
+## Expansion Summary
+
+| Phase | Blog Posts | Learn Articles | Total |
+|-------|------------|----------------|-------|
+| Phase 1: Platform How-To | 12 | 8 | 20 |
+| Phase 2: Industries | 0 | 12 | 12 |
+| Phase 3: Use Cases | 0 | 17 | 17 |
+| Phase 4: Comparisons | 8 | 0 | 8 |
+| Phase 5: Technical | 0 | 8 | 8 |
+| Phase 6: Foundational | 8 | 6 | 14 |
+| Phase 7: Print/Physical | 6 | 0 | 6 |
+| **TOTAL NEW** | **34** | **51** | **85** |
+
+**Final Totals After Expansion:**
+- Blog posts: 16 current + 34 new = **50 blog posts**
+- Learn articles: 43 current + 51 new = **94 learn articles**
+- **Grand total: 144 pieces**
+
+---
+
+## Recommended Execution Order
+
+### Month 1-2: High-Priority Foundation (20 pieces)
+1. ~~QR Code Glossary (qr-basics)~~ - ✅ Created
+2. ~~Types of QR Codes: Complete Guide (qr-basics)~~ - ✅ Created
+3. ~~QR Code FAQs (qr-basics)~~ - ✅ Created
+4. ~~Best Free QR Code Generators 2026 (blog)~~ - ✅ Created
+5. How to Create QR Code for Google Reviews (blog) - High volume
+6. How to Create QR Code for YouTube (blog) - High volume
+7. Text QR Codes (use-cases) - Feature coverage
+8. Email QR Codes (use-cases) - Feature coverage
+9. Phone QR Codes (use-cases) - Feature coverage
+10. SMS QR Codes (use-cases) - Feature coverage
+11. How to Test if Your QR Code Works (best-practices)
+12. How to Make a QR Code Smaller (best-practices)
+13. QR Code Statistics 2026 (blog) - Authority
+14. QR Codes for Restaurants (industries) - High volume
+15. QR Codes for Construction (industries) - Underserved
+16. How to Create QR Code for LinkedIn (blog)
+17. How to Create QR Code for Spotify (blog)
+18. QR Code Colors: Contrast Guide (technical)
+19. QR Codes on Business Cards (blog) - High volume
+20. QR Codes for Print Materials (blog)
+
+### Month 3-4: Industry & Use Case Expansion (25 pieces)
+- Remaining industries (10)
+- Remaining use cases (15)
+
+### Month 5-6: Competitive & Platform Content (20 pieces)
+- Remaining platform how-tos (8)
+- Comparison content (8)
+- Print/physical (4)
+
+### Month 7-8: Technical & Trust Content (20 pieces)
+- Remaining technical (6)
+- Remaining foundational (8)
+- Case studies and success stories (6)
 
 ---
 
@@ -384,6 +636,10 @@ Common competitor content we should create:
 
 | Date | Changes |
 |------|---------|
+| 2026-01-21 | Added Glossary, Types of QR Codes, FAQs (qr-basics) + Best Free Generators (blog) - Now 17 blog, 46 learn |
+| 2026-01-21 | Added EXPANSION PLAN: 85 new topics across 7 phases to reach 150 total pieces |
+| 2026-01-21 | Added Payment QR Code blog + Encoding Modes, Analytics Metrics, Myths Debunked articles (4 pieces) |
+| 2026-01-21 | Added Manufacturing, File Formats, History articles + WiFi Password Sharing blog (4 pieces) |
 | 2026-01-21 | Added Nonprofits, App Downloads articles + Google Form QR, Print QR Codes blogs |
 | 2026-01-21 | Rewrote qr-codes-for-retail.mdx; Added Audio/Podcasts, Gyms/Fitness articles + QR Code for Link blog |
 | 2026-01-21 | Rewrote qr-codes-for-video.mdx and qr-codes-for-education.mdx to prose-first; Added QR Code Size Guide |

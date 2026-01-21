@@ -1,0 +1,177 @@
+---
+title: "QR Code FAQs: 30 Common Questions Answered"
+description: "Get answers to the most frequently asked questions about QR codes—how they work, how to create them, troubleshooting scanning issues, and more."
+category: "qr-basics"
+order: 10
+tags: ["faq", "questions", "help", "troubleshooting", "beginner"]
+relatedSlugs: ["what-is-a-qr-code", "qr-code-not-scanning", "static-vs-dynamic-qr-codes"]
+draft: false
+---
+
+Whether you're creating your first QR code or troubleshooting one that won't scan, you probably have questions. This FAQ covers the most common questions we hear, organized by topic for easy reference.
+
+---
+
+## Getting Started
+
+### What is a QR code?
+
+A QR (Quick Response) code is a two-dimensional barcode that stores information in a pattern of black and white squares. When you scan the code with a smartphone camera, it reads the encoded data and takes an action—typically opening a website, but QR codes can also share contact information, connect to WiFi networks, and much more.
+
+### How do I scan a QR code?
+
+On most modern smartphones, simply open your camera app and point it at the QR code. A notification will appear asking if you want to open the link or content. Tap the notification to proceed. No special app is required on iPhones (iOS 11+) or most Android phones (2018+).
+
+### Are QR codes free to create?
+
+Yes, basic QR codes are free to create using online generators like QRWolf. Free codes typically include standard customization options and work indefinitely. Premium features like analytics tracking, dynamic destinations, and advanced customization may require paid plans.
+
+### Do QR codes expire?
+
+Static QR codes never expire—the pattern is simply encoded data that doesn't depend on any external service. Dynamic QR codes can optionally be set to expire, but only if the creator enables expiration. The code itself remains scannable; it's the redirect destination that can be disabled.
+
+### What can QR codes link to?
+
+QR codes can encode almost any text-based information: website URLs, plain text, WiFi credentials, contact information (vCards), phone numbers, email addresses, SMS messages, calendar events, geographic coordinates, app store links, and more. The most common use is linking to websites.
+
+---
+
+## Creating QR Codes
+
+### What's the difference between static and dynamic QR codes?
+
+Static QR codes encode information directly—the destination URL or data is baked into the pattern itself. Dynamic QR codes encode a short redirect URL that points to your actual destination, allowing you to change where the code leads without reprinting it. Dynamic codes also enable scan tracking and analytics.
+
+### How small can I print a QR code?
+
+The minimum recommended size is about 1 inch (2.5 cm) square for codes scanned from a few inches away. For scanning from greater distances, codes should be larger—roughly 1/10th of the scanning distance as a minimum. A code scanned from 10 feet away should be at least 12 inches. Test before mass printing.
+
+### Can I add a logo to my QR code?
+
+Yes, QR codes can include a logo or image in the center thanks to error correction. The code has redundant data that allows it to be read even when part is obscured. Keep logos simple and don't cover more than about 30% of the code area. Always test that the code still scans after adding a logo.
+
+### What file format should I download?
+
+For digital use (websites, email, documents), PNG works well at sufficient resolution (1000+ pixels). For print, especially large format, SVG is ideal because it scales to any size without quality loss. PDF works well for professional print workflows where printers expect document files.
+
+### Can I change the colors of my QR code?
+
+Yes, but maintain sufficient contrast between the dark and light elements. Dark colors on light backgrounds work best. Avoid red on green (colorblind users struggle), low-contrast combinations (light gray on white), and inverting the colors (light patterns on dark backgrounds can cause scanning issues on some devices).
+
+---
+
+## Using QR Codes
+
+### Where should I place QR codes?
+
+Place codes where people have time and reason to scan—not where they're rushing past. Good locations include: point-of-sale counters, product packaging, table tents, posters in waiting areas, printed materials people take home, and anywhere with clear instructions on what scanning provides.
+
+### What should the QR code link to?
+
+Link to mobile-optimized content relevant to the scanning context. Someone scanning a product code wants product information, not your homepage. Someone scanning a restaurant table code wants the menu, not your company history. Match the destination to the user's likely intent at that moment.
+
+### Do QR codes work without internet?
+
+QR codes that encode information directly (text, contact cards, WiFi credentials) work without internet—the data is stored in the code itself. QR codes that link to websites obviously require an internet connection to load the destination page.
+
+### Can the same QR code be used multiple times?
+
+Absolutely. A QR code can be scanned unlimited times by unlimited people. Each scan reads the same encoded data. For dynamic codes, you can track how many times the code has been scanned through analytics.
+
+### How do I track QR code scans?
+
+Use dynamic QR codes with a service that provides analytics. Each scan passes through a redirect server that logs the scan before sending users to the destination. Analytics typically include scan counts, timestamps, geographic locations (approximate), and device information.
+
+---
+
+## Troubleshooting
+
+### Why won't my QR code scan?
+
+Common causes include: code printed too small, insufficient contrast between colors, damaged or dirty surface, blur from camera being too close, poor lighting, outdated phone camera, or a code that's been corrupted. Try cleaning the code, improving lighting, and backing up slightly while scanning.
+
+### Why does my QR code link to the wrong place?
+
+If you're using a dynamic QR code, the redirect destination may have been changed (intentionally or accidentally). If it's a static code, the encoded URL may have been typed incorrectly during creation. For static codes, the only fix is creating a new code with the correct URL.
+
+### Can a QR code get "used up" or stop working?
+
+No. Static QR codes work indefinitely because they simply encode data—there's no external dependency. Dynamic QR codes continue working as long as the redirect service remains active. Codes don't have a scan limit unless one is explicitly configured.
+
+### Why is my QR code so dense/complicated looking?
+
+QR code density increases with data length and error correction level. Long URLs produce more complex codes. Shortening the URL (using a URL shortener or removing unnecessary parameters) creates simpler, more easily scannable codes. Higher error correction also increases complexity.
+
+### Why do some phones struggle to scan my code?
+
+Older phones, phones with low-quality cameras, or phones running outdated operating systems may have trouble with QR codes—especially dense ones, customized designs, or codes with low contrast. Testing on multiple devices before printing helps identify compatibility issues.
+
+---
+
+## Security & Privacy
+
+### Are QR codes safe to scan?
+
+QR codes themselves are safe—they're just encoded data. However, a QR code can link to a malicious website, just like any link. Treat QR codes like links from unknown sources: check that the destination URL looks legitimate before entering sensitive information. Your phone shows the URL before you confirm opening it.
+
+### Can QR codes contain viruses?
+
+A QR code cannot directly install malware or viruses simply by scanning. The code only contains text data (usually a URL). However, that URL could lead to a malicious website that attempts to trick you into downloading something or entering credentials. The risk is identical to clicking an unknown link.
+
+### Do QR codes track me?
+
+The QR code itself doesn't track you. However, when you scan a dynamic QR code and visit the destination, the website can track you the same way any website does—through cookies, analytics, and standard web tracking. Static QR codes with direct URLs skip the tracking redirect entirely.
+
+### Can someone replace my QR code with a malicious one?
+
+Yes, this is a real concern in public spaces. Someone could place a sticker with a malicious code over your legitimate one. Periodically check that your displayed codes haven't been tampered with, especially in high-traffic public locations. Consider tamper-evident mounting for important codes.
+
+---
+
+## Business Questions
+
+### How much do QR codes cost for business use?
+
+Basic QR codes are free. Business features like analytics, dynamic destinations, bulk generation, and API access typically require paid plans ranging from roughly $10-50/month depending on the service and feature set. [QRWolf's plans](/plans) start at $9/month for Pro features.
+
+### Can I use the same QR code on different marketing materials?
+
+Yes, if they all should link to the same destination. One code can appear on business cards, flyers, posters, and digital materials simultaneously. For different destinations, you'll need different codes. Dynamic codes let you change where a single code leads over time.
+
+### Should I use static or dynamic codes for printed materials?
+
+Dynamic codes are usually better for print because you can fix mistakes and update destinations without reprinting. The only downsides are the ongoing service requirement and the fraction-of-a-second redirect delay. For permanent applications where the destination will never change, static codes work fine.
+
+### How do I generate QR codes in bulk?
+
+QR code generators with bulk features let you upload a spreadsheet of destinations (URLs, contacts, etc.) and generate all the codes at once. This is essential for product packaging, inventory management, or any application requiring hundreds or thousands of unique codes. Business-tier plans typically include bulk generation.
+
+### What analytics can I get from QR code scans?
+
+Typical analytics include: total scan count, unique visitor count, scans over time, geographic distribution (country and city), device types (mobile/desktop/tablet), operating systems, browsers, and time patterns (when people scan). More advanced tracking requires integration with your own analytics systems.
+
+---
+
+## Technical Questions
+
+### What's the maximum data a QR code can hold?
+
+The largest QR code (version 40 with minimal error correction) holds 7,089 numeric characters, 4,296 alphanumeric characters, or 2,953 bytes of binary data. Practically, keeping URLs under a few hundred characters ensures codes remain easily scannable.
+
+### What is error correction and which level should I use?
+
+Error correction adds redundant data so codes remain scannable even when partially damaged. Four levels exist: L (7% recovery), M (15%), Q (25%), and H (30%). Level M balances capacity and reliability for most uses. Use H if you're adding a logo or expect physical wear.
+
+### Why are there squares in the corners of QR codes?
+
+These "finder patterns" help scanners quickly locate and orient the code. The distinctive pattern of nested squares is easy for image processing algorithms to detect, and having three corners (not four) indicates which way is up. This is why QR codes scan so quickly compared to other barcodes.
+
+### Can QR codes be any color?
+
+Technically yes, but practically the dark pattern must contrast sufficiently with the light background. Dark blue, dark green, or black on white all work. Avoid low-contrast combinations, and never invert the pattern (light-on-dark can confuse some scanners). When in doubt, use classic black on white.
+
+---
+
+## Still Have Questions?
+
+If your question isn't answered here, check our [knowledge base](/learn) for detailed articles on specific topics. Ready to create? [Start making QR codes](/qr-codes/new) with QRWolf—it's free to begin.

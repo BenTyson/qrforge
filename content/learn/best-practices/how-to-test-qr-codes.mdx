@@ -1,0 +1,125 @@
+---
+title: "How to Test if Your QR Code Works"
+description: "Learn the essential tests every QR code needs before printing. Catch scanning issues, broken links, and display problems before they cost you."
+category: "best-practices"
+order: 6
+tags: ["test qr code", "qr code troubleshooting", "qr code scanning", "qr code quality"]
+relatedSlugs: ["qr-code-not-scanning", "qr-code-size-guide", "qr-code-design-best-practices"]
+draft: false
+---
+
+Nothing undermines credibility faster than a QR code that doesn't work. A customer pulls out their phone, points the camera, waits expectantly... and nothing happens. Or worse, they land on an error page, a broken link, or completely wrong content. Every failed scan represents a lost opportunity and a damaged impression of your brand.
+
+Testing sounds obvious, but most QR code failures come from skipped or inadequate testing. A quick scan on your own phone isn't enough. Thorough testing catches problems before you've printed thousands of flyers, manufactured product packaging, or installed permanent signage.
+
+## The Complete Testing Checklist
+
+A QR code needs to pass several distinct tests before it's ready for production. Each test catches different types of problems that might not appear in other conditions.
+
+**Test the raw scan.** Point your phone's camera at the code and verify it recognizes and decodes correctly. Both iPhone (built into Camera app) and Android (also built into Camera on most devices) should detect the code automatically without needing a separate app.
+
+**Test the destination.** After scanning, verify the link loads correctly. The right page should appear, with correct content, proper formatting, and no errors. Don't just confirm *something* loads—confirm *the right thing* loads.
+
+**Test across devices.** Scan with at least two different phones, ideally one iPhone and one Android device. Camera hardware and software vary; a code that scans perfectly on one phone might struggle on another.
+
+**Test at intended size.** Print a sample at the actual production size or display the code at real dimensions. Larger on your monitor doesn't count—test the actual size people will encounter.
+
+**Test at intended distance.** If your code will be on a poster viewed from six feet away, stand six feet away when testing. A code that scans at arm's length might be too dense for distance scanning.
+
+**Test in intended conditions.** If the code will be outdoors, test in sunlight and shade. If it will be on a curved surface, test on a similar curve. If it will be behind glass, test through glass.
+
+<Callout type="tip" title="Fresh Eyes">
+After staring at a QR code during creation, your brain fills in gaps. Have someone unfamiliar with the project test the code. They'll scan it like a real customer would, without unconscious assumptions about what should happen.
+</Callout>
+
+## Common Failures and Their Causes
+
+Understanding why codes fail helps you catch problems during testing rather than after deployment.
+
+**"Nothing happens when I point my camera"** usually indicates a size or contrast problem. The code is either too small for the camera to recognize or lacks sufficient contrast between light and dark modules. Increase size or improve contrast and retest.
+
+**"It recognizes a code but won't open anything"** suggests the code is malformed. Something went wrong during generation—perhaps special characters weren't encoded properly or the URL format is invalid. Regenerate the code and compare the encoded data against what you intended.
+
+**"It opens the wrong page"** points to a configuration error. You may have pasted the wrong URL, the link redirects unexpectedly, or you're testing an old version of the code. Verify the code encodes exactly what you expect by checking the URL that appears after scanning.
+
+**"The page shows an error"** means the code works but the destination doesn't. The website might be down, the specific page might not exist, or the URL might have typos. Test the URL directly in a browser to isolate whether the problem is the code or the destination.
+
+**"It works on my phone but not others"** suggests marginal scannability. Your phone might have a better camera, more patient software, or better lighting at that moment. The code needs improvement—increase size, boost contrast, reduce density, or clean up any visual noise.
+
+## Testing Different Code Types
+
+Different QR code content types have different testing requirements.
+
+**URL codes** need the most thorough destination testing. Visit the target page, verify content loads correctly on mobile, check that the page is mobile-responsive, and confirm any tracking parameters work as expected.
+
+**Email codes** (mailto:) should open your email app with the correct recipient, subject, and body text pre-filled. Test on both iOS and Android, as email apps handle mailto links slightly differently.
+
+**Phone codes** (tel:) should open your dialer with the correct number pre-filled. Verify the number includes the correct country code if your audience spans multiple countries.
+
+**WiFi codes** should prompt you to join the network. Test by actually connecting—some devices display the network but fail to connect if parameters are wrong.
+
+**vCard codes** should open a contact card that you can save. Check that all fields (name, phone, email, address) populated correctly.
+
+**SMS codes** should open your messaging app with the number and pre-written message. Test by actually sending the message to verify it arrives correctly.
+
+<Callout type="warning" title="Dynamic vs. Static">
+Dynamic QR codes route through a redirect server, adding a dependency. Test that the redirect resolves quickly and correctly. If using QRWolf's dynamic codes, verify in your dashboard that the destination URL is configured properly.
+</Callout>
+
+## Testing Printed Materials
+
+The gap between digital preview and printed reality catches many people off guard. Printers, paper stocks, and printing methods all affect how QR codes render and scan.
+
+**Request a proof** before large print runs. Scan the actual printed proof, not a digital file. Ink spread, paper texture, and color shifts can make a perfectly designed code unscannable.
+
+**Test different lighting.** Office fluorescents, outdoor sun, and dim restaurant lighting all affect how cameras perceive contrast. If your code will be seen in variable conditions, test in variable conditions.
+
+**Test curved or textured surfaces.** QR codes on bottles, bags, or textured materials can distort. Scan from multiple angles to ensure reliable recognition.
+
+**Test after aging and handling.** If materials will be handled repeatedly, exposed to weather, or sit on shelves for months, test samples that have endured similar treatment. Fading, smudging, and wear affect scannability.
+
+## Testing Digital Displays
+
+QR codes on screens introduce different challenges than print.
+
+**Match expected screen sizes.** A code displayed on a huge monitor might need to work when viewed on a smaller tablet screen. Test at realistic sizes for your deployment.
+
+**Account for screen refresh and display artifacts.** Some cameras struggle with certain screen technologies or refresh rates. Test on actual destination screens, not just your development monitor.
+
+**Consider viewing angles.** LCD screens lose contrast when viewed from angles. If people might scan your digital code from off-center positions, test those positions.
+
+**Test brightness levels.** Screens at maximum brightness behave differently than screens at lower power-saving levels. Ensure scanning works across typical brightness ranges.
+
+## Building a Testing Protocol
+
+For businesses deploying QR codes regularly, establish a consistent testing protocol that catches problems before they reach customers.
+
+Document which devices you test on. Include specific phone models and operating systems. Update the device list as technology evolves.
+
+Define pass/fail criteria explicitly. "Scans successfully on 3 of 3 test devices at intended size from intended distance" is a testable criterion. "Works fine" is not.
+
+Assign responsibility for testing. The person who created the code shouldn't be the only tester—fresh eyes catch more problems.
+
+Test again after any changes. Updated a URL? Adjusted colors? Resized the code? Test the final version, not the pre-change version.
+
+Log test results. When problems surface later, historical records help identify what changed. Even simple notes like "tested on iPhone 15 and Pixel 8, passed" provide valuable reference.
+
+## When Testing Reveals Problems
+
+Failed tests are good news—they caught problems before customers did. Now you can fix them.
+
+**Scannability issues** usually require making the code larger, improving contrast, simplifying design elements, or reducing the amount of encoded data. See our guide on [fixing codes that won't scan](/learn/qr-code-not-scanning) for specific solutions.
+
+**Destination issues** require fixing the target—correcting URLs, updating page content, or ensuring servers respond reliably. Test the destination independently from the code to isolate whether the problem is in the code or the target.
+
+**Device compatibility issues** suggest the code is marginal—it works but barely. Improve the code rather than hoping all customers have good cameras in good lighting.
+
+Don't ship a code that fails any test. The cost of reprinting or reconfiguring is always less than the cost of failed customer experiences.
+
+## Creating Reliable QR Codes
+
+[QRWolf's generator](/create) produces high-quality codes with proper error correction, but generation is only half the equation. Your testing process determines whether those codes succeed in the real world.
+
+For businesses deploying QR codes across multiple materials and locations, the [Pro plan](/plans) provides scan analytics that function as ongoing testing—you'll see if codes suddenly stop getting scanned, indicating a possible problem that testing can diagnose.
+
+Every minute spent testing saves hours of dealing with failed deployments. Make testing a non-negotiable part of your QR code workflow.

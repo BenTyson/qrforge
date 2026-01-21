@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
 > **Last Updated**: January 21, 2026
-> **Total Content**: 17 blog posts, 46 learn articles
+> **Total Content**: 26 blog posts, 61 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -52,8 +52,17 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How to Share WiFi Password with QR Code | tutorials | share wifi password qr code | share-wifi-password-qr-code |
 | How to Create a QR Code for Payment | tutorials | qr code for payment | qr-code-for-payment |
 | Best Free QR Code Generators in 2026 | guides | best free qr code generator | best-free-qr-code-generators |
+| How to Create a QR Code for Google Reviews | tutorials | google reviews qr code | qr-code-for-google-reviews |
+| How to Create a QR Code for YouTube Video | tutorials | youtube qr code | qr-code-for-youtube |
+| QR Code Statistics 2026: Usage and Trends | news | qr code statistics | qr-code-statistics-2026 |
+| How to Create a QR Code for LinkedIn | tutorials | linkedin qr code | qr-code-for-linkedin |
+| How to Create a QR Code for Spotify | tutorials | spotify qr code | qr-code-for-spotify |
+| QR Codes on Business Cards: Design Guide | guides | business card qr code | qr-codes-on-business-cards |
+| QR Codes for Print Materials: Complete Guide | guides | print qr code | qr-codes-for-print-materials |
+| How to Create a QR Code for TikTok | tutorials | tiktok qr code | qr-code-for-tiktok |
+| How to Create a QR Code for Google Docs | tutorials | google docs qr code | qr-code-for-google-docs |
 
-### Learn Articles (46)
+### Learn Articles (61)
 
 #### qr-basics (10)
 | Title | Primary Keyword | Slug |
@@ -92,8 +101,14 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Codes for App Downloads | app store qr code, app download qr | qr-codes-for-app-downloads |
 | QR Code for Google Maps Location | qr code google maps | qr-code-for-google-maps |
 | QR Codes for Coupons & Discounts | qr code coupon | qr-codes-for-coupons |
+| Text QR Codes: When and How to Use Plain Text | text qr code | text-qr-codes |
+| Email QR Codes: Pre-filled Messages That Convert | email qr code | email-qr-codes |
+| Phone Number QR Codes: Click-to-Call Made Easy | phone qr code | phone-qr-codes |
+| SMS QR Codes: Pre-written Text Messages | sms qr code | sms-qr-codes |
+| Facebook QR Code: Connect Your Page | facebook qr code | facebook-qr-code |
+| Image Gallery QR Codes | image qr code | image-gallery-qr-codes |
 
-#### industries (8)
+#### industries (14)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Codes for Retail | qr codes for retail | qr-codes-for-retail |
@@ -104,8 +119,14 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Codes for Gyms & Fitness | qr codes for gym, fitness qr code | qr-codes-for-gyms |
 | QR Codes for Nonprofits & Donations | nonprofit qr code, donation qr code | qr-codes-for-nonprofits |
 | QR Codes for Manufacturing | qr codes manufacturing | qr-codes-for-manufacturing |
+| QR Codes for Restaurants: Beyond Menus | qr codes restaurants | qr-codes-for-restaurants-beyond-menus |
+| QR Codes for Construction Sites | qr codes construction | qr-codes-for-construction |
+| QR Codes for Law Firms & Legal | qr codes law firm | qr-codes-for-law-firms |
+| QR Codes for Automotive & Dealerships | qr codes automotive | qr-codes-for-automotive |
+| QR Codes for Travel & Tourism | qr codes tourism | qr-codes-for-travel-tourism |
+| QR Codes for Beauty Salons & Spas | qr codes salon | qr-codes-for-beauty-salons |
 
-#### best-practices (5)
+#### best-practices (7)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Code Design Best Practices | qr code design | qr-code-design-best-practices |
@@ -113,8 +134,10 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How to Fix a QR Code That Won't Scan | qr code not scanning | qr-code-not-scanning |
 | QR Code Size Guide | qr code size, minimum qr code size | qr-code-size-guide |
 | QR Code Size Requirements | qr code size requirements | qr-code-size-requirements |
+| How to Test if Your QR Code Works | test qr code | how-to-test-qr-codes |
+| How to Make a QR Code Smaller | qr code minimum size | how-to-make-qr-code-smaller |
 
-#### technical (7)
+#### technical (8)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Code Data Capacity | qr code data capacity | qr-code-data-capacity |
@@ -124,6 +147,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Code File Formats: PNG vs SVG vs PDF | qr code file format | qr-code-file-formats |
 | QR Code Encoding Modes Explained | qr code encoding | qr-code-encoding-modes |
 | QR Code Analytics: Metrics That Matter | qr code analytics | qr-code-analytics-metrics |
+| QR Code Colors: Contrast and Readability Guide | qr code colors | qr-code-colors-contrast |
 
 ---
 
@@ -308,15 +332,45 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 31. ~~QR Code FAQs: 30 Common Questions Answered (qr-basics)~~ - ✅ Created
 32. ~~Best Free QR Code Generators in 2026 (blog)~~ - ✅ Created
 
-**NEXT PRIORITIES (from Expansion Plan Month 1-2):**
-33. How to Create QR Code for Google Reviews (blog) - High volume
-34. How to Create QR Code for YouTube (blog) - High volume
-35. Text QR Codes: When and How to Use Them (use-cases)
-36. Email QR Codes: Pre-filled Messages (use-cases)
-37. Phone Number QR Codes: Click-to-Call (use-cases)
-38. SMS QR Codes: Pre-written Text Messages (use-cases)
-39. How to Test if Your QR Code Works (best-practices)
-40. How to Make a QR Code Smaller (best-practices)
+**COMPLETED:**
+33. ~~How to Create QR Code for Google Reviews (blog)~~ - ✅ Created
+34. ~~How to Create QR Code for YouTube (blog)~~ - ✅ Created
+35. ~~Text QR Codes: When and How to Use Them (use-cases)~~ - ✅ Created
+36. ~~Email QR Codes: Pre-filled Messages (use-cases)~~ - ✅ Created
+37. ~~Phone Number QR Codes: Click-to-Call (use-cases)~~ - ✅ Created
+38. ~~SMS QR Codes: Pre-written Text Messages (use-cases)~~ - ✅ Created
+39. ~~How to Test if Your QR Code Works (best-practices)~~ - ✅ Created
+40. ~~How to Make a QR Code Smaller (best-practices)~~ - ✅ Created
+
+**COMPLETED:**
+41. ~~QR Code Statistics 2026 (blog)~~ - ✅ Created
+42. ~~QR Codes for Restaurants: Beyond Menus (industries)~~ - ✅ Created
+43. ~~QR Codes for Construction Sites (industries)~~ - ✅ Created
+44. ~~How to Create QR Code for LinkedIn (blog)~~ - ✅ Created
+45. ~~How to Create QR Code for Spotify (blog)~~ - ✅ Created
+46. ~~QR Code Colors: Contrast Guide (technical)~~ - ✅ Created
+47. ~~QR Codes on Business Cards (blog)~~ - ✅ Created
+48. ~~QR Codes for Print Materials (blog)~~ - ✅ Created
+
+**COMPLETED:**
+49. ~~QR Codes for Law Firms & Legal (industries)~~ - ✅ Created
+50. ~~QR Codes for Automotive & Car Dealerships (industries)~~ - ✅ Created
+51. ~~QR Codes for Travel & Tourism (industries)~~ - ✅ Created
+52. ~~QR Codes for Beauty Salons & Spas (industries)~~ - ✅ Created
+53. ~~How to Create QR Code for TikTok (blog)~~ - ✅ Created
+54. ~~How to Create QR Code for Google Docs (blog)~~ - ✅ Created
+55. ~~Facebook QR Code: Connect Your Page (use-cases)~~ - ✅ Created
+56. ~~Image Gallery QR Codes (use-cases)~~ - ✅ Created
+
+**NEXT PRIORITIES (from Expansion Plan Month 3-4):**
+57. QR Codes for Churches & Religious Organizations (industries)
+58. QR Codes for Museums & Galleries (industries)
+59. Social Profile QR Codes (use-cases)
+60. QR Codes for Portfolios & Resumes (use-cases)
+61. QR Codes for Wedding Invitations (use-cases)
+62. QR Code Generator Comparison: Top 10 Tools (blog)
+63. Free vs Paid QR Code Generators (blog)
+64. How to Change QR Code Destination (how-it-works)
 
 **ALL REWRITES COMPLETE!**
 - ~~static-vs-dynamic-qr-codes.mdx~~ - ✅ Done
@@ -636,6 +690,9 @@ Common competitor content we should create:
 
 | Date | Changes |
 |------|---------|
+| 2026-01-21 | Added TikTok, Google Docs blogs + Law, Auto, Travel, Beauty, Facebook, Gallery articles - Now 26 blog, 61 learn (87 total) |
+| 2026-01-21 | Added Statistics, LinkedIn, Spotify, Business Cards, Print blogs + Restaurants, Construction, Colors articles - Now 24 blog, 55 learn (79 total) |
+| 2026-01-21 | Added Google Reviews, YouTube blogs + Text, Email, Phone, SMS, Testing, Sizing articles - Now 19 blog, 52 learn (71 total) |
 | 2026-01-21 | Added Glossary, Types of QR Codes, FAQs (qr-basics) + Best Free Generators (blog) - Now 17 blog, 46 learn |
 | 2026-01-21 | Added EXPANSION PLAN: 85 new topics across 7 phases to reach 150 total pieces |
 | 2026-01-21 | Added Payment QR Code blog + Encoding Modes, Analytics Metrics, Myths Debunked articles (4 pieces) |

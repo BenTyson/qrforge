@@ -203,9 +203,13 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
   }, []);
 
   // Check if type requires dynamic QR
+  // Pro and Business users always get dynamic QR codes (for analytics tracking)
   const requiresDynamicQR = useCallback((type: QRContentType): boolean => {
+    if (userTier === 'pro' || userTier === 'business') {
+      return true;
+    }
     return DYNAMIC_REQUIRED_TYPES.includes(type);
-  }, []);
+  }, [userTier]);
 
   // Validate content
   const isContentValid = useCallback((): boolean => {

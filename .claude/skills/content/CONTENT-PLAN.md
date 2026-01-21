@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
 > **Last Updated**: January 21, 2026
-> **Total Content**: 13 blog posts, 39 learn articles
+> **Total Content**: 14 blog posts, 37 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -31,7 +31,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 
 ## Existing Content Inventory
 
-### Blog Posts (9)
+### Blog Posts (14)
 
 | Title | Category | Primary Keyword | Slug |
 |-------|----------|-----------------|------|
@@ -44,8 +44,13 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How to Make a QR Code for a Link | tutorials | how to make qr code for link | how-to-make-qr-code-for-link |
 | How to Create a QR Code for a Google Form | tutorials | google form qr code | qr-code-for-google-form |
 | How to Print QR Codes: Size and Quality Guide | tutorials | print qr code | how-to-print-qr-codes |
+| Free QR Code Generator: What to Look For | guides | free qr code generator | free-qr-code-generator-guide |
+| Menu QR Code Generator: Restaurant Guide | guides | menu qr code | menu-qr-code-generator |
+| Bulk QR Code Generator Guide | guides | bulk qr code generator | bulk-qr-code-generator |
+| QR Code with Logo: How to Add Your Brand | tutorials | qr code with logo | qr-code-with-logo |
+| QR Code Marketing Strategies for 2026 | guides | qr code marketing | qr-code-marketing-strategies |
 
-### Learn Articles (20)
+### Learn Articles (37)
 
 #### qr-basics (5)
 | Title | Primary Keyword | Slug |
@@ -56,13 +61,14 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How to Create a QR Code: Step-by-Step Guide | how to create qr code | how-to-create-a-qr-code |
 | How to Scan a QR Code on iPhone and Android | how to scan qr code | how-to-scan-a-qr-code |
 
-#### how-it-works (2)
+#### how-it-works (3)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | How QR Code Error Correction Works | qr code error correction | qr-code-error-correction |
 | How QR Code Scanning Works | how qr code scanning works | how-qr-code-scanning-works |
+| How WiFi QR Codes Work | how wifi qr code works | how-wifi-qr-codes-work |
 
-#### use-cases (11)
+#### use-cases (13)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | Restaurant QR Code Menus | restaurant qr code menu | restaurant-menu-qr-codes |
@@ -76,6 +82,8 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | Links QR Code: Linktree Alternative | linktree alternative, link in bio | links-qr-code |
 | QR Codes for Audio and Podcasts | audio qr code, podcast qr code | qr-codes-for-audio |
 | QR Codes for App Downloads | app store qr code, app download qr | qr-codes-for-app-downloads |
+| QR Code for Google Maps Location | qr code google maps | qr-code-for-google-maps |
+| QR Codes for Coupons & Discounts | qr code coupon | qr-codes-for-coupons |
 
 #### industries (7)
 | Title | Primary Keyword | Slug |
@@ -88,20 +96,22 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Codes for Gyms & Fitness | qr codes for gym, fitness qr code | qr-codes-for-gyms |
 | QR Codes for Nonprofits & Donations | nonprofit qr code, donation qr code | qr-codes-for-nonprofits |
 
-#### best-practices (4)
+#### best-practices (5)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Code Design Best Practices | qr code design | qr-code-design-best-practices |
 | QR Code Placement Guide | qr code placement | qr-code-placement-guide |
 | How to Fix a QR Code That Won't Scan | qr code not scanning | qr-code-not-scanning |
 | QR Code Size Guide | qr code size, minimum qr code size | qr-code-size-guide |
+| QR Code Size Requirements | qr code size requirements | qr-code-size-requirements |
 
-#### technical (3)
+#### technical (4)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Code Data Capacity | qr code data capacity | qr-code-data-capacity |
 | QR Code Versions Explained | qr code versions | qr-code-versions-explained |
 | QR Code Security: Risks and Best Practices | qr code security | qr-code-security |
+| QR Code API Guide for Developers | qr code api | qr-code-api-guide |
 
 ---
 

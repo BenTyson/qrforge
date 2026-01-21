@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 20, 2026 (Creative Design Section, Scan Limit Emails)
+> **Last Updated**: January 21, 2026 (Analytics Bug Fixes, SEO Content Expansion)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -516,6 +516,36 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - Better visual spacing between QR code and artboard edge
   - Applied to all future QR codes (existing codes unaffected)
   - Updated in types.ts, generator.ts, server-generator.ts, useQRStudioState.ts
+- **Analytics Bug Fixes & Pro Dynamic QR Codes** (January 21, 2026):
+  - **Critical fix**: Missing `scan_limit_notified_at` column was causing ALL QR redirects to fail
+  - **Critical fix**: Missing `on_scan_created` trigger was preventing scan counts from incrementing
+  - Pro/Business users now always get dynamic QR codes (regardless of content type)
+  - Added debug logging to redirect route for easier troubleshooting
+  - Applied migrations directly to production database
+  - Manually synced 20 QR codes with mismatched scan counts
+  - Re-linked Supabase CLI to correct production project
+- **SEO Content Expansion** (January 21, 2026):
+  - Added 3 new blog posts:
+    - How to Make a QR Code for a Link (high-intent "how to" keyword)
+    - How to Print QR Codes: Size and Quality Guide
+    - How to Create a QR Code for a Google Form
+  - Added 6 new learn articles:
+    - QR Code Size Guide (best-practices)
+    - QR Codes for Gyms & Fitness (industries)
+    - QR Codes for Nonprofits & Donations (industries)
+    - Links QR Code / Linktree Alternative (use-cases)
+    - QR Codes for App Downloads (use-cases)
+    - QR Codes for Audio & Podcasts (use-cases)
+  - Rewrote 4 articles to prose-first style (removing bullet bloat):
+    - static-vs-dynamic-qr-codes.mdx
+    - qr-codes-for-video.mdx
+    - qr-codes-for-education.mdx
+    - qr-codes-for-retail.mdx
+  - Total content now: 14 blog posts, 37 learn articles
+- **Google Search Appearance Improvements** (January 21, 2026):
+  - New favicon.ico with proper sizing
+  - Organization and WebSite JSON-LD schemas for sitelinks
+  - Improved OpenGraph metadata
 
 ### Planned Enhancements
 - Webhooks for scan notifications
@@ -974,7 +1004,7 @@ npm run dev               # Dev server on port 3322
 - **Logo background styles** - Circle, square, rounded, transparent
 
 ### SEO & Content (Ongoing)
-- Current: 6 blog posts, 28 learn articles
+- Current: 14 blog posts, 37 learn articles
 - Expand blog to 20-30 articles
-- Expand learn section to 30+ articles
+- Expand learn section to 50+ articles
 - Add FAQ schema to knowledge base pages

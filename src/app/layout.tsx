@@ -26,11 +26,13 @@ export const metadata: Metadata = {
   applicationName: "QRWolf",
   icons: {
     icon: [
-      { url: "/icon.png", type: "image/png" },
+      { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-icon.png", type: "image/png" },
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
     ],
+    shortcut: "/favicon.ico",
   },
   keywords: [
     "qr code generator",

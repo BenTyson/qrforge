@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 21, 2026 (Analytics Bug Fixes, SEO Content Expansion)
+> **Last Updated**: January 21, 2026 (SEO Content Batch 3: Glossary, Types, FAQs, Free Generators)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -546,6 +546,12 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - New favicon.ico with proper sizing
   - Organization and WebSite JSON-LD schemas for sitelinks
   - Improved OpenGraph metadata
+- **SEO Content Batch 3** (January 21, 2026):
+  - QR Code Glossary: 50+ Terms You Should Know (qr-basics)
+  - Types of QR Codes: Complete Guide to All 16 (qr-basics)
+  - QR Code FAQs: 30 Common Questions Answered (qr-basics)
+  - Best Free QR Code Generators in 2026 (blog - competitive piece)
+  - Total content now: 17 blog posts, 46 learn articles (63 total)
 
 ### Planned Enhancements
 - Webhooks for scan notifications
@@ -976,6 +982,8 @@ Dynamic QR codes are the key lock-in:
 - `docs/STRIPE-SETUP.md` - Stripe configuration
 - `docs/AGENT-WORKFLOW.md` - Universal agent workflow rules
 - `docs/SUPABASE-EMAIL-TEMPLATES.md` - Supabase auth email templates
+- `docs/FEATURE-ROADMAP.md` - **Feature build-out plan with 25 prioritized features**
+- `.claude/skills/content/CONTENT-PLAN.md` - **SEO content plan (85 planned articles)**
 
 ---
 
@@ -1004,7 +1012,7 @@ npm run dev               # Dev server on port 3322
 - **Logo background styles** - Circle, square, rounded, transparent
 
 ### SEO & Content (Ongoing)
-- Current: 14 blog posts, 37 learn articles
-- Expand blog to 20-30 articles
-- Expand learn section to 50+ articles
+- Current: 17 blog posts, 46 learn articles (63 total)
+- Target: 50 blog posts, 100 learn articles (150 total)
+- See `.claude/skills/content/CONTENT-PLAN.md` for 85-topic expansion plan
 - Add FAQ schema to knowledge base pages

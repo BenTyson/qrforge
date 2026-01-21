@@ -1,4 +1,4 @@
-import { createAdminClient } from '@/lib/admin/auth';
+import { createAdminClient, ADMIN_EMAIL } from '@/lib/admin/auth';
 import { AdminStatsCard } from '@/components/admin/AdminStatsCard';
 
 // Pricing from plans.ts
@@ -7,29 +7,43 @@ const PRICING = {
   business: { monthly: 29, yearly: 290 },
 };
 
+// Exclude admin account from revenue calculations
+const EXCLUDED_EMAILS = [ADMIN_EMAIL].filter(Boolean);
+
 export default async function AdminSubscriptionsPage() {
   const supabase = createAdminClient();
 
+  // Build exclude filter for admin emails (for revenue calculations)
+  const excludeFilter = EXCLUDED_EMAILS.length > 0 ? EXCLUDED_EMAILS : ['__none__'];
+
   // Fetch subscription data
   const [
-    { data: profiles },
+    { data: allProfiles },
+    { data: profiles }, // Excludes admin for revenue calculations
     { count: activeCount },
     { count: pastDueCount },
     { count: canceledCount },
   ] = await Promise.all([
+    // All profiles (for total user count display)
     supabase.from('profiles').select('id, email, subscription_tier, subscription_status, stripe_customer_id, created_at, updated_at'),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_status', 'active').neq('subscription_tier', 'free'),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_status', 'past_due'),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_status', 'canceled'),
+    // Profiles excluding admin (for revenue calculations)
+    supabase.from('profiles').select('id, email, subscription_tier, subscription_status, stripe_customer_id, created_at, updated_at').not('email', 'in', `(${excludeFilter.join(',')})`),
+    // Active paid subscribers (excluding admin)
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_status', 'active').neq('subscription_tier', 'free').not('email', 'in', `(${excludeFilter.join(',')})`),
+    // Past due (excluding admin)
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_status', 'past_due').not('email', 'in', `(${excludeFilter.join(',')})`),
+    // Canceled (excluding admin)
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_status', 'canceled').not('email', 'in', `(${excludeFilter.join(',')})`),
   ]);
 
-  // Calculate tier counts
+  // Calculate tier counts (excluding admin for revenue)
   const tierCounts = {
     free: 0,
     pro: 0,
     business: 0,
   };
 
+  // Count from profiles that exclude admin
   profiles?.forEach((p: { subscription_tier: string }) => {
     const tier = p.subscription_tier as keyof typeof tierCounts;
     if (tier in tierCounts) {
@@ -39,6 +53,9 @@ export default async function AdminSubscriptionsPage() {
     }
   });
 
+  // Total users count (includes everyone for display)
+  const totalUsersCount = allProfiles?.length || 0;
+
   // Calculate estimated monthly revenue (assuming monthly billing for simplicity)
   // In production, you'd query Stripe for actual billing intervals
   const estimatedMonthlyRevenue =
@@ -46,11 +63,15 @@ export default async function AdminSubscriptionsPage() {
     (tierCounts.business * PRICING.business.monthly);
 
   const payingUsers = tierCounts.pro + tierCounts.business;
-  const totalUsers = tierCounts.free + tierCounts.pro + tierCounts.business;
+  // Use totalUsersCount for display but tierCounts total for percentage of paying
+  const totalUsers = totalUsersCount;
+  const totalPaidBase = tierCounts.free + tierCounts.pro + tierCounts.business; // For percentage calculation
 
-  // Get recent subscription changes (users with updated subscription)
+  // Get recent subscription changes (users with updated subscription, excluding admin)
   const recentChanges = profiles
-    ?.filter((p: { subscription_tier: string }) => p.subscription_tier !== 'free')
+    ?.filter((p: { subscription_tier: string; email: string }) =>
+      p.subscription_tier !== 'free' && !EXCLUDED_EMAILS.includes(p.email)
+    )
     .sort((a: { updated_at: string }, b: { updated_at: string }) =>
       new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
     )
@@ -67,11 +88,11 @@ export default async function AdminSubscriptionsPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <AdminStatsCard
-          title="Paying Users"
+          title="Paying Customers"
           value={payingUsers}
           icon={UsersIcon}
           color="primary"
-          subtitle={`${totalUsers > 0 ? Math.round(payingUsers / totalUsers * 100) : 0}% of total`}
+          subtitle={`${totalPaidBase > 0 ? Math.round(payingUsers / totalPaidBase * 100) : 0}% conversion (excl. admin)`}
         />
         <AdminStatsCard
           title="Pro Subscribers"
@@ -103,6 +124,7 @@ export default async function AdminSubscriptionsPage() {
             Tier Distribution
           </h2>
           <div className="space-y-4">
+            <p className="text-xs text-muted-foreground -mt-2 mb-2">Excludes admin account from revenue metrics</p>
             {[
               { tier: 'Free', count: tierCounts.free, color: 'from-zinc-500 to-zinc-400' },
               { tier: 'Pro', count: tierCounts.pro, color: 'from-primary to-cyan-400' },
@@ -111,12 +133,12 @@ export default async function AdminSubscriptionsPage() {
               <div key={tier}>
                 <div className="flex justify-between text-sm mb-1">
                   <span>{tier}</span>
-                  <span className="text-muted-foreground">{count} users ({totalUsers > 0 ? Math.round(count / totalUsers * 100) : 0}%)</span>
+                  <span className="text-muted-foreground">{count} users ({totalPaidBase > 0 ? Math.round(count / totalPaidBase * 100) : 0}%)</span>
                 </div>
                 <div className="h-3 bg-secondary rounded-full overflow-hidden">
                   <div
                     className={`h-full bg-gradient-to-r ${color} rounded-full`}
-                    style={{ width: `${totalUsers > 0 ? (count / totalUsers * 100) : 0}%` }}
+                    style={{ width: `${totalPaidBase > 0 ? (count / totalPaidBase * 100) : 0}%` }}
                   />
                 </div>
               </div>

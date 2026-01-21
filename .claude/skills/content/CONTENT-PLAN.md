@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
-> **Last Updated**: January 20, 2026
-> **Total Content**: 10 blog posts, 31 learn articles
+> **Last Updated**: January 21, 2026
+> **Total Content**: 13 blog posts, 39 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -31,7 +31,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 
 ## Existing Content Inventory
 
-### Blog Posts (6)
+### Blog Posts (9)
 
 | Title | Category | Primary Keyword | Slug |
 |-------|----------|-----------------|------|
@@ -41,6 +41,9 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | WiFi QR Codes: The Complete Guide | guides | wifi qr code | wifi-qr-codes-complete-guide |
 | vCard QR Codes: Create Digital Business Cards That Work | guides | vcard qr code | vcard-qr-codes-digital-business-cards |
 | Dynamic QR Codes: The Complete Guide | guides | dynamic qr code | dynamic-qr-codes-complete-guide |
+| How to Make a QR Code for a Link | tutorials | how to make qr code for link | how-to-make-qr-code-for-link |
+| How to Create a QR Code for a Google Form | tutorials | google form qr code | qr-code-for-google-form |
+| How to Print QR Codes: Size and Quality Guide | tutorials | print qr code | how-to-print-qr-codes |
 
 ### Learn Articles (20)
 
@@ -59,7 +62,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How QR Code Error Correction Works | qr code error correction | qr-code-error-correction |
 | How QR Code Scanning Works | how qr code scanning works | how-qr-code-scanning-works |
 
-#### use-cases (8)
+#### use-cases (11)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | Restaurant QR Code Menus | restaurant qr code menu | restaurant-menu-qr-codes |
@@ -70,21 +73,28 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | WhatsApp QR Code: Connect with Customers | whatsapp qr code | whatsapp-qr-code |
 | QR Code for PDF: Share Documents Instantly | qr code for pdf | qr-code-for-pdf |
 | QR Codes for Video Marketing | video qr code | qr-codes-for-video |
+| Links QR Code: Linktree Alternative | linktree alternative, link in bio | links-qr-code |
+| QR Codes for Audio and Podcasts | audio qr code, podcast qr code | qr-codes-for-audio |
+| QR Codes for App Downloads | app store qr code, app download qr | qr-codes-for-app-downloads |
 
-#### industries (4)
+#### industries (7)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Codes for Retail | qr codes for retail | qr-codes-for-retail |
 | QR Codes for Healthcare | qr codes for healthcare | qr-codes-for-healthcare |
 | QR Codes for Real Estate | qr codes for real estate | qr-codes-for-real-estate |
 | QR Codes for Hotels & Hospitality | qr codes for hotels | qr-codes-for-hotels |
+| QR Codes for Education | qr codes for education | qr-codes-for-education |
+| QR Codes for Gyms & Fitness | qr codes for gym, fitness qr code | qr-codes-for-gyms |
+| QR Codes for Nonprofits & Donations | nonprofit qr code, donation qr code | qr-codes-for-nonprofits |
 
-#### best-practices (3)
+#### best-practices (4)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Code Design Best Practices | qr code design | qr-code-design-best-practices |
 | QR Code Placement Guide | qr code placement | qr-code-placement-guide |
 | How to Fix a QR Code That Won't Scan | qr code not scanning | qr-code-not-scanning |
+| QR Code Size Guide | qr code size, minimum qr code size | qr-code-size-guide |
 
 #### technical (3)
 | Title | Primary Keyword | Slug |
@@ -106,11 +116,14 @@ These existing articles have severe bullet-point bloat and need rewriting to pro
 | ~~restaurant-menu-qr-codes.mdx~~ | Learn | 30K+ monthly searches | Rewritten to prose-first | ✅ Done |
 
 ### Tier 2 Rewrites (Do Soon)
-| Article | Type | Issue |
-|---------|------|-------|
-| static-vs-dynamic-qr-codes.mdx | Learn | Advantages/Disadvantages are all bullets |
-| qr-codes-for-video.mdx | Learn | Every use case is bullets |
-| qr-codes-for-retail.mdx | Learn | Extreme bullet bloat |
+| Article | Type | Issue | Status |
+|---------|------|-------|--------|
+| ~~static-vs-dynamic-qr-codes.mdx~~ | Learn | Advantages/Disadvantages are all bullets | ✅ Done |
+| ~~qr-codes-for-video.mdx~~ | Learn | Every use case is bullets | ✅ Done |
+| ~~qr-codes-for-education.mdx~~ | Learn | Extreme bullet bloat | ✅ Done |
+| ~~qr-codes-for-retail.mdx~~ | Learn | Extreme bullet bloat | ✅ Done |
+
+**All Tier 2 rewrites complete!**
 
 ---
 
@@ -242,14 +255,30 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 10. ~~QR Code API Documentation (technical)~~ - ✅ Created
 
 **NEXT UP:**
-11. Links QR Code / Linktree Alternative (use-cases) - TIER 2
-12. QR Codes for Education (industries) - TIER 3
-13. QR Code Size Calculator / Guidelines (best-practices) - TIER 2
+11. ~~Links QR Code / Linktree Alternative (use-cases)~~ - ✅ Created
+12. ~~QR Codes for Education (industries)~~ - ✅ Rewritten (prose-first)
+13. ~~QR Code Size Guide (best-practices)~~ - ✅ Created
 
-**TIER 2 REWRITES (when time permits):**
-- static-vs-dynamic-qr-codes.mdx
-- qr-codes-for-video.mdx
-- qr-codes-for-retail.mdx
+**COMPLETED:**
+14. ~~QR Codes for Audio & Podcasts (use-cases)~~ - ✅ Created
+15. ~~How to Make a QR Code for a Link (blog)~~ - ✅ Created
+16. ~~QR Codes for Gyms & Fitness (industries)~~ - ✅ Created
+17. ~~QR Codes for Nonprofits & Donations (industries)~~ - ✅ Created
+18. ~~How to Create a QR Code for a Google Form (blog)~~ - ✅ Created
+19. ~~QR Codes for App Downloads (use-cases)~~ - ✅ Created
+20. ~~How to Print QR Codes: Size and Quality Guide (blog)~~ - ✅ Created
+
+**NEXT PRIORITIES:**
+21. QR Codes for Manufacturing (industries) - TIER 3
+22. How to Share WiFi Password with QR Code (blog) - TIER 2
+23. QR Code File Formats: PNG vs SVG vs PDF (technical) - TIER 4
+24. History of QR Codes: From Toyota to Today (qr-basics) - TIER 4
+
+**ALL REWRITES COMPLETE!**
+- ~~static-vs-dynamic-qr-codes.mdx~~ - ✅ Done
+- ~~qr-codes-for-video.mdx~~ - ✅ Done
+- ~~qr-codes-for-education.mdx~~ - ✅ Done
+- ~~qr-codes-for-retail.mdx~~ - ✅ Done
 
 ---
 
@@ -268,7 +297,7 @@ Map content to product features for conversion optimization:
 | Instagram QR | instagram qr code | ✅ Covered |
 | WhatsApp QR | whatsapp qr code | ✅ Covered |
 | Coupon QR | qr code coupon, discount qr code | ✅ Covered |
-| Links QR | linktree alternative, link in bio qr | 🔲 Needs article |
+| Links QR | linktree alternative, link in bio qr | ✅ Covered |
 | Dynamic QR | dynamic qr code, editable qr code | ✅ Covered |
 | Analytics | qr code tracking, qr code analytics | ✅ Covered |
 | Logo Upload | qr code with logo, custom qr code | ✅ Covered |
@@ -345,6 +374,10 @@ Common competitor content we should create:
 
 | Date | Changes |
 |------|---------|
+| 2026-01-21 | Added Nonprofits, App Downloads articles + Google Form QR, Print QR Codes blogs |
+| 2026-01-21 | Rewrote qr-codes-for-retail.mdx; Added Audio/Podcasts, Gyms/Fitness articles + QR Code for Link blog |
+| 2026-01-21 | Rewrote qr-codes-for-video.mdx and qr-codes-for-education.mdx to prose-first; Added QR Code Size Guide |
+| 2026-01-21 | Rewrote static-vs-dynamic-qr-codes.mdx to prose-first style; Added Links QR Code article |
 | 2026-01-20 | Added 3 more articles: QR Codes for Coupons, Bulk QR Code Generator, QR Code API Guide |
 | 2026-01-20 | Added 3 new articles: Free QR Code Generator Guide, Menu QR Code Generator, QR Code for Google Maps |
 | 2026-01-20 | Rewrote 3 articles (qr-codes-in-2025, what-is-a-qr-code, restaurant-menu-qr-codes) to prose-first style |

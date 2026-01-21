@@ -37,7 +37,9 @@ const PLANS: Record<Plan, PlanInfo> = {
       'SVG downloads',
       'Password protection',
       'Expiration & scheduling',
-      'Branded landing pages',
+      'Custom patterns & shapes',
+      'Gradient colors',
+      'Decorative frames',
     ],
   },
   business: {

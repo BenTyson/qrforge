@@ -1,6 +1,6 @@
 -- Admin Audit Log table for tracking admin actions
 CREATE TABLE IF NOT EXISTS admin_audit_log (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   admin_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
   admin_email TEXT NOT NULL,
   action_type TEXT NOT NULL,

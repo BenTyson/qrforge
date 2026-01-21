@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import crypto from 'crypto';
 import { SCAN_LIMITS } from '@/lib/stripe/config';
+import { sendScanLimitReachedEmail } from '@/lib/email';
 
 type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -55,9 +56,12 @@ export async function GET(
       *,
       profiles:user_id (
         id,
+        email,
+        full_name,
         subscription_tier,
         monthly_scan_count,
-        scan_count_reset_at
+        scan_count_reset_at,
+        scan_limit_notified_at
       )
     `)
     .eq('short_code', code)
@@ -129,9 +133,12 @@ export async function GET(
   // Check scan limits
   const profile = qrCode.profiles as {
     id: string;
+    email: string | null;
+    full_name: string | null;
     subscription_tier: 'free' | 'pro' | 'business';
     monthly_scan_count: number | null;
     scan_count_reset_at: string | null;
+    scan_limit_notified_at: string | null;
   } | null;
 
   if (profile) {
@@ -149,6 +156,29 @@ export async function GET(
 
     // If limit is not unlimited (-1) and exceeded, redirect to limit page
     if (limit !== -1 && effectiveCount >= limit) {
+      // Check if we need to send notification email (only once per month)
+      const notifiedAt = profile.scan_limit_notified_at ? new Date(profile.scan_limit_notified_at) : null;
+      const shouldNotify = !notifiedAt || notifiedAt < monthStart;
+
+      if (shouldNotify && profile.email && (tier === 'free' || tier === 'pro')) {
+        // Send email notification (async, don't block redirect)
+        sendScanLimitReachedEmail(
+          profile.email,
+          profile.full_name || undefined,
+          tier,
+          limit
+        ).catch(err => console.error('[Scan] Failed to send limit email:', err));
+
+        // Update notification timestamp (async, don't block redirect)
+        supabase
+          .from('profiles')
+          .update({ scan_limit_notified_at: new Date().toISOString() })
+          .eq('id', profile.id)
+          .then(({ error }) => {
+            if (error) console.error('[Scan] Failed to update notification timestamp:', error);
+          });
+      }
+
       return NextResponse.redirect(new URL('/limit-reached', baseUrl));
     }
   }

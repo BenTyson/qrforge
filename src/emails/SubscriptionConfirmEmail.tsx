@@ -18,6 +18,9 @@ const planFeatures = {
     'File Uploads (PDF, Images, Video, Audio)',
     'Landing Pages (Menu, Business, Links, Coupon, Social)',
     'Expiration Dates & Password Protection',
+    'Custom Patterns & Shapes',
+    'Gradient Colors',
+    'Decorative Frames',
   ],
   business: [
     'Unlimited Dynamic QR Codes',

@@ -36,6 +36,9 @@ export const PLANS = {
       'QR expiration dates',
       'Password protection',
       'Scheduled activation',
+      'Custom patterns & shapes',
+      'Gradient colors',
+      'Decorative frames',
     ],
   },
   business: {

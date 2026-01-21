@@ -111,7 +111,9 @@ export function PricingSection({ isAuthenticated = false, currentTier = 'free' }
               'SVG downloads',
               'Password protection',
               'Expiration & scheduling',
-              'Branded landing pages',
+              'Custom patterns & shapes',
+              'Gradient colors',
+              'Decorative frames',
             ].map((feature) => (
               <li key={feature} className="flex items-center gap-2 text-sm">
                 <CheckIcon />

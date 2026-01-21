@@ -71,6 +71,7 @@ export async function GET(
 
   if (error || !qrCode) {
     // Redirect to home page if QR code not found
+    console.error('[QR Route] QR code not found:', { code, error: error?.message });
     return NextResponse.redirect(new URL('/', baseUrl));
   }
 
@@ -195,6 +196,13 @@ export async function GET(
   }
 
   if (!destinationUrl) {
+    console.error('[QR Route] No destination URL:', {
+      code,
+      qrCodeId: qrCode.id,
+      destinationUrl: qrCode.destination_url,
+      content: qrCode.content,
+      contentType: qrCode.content_type
+    });
     return NextResponse.redirect(new URL('/', baseUrl));
   }
 

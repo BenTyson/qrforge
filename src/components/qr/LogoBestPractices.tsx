@@ -1,6 +1,7 @@
 'use client';
 
-import { Sparkles, Maximize2, Contrast, Square, Smartphone, FileText } from 'lucide-react';
+import { Sparkles, Maximize2, Contrast, Square, Smartphone, FileText, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 interface LogoBestPracticesProps {
@@ -64,6 +65,16 @@ export function LogoBestPractices({ className }: LogoBestPracticesProps) {
           readable even with the center obscured.
         </p>
       </div>
+
+      {/* Learn more link */}
+      <Link
+        href="/blog/qr-code-with-logo"
+        target="_blank"
+        className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-primary transition-colors mt-2"
+      >
+        Learn more about logos in QR codes
+        <ExternalLink className="w-3 h-3" />
+      </Link>
     </div>
   );
 }

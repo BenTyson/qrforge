@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
-> **Last Updated**: January 19, 2026
-> **Total Content**: 6 blog posts, 28 learn articles
+> **Last Updated**: January 20, 2026
+> **Total Content**: 10 blog posts, 31 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -95,6 +95,25 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 
 ---
 
+## PRIORITY 0: Content Rewrites (Do First)
+
+These existing articles have severe bullet-point bloat and need rewriting to prose-first style. They target high-value keywords and create poor first impressions.
+
+| Article | Type | Keyword Value | Issue | Status |
+|---------|------|---------------|-------|--------|
+| ~~qr-codes-in-2025.mdx~~ | Blog | Featured/Homepage | Rewritten to prose-first | ✅ Done |
+| ~~what-is-a-qr-code.mdx~~ | Learn | Foundational (huge traffic) | Rewritten to prose-first | ✅ Done |
+| ~~restaurant-menu-qr-codes.mdx~~ | Learn | 30K+ monthly searches | Rewritten to prose-first | ✅ Done |
+
+### Tier 2 Rewrites (Do Soon)
+| Article | Type | Issue |
+|---------|------|-------|
+| static-vs-dynamic-qr-codes.mdx | Learn | Advantages/Disadvantages are all bullets |
+| qr-codes-for-video.mdx | Learn | Every use case is bullets |
+| qr-codes-for-retail.mdx | Learn | Extreme bullet bloat |
+
+---
+
 ## Planned Content - SEO Prioritized
 
 ### TIER 1: High-Value Keywords (Create First)
@@ -105,17 +124,17 @@ These target high-volume, high-intent keywords directly aligned with QRWolf feat
 | Title | Primary Keyword | Est. Volume | Intent |
 |-------|-----------------|-------------|--------|
 | ~~vCard QR Codes: Create Digital Business Cards~~ | vcard qr code | 10K+ | ✅ Created |
-| **Free QR Code Generator: What to Look For** | free qr code generator | 100K+ | Transactional |
+| ~~Free QR Code Generator: What to Look For~~ | free qr code generator | 100K+ | ✅ Created |
 | ~~Dynamic QR Codes: The Complete Guide~~ | dynamic qr code | 20K+ | ✅ Created |
-| **QR Code with Logo: How to Add Your Brand** | qr code with logo | 15K+ | Transactional |
-| **Menu QR Code Generator: Restaurant Guide** | menu qr code | 30K+ | Transactional |
+| ~~QR Code with Logo: How to Add Your Brand~~ | qr code with logo | 15K+ | ✅ Created |
+| ~~Menu QR Code Generator: Restaurant Guide~~ | menu qr code | 30K+ | ✅ Created |
 
 #### Learn Articles
 | Title | Category | Primary Keyword | Est. Volume |
 |-------|----------|-----------------|-------------|
 | ~~How to Create a QR Code (Step-by-Step)~~ | qr-basics | how to create qr code | ✅ Created |
 | ~~QR Code for PDF: Share Documents Easily~~ | use-cases | qr code for pdf | ✅ Created |
-| **QR Code for Google Maps Location** | use-cases | qr code google maps | 8K+ |
+| ~~QR Code for Google Maps Location~~ | use-cases | qr code google maps | ✅ Created |
 | ~~Instagram QR Code: Grow Your Following~~ | use-cases | instagram qr code | ✅ Created |
 | ~~WhatsApp QR Code: Direct Chat Links~~ | use-cases | whatsapp qr code | ✅ Created |
 
@@ -204,13 +223,33 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 9. How to Fix QR Code Not Scanning (best-practices) - TIER 2
 10. QR Codes for Education (industries) - TIER 3
 
-### Updated Priority (Next 6 Pieces)
-1. Free QR Code Generator Guide (blog) - TIER 1
-2. QR Code with Logo: How to Add Your Brand (blog) - TIER 1
-3. Menu QR Code Generator: Restaurant Guide (blog) - TIER 1
-4. QR Code for Google Maps Location (use-cases) - TIER 1
-5. How to Test if Your QR Code Works (best-practices) - TIER 2
-6. QR Codes for Coupons & Discounts (use-cases) - TIER 3
+### Updated Priority (Next Actions)
+
+**REWRITES COMPLETED:**
+1. ~~Rewrite qr-codes-in-2025.mdx~~ - ✅ Done
+2. ~~Rewrite what-is-a-qr-code.mdx~~ - ✅ Done
+3. ~~Rewrite restaurant-menu-qr-codes.mdx~~ - ✅ Done
+
+**NEW CONTENT:**
+4. ~~Free QR Code Generator Guide (blog)~~ - ✅ Created
+5. ~~QR Code with Logo: How to Add Your Brand (blog)~~ - ✅ Created
+6. ~~Menu QR Code Generator: Restaurant Guide (blog)~~ - ✅ Created
+7. ~~QR Code for Google Maps Location (use-cases)~~ - ✅ Created
+
+**COMPLETED:**
+8. ~~QR Codes for Coupons & Discounts (use-cases)~~ - ✅ Created
+9. ~~Bulk QR Code Generator Guide (blog)~~ - ✅ Created
+10. ~~QR Code API Documentation (technical)~~ - ✅ Created
+
+**NEXT UP:**
+11. Links QR Code / Linktree Alternative (use-cases) - TIER 2
+12. QR Codes for Education (industries) - TIER 3
+13. QR Code Size Calculator / Guidelines (best-practices) - TIER 2
+
+**TIER 2 REWRITES (when time permits):**
+- static-vs-dynamic-qr-codes.mdx
+- qr-codes-for-video.mdx
+- qr-codes-for-retail.mdx
 
 ---
 
@@ -228,13 +267,13 @@ Map content to product features for conversion optimization:
 | Video QR | qr code for video, youtube qr code | ✅ Covered |
 | Instagram QR | instagram qr code | ✅ Covered |
 | WhatsApp QR | whatsapp qr code | ✅ Covered |
-| Coupon QR | qr code coupon, discount qr code | 🔲 Needs article |
+| Coupon QR | qr code coupon, discount qr code | ✅ Covered |
 | Links QR | linktree alternative, link in bio qr | 🔲 Needs article |
 | Dynamic QR | dynamic qr code, editable qr code | ✅ Covered |
 | Analytics | qr code tracking, qr code analytics | ✅ Covered |
-| Logo Upload | qr code with logo, custom qr code | 🔲 Needs blog |
-| Bulk QR | bulk qr code generator | 🔲 Needs blog |
-| API | qr code api | 🔲 Needs article |
+| Logo Upload | qr code with logo, custom qr code | ✅ Covered |
+| Bulk QR | bulk qr code generator | ✅ Covered |
+| API | qr code api | ✅ Covered |
 
 ---
 
@@ -306,6 +345,10 @@ Common competitor content we should create:
 
 | Date | Changes |
 |------|---------|
+| 2026-01-20 | Added 3 more articles: QR Codes for Coupons, Bulk QR Code Generator, QR Code API Guide |
+| 2026-01-20 | Added 3 new articles: Free QR Code Generator Guide, Menu QR Code Generator, QR Code for Google Maps |
+| 2026-01-20 | Rewrote 3 articles (qr-codes-in-2025, what-is-a-qr-code, restaurant-menu-qr-codes) to prose-first style |
+| 2026-01-20 | Added blog: QR Code with Logo |
 | 2026-01-19 | Added 5 learn articles: QR Code for PDF, QR Code Not Scanning, Hotels & Hospitality, Video Marketing, QR Code Security |
 | 2026-01-17 | Added 6 new articles: vCard blog, Dynamic QR blog, How to Create, How to Scan, Instagram QR, WhatsApp QR |
 | 2026-01-17 | Complete SEO overhaul with tiered priorities, keyword mapping, and volume estimates |

@@ -23,14 +23,14 @@ Generate MDX content for the blog and learn sections of QRWolf.
 
 ### Blog Posts
 
-Location: `content/blog/2025/[slug].mdx`
+Location: `content/blog/2026/[slug].mdx`
 
 **Frontmatter Schema:**
 ```yaml
 ---
 title: "Title Here" # max 100 chars
 description: "SEO description" # max 300 chars
-date: 2025-01-15 # ISO date
+date: 2026-01-20 # ISO date
 author: "QRWolf Team"
 category: "guides" | "news" | "tutorials" | "case-studies"
 tags: ["tag1", "tag2"] # relevant keywords
@@ -70,36 +70,129 @@ draft: false
 - `best-practices` - Design and implementation tips
 - `technical` - Developer-focused content
 
+---
+
+## Writing Quality: The #1 Priority
+
+**Write articles people actually want to read, not outlines dressed as articles.**
+
+The biggest mistake is treating articles as formatted lists of facts. Readers came for insight, explanation, and understanding - not bullet points they could have gotten from a Google snippet.
+
+### Prose First, Always
+
+Every section should be primarily **flowing paragraphs** that develop ideas, provide context, and guide the reader through the topic. Bullet points and tables are occasional supplements, not the main content vehicle.
+
+**BAD - Outline masquerading as an article:**
+```markdown
+## Benefits of Dynamic QR Codes
+
+Dynamic QR codes offer several advantages:
+
+- **Editable destinations** - Change where the code points without reprinting
+- **Analytics tracking** - See who scanned, when, and where
+- **Expiration dates** - Set codes to stop working after a campaign ends
+- **A/B testing** - Test different landing pages with the same printed code
+- **Error recovery** - Fix broken links without reprinting materials
+```
+
+**GOOD - Actual writing that explains and engages:**
+```markdown
+## Why Dynamic QR Codes Change Everything
+
+Imagine printing 10,000 product brochures, only to discover a typo in your landing page URL. With a static QR code, you'd face an impossible choice: live with the error or reprint everything. Dynamic QR codes eliminate this nightmare entirely.
+
+The "dynamic" in dynamic QR codes refers to a simple but powerful concept: the code itself points to an intermediate URL that you control. When someone scans the code, they hit your redirect server first, which then sends them to whatever destination you've configured. Change the destination anytime, and every code you've ever printed automatically points to the new location.
+
+This redirect layer also enables something static codes could never offer: analytics. Because every scan passes through your server, you can track exactly how many people scanned, when they did it, what device they used, and even their approximate location. For marketers running print campaigns, this transforms QR codes from a black box ("did anyone scan this?") into a measurable channel with real data.
+
+The implications extend further. You can set expiration dates so promotional codes stop working when a campaign ends. You can A/B test different landing pages without printing different codes. You can recover from mistakes - broken links, outdated content, or strategic pivots - without touching the physical materials already in the world.
+```
+
+Notice the difference: the good version tells a story, explains *why* things matter, uses concrete examples, and guides the reader through the concepts. The bad version just lists facts.
+
+### When Lists ARE Appropriate
+
+Lists serve specific purposes. Use them for:
+
+1. **Step-by-step instructions** where sequence matters and each step is a discrete action
+2. **Quick reference summaries** at the end of a section (after you've explained things in prose)
+3. **Feature comparisons** in tables where parallel structure aids scanning
+4. **Scannable overviews** when readers genuinely need to quickly find one item
+
+Even then, introduce lists with context and follow them with explanation when needed.
+
+**Example of appropriate list use:**
+```markdown
+Creating your first dynamic QR code takes just a few steps. Once you understand the concepts above, the process is straightforward:
+
+1. Sign up for a free QRWolf account
+2. Click "Create QR Code" and select your content type
+3. Enter your destination URL
+4. Customize colors and add your logo
+5. Download in PNG or SVG format
+
+That's it - your code is live and trackable immediately. The dashboard will show scan analytics as they come in.
+```
+
+The list here makes sense because it's genuinely a sequential process, and the preceding prose has already explained the concepts.
+
+### Writing Techniques to Apply
+
+**Explain the "why" behind the "what."** Don't just state that something exists - explain why it matters, what problem it solves, or what it enables.
+
+**Use concrete examples.** Abstract concepts become clear through specific scenarios. "A coffee shop could..." or "Imagine printing 10,000 brochures..." makes ideas tangible.
+
+**Create narrative flow.** Each paragraph should connect to the next. Use transitions. Build from simple concepts to complex ones. Guide the reader.
+
+**Vary sentence structure.** Mix short punchy sentences with longer explanatory ones. Monotonous rhythm puts readers to sleep.
+
+**Write with voice.** You're not a textbook. Use "you" and "your." Be direct. Have opinions. Sound like a knowledgeable person explaining something to a colleague.
+
+**Cut ruthlessly.** If a sentence doesn't add understanding, remove it. If a section rehashes what you've already said, consolidate. Respect the reader's time.
+
+### Section Structure
+
+Each major section (H2) should follow this pattern:
+
+1. **Opening paragraph** - Introduce the concept, establish why it matters
+2. **Explanation paragraphs** - Develop the idea with examples and context (2-4 paragraphs typically)
+3. **Optional supporting element** - A list, table, or callout if it genuinely helps (not required)
+4. **Transition** - Connect to the next section or reinforce the key takeaway
+
+Subsections (H3) can be shorter but should still lead with prose, not bullet points.
+
+---
+
 ## Content Guidelines
 
-### Structure
+### Document Structure
 1. Start with an engaging intro paragraph (no H1 - title is from frontmatter)
 2. Use H2 (`##`) for main sections
 3. Use H3 (`###`) for subsections
 4. Include 4-8 main sections depending on topic depth
 5. End with a conclusion and CTA
 
-### Formatting Patterns
-- Use `**bold**` for key terms on first mention
-- Use bullet lists for features/benefits
-- Use numbered lists for steps/processes
-- Use tables for comparisons
-- Include code blocks for technical content
+### Formatting Elements
 
-### Callout Component
-Use for tips, warnings, and important notes:
+**Bold text:** Use for key terms on first introduction, not for every other phrase.
+
+**Tables:** Good for structured comparisons where readers need to see parallel information. Always accompany with prose explanation.
+
+**Code blocks:** For technical content where readers need exact syntax.
+
+**Callout Component:** Use sparingly (1-3 per article) for genuinely important asides:
 
 ```mdx
 <Callout type="info" title="Did You Know?">
-Interesting fact or context here.
+Interesting fact that adds context but would interrupt the main narrative.
 </Callout>
 
 <Callout type="tip" title="Pro Tip">
-Actionable advice here.
+Actionable advice that deserves emphasis.
 </Callout>
 
 <Callout type="warning" title="Important">
-Critical information here.
+Critical information readers must not miss.
 </Callout>
 ```
 
@@ -111,68 +204,35 @@ Types: `info`, `tip`, `warning`, `error`, `note`
 - Link to blog posts: `[post title](/blog/slug-here)`
 
 ### CTAs
-Include natural calls-to-action:
+Include natural calls-to-action woven into the prose:
 - Near the end: "Ready to create your first QR code? [Get started for free](/signup) with QRWolf."
 - After explaining a Pro feature: "This feature is available on [Pro and Business plans](/plans)."
 
-## SEO Keywords to Target
+---
 
-Incorporate these naturally based on topic relevance:
+## SEO Keywords
 
-**Primary:**
-- qr code generator, free qr code, qr code maker
-- dynamic qr code, qr code tracking, qr code analytics
+Incorporate these naturally - they should appear where they fit the prose, not shoehorned in:
 
-**By Type:**
-- wifi qr code, menu qr code, vcard qr code
-- restaurant qr code, business qr code, digital business card qr
-- whatsapp qr code, instagram qr code, facebook qr code
-- pdf qr code, video qr code, linktree alternative qr
-- coupon qr code, social media qr code
+**Primary:** qr code generator, free qr code, qr code maker, dynamic qr code, qr code tracking, qr code analytics
 
-**Educational:**
-- what is a qr code, how qr codes work, qr code history
-- static vs dynamic qr code, qr code best practices
-- qr code size requirements, qr code error correction
+**By Type:** wifi qr code, menu qr code, vcard qr code, restaurant qr code, business qr code, digital business card qr, whatsapp qr code, instagram qr code, pdf qr code, video qr code, coupon qr code
 
-## QRWolf Features to Reference
+**Educational:** what is a qr code, how qr codes work, static vs dynamic qr code, qr code best practices, qr code size requirements
 
-When relevant, mention these platform capabilities:
+---
 
-**Free Tier:**
-- 11 QR types (URL, Text, WiFi, vCard, Email, Phone, SMS, WhatsApp, Facebook, Instagram, Apps)
-- Basic customization (colors, patterns)
-- PNG/SVG download
+## QRWolf Features Reference
 
-**Pro Tier ($9/mo):**
-- All 16 QR types including file uploads and landing pages
-- Dynamic QR codes (50 limit)
-- Full analytics dashboard
-- Logo upload
-- Expiration dates
-- Password protection
-- Scan tracking with geolocation
+When relevant, mention these capabilities:
 
-**Business Tier ($29/mo):**
-- Unlimited dynamic QR codes
-- Bulk generation via CSV
-- REST API access (10k requests/mo)
-- Team members (up to 3)
+**Free Tier:** 11 QR types (URL, Text, WiFi, vCard, Email, Phone, SMS, WhatsApp, Facebook, Instagram, Apps), basic customization, PNG/SVG download
 
-## Existing Content Reference
+**Pro Tier ($9/mo):** All 16 QR types, dynamic QR codes (50), full analytics, logo upload, expiration dates, password protection, scan tracking
 
-Check existing articles before creating to avoid duplication and set up proper `relatedSlugs`:
+**Business Tier ($29/mo):** Unlimited dynamic QRs, bulk generation, REST API (10k requests/mo), team members (up to 3)
 
-**Blog:**
-- `qr-codes-in-2025` - 2025 trends overview
-
-**Learn - qr-basics:**
-- `what-is-a-qr-code` - Beginner introduction
-- `static-vs-dynamic-qr-codes` - Comparison article
-
-**Learn - use-cases:**
-- `restaurant-menu-qr-codes` - Restaurant menus
-- `business-card-qr-codes` - Digital business cards
+---
 
 ## Workflow
 
@@ -180,19 +240,27 @@ Check existing articles before creating to avoid duplication and set up proper `
 2. Choose appropriate category
 3. Generate slug from title (lowercase, hyphens, no special chars)
 4. Create file at correct path
-5. Write content following guidelines above
-6. Suggest related articles for cross-linking
-7. Build to verify: `npm run build`
+5. **Write quality prose first** - get the ideas and explanations right
+6. Add formatting elements (lists, tables, callouts) only where they enhance understanding
+7. Review for bullet-point overuse - convert to prose where needed
+8. Add internal links and CTAs naturally
+9. Build to verify: `npm run build`
+
+---
 
 ## Quality Checklist
 
 Before finalizing content:
+- [ ] **Prose-first check**: Is every section primarily flowing paragraphs? (Most important!)
+- [ ] **List audit**: Are bullet points used sparingly and only where appropriate?
+- [ ] **Explanation check**: Does the article explain *why*, not just *what*?
+- [ ] **Example check**: Are abstract concepts illustrated with concrete scenarios?
+- [ ] **Flow check**: Do sections connect and build on each other?
 - [ ] Title under 100 characters
 - [ ] Description under 300 characters, includes primary keyword
 - [ ] Proper frontmatter with all required fields
 - [ ] 800-1500 words for blog, 600-1200 for learn
-- [ ] At least one Callout component
+- [ ] 1-3 Callout components (not more)
 - [ ] Internal links to related content
 - [ ] CTA to /signup or /plans
-- [ ] No duplicate content with existing articles
 - [ ] relatedSlugs reference actual existing articles

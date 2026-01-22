@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-// contentToString can be imported from '@/lib/qr/generator' if needed
+import { normalizeContentUrls } from '@/lib/qr/generator';
 import type {
   QRContent,
   QRContentType,
@@ -409,12 +409,15 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
       // All saved QR codes are dynamic (they have short_codes for tracking)
       // destination_url intentionally null - redirect route constructs from content
 
+      // Normalize URLs in content (adds https:// to URLs without protocol)
+      const normalizedContent = normalizeContentUrls(content);
+
       const insertData: Record<string, unknown> = {
         user_id: userId,
         name: qrName.trim() || `${selectedType} QR Code`,
         type: 'dynamic', // All saved QR codes are dynamic (they have short_codes for tracking)
         content_type: selectedType,
-        content: content as unknown as Record<string, unknown>,
+        content: normalizedContent as unknown as Record<string, unknown>,
         destination_url: null, // Redirect route constructs destination from content
         short_code: newShortCode,
         // Save entire style object to preserve all properties (gradient, patterns, frame, etc.)

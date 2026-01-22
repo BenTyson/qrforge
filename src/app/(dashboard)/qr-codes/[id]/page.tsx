@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { getAppUrl } from '@/lib/utils';
+import { normalizeContentUrls } from '@/lib/qr/generator';
 
 // Form components for new QR types
 import { MenuForm } from '@/components/qr/forms/MenuForm';
@@ -185,9 +186,9 @@ export default function EditQRCodePage() {
         },
       };
 
-      // Update content for landing page types
+      // Update content for landing page types (normalize URLs before saving)
       if (DYNAMIC_REQUIRED_TYPES.includes(contentType) && content) {
-        updateData.content = content;
+        updateData.content = normalizeContentUrls(content);
       }
 
       // Dynamic QR settings

@@ -31,192 +31,8 @@ This document tracks planned features in priority order. Work through sequential
 
 ## NEXT UP
 
-### 1. QR Code Size Calculator Tool
-**Tier**: QUICK WIN | **Priority**: 1 of 25 | **Effort**: ~2-4 hours
-
-**What**: Standalone tool page that calculates optimal QR code print size based on scanning distance.
-
-**Why build this**:
-- Ranks for "qr code size calculator" (tool-intent keyword)
-- Free tools attract backlinks naturally
-- Zero backend complexity - pure frontend
-- Supports existing content: `qr-code-size-guide`, `how-to-print-qr-codes`
-
-**Implementation**:
-```
-Route: /tools/size-calculator
-```
-
-**UI Components**:
-- Input: Expected scanning distance (slider or input, feet/meters toggle)
-- Input: Error correction level (L/M/Q/H dropdown)
-- Output: Minimum print size (inches/cm)
-- Output: Recommended size for reliability
-- Visual: Size comparison graphic
-- CTA: "Create a QR code at the perfect size" → /qr-codes/new
-
-**Formula**:
-```
-Minimum size = Distance / 10
-Recommended size = Distance / 7
-(Adjust slightly based on error correction level)
-```
-
-**Files to create**:
-- `src/app/(marketing)/tools/size-calculator/page.tsx`
-- `src/components/tools/SizeCalculator.tsx`
-
-**Content to publish after**:
-- Update `qr-code-size-guide` with link to calculator
-- Update `how-to-print-qr-codes` with link to calculator
-
-**Acceptance criteria**:
-- [ ] Calculator works with distance input
-- [ ] Shows both minimum and recommended sizes
-- [ ] Unit toggle (inches/cm, feet/meters)
-- [ ] Mobile responsive
-- [ ] CTA to create QR code
-- [ ] SEO meta tags optimized for "qr code size calculator"
-
----
-
-## PLANNED FEATURES (Priority Order)
-
-### 2. QR Code Contrast Checker Tool
-**Tier**: QUICK WIN | **Priority**: 2 of 25 | **Effort**: ~2-4 hours
-
-**What**: Tool that checks if QR code colors have sufficient contrast for reliable scanning.
-
-**Why build this**:
-- Ranks for "qr code color contrast" queries
-- Prevents user frustration (codes that don't scan)
-- Supports content: `qr-code-design-best-practices`, planned `qr-code-colors-guide`
-
-**Implementation**:
-```
-Route: /tools/contrast-checker
-```
-
-**UI Components**:
-- Color picker: Foreground (dark modules)
-- Color picker: Background
-- Output: Contrast ratio (WCAG calculation)
-- Output: Pass/Fail indicator with explanation
-- Visual: Live QR code preview with selected colors
-- Suggestions: "Try these high-contrast combinations"
-- CTA: "Create QR code with these colors" → /qr-codes/new?fg=XXX&bg=XXX
-
-**Formula**:
-```javascript
-// WCAG contrast ratio
-const luminance = (r, g, b) => {
-  const [rs, gs, bs] = [r, g, b].map(c => {
-    c = c / 255;
-    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-  });
-  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
-};
-const contrast = (l1, l2) => (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
-// QR codes need at least 4:1 contrast ratio (ideally 7:1+)
-```
-
-**Files to create**:
-- `src/app/(marketing)/tools/contrast-checker/page.tsx`
-- `src/components/tools/ContrastChecker.tsx`
-
-**Content to publish after**:
-- New article: "QR Code Colors: Contrast and Readability Guide"
-
-**Acceptance criteria**:
-- [ ] Two color pickers (foreground/background)
-- [ ] Real-time contrast ratio calculation
-- [ ] Clear pass/fail indicator
-- [ ] Live QR preview with colors
-- [ ] Preset high-contrast combinations
-- [ ] Deep link to QR creator with colors
-
----
-
-### 3. QR Code Decoder/Tester Tool
-**Tier**: QUICK WIN | **Priority**: 3 of 25 | **Effort**: ~4-6 hours
-
-**What**: Upload a QR code image and see what it contains. Verify it works before printing.
-
-**Why build this**:
-- Ranks for "qr code reader online", "decode qr code", "test qr code"
-- High utility - users want to verify codes work
-- Supports content: `how-to-test-qr-code` (planned)
-
-**Implementation**:
-```
-Route: /tools/qr-reader
-```
-
-**UI Components**:
-- File upload zone (drag & drop)
-- Camera capture option (mobile)
-- Output: Decoded content with type detection
-- Output: QR code metadata (version, error correction, size)
-- Validation: "This QR code is valid and scannable"
-- Warning: Flag potential issues (low resolution, poor contrast)
-- CTA: "Create a similar QR code" → /qr-codes/new
-
-**Technical**:
-- Use `jsQR` library for decoding
-- Canvas-based image processing
-- Mobile camera via `navigator.mediaDevices`
-
-**Files to create**:
-- `src/app/(marketing)/tools/qr-reader/page.tsx`
-- `src/components/tools/QRDecoder.tsx`
-
-**Content to publish after**:
-- New article: "How to Test if Your QR Code Works"
-
-**Acceptance criteria**:
-- [ ] File upload with drag & drop
-- [ ] Camera capture on mobile
-- [ ] Decodes content and shows type
-- [ ] Shows QR metadata (version, EC level)
-- [ ] Quality assessment (resolution, contrast)
-- [ ] Works offline (client-side only)
-
----
-
-### 4. Tools Hub Page
-**Tier**: QUICK WIN | **Priority**: 4 of 25 | **Effort**: ~1-2 hours
-
-**What**: Landing page listing all free tools with descriptions.
-
-**Why build this**:
-- SEO hub page for tool-related queries
-- Internal linking structure
-- Captures "free qr code tools" searches
-
-**Implementation**:
-```
-Route: /tools
-```
-
-**UI Components**:
-- Hero: "Free QR Code Tools"
-- Tool cards grid (size calculator, contrast checker, decoder)
-- Each card: Icon, title, description, "Use Tool" button
-- CTA section: "Need more? Create unlimited QR codes free"
-
-**Files to create**:
-- `src/app/(marketing)/tools/page.tsx`
-
-**Acceptance criteria**:
-- [ ] Lists all available tools
-- [ ] Consistent card design
-- [ ] SEO optimized
-- [ ] Links to QR creator
-
----
-
-### 5. Google Reviews QR Code Type
-**Tier**: STANDARD | **Priority**: 5 of 25 | **Effort**: ~1-2 days
+### 1. Google Reviews QR Code Type
+**Tier**: STANDARD | **Priority**: 1 of 21 | **Effort**: ~1-2 days
 
 **What**: Dedicated QR type that generates a direct link to leave a Google review.
 
@@ -935,7 +751,10 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
-| *(None yet)* | | |
+| QR Code Reader Tool | 2026-01-21 | Route: `/tools/qr-reader`. Drag-and-drop image upload, camera support on mobile, jsQR decoding, content type detection (URL, email, phone, WiFi, vCard), copy to clipboard, action buttons. |
+| QR Code Contrast Checker Tool | 2026-01-21 | Route: `/tools/contrast-checker`. Dual color pickers, WCAG contrast ratio calculation, pass/fail indicator with scale, live QR preview, preset color combinations, deep link to QR creator with colors. |
+| Tools Hub Page | 2026-01-21 | Route: `/tools`. Lists all free tools with cards. Added "Tools" link to PublicNav and Footer. |
+| QR Code Size Calculator Tool | 2026-01-21 | Route: `/tools/size-calculator`. Interactive calculator with distance slider, error correction selection, unit toggles (feet/meters, inches/cm/feet), minimum/recommended size cards, size comparison visual, and CTA to create QR code. |
 
 ---
 
@@ -991,4 +810,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-21 | Completed Contrast Checker and QR Reader tools - Tools section complete |
+| 2026-01-21 | Completed Tools Hub Page (Feature #4), added Tools to nav |
+| 2026-01-21 | Completed QR Code Size Calculator Tool (Feature #1) |
 | 2026-01-21 | Initial roadmap created with 25 prioritized features |

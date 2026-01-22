@@ -13,6 +13,7 @@ interface PublicNavProps {
 const NAV_LINKS = [
   { label: 'Features', href: '#features' },
   { label: 'Pricing', href: '#pricing' },
+  { label: 'Tools', href: '/tools' },
   { label: 'Learn', href: '/learn' },
 ];
 

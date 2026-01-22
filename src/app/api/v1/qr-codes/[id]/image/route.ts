@@ -77,17 +77,19 @@ export async function GET(
   }
 
   // Build the content object
+  // IMPORTANT: If QR has a short_code, always use the redirect URL
+  // This ensures scans are tracked regardless of how the QR was originally saved
   let content: QRContent;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
 
-  if (qrCode.type === 'dynamic' && qrCode.short_code) {
-    // Dynamic QR codes always point to the redirect URL
+  if (qrCode.short_code) {
+    // Any QR with a short_code should point to the redirect URL for tracking
     content = {
       type: 'url',
       url: `${baseUrl}/r/${qrCode.short_code}`,
     };
   } else {
-    // Static QR codes use the stored content
+    // QR codes without short_code use stored content (edge case)
     content = qrCode.content as QRContent;
   }
 

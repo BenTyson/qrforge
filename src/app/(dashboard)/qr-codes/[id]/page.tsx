@@ -247,10 +247,10 @@ export default function EditQRCodePage() {
   const handleDownloadPNG = async () => {
     if (!content) return;
 
-    // For dynamic QR codes, use the redirect URL for tracking
-    // For static QR codes, use the original content
+    // IMPORTANT: If QR has a short_code, always use the redirect URL
+    // This ensures scans are tracked regardless of how the QR was originally saved
     let qrContent: QRContent = content;
-    if (isDynamic && shortCode) {
+    if (shortCode) {
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
       qrContent = { type: 'url', url: `${appUrl}/r/${shortCode}` };
     }
@@ -262,10 +262,10 @@ export default function EditQRCodePage() {
   const handleDownloadSVG = async () => {
     if (!content) return;
 
-    // For dynamic QR codes, use the redirect URL for tracking
-    // For static QR codes, use the original content
+    // IMPORTANT: If QR has a short_code, always use the redirect URL
+    // This ensures scans are tracked regardless of how the QR was originally saved
     let qrContent: QRContent = content;
-    if (isDynamic && shortCode) {
+    if (shortCode) {
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
       qrContent = { type: 'url', url: `${appUrl}/r/${shortCode}` };
     }

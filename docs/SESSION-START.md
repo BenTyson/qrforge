@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 22, 2026 (SEO Content Expansion)
+> **Last Updated**: January 22, 2026 (Critical URL Handling Fixes)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -642,6 +642,20 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - Added "1 rewrite per batch" rule to content guidelines
   - Updated BULLET-BLOAT-AUDIT.md (10 SEVERE articles remaining)
   - Total content now: 28 blog posts, 77 learn articles (105 total)
+- **Critical URL Handling Fixes** (January 22, 2026):
+  - **Root cause**: URLs without protocols (e.g., `lumengrave.com`) caused QR scans to trigger file download prompts instead of redirecting
+  - **Fix 1 - getAppUrl() helper** (`src/lib/utils.ts`):
+    - Validates `NEXT_PUBLIC_APP_URL` starts with `http://` or `https://`
+    - Falls back to `https://qrwolf.com` if misconfigured
+    - Prevents QR codes from encoding invalid URLs like `/r/code` without domain
+  - **Fix 2 - Redirect route URL normalization** (`src/app/r/[code]/route.ts`):
+    - Adds `https://` to destination URLs missing a protocol
+    - Fixes existing QR codes that stored URLs without protocols
+  - **Fix 3 - Save-time URL normalization** (`src/lib/qr/generator.ts`):
+    - `normalizeContentUrls()` function normalizes URLs before saving to database
+    - Users now see `https://example.com` in dashboard instead of just `example.com`
+    - Handles all QR types with URL fields: url, facebook, apps, pdf, video, mp3, business, links, social
+  - Updated 6 files: utils.ts, route.ts, generator.ts, QRCodeCard.tsx, QRStudioPreview.tsx, QRStudio.tsx, useQRStudioState.ts, edit page
 
 ### Planned Enhancements
 - Webhooks for scan notifications

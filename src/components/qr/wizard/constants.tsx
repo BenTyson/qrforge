@@ -116,16 +116,16 @@ export const TYPE_CATEGORIES: TypeCategory[] = [
   },
 ];
 
-// Color presets for style step
+// Color presets for style step - all have 7:1+ contrast ratio (Excellent)
 export const COLOR_PRESETS = [
-  { name: 'Classic', fg: '#000000', bg: '#ffffff' },
-  { name: 'Inverted', fg: '#ffffff', bg: '#000000' },
-  { name: 'Brand', fg: '#14b8a6', bg: '#0f172a' },
-  { name: 'Ocean', fg: '#0ea5e9', bg: '#0c4a6e' },
-  { name: 'Forest', fg: '#22c55e', bg: '#14532d' },
-  { name: 'Sunset', fg: '#f97316', bg: '#431407' },
-  { name: 'Berry', fg: '#ec4899', bg: '#500724' },
-  { name: 'Royal', fg: '#a855f7', bg: '#3b0764' },
+  { name: 'Classic', fg: '#000000', bg: '#ffffff' },    // 21:1 - Black on white
+  { name: 'Inverted', fg: '#ffffff', bg: '#000000' },   // 21:1 - White on black
+  { name: 'Navy', fg: '#1e3a5f', bg: '#ffffff' },       // 10:1 - Dark navy on white
+  { name: 'Forest', fg: '#14532d', bg: '#f0fdf4' },     // 12:1 - Dark green on mint
+  { name: 'Ocean', fg: '#0c4a6e', bg: '#e0f2fe' },      // 9:1 - Dark blue on sky
+  { name: 'Sunset', fg: '#7c2d12', bg: '#fff7ed' },     // 10:1 - Brown on cream
+  { name: 'Berry', fg: '#701a45', bg: '#fce7f3' },      // 9:1 - Magenta on pink
+  { name: 'Royal', fg: '#4c1d95', bg: '#f3e8ff' },      // 10:1 - Purple on lavender
 ];
 
 // Types that have landing page previews

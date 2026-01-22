@@ -176,12 +176,6 @@ export default async function Home() {
 
       {/* QR Generator Section */}
       <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto text-center mb-8">
-          <Badge className="bg-primary/10 text-primary border-primary/20">
-            Free to use, no signup required
-          </Badge>
-        </div>
-
         {/* QR Generator */}
         <div className="max-w-7xl mx-auto">
           <QRGenerator />
@@ -1634,7 +1628,7 @@ const FAQS = [
   },
   {
     question: 'Do I need an account to create QR codes?',
-    answer: 'No! You can try the QR generator without signing up. A free account is required to download and save your QR codes, and gives you access to all 16 QR types.',
+    answer: 'You can preview QR codes without signing up, but a free account is required to download and save them. Creating an account gives you access to all 16 QR types, scan tracking, and customization options.',
   },
   {
     question: 'What file formats can I download?',

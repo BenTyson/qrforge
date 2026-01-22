@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 21, 2026 (Content Quality Audit: 97 articles assessed, skill guidelines strengthened)
+> **Last Updated**: January 21, 2026 (Free QR Code Tools: Size Calculator, Contrast Checker, QR Reader)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -571,6 +571,31 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
     - "Instant Fail Patterns" showing what NOT to do
     - Mandatory pre-submission bullet audit checklist
   - Total content: 28 blog posts, 69 learn articles (97 total)
+- **Free QR Code Tools** (January 21, 2026):
+  - Tools Hub page at `/tools` with navigation integration (added to PublicNav and Footer)
+  - **Size Calculator** (`/tools/size-calculator`):
+    - Distance slider (1-100 ft or 1-30 m) with number input
+    - Error correction level selector (L/M/Q/H)
+    - Output unit toggle (inches/cm/feet)
+    - Minimum and recommended size cards
+    - Size comparison visual (postage stamp to billboard)
+    - CTA to create QR code
+  - **Contrast Checker** (`/tools/contrast-checker`):
+    - Dual color pickers (foreground/background)
+    - WCAG 2.1 contrast ratio calculation
+    - Pass/fail indicator with 4-tier scale (Excellent/Good/Poor/Fail)
+    - Live QR code preview with selected colors
+    - 6 preset high-contrast combinations
+    - Deep link to QR creator with colors (`?fg=XXX&bg=XXX`)
+  - **QR Code Reader** (`/tools/qr-reader`):
+    - Drag-and-drop image upload with paste support
+    - Camera capture on mobile devices
+    - jsQR library for client-side decoding
+    - Content type detection (URL, email, phone, WiFi, vCard, SMS)
+    - WiFi network detail parsing
+    - Copy to clipboard and action buttons
+  - All tools follow V2 design: glassmorphism cards, floating orbs, staggered animations
+  - Homepage messaging cleanup: removed confusing "no signup required" badge
 
 ### Planned Enhancements
 - Webhooks for scan notifications
@@ -697,6 +722,11 @@ src/
 │   ├── checkout/
 │   │   └── [plan]/page.tsx         # Custom Stripe Elements checkout
 │   ├── contact/page.tsx            # Contact page (hello@qrwolf.com)
+│   ├── tools/
+│   │   ├── page.tsx                # Tools hub page
+│   │   ├── size-calculator/page.tsx # QR code size calculator
+│   │   ├── contrast-checker/page.tsx # Color contrast checker
+│   │   └── qr-reader/page.tsx      # QR code reader/decoder
 │   └── r/[code]/
 │       ├── route.ts                # Dynamic QR redirect + tracking
 │       ├── landing/page.tsx        # Custom branded landing page
@@ -734,6 +764,10 @@ src/
 │   │   ├── MediaUploader.tsx       # File upload component for media types
 │   │   ├── BulkBatchCard.tsx       # Expandable bulk batch display
 │   │   └── forms/                  # Type-specific form components
+│   ├── tools/
+│   │   ├── SizeCalculator.tsx      # Size calculator component
+│   │   ├── ContrastChecker.tsx     # Contrast checker component
+│   │   └── QRReader.tsx            # QR reader/decoder component
 │   │       ├── WhatsAppForm.tsx    # WhatsApp content form
 │   │       ├── FacebookForm.tsx    # Facebook content form
 │   │       ├── InstagramForm.tsx   # Instagram content form

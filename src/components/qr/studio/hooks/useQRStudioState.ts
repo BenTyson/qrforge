@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { contentToString } from '@/lib/qr/generator';
+// contentToString can be imported from '@/lib/qr/generator' if needed
 import type {
   QRContent,
   QRContentType,
@@ -73,12 +73,14 @@ export interface QRStudioState {
   // User context
   userId: string | null;
   userTier: 'free' | 'pro' | 'business' | null;
+  userTierLoading: boolean;
 
   // Persistence
   isSaving: boolean;
   savedQRId: string | null;
   shortCode: string | null;
   saveError: string | null;
+  saveBlockedReason: string | null;
   hasDownloaded: boolean;
   isDownloading: boolean;
 }
@@ -158,34 +160,41 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
   // User context
   const [userId, setUserId] = useState<string | null>(null);
   const [userTier, setUserTier] = useState<'free' | 'pro' | 'business' | null>(null);
+  const [userTierLoading, setUserTierLoading] = useState(true);
 
   // Persistence
   const [isSaving, setIsSaving] = useState(false);
   const [savedQRId, setSavedQRId] = useState<string | null>(qrCodeId || null);
   const [shortCode, setShortCode] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveBlockedReason, setSaveBlockedReason] = useState<string | null>(null);
   const [hasDownloaded, setHasDownloaded] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
   // Fetch user on mount
   useEffect(() => {
     const fetchUser = async () => {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      setUserTierLoading(true);
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
 
-      if (user) {
-        setUserId(user.id);
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('subscription_tier')
-          .eq('id', user.id)
-          .single();
+        if (user) {
+          setUserId(user.id);
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('subscription_tier')
+            .eq('id', user.id)
+            .single();
 
-        const tier = (profile?.subscription_tier || 'free') as 'free' | 'pro' | 'business';
-        setUserTier(tier);
-      } else {
-        setUserId(null);
-        setUserTier('free'); // Default to free instead of null for unauthenticated
+          const tier = (profile?.subscription_tier || 'free') as 'free' | 'pro' | 'business';
+          setUserTier(tier);
+        } else {
+          setUserId(null);
+          setUserTier(null); // Keep null for unauthenticated - prevents dynamic QR creation without account
+        }
+      } finally {
+        setUserTierLoading(false);
       }
     };
 
@@ -204,7 +213,8 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
 
   // Check if type requires dynamic QR
   // Pro and Business users always get dynamic QR codes (for analytics tracking)
-  const requiresDynamicQR = useCallback((type: QRContentType): boolean => {
+  // Note: This function is currently unused but kept for potential future use
+  const _requiresDynamicQR = useCallback((type: QRContentType): boolean => {
     if (userTier === 'pro' || userTier === 'business') {
       return true;
     }
@@ -248,16 +258,45 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         return !!(content as VideoContent).videoUrl?.trim() || !!(content as VideoContent).embedUrl?.trim();
       case 'mp3':
         return !!(content as MP3Content).audioUrl?.trim() || !!(content as MP3Content).embedUrl?.trim();
-      case 'menu':
-        return !!(content as MenuContent).restaurantName?.trim();
-      case 'business':
-        return !!(content as BusinessContent).name?.trim();
-      case 'links':
-        return !!(content as LinksContent).title?.trim();
-      case 'coupon':
-        return !!(content as CouponContent).businessName?.trim() && !!(content as CouponContent).headline?.trim();
-      case 'social':
-        return !!(content as SocialContent).name?.trim();
+      case 'menu': {
+        const menu = content as MenuContent;
+        return !!(
+          menu.restaurantName?.trim() &&
+          menu.categories?.length > 0 &&
+          menu.categories[0]?.items?.length > 0
+        );
+      }
+      case 'business': {
+        const biz = content as BusinessContent;
+        return !!(
+          biz.name?.trim() &&
+          (biz.email?.trim() || biz.phone?.trim() || biz.website?.trim())
+        );
+      }
+      case 'links': {
+        const links = content as LinksContent;
+        return !!(
+          links.title?.trim() &&
+          links.links?.length > 0 &&
+          links.links.some(link => link.url?.trim() && link.title?.trim())
+        );
+      }
+      case 'coupon': {
+        const coupon = content as CouponContent;
+        return !!(
+          coupon.businessName?.trim() &&
+          coupon.headline?.trim() &&
+          (coupon.code?.trim() || coupon.description?.trim())
+        );
+      }
+      case 'social': {
+        const social = content as SocialContent;
+        return !!(
+          social.name?.trim() &&
+          social.links?.length > 0 &&
+          social.links.some(link => link.url?.trim())
+        );
+      }
       default:
         return false;
     }
@@ -339,9 +378,26 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
 
   // Save QR code
   const saveQRCode = useCallback(async (): Promise<{ id: string; shortCode: string } | null> => {
-    // CRITICAL: Wait for userTier to load before saving
-    // This prevents the race condition where Pro users get type='static'
-    if (!content || !selectedType || !userId || userTier === null) return null;
+    // Clear any previous blocked reason
+    setSaveBlockedReason(null);
+
+    // Validate all requirements with user-friendly feedback
+    if (!userId) {
+      setSaveBlockedReason('Please sign in to save your QR code');
+      return null;
+    }
+    if (userTierLoading) {
+      setSaveBlockedReason('Loading your account...');
+      return null;
+    }
+    if (!content) {
+      setSaveBlockedReason('Please add content to your QR code');
+      return null;
+    }
+    if (!selectedType) {
+      setSaveBlockedReason('Please select a QR code type');
+      return null;
+    }
 
     setIsSaving(true);
     setSaveError(null);
@@ -350,22 +406,16 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
       const supabase = createClient();
       const newShortCode = shortCode || generateShortCode();
 
-      // IMPORTANT: Any QR with a short_code should be 'dynamic' for tracking
-      // This matches our download/redirect behavior which uses short_code
-      const isDynamic = true; // All saved QR codes are dynamic (they all have short_codes)
-
-      let destinationUrl = null;
-      if (!isDynamic) {
-        destinationUrl = contentToString(content);
-      }
+      // All saved QR codes are dynamic (they have short_codes for tracking)
+      // destination_url intentionally null - redirect route constructs from content
 
       const insertData: Record<string, unknown> = {
         user_id: userId,
         name: qrName.trim() || `${selectedType} QR Code`,
-        type: isDynamic ? 'dynamic' : 'static',
+        type: 'dynamic', // All saved QR codes are dynamic (they have short_codes for tracking)
         content_type: selectedType,
         content: content as unknown as Record<string, unknown>,
-        destination_url: destinationUrl,
+        destination_url: null, // Redirect route constructs destination from content
         short_code: newShortCode,
         // Save entire style object to preserve all properties (gradient, patterns, frame, etc.)
         style: style as unknown as Record<string, unknown>,
@@ -431,7 +481,7 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     } finally {
       setIsSaving(false);
     }
-  }, [content, selectedType, userId, qrName, style, mode, savedQRId, shortCode, generateShortCode, requiresDynamicQR, expiresAt, passwordEnabled, password, scheduledEnabled, activeFrom, activeUntil]);
+  }, [content, selectedType, userId, userTierLoading, qrName, style, mode, savedQRId, shortCode, generateShortCode, expiresAt, passwordEnabled, password, scheduledEnabled, activeFrom, activeUntil]);
 
   // Load existing QR code for edit mode
   const loadQRCode = useCallback(async (id: string): Promise<boolean> => {
@@ -536,10 +586,12 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     landingPageButtonText,
     userId,
     userTier,
+    userTierLoading,
     isSaving,
     savedQRId,
     shortCode,
     saveError,
+    saveBlockedReason,
     hasDownloaded,
     isDownloading,
   };
@@ -572,7 +624,10 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     setHasDownloaded,
     setIsDownloading,
     getFilename,
-    clearSaveError: () => setSaveError(null),
+    clearSaveError: () => {
+      setSaveError(null);
+      setSaveBlockedReason(null);
+    },
   };
 
   return [state, actions];

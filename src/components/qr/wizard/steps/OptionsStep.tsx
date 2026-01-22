@@ -247,13 +247,19 @@ export function OptionsStep({
                     <span className="text-sm text-slate-300">Enable password</span>
                   </label>
                   {passwordEnabled && (
-                    <Input
-                      type="password"
-                      placeholder="Enter password"
-                      value={password}
-                      onChange={(e) => onPasswordChange(e.target.value)}
-                      className="bg-slate-900 border-slate-600"
-                    />
+                    <div className="space-y-1">
+                      <Input
+                        type="password"
+                        placeholder="Enter password (min. 4 characters)"
+                        value={password}
+                        onChange={(e) => onPasswordChange(e.target.value)}
+                        minLength={4}
+                        className="bg-slate-900 border-slate-600"
+                      />
+                      {password && password.length < 4 && (
+                        <p className="text-xs text-yellow-500">Password must be at least 4 characters</p>
+                      )}
+                    </div>
                   )}
                 </div>
               ) : (

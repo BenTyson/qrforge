@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 22, 2026 (Critical System Audit & Fixes)
+> **Last Updated**: January 22, 2026 (SEO Content Expansion)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -55,7 +55,7 @@ See `docs/WORKFLOW.md` for full details.
 
 ## ⚠️ Testing Infrastructure
 
-**159 tests** across 4 test suites ensure code quality:
+**185 tests** across 8 test suites ensure code quality:
 
 | Suite | Tests | Coverage |
 |-------|-------|----------|
@@ -63,6 +63,8 @@ See `docs/WORKFLOW.md` for full details.
 | QR Generation | 58 | Content generation, WiFi, vCard, validation |
 | Subscription Plans | 31 | Tier limits, features, scan limits |
 | Environment Safety | 23 | Environment detection, safety blocks |
+| useQRStudioState | 16 | State management, race conditions, validation |
+| QR Creation Flow | 10 | Integration tests for full QR workflow |
 
 **Commands:**
 ```bash
@@ -604,16 +606,42 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - Updated 4 files: QRCodeCard, edit page, API image route
   - Now all QR codes with short_codes are trackable regardless of saved type
 - **Critical System Audit & Fixes** (January 22, 2026):
-  - Database remediation: Fixed 30 customer QR codes with incorrect type='static'
-  - Race condition fix: Added userTier null check before save, all codes now dynamic
-  - Stripe routes: Added NEXT_PUBLIC_APP_URL fallback to checkout/portal routes
-  - Admin panel: Fixed empty string URL fallback
-  - Redirect route: Added handling for whatsapp, facebook, instagram, apps, email, phone, sms
-  - API validation: Fixed field names (email vs address, phone vs number, etc.)
-  - API validation: Added proper validation for all 9 complex content types
-  - Preview fix: QRStudioPreview now shows redirect URL after save (matches download)
-  - Health check: Added NEXT_PUBLIC_APP_URL to required environment variables
-  - Tests: Updated to use correct field names, all 159 tests passing
+  - **Root cause identified**: QR codes saved with `type='static'` when they should be `type='dynamic'` due to race condition where `userTier` was null during save
+  - **Database remediation**: Fixed 30 customer QR codes with incorrect type='static' via SQL UPDATE
+  - **11 critical bugs fixed** across 10 files:
+    - Race condition in `useQRStudioState.ts`: Added userTier null check, all saved codes now dynamic
+    - QRCodeCard.tsx: Fixed preview and download to check `short_code` instead of `type === 'dynamic'`
+    - qr-codes/[id]/page.tsx: Fixed edit page to use redirect URL when short_code exists
+    - api/v1/qr-codes/[id]/image/route.ts: Fixed API image generation
+    - Stripe checkout/portal routes: Added NEXT_PUBLIC_APP_URL fallback
+    - Admin panel: Fixed empty string URL fallback
+    - Redirect route: Added URL handling for whatsapp, facebook, instagram, apps, email, phone, sms
+    - API validation: Fixed field names (email vs address, phone vs number)
+    - API validation: Added proper validation for all 9 complex content types (menu, business, links, coupon, social, pdf, images, video, mp3)
+    - QRStudioPreview: Now shows redirect URL after save (matches download)
+    - Health check: Added NEXT_PUBLIC_APP_URL to required environment variables
+  - **Tests updated**: All 159 tests passing with correct field names
+- **System Audit & Testing Improvement** (January 22, 2026):
+  - Fixed race condition: Added `userTierLoading` state to prevent silent save failures
+  - Added `saveBlockedReason` for user feedback when save is blocked
+  - Fixed unauthenticated users incorrectly treated as 'free' tier
+  - Fixed Pro type access race condition (no redirect to /plans during load)
+  - Created WiFi, Text, vCard landing pages for QR types without destinations
+  - Added comprehensive landing page validation (menu, business, links, coupon, social)
+  - Added password minimum length validation (4 characters)
+  - Removed dead code from useQRStudioState.ts
+  - Created Supabase and Stripe mock infrastructure (`src/__mocks__/`)
+  - Added 26 new tests: useQRStudioState (16), QR creation flow integration (10)
+  - Total tests: 185 passing across 8 test suites
+- **SEO Content Expansion** (January 22, 2026):
+  - 8 new learn articles:
+    - Industries (4): Libraries, Government & Public Sector, Insurance Agencies, Financial Services
+    - Use-cases (3): Flyers & Posters, Packaging Labels, Conference Badges
+    - How-it-works (1): How Dynamic QR Code Redirects Work
+  - Rewrote dynamic-qr-codes-complete-guide.mdx (SEVERE bullet bloat → prose-first)
+  - Added "1 rewrite per batch" rule to content guidelines
+  - Updated BULLET-BLOAT-AUDIT.md (10 SEVERE articles remaining)
+  - Total content now: 28 blog posts, 77 learn articles (105 total)
 
 ### Planned Enhancements
 - Webhooks for scan notifications
@@ -1085,8 +1113,9 @@ npm run dev               # Dev server on port 3322
 ### SEO & Content (Ongoing)
 - Current: 28 blog posts, 69 learn articles (97 total)
 - Target: 50 blog posts, 100 learn articles (150 total)
-- Remaining: ~53 articles to reach target
-- **Quality audit completed**: 11 articles flagged for prose-first rewrites
+- Current: 28 blog posts, 77 learn articles (105 total)
+- Remaining: ~45 articles to reach target
+- **Quality audit**: 10 SEVERE articles remaining for prose-first rewrites
 - See `.claude/skills/content/CONTENT-PLAN.md` for expansion plan
 - See `.claude/skills/content/BULLET-BLOAT-AUDIT.md` for quality audit results
 - Add FAQ schema to knowledge base pages

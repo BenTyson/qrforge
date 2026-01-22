@@ -121,6 +121,9 @@ export async function GET(
     links: 'links',
     coupon: 'coupon',
     social: 'social',
+    wifi: 'wifi',
+    text: 'text',
+    vcard: 'vcard',
   };
 
   const contentType = qrCode.content_type as string;

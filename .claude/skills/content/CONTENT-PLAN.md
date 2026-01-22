@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
-> **Last Updated**: January 21, 2026
-> **Total Content**: 28 blog posts, 69 learn articles
+> **Last Updated**: January 22, 2026
+> **Total Content**: 28 blog posts, 77 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -80,15 +80,16 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | Types of QR Codes: Complete Guide to All 16 | types of qr codes | types-of-qr-codes |
 | QR Code FAQs: 30 Common Questions Answered | qr code faq | qr-code-faqs |
 
-#### how-it-works (4)
+#### how-it-works (5)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | How QR Code Error Correction Works | qr code error correction | qr-code-error-correction |
 | How QR Code Scanning Works | how qr code scanning works | how-qr-code-scanning-works |
 | How WiFi QR Codes Work | how wifi qr code works | how-wifi-qr-codes-work |
 | How to Change QR Code Destination | change qr code link | how-to-change-qr-code-destination |
+| How Dynamic QR Code Redirects Work | qr code redirect | how-dynamic-qr-redirects-work |
 
-#### use-cases (18)
+#### use-cases (21)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | Restaurant QR Code Menus | restaurant qr code menu | restaurant-menu-qr-codes |
@@ -113,8 +114,11 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | SMS QR Codes: Pre-written Text Messages | sms qr code | sms-qr-codes |
 | Facebook QR Code: Connect Your Page | facebook qr code | facebook-qr-code |
 | Image Gallery QR Codes | image qr code | image-gallery-qr-codes |
+| QR Codes for Flyers & Posters | flyer qr code, poster qr code | qr-codes-for-flyers |
+| QR Codes for Packaging Labels | packaging label qr code | qr-codes-for-packaging-labels |
+| QR Codes for Conference Badges | conference badge qr code | qr-codes-for-conference-badges |
 
-#### industries (16)
+#### industries (20)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Codes for Retail | qr codes for retail | qr-codes-for-retail |
@@ -133,6 +137,10 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Codes for Automotive & Dealerships | qr codes automotive | qr-codes-for-automotive |
 | QR Codes for Travel & Tourism | qr codes tourism | qr-codes-for-travel-tourism |
 | QR Codes for Beauty Salons & Spas | qr codes salon | qr-codes-for-beauty-salons |
+| QR Codes for Libraries | qr codes library | qr-codes-for-libraries |
+| QR Codes for Government & Public Sector | qr codes government | qr-codes-for-government |
+| QR Codes for Insurance Agencies | qr codes insurance | qr-codes-for-insurance |
+| QR Codes for Financial Services | qr codes banking, financial services | qr-codes-for-financial-services |
 
 #### best-practices (7)
 | Title | Primary Keyword | Slug |
@@ -380,17 +388,34 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 63. ~~Free vs Paid QR Code Generators (blog)~~ - ✅ Created
 64. ~~How to Change QR Code Destination (how-it-works)~~ - ✅ Created
 
-**NEXT PRIORITIES (from Expansion Plan Month 3-4):**
-65. QR Codes for Libraries (industries)
-66. QR Codes for Government & Public Sector (industries)
-67. QR Codes for Insurance Agencies (industries)
-68. QR Codes for Financial Services (industries)
-69. QR Codes for Flyers & Posters (use-cases)
-70. QR Codes for Packaging Labels (use-cases)
-71. QR Codes for Conference Badges (use-cases)
-72. How Dynamic QR Code Redirects Work (how-it-works)
+**COMPLETED (January 22, 2026):**
+65. ~~QR Codes for Libraries (industries)~~ - ✅ Created
+66. ~~QR Codes for Government & Public Sector (industries)~~ - ✅ Created
+67. ~~QR Codes for Insurance Agencies (industries)~~ - ✅ Created
+68. ~~QR Codes for Financial Services (industries)~~ - ✅ Created
+69. ~~QR Codes for Flyers & Posters (use-cases)~~ - ✅ Created
+70. ~~QR Codes for Packaging Labels (use-cases)~~ - ✅ Created
+71. ~~QR Codes for Conference Badges (use-cases)~~ - ✅ Created
+72. ~~How Dynamic QR Code Redirects Work (how-it-works)~~ - ✅ Created
+73. ~~dynamic-qr-codes-complete-guide.mdx~~ - ✅ Rewritten (SEVERE → GOOD)
 
-**ALL REWRITES COMPLETE!**
+**NEXT PRIORITIES:**
+74. How to Create a QR Code for Zoom Meeting (blog)
+75. How to Create a QR Code for Email Signature (blog)
+76. QR Code Quiet Zone: Why Margins Matter (technical)
+77. QR Code Case Studies: Real Business Results (blog)
+78. QR Code Landing Page Best Practices (best-practices)
+79. QR Code Campaign Planning Template (best-practices)
+
+**REWRITES REMAINING (10 articles) - Include 1+ per content batch:**
+See `.claude/skills/content/BULLET-BLOAT-AUDIT.md` for full list.
+Priority order for rewrites:
+1. business-card-qr-codes.mdx (high-value keyword)
+2. instagram-qr-code.mdx (high-volume keyword)
+3. qr-codes-for-healthcare.mdx (industry vertical)
+4. how-to-scan-a-qr-code.mdx (foundational content)
+
+**TIER 2 REWRITES COMPLETE!**
 - ~~static-vs-dynamic-qr-codes.mdx~~ - ✅ Done
 - ~~qr-codes-for-video.mdx~~ - ✅ Done
 - ~~qr-codes-for-education.mdx~~ - ✅ Done
@@ -401,9 +426,9 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 ## EXPANSION PLAN: Road to 150 Pieces
 
 > **Goal**: 125-150 total pieces for topical authority leadership
-> **Current**: 59 pieces (16 blog, 43 learn)
+> **Current**: 105 pieces (28 blog, 77 learn)
 > **Target**: 150 pieces (50 blog, 100 learn)
-> **Gap**: ~85-90 new pieces
+> **Gap**: ~45 new pieces
 
 ### PHASE 1: Platform-Specific "How To" Content (High Conversion)
 
@@ -654,16 +679,23 @@ Common competitor content we should create:
 
 ## Content Creation Guidelines
 
+### Batch Requirements
+
+**Every content batch MUST include at least 1 rewrite** until all SEVERE articles are fixed.
+
+There are 10 articles with severe bullet bloat that need prose-first rewrites. See `BULLET-BLOAT-AUDIT.md` for the full list. These articles damage brand perception and must be fixed alongside new content creation.
+
 ### For Agents Creating Content
 
 1. **Check this document first** - Pick from prioritized list
-2. **Include primary keyword** - In title, H1, first paragraph, meta description
-3. **Add secondary keywords** - Naturally throughout content
-4. **Internal linking** - Link to related articles and /signup, /plans
-5. **Include CTAs** - Conversion-focused calls to action
-6. **Minimum 800 words** - Google prefers comprehensive content
-7. **Use the /content skill** - Follow frontmatter schema exactly
-8. **Run build after** - Verify with `npm run build`
+2. **Include 1+ rewrite per batch** - From the SEVERE list in BULLET-BLOAT-AUDIT.md
+3. **Include primary keyword** - In title, H1, first paragraph, meta description
+4. **Add secondary keywords** - Naturally throughout content
+5. **Internal linking** - Link to related articles and /signup, /plans
+6. **Include CTAs** - Conversion-focused calls to action
+7. **Minimum 800 words** - Google prefers comprehensive content
+8. **Use the /content skill** - Follow frontmatter schema exactly
+9. **Run build after** - Verify with `npm run build`
 
 ### SEO Checklist Per Article
 - [ ] Primary keyword in title (front-loaded if possible)
@@ -708,6 +740,7 @@ Common competitor content we should create:
 
 | Date | Changes |
 |------|---------|
+| 2026-01-22 | Added Libraries, Government, Insurance, Financial Services (industries) + Flyers, Packaging Labels, Conference Badges (use-cases) + Dynamic Redirects (how-it-works). Rewrote dynamic-qr-codes-complete-guide.mdx (SEVERE→GOOD). Added "1 rewrite per batch" rule. Now 28 blog, 77 learn (105 total) |
 | 2026-01-21 | Added Churches, Museums (industries) + Social Profile, Portfolios, Weddings (use-cases) + Generator Comparison, Free vs Paid (blogs) + Change Destination (how-it-works) - Now 28 blog, 69 learn (97 total) |
 | 2026-01-21 | Added TikTok, Google Docs blogs + Law, Auto, Travel, Beauty, Facebook, Gallery articles - Now 26 blog, 61 learn (87 total) |
 | 2026-01-21 | Added Statistics, LinkedIn, Spotify, Business Cards, Print blogs + Restaurants, Construction, Colors articles - Now 24 blog, 55 learn (79 total) |

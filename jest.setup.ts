@@ -1,5 +1,27 @@
 import '@testing-library/jest-dom';
 
+// Polyfill Request, Response, Headers for API route tests
+// These are available in Next.js runtime but not in Jest's jsdom environment
+// Node.js 18+ has native fetch support
+if (typeof global.Request === 'undefined') {
+  // Use native fetch from Node.js
+  global.Request = globalThis.Request || class MockRequest {
+    constructor(public url: string, public init?: RequestInit) {}
+    get method() { return this.init?.method || 'GET'; }
+    get headers() { return new Headers(this.init?.headers); }
+    json() { return Promise.resolve(JSON.parse(this.init?.body as string || '{}')); }
+    text() { return Promise.resolve(this.init?.body as string || ''); }
+  } as unknown as typeof Request;
+
+  global.Response = globalThis.Response || class MockResponse {
+    constructor(public body: BodyInit | null, public init?: ResponseInit) {}
+    get status() { return this.init?.status || 200; }
+    get headers() { return new Headers(this.init?.headers); }
+    json() { return Promise.resolve(JSON.parse(this.body as string || '{}')); }
+    text() { return Promise.resolve(this.body as string || ''); }
+  } as unknown as typeof Response;
+}
+
 // Mock Redis rate limiter before any imports that depend on it
 jest.mock('@/lib/redis/rate-limiter');
 

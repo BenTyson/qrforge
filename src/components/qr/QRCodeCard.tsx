@@ -17,6 +17,7 @@ import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
 import type { Folder } from '@/lib/supabase/types';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { getAppUrl } from '@/lib/utils';
 
 interface QRCodeData {
   id: string;
@@ -60,8 +61,7 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
     // Use redirect URL for any QR with a short_code (dynamic or static)
     // This ensures scans are tracked and the QR actually works
     if (qrCode.short_code) {
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
-      qrContent = { type: 'url', url: `${appUrl}/r/${qrCode.short_code}` };
+      qrContent = { type: 'url', url: `${getAppUrl()}/r/${qrCode.short_code}` };
     }
 
     generateQRDataURL(qrContent, { ...(qrCode.style as QRStyleOptions), width: 128 })
@@ -100,8 +100,7 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
       // This ensures scans are tracked regardless of how the QR was originally saved
       let qrContent: QRContent = qrCode.content as QRContent;
       if (qrCode.short_code) {
-        const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
-        qrContent = { type: 'url', url: `${appUrl}/r/${qrCode.short_code}` };
+        qrContent = { type: 'url', url: `${getAppUrl()}/r/${qrCode.short_code}` };
       }
 
       const dataURL = await generateQRDataURL(qrContent, { ...(qrCode.style as QRStyleOptions), width: 1024 });
@@ -118,8 +117,7 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
       return;
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
-    const link = `${baseUrl}/r/${qrCode.short_code}`;
+    const link = `${getAppUrl()}/r/${qrCode.short_code}`;
 
     try {
       await navigator.clipboard.writeText(link);

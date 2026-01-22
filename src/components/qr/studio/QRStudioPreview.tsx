@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { QRPreview } from '../QRPreview';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn, getAppUrl } from '@/lib/utils';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
 
 interface QRStudioPreviewProps {
@@ -40,8 +40,7 @@ export function QRStudioPreview({
   const previewContent = useMemo((): QRContent | null => {
     if (shortCode) {
       // After save: show QR with redirect URL (matches download)
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
-      return { type: 'url', url: `${appUrl}/r/${shortCode}` };
+      return { type: 'url', url: `${getAppUrl()}/r/${shortCode}` };
     }
     // Before save: show QR with actual content (live preview while editing)
     return content;

@@ -50,3 +50,35 @@ export function isValidUrl(url: string): boolean {
     return false;
   }
 }
+
+/**
+ * CRITICAL: Gets the application base URL for QR code generation.
+ *
+ * This function ensures the URL is always valid with a proper protocol.
+ * If NEXT_PUBLIC_APP_URL is misconfigured (empty, path only, or invalid),
+ * it falls back to the production URL to prevent broken QR codes.
+ *
+ * @returns A valid base URL starting with https://
+ */
+export function getAppUrl(): string {
+  const FALLBACK_URL = 'https://qrwolf.com';
+  const envUrl = process.env.NEXT_PUBLIC_APP_URL;
+
+  // If env var is not set or empty, use fallback
+  if (!envUrl || envUrl.trim() === '') {
+    return FALLBACK_URL;
+  }
+
+  const trimmed = envUrl.trim();
+
+  // Must start with http:// or https:// to be valid
+  if (/^https?:\/\//i.test(trimmed)) {
+    // Remove trailing slash for consistency
+    return trimmed.replace(/\/+$/, '');
+  }
+
+  // If it's just a path like "/" or "/app", use fallback
+  // This prevents QR codes from encoding invalid URLs
+  console.warn(`[getAppUrl] Invalid NEXT_PUBLIC_APP_URL: "${envUrl}". Using fallback: ${FALLBACK_URL}`);
+  return FALLBACK_URL;
+}

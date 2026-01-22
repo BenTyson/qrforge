@@ -85,7 +85,15 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
 
   const handleDownloadPNG = async () => {
     try {
-      const dataURL = await generateQRDataURL(qrCode.content as QRContent, { ...(qrCode.style as QRStyleOptions), width: 1024 });
+      // For dynamic QR codes, use the redirect URL for tracking
+      // For static QR codes, use the original content
+      let qrContent: QRContent = qrCode.content as QRContent;
+      if (qrCode.type === 'dynamic' && qrCode.short_code) {
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
+        qrContent = { type: 'url', url: `${appUrl}/r/${qrCode.short_code}` };
+      }
+
+      const dataURL = await generateQRDataURL(qrContent, { ...(qrCode.style as QRStyleOptions), width: 1024 });
       await downloadQRPNG(dataURL, `qrwolf-${(qrCode.name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
       toast.success('PNG downloaded');
     } catch {

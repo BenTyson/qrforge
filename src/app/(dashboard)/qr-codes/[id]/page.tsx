@@ -74,6 +74,9 @@ export default function EditQRCodePage() {
   // Tier
   const [tier, setTier] = useState<'free' | 'pro' | 'business'>('free');
 
+  // Short code for redirect URL
+  const [shortCode, setShortCode] = useState<string | null>(null);
+
   // Load QR code data
   useEffect(() => {
     const fetchQRCode = async () => {
@@ -114,6 +117,7 @@ export default function EditQRCodePage() {
       setContentType((qrCode.content_type || 'url') as QRContentType);
       setContent(qrCode.content as QRContent);
       setStyle(qrCode.style || DEFAULT_STYLE);
+      setShortCode(qrCode.short_code || null);
 
       // Dynamic settings
       if (qrCode.destination_url) {
@@ -242,13 +246,31 @@ export default function EditQRCodePage() {
 
   const handleDownloadPNG = async () => {
     if (!content) return;
-    const dataURL = await generateQRDataURL(content, { ...style, width: 1024 });
+
+    // For dynamic QR codes, use the redirect URL for tracking
+    // For static QR codes, use the original content
+    let qrContent: QRContent = content;
+    if (isDynamic && shortCode) {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
+      qrContent = { type: 'url', url: `${appUrl}/r/${shortCode}` };
+    }
+
+    const dataURL = await generateQRDataURL(qrContent, { ...style, width: 1024 });
     await downloadQRPNG(dataURL, `qrwolf-${(name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
   };
 
   const handleDownloadSVG = async () => {
     if (!content) return;
-    const svg = await generateQRSVG(content, style);
+
+    // For dynamic QR codes, use the redirect URL for tracking
+    // For static QR codes, use the original content
+    let qrContent: QRContent = content;
+    if (isDynamic && shortCode) {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
+      qrContent = { type: 'url', url: `${appUrl}/r/${shortCode}` };
+    }
+
+    const svg = await generateQRSVG(qrContent, style);
     downloadQRSVG(svg, `qrwolf-${(name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
   };
 

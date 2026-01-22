@@ -208,7 +208,7 @@ export default async function AdminQRCodeDetailPage({
             label: 'Redirect URL',
             value: qrCode.short_code ? (
               <a
-                href={`${process.env.NEXT_PUBLIC_APP_URL || ''}/r/${qrCode.short_code}`}
+                href={`${process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com'}/r/${qrCode.short_code}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline text-sm break-all"

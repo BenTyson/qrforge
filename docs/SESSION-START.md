@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 21, 2026 (Critical QR Download Bug Fix)
+> **Last Updated**: January 22, 2026 (Critical System Audit & Fixes)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -603,6 +603,17 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - Fix: Always use redirect URL (`qrwolf.com/r/[code]`) when `short_code` exists
   - Updated 4 files: QRCodeCard, edit page, API image route
   - Now all QR codes with short_codes are trackable regardless of saved type
+- **Critical System Audit & Fixes** (January 22, 2026):
+  - Database remediation: Fixed 30 customer QR codes with incorrect type='static'
+  - Race condition fix: Added userTier null check before save, all codes now dynamic
+  - Stripe routes: Added NEXT_PUBLIC_APP_URL fallback to checkout/portal routes
+  - Admin panel: Fixed empty string URL fallback
+  - Redirect route: Added handling for whatsapp, facebook, instagram, apps, email, phone, sms
+  - API validation: Fixed field names (email vs address, phone vs number, etc.)
+  - API validation: Added proper validation for all 9 complex content types
+  - Preview fix: QRStudioPreview now shows redirect URL after save (matches download)
+  - Health check: Added NEXT_PUBLIC_APP_URL to required environment variables
+  - Tests: Updated to use correct field names, all 159 tests passing
 
 ### Planned Enhancements
 - Webhooks for scan notifications

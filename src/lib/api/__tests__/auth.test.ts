@@ -236,35 +236,35 @@ describe('API Validators', () => {
 
     describe('email content', () => {
       it('should validate valid email', () => {
-        const result = validators.validateContent({ address: 'test@example.com' }, 'email');
+        const result = validators.validateContent({ email: 'test@example.com' }, 'email');
         expect(result.valid).toBe(true);
       });
 
       it('should reject invalid email format', () => {
-        const result = validators.validateContent({ address: 'not-an-email' }, 'email');
+        const result = validators.validateContent({ email: 'not-an-email' }, 'email');
         expect(result.valid).toBe(false);
       });
     });
 
     describe('phone/sms content', () => {
       it('should validate phone content', () => {
-        const result = validators.validateContent({ number: '+1234567890' }, 'phone');
+        const result = validators.validateContent({ phone: '+1234567890' }, 'phone');
         expect(result.valid).toBe(true);
       });
 
       it('should validate SMS content', () => {
-        const result = validators.validateContent({ number: '+1234567890' }, 'sms');
+        const result = validators.validateContent({ phone: '+1234567890' }, 'sms');
         expect(result.valid).toBe(true);
       });
     });
 
     describe('WhatsApp content', () => {
       it('should validate WhatsApp content', () => {
-        const result = validators.validateContent({ number: '+1234567890' }, 'whatsapp');
+        const result = validators.validateContent({ phone: '+1234567890' }, 'whatsapp');
         expect(result.valid).toBe(true);
       });
 
-      it('should reject missing number', () => {
+      it('should reject missing phone', () => {
         const result = validators.validateContent({}, 'whatsapp');
         expect(result.valid).toBe(false);
       });

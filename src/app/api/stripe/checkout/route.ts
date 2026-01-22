@@ -67,8 +67,8 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscription/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/#pricing`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com'}/subscription/success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com'}/#pricing`,
       metadata: {
         supabase_user_id: user.id,
         plan,

@@ -339,7 +339,9 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
 
   // Save QR code
   const saveQRCode = useCallback(async (): Promise<{ id: string; shortCode: string } | null> => {
-    if (!content || !selectedType || !userId) return null;
+    // CRITICAL: Wait for userTier to load before saving
+    // This prevents the race condition where Pro users get type='static'
+    if (!content || !selectedType || !userId || userTier === null) return null;
 
     setIsSaving(true);
     setSaveError(null);
@@ -347,7 +349,10 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     try {
       const supabase = createClient();
       const newShortCode = shortCode || generateShortCode();
-      const isDynamic = requiresDynamicQR(selectedType);
+
+      // IMPORTANT: Any QR with a short_code should be 'dynamic' for tracking
+      // This matches our download/redirect behavior which uses short_code
+      const isDynamic = true; // All saved QR codes are dynamic (they all have short_codes)
 
       let destinationUrl = null;
       if (!isDynamic) {

@@ -1,11 +1,10 @@
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/admin/auth';
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import crypto from 'crypto';
 import { SCAN_LIMITS } from '@/lib/stripe/config';
 import { sendScanLimitReachedEmail } from '@/lib/email';
-
-type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
 
 // Get the base URL for redirects (supports ngrok/proxy scenarios)
 function getBaseUrl(request: Request): string {
@@ -127,7 +126,7 @@ export async function GET(
   const contentType = qrCode.content_type as string;
   if (LANDING_PAGE_ROUTES[contentType]) {
     // Record the scan before redirecting to landing page
-    recordScan(supabase, qrCode.id, request);
+    recordScan(qrCode.id, request);
     return NextResponse.redirect(new URL(`/r/${code}/${LANDING_PAGE_ROUTES[contentType]}`, baseUrl));
   }
 
@@ -207,14 +206,13 @@ export async function GET(
   }
 
   // Record the scan (async, don't wait)
-  recordScan(supabase, qrCode.id, request);
+  recordScan(qrCode.id, request);
 
   // Redirect to destination
   return NextResponse.redirect(destinationUrl);
 }
 
 async function recordScan(
-  supabase: SupabaseClient,
   qrCodeId: string,
   _request: Request
 ) {
@@ -243,8 +241,12 @@ async function recordScan(
     // Get geolocation data (with caching)
     const geoData = await getGeolocationCached(ip);
 
-    // Insert scan record
-    await supabase.from('scans').insert({
+    // Use admin client (service role) to bypass RLS for scan recording
+    // This is a system operation, not a user operation
+    const adminClient = createAdminClient();
+
+    // Insert scan record and CHECK the result
+    const { error } = await adminClient.from('scans').insert({
       qr_code_id: qrCodeId,
       ip_hash: ipHash,
       device_type: deviceType,
@@ -255,8 +257,20 @@ async function recordScan(
       city: geoData?.city || null,
       region: geoData?.region || null,
     });
+
+    if (error) {
+      console.error('[Scan] CRITICAL: Failed to insert scan record:', {
+        qrCodeId,
+        error: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+      });
+    } else {
+      console.log('[Scan] Successfully recorded scan for QR:', qrCodeId);
+    }
   } catch (error) {
-    console.error('Failed to record scan:', error);
+    console.error('[Scan] CRITICAL: Exception recording scan:', error);
   }
 }
 

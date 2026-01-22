@@ -3,6 +3,92 @@
 import QRCodeStyling from 'qr-code-styling';
 import type { QRContent, QRStyleOptions, ModuleShape, CornerSquareShape, CornerDotShape } from './types';
 import type { Options as QRCodeStylingOptions, DotType, CornerSquareType, CornerDotType } from 'qr-code-styling';
+import { normalizeUrl } from '@/lib/utils';
+
+/**
+ * Normalizes all URL fields in QR content before saving.
+ * Ensures URLs have proper https:// protocol.
+ *
+ * @param content - The QR content object
+ * @returns A new content object with normalized URLs
+ */
+export function normalizeContentUrls(content: QRContent): QRContent {
+  if (!content) return content;
+
+  switch (content.type) {
+    case 'url':
+      return {
+        ...content,
+        url: content.url ? normalizeUrl(content.url) : content.url,
+      };
+
+    case 'facebook':
+      return {
+        ...content,
+        profileUrl: content.profileUrl ? normalizeUrl(content.profileUrl) : content.profileUrl,
+      };
+
+    case 'apps':
+      return {
+        ...content,
+        appStoreUrl: content.appStoreUrl ? normalizeUrl(content.appStoreUrl) : content.appStoreUrl,
+        playStoreUrl: content.playStoreUrl ? normalizeUrl(content.playStoreUrl) : content.playStoreUrl,
+        fallbackUrl: content.fallbackUrl ? normalizeUrl(content.fallbackUrl) : content.fallbackUrl,
+      };
+
+    case 'pdf':
+      return {
+        ...content,
+        fileUrl: content.fileUrl ? normalizeUrl(content.fileUrl) : content.fileUrl,
+      };
+
+    case 'video':
+      return {
+        ...content,
+        videoUrl: content.videoUrl ? normalizeUrl(content.videoUrl) : content.videoUrl,
+        embedUrl: content.embedUrl ? normalizeUrl(content.embedUrl) : content.embedUrl,
+      };
+
+    case 'mp3':
+      return {
+        ...content,
+        audioUrl: content.audioUrl ? normalizeUrl(content.audioUrl) : content.audioUrl,
+        embedUrl: content.embedUrl ? normalizeUrl(content.embedUrl) : content.embedUrl,
+      };
+
+    case 'business':
+      return {
+        ...content,
+        website: content.website ? normalizeUrl(content.website) : content.website,
+      };
+
+    case 'links':
+      return {
+        ...content,
+        links: content.links?.map(link => ({
+          ...link,
+          url: link.url ? normalizeUrl(link.url) : link.url,
+        })) || [],
+      };
+
+    case 'social':
+      return {
+        ...content,
+        links: content.links?.map(link => {
+          // Only normalize if it looks like a URL (has a dot but no protocol)
+          if (link.url && link.url.includes('.') && !link.url.includes(':')) {
+            return { ...link, url: normalizeUrl(link.url) };
+          }
+          return link;
+        }) || [],
+      };
+
+    // Other types (text, wifi, vcard, email, phone, sms, whatsapp, instagram, images, menu, coupon)
+    // don't have URL fields that need normalization or are handled differently
+    default:
+      return content;
+  }
+}
 
 /**
  * Converts QR content to a string that can be encoded in a QR code

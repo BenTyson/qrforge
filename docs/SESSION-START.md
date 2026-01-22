@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 21, 2026 (Free QR Code Tools: Size Calculator, Contrast Checker, QR Reader)
+> **Last Updated**: January 21, 2026 (Critical QR Download Bug Fix)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -596,6 +596,13 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
     - Copy to clipboard and action buttons
   - All tools follow V2 design: glassmorphism cards, floating orbs, staggered animations
   - Homepage messaging cleanup: removed confusing "no signup required" badge
+- **Critical QR Download Bug Fix** (January 21, 2026):
+  - Fixed bug where QR codes downloaded from dashboard encoded wrong content
+  - Downloads were checking `type === 'dynamic'` instead of just `short_code`
+  - If QR was incorrectly saved as 'static', download would encode raw content not redirect URL
+  - Fix: Always use redirect URL (`qrwolf.com/r/[code]`) when `short_code` exists
+  - Updated 4 files: QRCodeCard, edit page, API image route
+  - Now all QR codes with short_codes are trackable regardless of saved type
 
 ### Planned Enhancements
 - Webhooks for scan notifications

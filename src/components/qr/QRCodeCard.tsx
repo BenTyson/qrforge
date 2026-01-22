@@ -52,11 +52,22 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
   const [qrDataURL, setQRDataURL] = useState<string | null>(null);
 
   // Generate QR preview on mount
+  // IMPORTANT: If the QR has a short_code, generate the QR with the redirect URL
+  // This ensures the preview matches what gets scanned (trackable URL)
   useEffect(() => {
-    generateQRDataURL(qrCode.content as QRContent, { ...(qrCode.style as QRStyleOptions), width: 128 })
+    let qrContent: QRContent = qrCode.content as QRContent;
+
+    // Use redirect URL for any QR with a short_code (dynamic or static)
+    // This ensures scans are tracked and the QR actually works
+    if (qrCode.short_code) {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
+      qrContent = { type: 'url', url: `${appUrl}/r/${qrCode.short_code}` };
+    }
+
+    generateQRDataURL(qrContent, { ...(qrCode.style as QRStyleOptions), width: 128 })
       .then(setQRDataURL)
       .catch(console.error);
-  }, [qrCode.content, qrCode.style]);
+  }, [qrCode.content, qrCode.style, qrCode.short_code]);
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this QR code? This action cannot be undone.')) {
@@ -85,10 +96,10 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
 
   const handleDownloadPNG = async () => {
     try {
-      // For dynamic QR codes, use the redirect URL for tracking
-      // For static QR codes, use the original content
+      // IMPORTANT: If QR has a short_code, always use the redirect URL
+      // This ensures scans are tracked regardless of how the QR was originally saved
       let qrContent: QRContent = qrCode.content as QRContent;
-      if (qrCode.type === 'dynamic' && qrCode.short_code) {
+      if (qrCode.short_code) {
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
         qrContent = { type: 'url', url: `${appUrl}/r/${qrCode.short_code}` };
       }

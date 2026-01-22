@@ -9,7 +9,7 @@ import { QRStudioPreview, QRStudioMiniPreview } from './QRStudioPreview';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { cn, getAppUrl } from '@/lib/utils';
 import { generateQRDataURL, downloadQRPNG, generateQRSVG, downloadQRSVG } from '@/lib/qr/generator';
 import type {
   QRContent,
@@ -174,10 +174,9 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
       }
 
       // Generate QR with real short_code URL
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
       const qrContent: QRContent = {
         type: 'url',
-        url: `${appUrl}/r/${code}`,
+        url: `${getAppUrl()}/r/${code}`,
       };
 
       const dataURL = await generateQRDataURL(qrContent, { ...state.style, width: 1024 });
@@ -202,10 +201,9 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
         code = result.shortCode;
       }
 
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
       const qrContent: QRContent = {
         type: 'url',
-        url: `${appUrl}/r/${code}`,
+        url: `${getAppUrl()}/r/${code}`,
       };
 
       const svg = await generateQRSVG(qrContent, state.style);

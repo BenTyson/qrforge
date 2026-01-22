@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { getAppUrl } from '@/lib/utils';
 
 // Form components for new QR types
 import { MenuForm } from '@/components/qr/forms/MenuForm';
@@ -251,8 +252,7 @@ export default function EditQRCodePage() {
     // This ensures scans are tracked regardless of how the QR was originally saved
     let qrContent: QRContent = content;
     if (shortCode) {
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
-      qrContent = { type: 'url', url: `${appUrl}/r/${shortCode}` };
+      qrContent = { type: 'url', url: `${getAppUrl()}/r/${shortCode}` };
     }
 
     const dataURL = await generateQRDataURL(qrContent, { ...style, width: 1024 });
@@ -266,8 +266,7 @@ export default function EditQRCodePage() {
     // This ensures scans are tracked regardless of how the QR was originally saved
     let qrContent: QRContent = content;
     if (shortCode) {
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
-      qrContent = { type: 'url', url: `${appUrl}/r/${shortCode}` };
+      qrContent = { type: 'url', url: `${getAppUrl()}/r/${shortCode}` };
     }
 
     const svg = await generateQRSVG(qrContent, style);

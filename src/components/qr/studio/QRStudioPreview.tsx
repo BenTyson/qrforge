@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { QRPreview } from '../QRPreview';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -34,6 +35,18 @@ export function QRStudioPreview({
 }: QRStudioPreviewProps) {
   const canDownloadSVG = userTier === 'pro' || userTier === 'business';
 
+  // IMPORTANT: Once saved (shortCode exists), show the actual QR that will be scanned
+  // This ensures preview matches what users download and print
+  const previewContent = useMemo((): QRContent | null => {
+    if (shortCode) {
+      // After save: show QR with redirect URL (matches download)
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com';
+      return { type: 'url', url: `${appUrl}/r/${shortCode}` };
+    }
+    // Before save: show QR with actual content (live preview while editing)
+    return content;
+  }, [shortCode, content]);
+
   return (
     <aside
       className={cn(
@@ -44,7 +57,7 @@ export function QRStudioPreview({
       {/* Header */}
       <div className="p-5 border-b border-border">
         <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
-          Live Preview
+          {shortCode ? 'Final QR Code' : 'Live Preview'}
         </h3>
         {qrName && (
           <p className="text-sm font-medium mt-1 truncate">{qrName}</p>
@@ -55,7 +68,7 @@ export function QRStudioPreview({
       <div className="flex-1 p-5 flex flex-col items-center justify-center">
         <div className="w-full max-w-[240px] p-3 bg-muted/30 rounded-2xl">
           <QRPreview
-            content={content}
+            content={previewContent}
             style={style}
             className="w-full rounded-xl shadow-lg"
             showPlaceholder={true}

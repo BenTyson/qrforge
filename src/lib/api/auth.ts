@@ -369,47 +369,120 @@ export const validators = {
         break;
 
       case 'email':
-        if (!content.address || typeof content.address !== 'string') {
-          return { valid: false, error: 'content.address is required for email type' };
+        if (!content.email || typeof content.email !== 'string') {
+          return { valid: false, error: 'content.email is required for email type' };
         }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(content.address)) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(content.email)) {
           return { valid: false, error: 'Invalid email address format' };
         }
         break;
 
       case 'phone':
+        if (!content.phone || typeof content.phone !== 'string') {
+          return { valid: false, error: 'content.phone is required for phone type' };
+        }
+        break;
+
       case 'sms':
-        if (!content.number || typeof content.number !== 'string') {
-          return { valid: false, error: `content.number is required for ${contentType} type` };
+        if (!content.phone || typeof content.phone !== 'string') {
+          return { valid: false, error: 'content.phone is required for SMS type' };
         }
         break;
 
       case 'whatsapp':
-        if (!content.number || typeof content.number !== 'string') {
-          return { valid: false, error: 'content.number is required for WhatsApp type' };
+        if (!content.phone || typeof content.phone !== 'string') {
+          return { valid: false, error: 'content.phone is required for WhatsApp type' };
         }
         break;
 
-      // URL-based social types
       case 'facebook':
-      case 'instagram':
-      case 'apps':
-        if (content.url && typeof content.url === 'string' && !validators.isValidUrl(content.url)) {
-          return { valid: false, error: 'Invalid URL format' };
+        if (!content.profileUrl || typeof content.profileUrl !== 'string') {
+          return { valid: false, error: 'content.profileUrl is required for Facebook type' };
+        }
+        if (!validators.isValidUrl(content.profileUrl)) {
+          return { valid: false, error: 'Invalid Facebook profile URL' };
         }
         break;
 
-      // File/landing page types - more permissive
+      case 'instagram':
+        if (!content.username || typeof content.username !== 'string') {
+          return { valid: false, error: 'content.username is required for Instagram type' };
+        }
+        break;
+
+      case 'apps':
+        // At least one app URL is required
+        if (!content.appStoreUrl && !content.playStoreUrl && !content.fallbackUrl) {
+          return { valid: false, error: 'At least one of appStoreUrl, playStoreUrl, or fallbackUrl is required' };
+        }
+        if (content.appStoreUrl && typeof content.appStoreUrl === 'string' && !validators.isValidUrl(content.appStoreUrl)) {
+          return { valid: false, error: 'Invalid App Store URL' };
+        }
+        if (content.playStoreUrl && typeof content.playStoreUrl === 'string' && !validators.isValidUrl(content.playStoreUrl)) {
+          return { valid: false, error: 'Invalid Play Store URL' };
+        }
+        if (content.fallbackUrl && typeof content.fallbackUrl === 'string' && !validators.isValidUrl(content.fallbackUrl)) {
+          return { valid: false, error: 'Invalid fallback URL' };
+        }
+        break;
+
+      // File upload types
       case 'pdf':
+        if (!content.fileUrl && !content.fileName) {
+          return { valid: false, error: 'content.fileUrl or content.fileName is required for PDF type' };
+        }
+        break;
+
       case 'images':
+        if (!content.images || !Array.isArray(content.images) || content.images.length === 0) {
+          return { valid: false, error: 'content.images array with at least one image is required' };
+        }
+        break;
+
       case 'video':
+        if (!content.videoUrl && !content.embedUrl) {
+          return { valid: false, error: 'content.videoUrl or content.embedUrl is required for video type' };
+        }
+        break;
+
       case 'mp3':
+        if (!content.audioUrl && !content.embedUrl) {
+          return { valid: false, error: 'content.audioUrl or content.embedUrl is required for MP3 type' };
+        }
+        break;
+
+      // Landing page types
       case 'menu':
+        if (!content.restaurantName || typeof content.restaurantName !== 'string') {
+          return { valid: false, error: 'content.restaurantName is required for menu type' };
+        }
+        break;
+
       case 'business':
+        if (!content.name || typeof content.name !== 'string') {
+          return { valid: false, error: 'content.name is required for business type' };
+        }
+        break;
+
       case 'links':
+        if (!content.title || typeof content.title !== 'string') {
+          return { valid: false, error: 'content.title is required for links type' };
+        }
+        break;
+
       case 'coupon':
+        if (!content.businessName || typeof content.businessName !== 'string') {
+          return { valid: false, error: 'content.businessName is required for coupon type' };
+        }
+        if (!content.headline || typeof content.headline !== 'string') {
+          return { valid: false, error: 'content.headline is required for coupon type' };
+        }
+        break;
+
       case 'social':
-        // These are more complex types, basic validation only
+        if (!content.name || typeof content.name !== 'string') {
+          return { valid: false, error: 'content.name is required for social type' };
+        }
         break;
 
       default:

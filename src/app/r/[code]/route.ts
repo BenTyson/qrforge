@@ -186,11 +186,63 @@ export async function GET(
   // Get destination URL
   let destinationUrl = qrCode.destination_url;
 
-  // If no destination URL, construct from content
+  // If no destination URL, construct from content based on type
   if (!destinationUrl && qrCode.content) {
-    const content = qrCode.content as { type?: string; url?: string };
-    if (content.type === 'url' && content.url) {
-      destinationUrl = content.url;
+    const content = qrCode.content as Record<string, unknown>;
+    const contentType = content.type as string;
+
+    switch (contentType) {
+      case 'url':
+        destinationUrl = content.url as string;
+        break;
+      case 'whatsapp':
+        // Construct WhatsApp URL: https://wa.me/{phone}?text={message}
+        if (content.phone) {
+          const phone = String(content.phone).replace(/\D/g, '');
+          destinationUrl = `https://wa.me/${phone}`;
+          if (content.message) {
+            destinationUrl += `?text=${encodeURIComponent(String(content.message))}`;
+          }
+        }
+        break;
+      case 'facebook':
+        destinationUrl = content.profileUrl as string;
+        break;
+      case 'instagram':
+        if (content.username) {
+          const username = String(content.username).replace('@', '');
+          destinationUrl = `https://instagram.com/${username}`;
+        }
+        break;
+      case 'apps':
+        // Use fallbackUrl, or platform-specific URL
+        destinationUrl = (content.fallbackUrl || content.appStoreUrl || content.playStoreUrl) as string;
+        break;
+      case 'email':
+        // mailto: URL scheme
+        if (content.email) {
+          destinationUrl = `mailto:${content.email}`;
+          const params: string[] = [];
+          if (content.subject) params.push(`subject=${encodeURIComponent(String(content.subject))}`);
+          if (content.body) params.push(`body=${encodeURIComponent(String(content.body))}`);
+          if (params.length > 0) destinationUrl += `?${params.join('&')}`;
+        }
+        break;
+      case 'phone':
+        if (content.phone) {
+          destinationUrl = `tel:${content.phone}`;
+        }
+        break;
+      case 'sms':
+        if (content.phone) {
+          destinationUrl = `sms:${content.phone}`;
+          if (content.message) {
+            destinationUrl += `?body=${encodeURIComponent(String(content.message))}`;
+          }
+        }
+        break;
+      // text, wifi, vcard don't have redirect URLs - they're meant to be scanned directly
+      // If we get here with these types, fall through to error handling
     }
   }
 

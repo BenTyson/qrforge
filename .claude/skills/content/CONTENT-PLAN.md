@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
 > **Last Updated**: January 22, 2026
-> **Total Content**: 28 blog posts, 77 learn articles
+> **Total Content**: 32 blog posts, 81 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -399,21 +399,41 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 72. ~~How Dynamic QR Code Redirects Work (how-it-works)~~ - ✅ Created
 73. ~~dynamic-qr-codes-complete-guide.mdx~~ - ✅ Rewritten (SEVERE → GOOD)
 
-**NEXT PRIORITIES:**
-74. How to Create a QR Code for Zoom Meeting (blog)
-75. How to Create a QR Code for Email Signature (blog)
-76. QR Code Quiet Zone: Why Margins Matter (technical)
-77. QR Code Case Studies: Real Business Results (blog)
-78. QR Code Landing Page Best Practices (best-practices)
-79. QR Code Campaign Planning Template (best-practices)
+**COMPLETED (January 22, 2026 - Session 2):**
+74. ~~How to Create a QR Code for Zoom Meeting (blog)~~ - ✅ Created
+75. ~~How to Create a QR Code for Email Signature (blog)~~ - ✅ Created
+76. ~~QR Code Quiet Zone: Why Margins Matter (technical)~~ - ✅ Created
+77. ~~QR Code Case Studies: Real Business Results (blog)~~ - ✅ Created
+78. ~~QR Code Landing Page Best Practices (best-practices)~~ - ✅ Created
 
-**REWRITES REMAINING (10 articles) - Include 1+ per content batch:**
-See `.claude/skills/content/BULLET-BLOAT-AUDIT.md` for full list.
-Priority order for rewrites:
-1. business-card-qr-codes.mdx (high-value keyword)
-2. instagram-qr-code.mdx (high-volume keyword)
-3. qr-codes-for-healthcare.mdx (industry vertical)
-4. how-to-scan-a-qr-code.mdx (foundational content)
+**COMPLETED (January 22, 2026 - Session 3):**
+79. ~~How to Create a QR Code for Survey (blog)~~ - ✅ Created
+80. ~~How to Create a QR Code for Twitter/X (blog)~~ - ✅ Created
+81. ~~How to Password Protect a QR Code (how-it-works)~~ - ✅ Created
+82. ~~QR Code Accessibility: Making Codes Inclusive (best-practices)~~ - ✅ Created
+
+**COMPLETED (January 22, 2026 - Session 4):**
+83. ~~qr-code-design-best-practices.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
+84. ~~qr-code-marketing-strategies.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
+85. ~~QR Code A/B Testing Guide (best-practices)~~ - ✅ Created
+86. ~~How to Create a QR Code for Facebook Page (blog)~~ - ✅ Created
+
+**NEXT PRIORITIES:**
+87. QR Code Campaign Planning Template (best-practices)
+88. How to Create Multiple QR Codes at Once (blog)
+89. How to Create a QR Code for LinkedIn (blog)
+90. QR Code Print Checklist (best-practices)
+
+**ALL SEVERE REWRITES COMPLETE!**
+The following 8 articles were rewritten to prose-first style (uncommitted, pending review):
+- ~~business-card-qr-codes.mdx~~ - ✅ Rewritten
+- ~~instagram-qr-code.mdx~~ - ✅ Rewritten
+- ~~qr-codes-for-healthcare.mdx~~ - ✅ Rewritten
+- ~~how-to-scan-a-qr-code.mdx~~ - ✅ Rewritten
+- ~~qr-code-placement-guide.mdx~~ - ✅ Rewritten
+- ~~qr-codes-for-event-marketing.mdx~~ - ✅ Rewritten
+- ~~qr-codes-for-hotels.mdx~~ - ✅ Rewritten
+- ~~whatsapp-qr-code.mdx~~ - ✅ Rewritten
 
 **TIER 2 REWRITES COMPLETE!**
 - ~~static-vs-dynamic-qr-codes.mdx~~ - ✅ Done
@@ -426,9 +446,9 @@ Priority order for rewrites:
 ## EXPANSION PLAN: Road to 150 Pieces
 
 > **Goal**: 125-150 total pieces for topical authority leadership
-> **Current**: 105 pieces (28 blog, 77 learn)
+> **Current**: 113 pieces (32 blog, 81 learn)
 > **Target**: 150 pieces (50 blog, 100 learn)
-> **Gap**: ~45 new pieces
+> **Gap**: ~37 new pieces
 
 ### PHASE 1: Platform-Specific "How To" Content (High Conversion)
 

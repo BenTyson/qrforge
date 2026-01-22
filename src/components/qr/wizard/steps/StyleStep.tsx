@@ -14,6 +14,7 @@ import { LogoBestPractices } from '@/components/qr/LogoBestPractices';
 import { PatternSelector } from '@/components/qr/PatternSelector';
 import { EyeStyleSelector } from '@/components/qr/EyeStyleSelector';
 import { FrameEditor } from '@/components/qr/FrameEditor';
+import { ContrastIndicator } from '@/components/qr/ContrastIndicator';
 import { COLOR_PRESETS } from '../constants';
 import type { QRStyleOptions } from '@/lib/qr/types';
 
@@ -236,8 +237,8 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
           >
             <span
               className={cn(
-                'absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform',
-                gradientEnabled ? 'translate-x-5' : 'translate-x-0.5'
+                'absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white transition-transform',
+                gradientEnabled ? 'translate-x-5' : 'translate-x-0'
               )}
             />
           </button>
@@ -394,6 +395,25 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
         )}
       </div>
 
+      {/* Background Color - always visible regardless of gradient mode */}
+      <div className="space-y-2">
+        <Label className="text-white">Background Color</Label>
+        <div className="flex gap-2">
+          <Input
+            type="color"
+            value={style.backgroundColor}
+            onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value })}
+            className="w-12 h-10 p-1 bg-slate-800 border-slate-700"
+          />
+          <Input
+            type="text"
+            value={style.backgroundColor}
+            onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value })}
+            className="flex-1 bg-slate-800 border-slate-700"
+          />
+        </div>
+      </div>
+
       {/* Color Presets & Custom Colors - only shown when gradient is off */}
       {!gradientEnabled && (
         <>
@@ -423,46 +443,33 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
             </div>
           </div>
 
-          {/* Custom Colors */}
-          <div className="space-y-4">
-            <div>
-              <Label className="text-white">QR Color</Label>
-              <div className="flex gap-2 mt-1">
-                <Input
-                  type="color"
-                  value={style.foregroundColor}
-                  onChange={(e) => onStyleChange({ ...style, foregroundColor: e.target.value })}
-                  className="w-12 h-10 p-1 bg-slate-800 border-slate-700"
-                />
-                <Input
-                  type="text"
-                  value={style.foregroundColor}
-                  onChange={(e) => onStyleChange({ ...style, foregroundColor: e.target.value })}
-                  className="flex-1 bg-slate-800 border-slate-700"
-                />
-              </div>
-            </div>
-            <div>
-              <Label className="text-white">Background</Label>
-              <div className="flex gap-2 mt-1">
-                <Input
-                  type="color"
-                  value={style.backgroundColor}
-                  onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value })}
-                  className="w-12 h-10 p-1 bg-slate-800 border-slate-700"
-                />
-                <Input
-                  type="text"
-                  value={style.backgroundColor}
-                  onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value })}
-                  className="flex-1 bg-slate-800 border-slate-700"
-                />
-              </div>
+          {/* Custom QR Color (foreground only - background is shown above) */}
+          <div className="space-y-2">
+            <Label className="text-white">QR Color</Label>
+            <div className="flex gap-2">
+              <Input
+                type="color"
+                value={style.foregroundColor}
+                onChange={(e) => onStyleChange({ ...style, foregroundColor: e.target.value })}
+                className="w-12 h-10 p-1 bg-slate-800 border-slate-700"
+              />
+              <Input
+                type="text"
+                value={style.foregroundColor}
+                onChange={(e) => onStyleChange({ ...style, foregroundColor: e.target.value })}
+                className="flex-1 bg-slate-800 border-slate-700"
+              />
             </div>
           </div>
         </>
       )}
 
+      {/* Contrast Indicator - always visible */}
+      <ContrastIndicator
+        foreground={gradientEnabled ? (style.gradient?.startColor || style.foregroundColor) : style.foregroundColor}
+        background={style.backgroundColor}
+        gradientEndColor={gradientEnabled ? style.gradient?.endColor : undefined}
+      />
     </div>
   );
 }

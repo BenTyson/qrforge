@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 22, 2026 (Critical URL Handling Fixes)
+> **Last Updated**: January 22, 2026 (QR Creator UX Improvements)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -656,6 +656,47 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
     - Users now see `https://example.com` in dashboard instead of just `example.com`
     - Handles all QR types with URL fields: url, facebook, apps, pdf, video, mp3, business, links, social
   - Updated 6 files: utils.ts, route.ts, generator.ts, QRCodeCard.tsx, QRStudioPreview.tsx, QRStudio.tsx, useQRStudioState.ts, edit page
+- **Contrast Checker Integration** (January 22, 2026):
+  - **Shared contrast utilities** (`src/lib/qr/contrast.ts`):
+    - WCAG 2.1 compliant contrast ratio calculation
+    - `hexToRgb()` now handles both 3-digit (#FFF) and 6-digit (#FFFFFF) hex codes
+    - `getContrastRatio()` returns null for invalid colors (prevents false "Excellent" ratings)
+    - `getContrastLevel()` maps ratio to Excellent/Good/Poor/Fail
+    - `isValidHexColor()` validation helper
+  - **Bug fix in ContrastChecker** (`/tools/contrast-checker`):
+    - Fixed bug where incomplete hex values always showed "Excellent" contrast
+    - Root cause: old `hexToRgb()` only matched 6-digit hex, returning null for 3-digit
+    - When null, luminance defaulted to 0 (black), giving 21:1 ratio vs white = "Excellent"
+    - Now properly shows "Fail" and "—:1" for invalid color inputs
+  - **New ContrastIndicator component** (`src/components/qr/ContrastIndicator.tsx`):
+    - Compact inline indicator with contrast ratio (e.g., "7.2:1") and status badge
+    - Gradient support: shows worst ratio when `gradientEndColor` is provided
+    - Collapsible "What does this mean?" details section explaining each level
+    - Real-time updates as colors change
+  - **Integrated into StyleStep Colors tab**:
+    - ContrastIndicator appears below color pickers in QR creation wizard
+    - Works for both solid colors and gradient mode
+    - Helps users choose scannable color combinations before downloading
+- **SEO Content Expansion** (January 22, 2026):
+  - 13 new articles across 4 content sessions:
+    - Blog (8): Zoom Meeting, Email Signature, Case Studies, Survey, Twitter/X, Facebook Page + 2 more
+    - Learn (5): Quiet Zone, Landing Page Best Practices, Password Protection, Accessibility, A/B Testing
+  - 10 articles rewritten from SEVERE bullet bloat to prose-first (all SEVERE complete!)
+  - 2 articles rewritten from MODERATE to GOOD (design best practices, marketing strategies)
+  - Total content now: 32 blog posts, 81 learn articles (113 total)
+  - Quality audit: 66% GOOD, 31% MODERATE, 0% SEVERE
+- **QR Creator UX Improvements** (January 22, 2026):
+  - **Toggle button fix**: Fixed gradient and frame toggle knobs moving outside track
+    - Added explicit `left-0.5` base positioning to toggle knobs
+    - Toggles now correctly animate between OFF (left) and ON (right) states
+  - **Background color always visible**: Moved background color picker outside gradient section
+    - Now appears as standalone control, always accessible regardless of gradient mode
+    - Background color persists when switching between gradient and solid color modes
+    - Removed duplicate background picker from non-gradient "Custom Colors" section
+  - **High-contrast color presets**: Updated all 8 color presets to have 7:1+ contrast (Excellent)
+    - All presets now use dark foreground on light background for optimal scanning
+    - Navy, Forest, Ocean, Sunset, Berry, Royal presets redesigned with proper contrast
+    - Prevents suggesting poor color combinations that would fail scanning
 
 ### Planned Enhancements
 - Webhooks for scan notifications
@@ -818,6 +859,7 @@ src/
 │   │   ├── QRTypeSelector.tsx      # Categorized type selector with Pro badges
 │   │   ├── QRWizard.tsx            # 5-step QR creation wizard (Type→Content→Style→Options→Download)
 │   │   ├── QRFilters.tsx           # Search, type filter, status filter, folder filter
+│   │   ├── ContrastIndicator.tsx   # Color contrast feedback for scannability
 │   │   ├── FolderManager.tsx       # Folder list sidebar (Pro+ feature)
 │   │   ├── FolderModal.tsx         # Create/edit folder dialog
 │   │   ├── LogoUploader.tsx        # Single image upload component for logos/avatars
@@ -889,6 +931,7 @@ src/
 │   └── useStripe.ts                # Checkout & portal hooks
 ├── lib/
 │   ├── qr/                         # QR generation
+│   │   └── contrast.ts             # WCAG 2.1 contrast utilities
 │   ├── supabase/                   # Supabase clients
 │   ├── stripe/                     # Stripe config (with SCAN_LIMITS)
 │   ├── api/                        # API authentication helpers
@@ -1125,11 +1168,10 @@ npm run dev               # Dev server on port 3322
 - **Logo background styles** - Circle, square, rounded, transparent
 
 ### SEO & Content (Ongoing)
-- Current: 28 blog posts, 69 learn articles (97 total)
+- Current: 32 blog posts, 81 learn articles (113 total)
 - Target: 50 blog posts, 100 learn articles (150 total)
-- Current: 28 blog posts, 77 learn articles (105 total)
-- Remaining: ~45 articles to reach target
-- **Quality audit**: 10 SEVERE articles remaining for prose-first rewrites
+- Remaining: ~37 articles to reach target
+- **Quality audit**: All SEVERE rewrites complete! 66% now GOOD, 31% MODERATE
 - See `.claude/skills/content/CONTENT-PLAN.md` for expansion plan
 - See `.claude/skills/content/BULLET-BLOAT-AUDIT.md` for quality audit results
 - Add FAQ schema to knowledge base pages

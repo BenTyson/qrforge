@@ -110,8 +110,8 @@ export function FrameEditor({
           >
             <span
               className={cn(
-                'absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform',
-                isEnabled ? 'translate-x-5' : 'translate-x-0.5'
+                'absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white transition-transform',
+                isEnabled ? 'translate-x-5' : 'translate-x-0'
               )}
             />
           </button>

@@ -6,6 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Sparkles } from 'lucide-react';
+import {
+  getContrastRatio,
+  getContrastLevel,
+  getContrastInfo,
+  isValidHexColor,
+  type ContrastLevel,
+} from '@/lib/qr/contrast';
 
 interface ColorPreset {
   name: string;
@@ -22,88 +29,15 @@ const PRESETS: ColorPreset[] = [
   { name: 'Ocean', foreground: '#003366', background: '#e6f3ff' },
 ];
 
-// Calculate relative luminance per WCAG 2.1
-function getLuminance(hex: string): number {
-  const rgb = hexToRgb(hex);
-  if (!rgb) return 0;
-
-  const [r, g, b] = [rgb.r, rgb.g, rgb.b].map((c) => {
-    c = c / 255;
-    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-  });
-
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-
-// Calculate contrast ratio per WCAG 2.1
-function getContrastRatio(hex1: string, hex2: string): number {
-  const l1 = getLuminance(hex1);
-  const l2 = getLuminance(hex2);
-  const lighter = Math.max(l1, l2);
-  const darker = Math.min(l1, l2);
-  return (lighter + 0.05) / (darker + 0.05);
-}
-
-function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
-    : null;
-}
-
-type ContrastLevel = 'excellent' | 'good' | 'poor' | 'fail';
-
-function getContrastLevel(ratio: number): ContrastLevel {
-  if (ratio >= 7) return 'excellent';
-  if (ratio >= 4.5) return 'good';
-  if (ratio >= 3) return 'poor';
-  return 'fail';
-}
-
-function getContrastInfo(level: ContrastLevel): {
-  label: string;
-  description: string;
-  icon: React.ReactNode;
-  color: string;
-  bgColor: string;
-} {
+function getContrastIcon(level: ContrastLevel): React.ReactNode {
   switch (level) {
     case 'excellent':
-      return {
-        label: 'Excellent',
-        description: 'Perfect contrast for all scanning conditions',
-        icon: <CheckCircle className="w-6 h-6" />,
-        color: 'text-green-500',
-        bgColor: 'bg-green-500/20',
-      };
     case 'good':
-      return {
-        label: 'Good',
-        description: 'Sufficient contrast for most conditions',
-        icon: <CheckCircle className="w-6 h-6" />,
-        color: 'text-primary',
-        bgColor: 'bg-primary/20',
-      };
+      return <CheckCircle className="w-6 h-6" />;
     case 'poor':
-      return {
-        label: 'Poor',
-        description: 'May have scanning issues in low light',
-        icon: <AlertTriangle className="w-6 h-6" />,
-        color: 'text-yellow-500',
-        bgColor: 'bg-yellow-500/20',
-      };
+      return <AlertTriangle className="w-6 h-6" />;
     case 'fail':
-      return {
-        label: 'Fail',
-        description: 'Will likely fail to scan - increase contrast',
-        icon: <XCircle className="w-6 h-6" />,
-        color: 'text-red-500',
-        bgColor: 'bg-red-500/20',
-      };
+      return <XCircle className="w-6 h-6" />;
   }
 }
 
@@ -161,11 +95,12 @@ export function ContrastChecker() {
   const [foreground, setForeground] = useState('#000000');
   const [background, setBackground] = useState('#FFFFFF');
 
-  const { ratio, level, info } = useMemo(() => {
+  const { ratio, level, info, isValid } = useMemo(() => {
+    const valid = isValidHexColor(foreground) && isValidHexColor(background);
     const r = getContrastRatio(foreground, background);
     const l = getContrastLevel(r);
     const i = getContrastInfo(l);
-    return { ratio: r, level: l, info: i };
+    return { ratio: r, level: l, info: i, isValid: valid };
   }, [foreground, background]);
 
   const applyPreset = (preset: ColorPreset) => {
@@ -298,15 +233,18 @@ export function ContrastChecker() {
         >
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
-              <div className={`w-12 h-12 rounded-full ${info.bgColor} flex items-center justify-center flex-shrink-0 ${info.color}`}>
-                {info.icon}
+              <div className={`w-12 h-12 rounded-full ${info.bgColorClass} flex items-center justify-center flex-shrink-0 ${info.colorClass}`}>
+                {getContrastIcon(level)}
               </div>
               <div className="flex-1">
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className={`text-lg font-semibold ${info.color}`}>{info.label}</span>
+                  <span className={`text-lg font-semibold ${info.colorClass}`}>{info.label}</span>
+                  {!isValid && (
+                    <span className="text-xs text-slate-500">(enter valid hex colors)</span>
+                  )}
                 </div>
                 <p className="text-3xl font-bold text-white mb-1">
-                  {ratio.toFixed(2)}
+                  {ratio !== null ? ratio.toFixed(2) : '—'}
                   <span className="text-lg text-slate-400 ml-1">: 1</span>
                 </p>
                 <p className="text-sm text-slate-400">{info.description}</p>
@@ -329,7 +267,7 @@ export function ContrastChecker() {
                     level === 'good' ? 'bg-primary' :
                     'bg-green-500'
                   }`}
-                  style={{ width: `${Math.min((ratio / 21) * 100, 100)}%` }}
+                  style={{ width: `${ratio !== null ? Math.min((ratio / 21) * 100, 100) : 0}%` }}
                 />
               </div>
               <div className="flex justify-between text-xs mt-1">

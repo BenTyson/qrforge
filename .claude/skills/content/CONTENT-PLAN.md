@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
 > **Last Updated**: January 22, 2026
-> **Total Content**: 32 blog posts, 81 learn articles
+> **Total Content**: 33 blog posts, 83 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -31,7 +31,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 
 ## Existing Content Inventory
 
-### Blog Posts (28)
+### Blog Posts (33)
 
 | Title | Category | Primary Keyword | Slug |
 |-------|----------|-----------------|------|
@@ -63,8 +63,15 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Codes for Print Materials: Complete Guide | guides | print qr code | qr-codes-for-print-materials |
 | How to Create a QR Code for TikTok | tutorials | tiktok qr code | qr-code-for-tiktok |
 | How to Create a QR Code for Google Docs | tutorials | google docs qr code | qr-code-for-google-docs |
+| How to Create a QR Code for Zoom Meeting | tutorials | zoom qr code | qr-code-for-zoom |
+| How to Create a QR Code for Email Signature | tutorials | email signature qr code | qr-code-for-email-signature |
+| QR Code Case Studies: Real Business Results | guides | qr code case study | qr-code-case-studies |
+| How to Create a QR Code for Survey | tutorials | survey qr code | qr-code-for-survey |
+| How to Create a QR Code for Twitter/X | tutorials | twitter qr code | qr-code-for-twitter |
+| How to Create a QR Code for Facebook Page | tutorials | facebook page qr code | qr-code-for-facebook-page |
+| How to Create Multiple QR Codes at Once | tutorials | bulk qr codes | how-to-create-bulk-qr-codes |
 
-### Learn Articles (69)
+### Learn Articles (83)
 
 #### qr-basics (10)
 | Title | Primary Keyword | Slug |
@@ -80,7 +87,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | Types of QR Codes: Complete Guide to All 16 | types of qr codes | types-of-qr-codes |
 | QR Code FAQs: 30 Common Questions Answered | qr code faq | qr-code-faqs |
 
-#### how-it-works (5)
+#### how-it-works (7)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | How QR Code Error Correction Works | qr code error correction | qr-code-error-correction |
@@ -88,6 +95,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How WiFi QR Codes Work | how wifi qr code works | how-wifi-qr-codes-work |
 | How to Change QR Code Destination | change qr code link | how-to-change-qr-code-destination |
 | How Dynamic QR Code Redirects Work | qr code redirect | how-dynamic-qr-redirects-work |
+| How to Password Protect a QR Code | password protected qr code | how-to-password-protect-qr-code |
 
 #### use-cases (21)
 | Title | Primary Keyword | Slug |
@@ -142,7 +150,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Codes for Insurance Agencies | qr codes insurance | qr-codes-for-insurance |
 | QR Codes for Financial Services | qr codes banking, financial services | qr-codes-for-financial-services |
 
-#### best-practices (7)
+#### best-practices (12)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Code Design Best Practices | qr code design | qr-code-design-best-practices |
@@ -152,8 +160,13 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Code Size Requirements | qr code size requirements | qr-code-size-requirements |
 | How to Test if Your QR Code Works | test qr code | how-to-test-qr-codes |
 | How to Make a QR Code Smaller | qr code minimum size | how-to-make-qr-code-smaller |
+| QR Code Landing Page Best Practices | qr code landing page | qr-code-landing-page-best-practices |
+| QR Code Accessibility: Making Codes Inclusive | qr code accessibility | qr-code-accessibility |
+| QR Code A/B Testing Guide | qr code a/b testing | qr-code-a-b-testing |
+| QR Code Campaign Planning Template | qr code campaign | qr-code-campaign-planning |
+| QR Code Print Checklist | print qr code checklist | qr-code-print-checklist |
 
-#### technical (8)
+#### technical (9)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Code Data Capacity | qr code data capacity | qr-code-data-capacity |
@@ -164,6 +177,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Code Encoding Modes Explained | qr code encoding | qr-code-encoding-modes |
 | QR Code Analytics: Metrics That Matter | qr code analytics | qr-code-analytics-metrics |
 | QR Code Colors: Contrast and Readability Guide | qr code colors | qr-code-colors-contrast |
+| QR Code Quiet Zone: Why Margins Matter | qr code quiet zone | qr-code-quiet-zone |
 
 ---
 
@@ -418,11 +432,16 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 85. ~~QR Code A/B Testing Guide (best-practices)~~ - ✅ Created
 86. ~~How to Create a QR Code for Facebook Page (blog)~~ - ✅ Created
 
+**COMPLETED (January 22, 2026 - Session 5):**
+87. ~~QR Code Campaign Planning Template (best-practices)~~ - ✅ Created
+88. ~~How to Create Multiple QR Codes at Once (blog)~~ - ✅ Created
+89. ~~QR Code Print Checklist (best-practices)~~ - ✅ Created
+
 **NEXT PRIORITIES:**
-87. QR Code Campaign Planning Template (best-practices)
-88. How to Create Multiple QR Codes at Once (blog)
-89. How to Create a QR Code for LinkedIn (blog)
-90. QR Code Print Checklist (best-practices)
+90. How to Create a QR Code for Feedback Form (blog)
+91. QR Codes for Inventory Management (use-cases)
+92. QR Codes for Employee ID Cards (use-cases)
+93. QR Codes for Loyalty Programs (use-cases)
 
 **ALL SEVERE REWRITES COMPLETE!**
 The following 8 articles were rewritten to prose-first style (uncommitted, pending review):
@@ -760,6 +779,8 @@ There are 10 articles with severe bullet bloat that need prose-first rewrites. S
 
 | Date | Changes |
 |------|---------|
+| 2026-01-22 | Rewrote qr-codes-for-small-business.mdx, qr-code-vs-barcode.mdx, wifi-qr-codes-complete-guide.mdx (MODERATE → GOOD). Quality now: 69% GOOD, 28% MODERATE, 0% SEVERE |
+| 2026-01-22 | Added Campaign Planning (best-practices), Print Checklist (best-practices), Bulk QR Codes (blog). Now 33 blog, 83 learn (116 total) |
 | 2026-01-22 | Added Libraries, Government, Insurance, Financial Services (industries) + Flyers, Packaging Labels, Conference Badges (use-cases) + Dynamic Redirects (how-it-works). Rewrote dynamic-qr-codes-complete-guide.mdx (SEVERE→GOOD). Added "1 rewrite per batch" rule. Now 28 blog, 77 learn (105 total) |
 | 2026-01-21 | Added Churches, Museums (industries) + Social Profile, Portfolios, Weddings (use-cases) + Generator Comparison, Free vs Paid (blogs) + Change Destination (how-it-works) - Now 28 blog, 69 learn (97 total) |
 | 2026-01-21 | Added TikTok, Google Docs blogs + Law, Auto, Travel, Beauty, Facebook, Gallery articles - Now 26 blog, 61 learn (87 total) |

@@ -8,12 +8,13 @@
 
 | Rating | Count | Percentage |
 |--------|-------|------------|
-| GOOD (prose-first) | 66 | 66% |
-| MODERATE (some issues) | 31 | 31% |
+| GOOD (prose-first) | 69 | 69% |
+| MODERATE (some issues) | 28 | 28% |
 | SEVERE (needs rewrite) | 0 | 0% |
 
 *Note: 12 articles moved from SEVERE to GOOD after prose-first rewrites.*
 *Note: 2 articles moved from MODERATE to GOOD (qr-code-design-best-practices, qr-code-marketing-strategies) on 2026-01-22.*
+*Note: 3 articles moved from MODERATE to GOOD (qr-codes-for-small-business, qr-code-vs-barcode, wifi-qr-codes-complete-guide) on 2026-01-22.*
 
 ## Rating Criteria
 
@@ -47,42 +48,38 @@
 
 ---
 
-## MODERATE - Acceptable But Could Improve (32 files)
+## MODERATE - Acceptable But Could Improve (28 files)
 
 These have some bullet-heavy sections but include enough prose to not feel like pure outlines.
 
-1. qr-codes-for-small-business.mdx
-2. qr-code-error-correction.mdx
-3. how-qr-code-scanning-works.mdx
-4. qr-code-data-capacity.mdx
-5. qr-code-versions-explained.mdx
-6. how-to-create-a-qr-code.mdx
-7. qr-code-vs-barcode.mdx
-8. qr-code-security.mdx
-9. how-to-track-qr-code-scans.mdx
-10. qr-code-marketing-strategies.mdx
-11. vcard-qr-codes-digital-business-cards.mdx
-12. wifi-qr-codes-complete-guide.mdx
-13. qr-code-size-requirements.mdx
-14. qr-code-not-scanning.mdx
-15. qr-code-for-pdf.mdx
-16. qr-code-file-formats.mdx
-17. qr-code-encoding-modes.mdx
-18. qr-code-analytics-metrics.mdx
-19. qr-code-myths-debunked.mdx
-20. qr-code-glossary.mdx (format-appropriate)
-21. types-of-qr-codes.mdx
-22. qr-code-faqs.mdx (format-appropriate)
-23. best-free-qr-code-generators.mdx
-24. qr-code-for-google-reviews.mdx
-25. qr-code-for-youtube.mdx
-26. how-to-test-qr-codes.mdx
-27. how-to-make-qr-code-smaller.mdx
-28. qr-code-colors-contrast.mdx
-29. facebook-qr-code.mdx
-30. image-gallery-qr-codes.mdx
-31. qr-codes-for-churches.mdx
-32. how-wifi-qr-codes-work.mdx
+1. qr-code-error-correction.mdx
+2. how-qr-code-scanning-works.mdx
+3. qr-code-data-capacity.mdx
+4. qr-code-versions-explained.mdx
+5. how-to-create-a-qr-code.mdx
+6. qr-code-security.mdx
+7. how-to-track-qr-code-scans.mdx
+8. vcard-qr-codes-digital-business-cards.mdx
+9. qr-code-size-requirements.mdx
+10. qr-code-not-scanning.mdx
+11. qr-code-for-pdf.mdx
+12. qr-code-file-formats.mdx
+13. qr-code-encoding-modes.mdx
+14. qr-code-analytics-metrics.mdx
+15. qr-code-myths-debunked.mdx
+16. qr-code-glossary.mdx (format-appropriate)
+17. types-of-qr-codes.mdx
+18. qr-code-faqs.mdx (format-appropriate)
+19. best-free-qr-code-generators.mdx
+20. qr-code-for-google-reviews.mdx
+21. qr-code-for-youtube.mdx
+22. how-to-test-qr-codes.mdx
+23. how-to-make-qr-code-smaller.mdx
+24. qr-code-colors-contrast.mdx
+25. facebook-qr-code.mdx
+26. image-gallery-qr-codes.mdx
+27. qr-codes-for-churches.mdx
+28. how-wifi-qr-codes-work.mdx
 
 ---
 
@@ -137,6 +134,9 @@ These articles demonstrate the quality we're aiming for: flowing prose with bull
 45. qr-codes-for-weddings.mdx
 46. qr-codes-for-product-packaging.mdx (after rewrite)
 47. dynamic-qr-codes-complete-guide.mdx (after rewrite 2026-01-22)
+48. qr-codes-for-small-business.mdx (after rewrite 2026-01-22)
+49. qr-code-vs-barcode.mdx (after rewrite 2026-01-22)
+50. wifi-qr-codes-complete-guide.mdx (after rewrite 2026-01-22)
 
 *Plus 5 additional files verified as GOOD by the audit agent*
 

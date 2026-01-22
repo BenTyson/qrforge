@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 22, 2026 (QR Creator UX Improvements)
+> **Last Updated**: January 22, 2026 (Homepage Modularization)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -697,6 +697,16 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
     - All presets now use dark foreground on light background for optimal scanning
     - Navy, Forest, Ocean, Sunset, Berry, Royal presets redesigned with proper contrast
     - Prevents suggesting poor color combinations that would fail scanning
+- **Homepage Modularization** (January 22, 2026):
+  - **94% reduction in page.tsx**: Refactored from 1,862 lines to 114 lines
+  - **22 new components** extracted for maintainability and reusability:
+    - Constants file: `src/constants/homepage.tsx` (FEATURES, FAQS, QR_TYPES, TESTIMONIALS, STATS, jsonLd)
+    - Icon components: `src/components/icons/index.tsx` (28 reusable SVG icons)
+    - UI patterns: `src/components/homepage/ui.tsx` (IconContainer, FeatureListItem, StatBlock, SectionHeader, UseCaseCard, StarRating, SecurityCard)
+    - Section components: HeroSection, HowItWorksSection, StatsSection, QRTypesSection, ComparisonSection, StaticVsDynamicSection, FeaturesGridSection, AnalyticsShowcaseSection, BrandingShowcaseSection, CreativeDesignSection, UseCasesSection, TestimonialsSection, PricingDisplaySection, FAQSection, SecuritySection, FinalCTASection
+  - **Eliminated code duplication**: CheckIcon, XIcon, ArrowIcon repeated 40+ times now single components
+  - **Improved maintainability**: Each section independently editable and testable
+  - **Better IDE performance**: Smaller file sizes improve developer experience
 
 ### Planned Enhancements
 - Webhooks for scan notifications
@@ -850,6 +860,27 @@ src/
 │   │   ├── AdminTabs.tsx           # URL-based tab navigation
 │   │   └── AdminExportButton.tsx   # CSV/JSON export button with format selector
 │   ├── ui/                         # shadcn components
+│   ├── icons/
+│   │   └── index.tsx               # 28 reusable SVG icon components
+│   ├── homepage/                   # Homepage section components
+│   │   ├── index.tsx               # Barrel export
+│   │   ├── ui.tsx                  # Reusable patterns (IconContainer, FeatureListItem, etc.)
+│   │   ├── HeroSection.tsx         # Hero with logo and tagline
+│   │   ├── HowItWorksSection.tsx   # 3-step process
+│   │   ├── StatsSection.tsx        # Stats grid
+│   │   ├── QRTypesSection.tsx      # 16 QR types showcase
+│   │   ├── ComparisonSection.tsx   # QRWolf vs competitors
+│   │   ├── StaticVsDynamicSection.tsx # Static vs dynamic comparison
+│   │   ├── FeaturesGridSection.tsx # Features grid
+│   │   ├── AnalyticsShowcaseSection.tsx # Analytics demo
+│   │   ├── BrandingShowcaseSection.tsx # Branding demo
+│   │   ├── CreativeDesignSection.tsx # Creative design demo
+│   │   ├── UseCasesSection.tsx     # Use cases with problem/solution
+│   │   ├── TestimonialsSection.tsx # Customer testimonials
+│   │   ├── PricingDisplaySection.tsx # Pricing wrapper
+│   │   ├── FAQSection.tsx          # FAQ accordion
+│   │   ├── SecuritySection.tsx     # Security features
+│   │   └── FinalCTASection.tsx     # Final call-to-action
 │   ├── qr/
 │   │   ├── QRGenerator.tsx         # QR generation form (homepage)
 │   │   ├── QRCodeCard.tsx          # QR list item with actions + folder dropdown
@@ -927,6 +958,8 @@ src/
 │       ├── industries/*.mdx
 │       ├── best-practices/*.mdx
 │       └── technical/*.mdx
+├── constants/
+│   └── homepage.tsx                # Homepage data (FEATURES, FAQS, QR_TYPES, TESTIMONIALS, jsonLd)
 ├── hooks/
 │   └── useStripe.ts                # Checkout & portal hooks
 ├── lib/

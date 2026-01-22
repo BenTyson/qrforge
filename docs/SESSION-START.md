@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 22, 2026 (Homepage Modularization)
+> **Last Updated**: January 22, 2026 (SEO Content Expansion - 123 articles)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -707,6 +707,17 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - **Eliminated code duplication**: CheckIcon, XIcon, ArrowIcon repeated 40+ times now single components
   - **Improved maintainability**: Each section independently editable and testable
   - **Better IDE performance**: Smaller file sizes improve developer experience
+- **SEO Content Expansion to 123 Articles** (January 22, 2026):
+  - **7 new articles** created across blog and learn categories:
+    - Blog (1): How to Create a QR Code for Feedback Form
+    - Use-cases (5): Inventory Management, Employee ID Cards, Loyalty Programs, Warranty Registration, Asset Tagging
+    - Technical (1): Micro QR Codes vs Standard QR Codes
+  - **2 articles rewritten** from MODERATE to GOOD (prose-first):
+    - how-to-create-a-qr-code.mdx (foundational article)
+    - vcard-qr-codes-digital-business-cards.mdx (high-value keyword)
+  - **Content quality improved**: 71% GOOD, 24% MODERATE, 0% SEVERE (up from 66% GOOD)
+  - **Total content now**: 34 blog posts, 89 learn articles (123 total)
+  - **Gap to target**: 27 articles remaining to reach 150 total
 
 ### Planned Enhancements
 - Webhooks for scan notifications
@@ -1201,10 +1212,10 @@ npm run dev               # Dev server on port 3322
 - **Logo background styles** - Circle, square, rounded, transparent
 
 ### SEO & Content (Ongoing)
-- Current: 32 blog posts, 81 learn articles (113 total)
+- Current: 34 blog posts, 89 learn articles (123 total)
 - Target: 50 blog posts, 100 learn articles (150 total)
-- Remaining: ~37 articles to reach target
-- **Quality audit**: All SEVERE rewrites complete! 66% now GOOD, 31% MODERATE
+- Remaining: ~27 articles to reach target
+- **Quality audit**: All SEVERE rewrites complete! 71% now GOOD, 24% MODERATE
 - See `.claude/skills/content/CONTENT-PLAN.md` for expansion plan
 - See `.claude/skills/content/BULLET-BLOAT-AUDIT.md` for quality audit results
 - Add FAQ schema to knowledge base pages

@@ -1,20 +1,24 @@
 # Content Bullet Bloat Audit Report
 
 **Date:** 2026-01-22 (Updated)
-**Total Files Audited:** 99
+**Total Files Audited:** 110
 **Status:** All SEVERE rewrites complete!
 
 ## Summary
 
 | Rating | Count | Percentage |
 |--------|-------|------------|
-| GOOD (prose-first) | 69 | 69% |
-| MODERATE (some issues) | 28 | 28% |
+| GOOD (prose-first) | 78 | 71% |
+| MODERATE (some issues) | 26 | 24% |
 | SEVERE (needs rewrite) | 0 | 0% |
 
 *Note: 12 articles moved from SEVERE to GOOD after prose-first rewrites.*
 *Note: 2 articles moved from MODERATE to GOOD (qr-code-design-best-practices, qr-code-marketing-strategies) on 2026-01-22.*
 *Note: 3 articles moved from MODERATE to GOOD (qr-codes-for-small-business, qr-code-vs-barcode, wifi-qr-codes-complete-guide) on 2026-01-22.*
+*Note: 1 article moved from MODERATE to GOOD (how-to-create-a-qr-code.mdx) on 2026-01-22.*
+*Note: 4 new articles added (Feedback Form, Inventory Management, Employee ID Cards, Loyalty Programs) - all GOOD quality.*
+*Note: 1 article moved from MODERATE to GOOD (vcard-qr-codes-digital-business-cards.mdx) on 2026-01-22.*
+*Note: 3 new articles added (Warranty Registration, Asset Tagging, Micro QR Codes) - all GOOD quality.*
 
 ## Rating Criteria
 
@@ -48,7 +52,7 @@
 
 ---
 
-## MODERATE - Acceptable But Could Improve (28 files)
+## MODERATE - Acceptable But Could Improve (26 files)
 
 These have some bullet-heavy sections but include enough prose to not feel like pure outlines.
 
@@ -56,34 +60,32 @@ These have some bullet-heavy sections but include enough prose to not feel like 
 2. how-qr-code-scanning-works.mdx
 3. qr-code-data-capacity.mdx
 4. qr-code-versions-explained.mdx
-5. how-to-create-a-qr-code.mdx
-6. qr-code-security.mdx
-7. how-to-track-qr-code-scans.mdx
-8. vcard-qr-codes-digital-business-cards.mdx
-9. qr-code-size-requirements.mdx
-10. qr-code-not-scanning.mdx
-11. qr-code-for-pdf.mdx
-12. qr-code-file-formats.mdx
-13. qr-code-encoding-modes.mdx
-14. qr-code-analytics-metrics.mdx
-15. qr-code-myths-debunked.mdx
-16. qr-code-glossary.mdx (format-appropriate)
-17. types-of-qr-codes.mdx
-18. qr-code-faqs.mdx (format-appropriate)
-19. best-free-qr-code-generators.mdx
-20. qr-code-for-google-reviews.mdx
-21. qr-code-for-youtube.mdx
-22. how-to-test-qr-codes.mdx
-23. how-to-make-qr-code-smaller.mdx
-24. qr-code-colors-contrast.mdx
-25. facebook-qr-code.mdx
-26. image-gallery-qr-codes.mdx
-27. qr-codes-for-churches.mdx
-28. how-wifi-qr-codes-work.mdx
+5. qr-code-security.mdx
+6. how-to-track-qr-code-scans.mdx
+7. qr-code-size-requirements.mdx
+8. qr-code-not-scanning.mdx
+9. qr-code-for-pdf.mdx
+10. qr-code-file-formats.mdx
+11. qr-code-encoding-modes.mdx
+12. qr-code-analytics-metrics.mdx
+13. qr-code-myths-debunked.mdx
+14. qr-code-glossary.mdx (format-appropriate)
+15. types-of-qr-codes.mdx
+16. qr-code-faqs.mdx (format-appropriate)
+17. best-free-qr-code-generators.mdx
+18. qr-code-for-google-reviews.mdx
+19. qr-code-for-youtube.mdx
+20. how-to-test-qr-codes.mdx
+21. how-to-make-qr-code-smaller.mdx
+22. qr-code-colors-contrast.mdx
+23. facebook-qr-code.mdx
+24. image-gallery-qr-codes.mdx
+25. qr-codes-for-churches.mdx
+26. how-wifi-qr-codes-work.mdx
 
 ---
 
-## GOOD - Prose-First Writing (51 files)
+## GOOD - Prose-First Writing (60 files)
 
 These articles demonstrate the quality we're aiming for: flowing prose with bullets used only where appropriate.
 
@@ -137,6 +139,15 @@ These articles demonstrate the quality we're aiming for: flowing prose with bull
 48. qr-codes-for-small-business.mdx (after rewrite 2026-01-22)
 49. qr-code-vs-barcode.mdx (after rewrite 2026-01-22)
 50. wifi-qr-codes-complete-guide.mdx (after rewrite 2026-01-22)
+51. how-to-create-a-qr-code.mdx (after rewrite 2026-01-22)
+52. qr-code-for-feedback-form.mdx (new 2026-01-22)
+53. qr-codes-for-inventory-management.mdx (new 2026-01-22)
+54. qr-codes-for-employee-id-cards.mdx (new 2026-01-22)
+55. qr-codes-for-loyalty-programs.mdx (new 2026-01-22)
+56. vcard-qr-codes-digital-business-cards.mdx (after rewrite 2026-01-22)
+57. qr-codes-for-warranty-registration.mdx (new 2026-01-22)
+58. qr-codes-for-asset-tagging.mdx (new 2026-01-22)
+59. micro-qr-codes.mdx (new 2026-01-22)
 
 *Plus 5 additional files verified as GOOD by the audit agent*
 

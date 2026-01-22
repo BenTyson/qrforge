@@ -260,11 +260,20 @@ export async function GET(
     return NextResponse.redirect(new URL('/', baseUrl));
   }
 
+  // CRITICAL: Normalize the destination URL to ensure it has a protocol
+  // Without this, URLs like "example.com" would be treated as relative paths
+  // and redirect to "/r/example.com" instead of "https://example.com"
+  let normalizedUrl = destinationUrl.trim();
+  if (normalizedUrl && !normalizedUrl.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:/)) {
+    // No protocol found - add https://
+    normalizedUrl = `https://${normalizedUrl}`;
+  }
+
   // Record the scan (async, don't wait)
   recordScan(qrCode.id, request);
 
   // Redirect to destination
-  return NextResponse.redirect(destinationUrl);
+  return NextResponse.redirect(normalizedUrl);
 }
 
 async function recordScan(

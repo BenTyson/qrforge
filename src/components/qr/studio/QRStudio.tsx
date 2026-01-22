@@ -247,6 +247,7 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
     );
   }
 
+  const isUserTierLoading = state.userTierLoading;
   const canAccessProTypes = state.userTier === 'pro' || state.userTier === 'business';
 
   return (
@@ -278,13 +279,16 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
               Saving...
             </span>
           )}
-          {state.saveError && (
-            <span className="text-sm text-red-500 flex items-center gap-2">
-              {state.saveError}
+          {(state.saveError || state.saveBlockedReason) && (
+            <span className={cn(
+              "text-sm flex items-center gap-2",
+              state.saveError ? "text-red-500" : "text-yellow-500"
+            )}>
+              {state.saveError || state.saveBlockedReason}
               <button
                 onClick={() => actions.clearSaveError()}
                 className="p-0.5 hover:bg-red-500/20 rounded"
-                aria-label="Dismiss error"
+                aria-label="Dismiss message"
               >
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M18 6L6 18M6 6l12 12" />
@@ -378,13 +382,15 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
                 selectedCategory={state.selectedCategory}
                 onCategorySelect={(categoryId) => actions.selectCategory(categoryId)}
                 onTypeSelect={(typeId) => {
-                  if (PRO_ONLY_TYPES.includes(typeId as QRContentType) && !canAccessProTypes) {
+                  // Don't redirect to /plans while userTier is loading - Pro users would be wrongly redirected
+                  if (PRO_ONLY_TYPES.includes(typeId as QRContentType) && !canAccessProTypes && !isUserTierLoading) {
                     router.push('/plans');
                     return;
                   }
+                  // If still loading and Pro type selected, just select it - access will be validated on save
                   actions.selectType(typeId as QRContentType);
                 }}
-                canAccessProTypes={canAccessProTypes}
+                canAccessProTypes={canAccessProTypes || isUserTierLoading}
                 userTier={state.userTier}
               />
             )}

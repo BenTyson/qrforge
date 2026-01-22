@@ -1,0 +1,120 @@
+---
+title: "QR Code Print Checklist: Pre-Print Verification Guide"
+description: "Verify your QR codes are print-ready with this comprehensive checklist. Covers size, contrast, resolution, placement, and testing to ensure codes scan reliably after printing."
+category: "best-practices"
+order: 10
+tags: ["print qr code", "qr code checklist", "printing guide", "quality assurance"]
+relatedSlugs: ["qr-code-size-guide", "qr-code-design-best-practices", "qr-code-placement-guide", "how-to-test-qr-codes"]
+draft: false
+---
+
+Printing a QR code that doesn't scan is worse than not printing one at all. You've invested in the design, the placement, and the print production, only to frustrate everyone who tries to engage. The worst part is that print failures are usually preventable. A methodical pre-print check catches problems while they're still cheap to fix.
+
+This checklist covers everything that matters before your QR codes hit the press. Work through it systematically, and you'll print with confidence knowing your codes will scan reliably in the real world.
+
+## Size and Viewing Distance
+
+The relationship between code size and scanning distance is fundamental to print success. Too small, and phones can't resolve the individual modules. Scanners require a certain pixel density to distinguish the pattern, and that density depends on how far away the phone will be when scanning.
+
+The baseline rule is that minimum QR code size should equal the expected scanning distance divided by ten. A code scanned from one meter away needs to be at least ten centimeters square. A code on a product package scanned from twenty centimeters works at just two centimeters. This math gives you the absolute minimum, not a comfortable target.
+
+Build in margin above the minimum whenever possible. Real-world scanning rarely happens under ideal conditions. People don't hold their phones perfectly steady at precisely the expected distance. Lighting varies. Print quality varies. A code comfortably above the minimum size accommodates these variations without requiring perfect conditions.
+
+<Callout type="warning" title="Don't Guess Distance">
+If you're unsure about scanning distance, physically test the placement before finalizing size. Stand where scanners will stand, hold a phone as they would, and measure the actual distance. Assumptions about viewing distance are wrong surprisingly often.
+</Callout>
+
+Consider the entire range of likely distances, not just a single point. A poster on a wall might be scanned by someone standing immediately in front of it or by someone standing a few meters back. The code needs to work across that entire range. Size for the maximum expected distance while ensuring it doesn't become absurdly large for close scanning.
+
+## Quiet Zone Verification
+
+The quiet zone is the blank border surrounding a QR code, and it's not optional decoration. Scanners use this contrast boundary to identify where the code begins and ends. Without adequate quiet space, scanners struggle to find the code at all, even if the code itself is perfectly rendered.
+
+Standard QR codes require a quiet zone of four modules on every side. A module is one of the small squares that make up the code's pattern. If you're unsure what that translates to in absolute measurements, look at the smallest squares in your code and ensure blank space extends at least four of those widths in every direction.
+
+The quiet zone must actually be quiet, meaning uniformly blank without any design elements, text, or graphics encroaching. It's tempting to push other content close to the code to save space, but this risks breaking the quiet zone. Logos, text, decorative elements, and even border lines should stay outside the quiet zone entirely.
+
+Watch for design creep during revision cycles. The original design might have adequate quiet zones, but subsequent tweaks can erode them. Each time artwork changes, verify that the quiet zone remains intact. This is especially important when non-technical team members are adjusting layouts.
+
+## Contrast and Color Choices
+
+QR scanners work by detecting contrast between dark and light areas. They don't actually see "black" and "white" but rather "darker" and "lighter." This means color choice affects scannability significantly, and what looks visually appealing might not function technically.
+
+The safest approach is traditional black on white, which provides maximum contrast that works under any lighting conditions on any scanner. Before deviating from this standard, honestly assess whether the visual benefit is worth the reliability risk. Brand colors are nice, but brand colors that don't scan are counterproductive.
+
+If you do use colors, maintain substantial contrast between foreground and background. Dark colors work for the code pattern; light colors work for the background. Reversing this relationship (light pattern on dark background) inverts what scanners expect and often fails. Mid-tone colors for either element reduce contrast dangerously.
+
+<Callout type="info" title="Test Your Colors">
+Use QRWolf's [contrast checker tool](/tools/contrast-checker) to verify your color combination meets scanning requirements before committing to print.
+</Callout>
+
+Be especially cautious with gradients and color variations within the code. Some generators offer gradient fills across the code pattern, but these can reduce local contrast in portions of the code even when overall contrast seems adequate. Solid colors are more reliable for print applications where you can't easily test and revise.
+
+## File Format and Resolution
+
+Print production demands higher quality files than screen display. What looks fine on your monitor might print as a blurry mess that scanners can't read. Understanding file formats and resolution requirements prevents this particular disappointment.
+
+Vector formats like SVG or PDF are ideal for print because they scale to any size without quality loss. The code remains mathematically defined rather than pixel-based, so whether you print it two centimeters wide or two meters wide, edges stay crisp. Request vector exports whenever your QR generator offers them.
+
+When only raster formats (PNG, JPG) are available, resolution matters enormously. The image needs enough pixels that individual modules remain distinct after scaling to print size. Calculate the required resolution based on your final print dimensions and the print process requirements, typically 300 DPI for commercial printing.
+
+Avoid JPG format for QR codes because its compression algorithm blurs edges. JPG excels at photographs where soft gradients look natural, but QR codes need sharp boundaries between modules. PNG preserves those hard edges. If someone sends you a QR code as a JPG, request a PNG or recreate the code entirely.
+
+## Material and Surface Considerations
+
+The substrate you're printing on affects scannability in ways that aren't obvious until you've seen a failure. Reflective materials create glare. Textured surfaces distort the pattern. Dark materials eat the quiet zone. Anticipate these issues before production rather than discovering them in finished materials.
+
+Glossy surfaces reflect light directly into camera lenses when scanned at certain angles. This creates bright spots that obscure portions of the code. If you must use glossy materials, increase code size to compensate, or consider whether a matte finish or matte coating over the code area would solve the problem more elegantly.
+
+Textured materials like certain papers, fabrics, or wood surfaces distort printed patterns. The texture's topography interferes with precise module edges. Test extensively on actual material samples before committing to full production. Some textures work fine; others render codes unscannable despite looking beautiful.
+
+Transparent or translucent materials require careful consideration of what shows through behind the code. The quiet zone must remain quiet even with varying backgrounds behind the material. Light-colored backing or an opaque white layer behind the code area prevents background interference.
+
+## Placement in Layout
+
+Where the QR code sits within your overall design affects both physical scannability and human likelihood of scanning. Technical function and user experience must both be satisfied.
+
+Avoid placing codes in folds, seams, curves, or other areas that distort flat printing. A code that prints flat but gets folded in packaging might no longer scan. Similarly, codes on curved surfaces like bottles need to remain visible and flat enough across the scannable area that phones can capture the complete pattern in focus.
+
+Consider what surrounds the code in the layout. High-contrast adjacent elements can confuse scanners trying to find the code boundaries. Busy visual environments make it harder for humans to notice the code at all. Some visual breathing room around the code serves both technical and perceptual purposes.
+
+Position codes where people can physically reach them to scan. This seems obvious but gets overlooked surprisingly often. Codes placed too high, too low, or in awkward positions reduce scan rates even when they technically function. Watch people interact with similar materials to understand realistic scanning positions.
+
+## Pre-Print Testing Protocol
+
+Testing before committing to print production is your final safety net. Everything else on this checklist reduces risk, but testing catches whatever slipped through. Build testing time into your production schedule rather than treating it as optional.
+
+Print a test copy at actual production size on actual production materials or the closest available approximation. Screen testing doesn't catch print-specific problems. A code that scans from your monitor might fail from the printed piece, and you need to know that before running thousands of copies.
+
+Test with multiple phones and multiple scanning methods. Different devices and apps have different capabilities. Test with at least one iPhone and one Android device. Try both the native camera apps and at least one dedicated QR scanner app. If the code fails on any combination your audience might use, investigate before proceeding.
+
+Test in conditions similar to the intended use environment. If the codes will be scanned in retail environments, test under fluorescent lighting. If they'll be outdoors, test in direct sunlight. Environmental factors affect scanning, and testing in your office might not reveal problems that emerge in deployment.
+
+## Complete Pre-Print Checklist
+
+Work through these items systematically before approving any QR code for print production.
+
+**Size and Distance**
+Confirm minimum size matches maximum scanning distance divided by ten or greater. Verify the size accommodates the full range of expected scanning distances. Ensure size is specified consistently in all production documents.
+
+**Quiet Zone**
+Measure quiet zone extends at least four modules on all sides. Check that no design elements, text, or graphics intrude into the quiet zone. Verify quiet zone survives at actual print size, not just in working files.
+
+**Contrast and Color**
+Confirm foreground is substantially darker than background. Avoid mid-tone colors for either element. Test color combination with a contrast checker tool. Avoid light-on-dark (inverted) color schemes.
+
+**File Quality**
+Use vector formats (SVG, PDF) when possible for scalable sharpness. For raster formats, verify resolution meets print requirements (typically 300 DPI). Never use JPG format for QR codes; use PNG instead.
+
+**Material Compatibility**
+Assess glare potential on glossy surfaces and mitigate if needed. Test on actual material samples if surface has texture. Plan for background visibility on transparent materials.
+
+**Layout Placement**
+Verify code won't be distorted by folds, seams, or curves. Check surrounding elements don't interfere with code detection. Confirm placement is physically accessible for scanning.
+
+**Testing**
+Print test at actual size on representative materials. Test with multiple phones and scanning apps. Test in conditions similar to intended use environment. Verify correct content is encoded, not just successful scanning.
+
+Only after every item passes should you approve the QR code for full production. Each checkpoint exists because failures have happened at that point. The few minutes this checklist takes could save reprinting costs and campaign embarrassment.
+
+Ready to create print-ready QR codes with confidence? [Generate codes at QRWolf](/signup) with built-in design tools that help you get sizing, contrast, and format right the first time.

@@ -7,6 +7,85 @@ description: Generate blog posts and learn articles for QRWolf. Use when asked t
 
 Generate MDX content for the blog and learn sections of QRWolf.
 
+---
+
+## CRITICAL: NO BULLET BLOAT
+
+**This is the #1 quality requirement. Violations are unacceptable.**
+
+An audit found that 14% of previously generated content was so bullet-heavy it reads like an outline rather than an article. This damages the brand and wastes the content investment.
+
+### The Hard Rules
+
+1. **Maximum 20% of article content should be in bullet/list form**
+2. **Every H2 section MUST start with 2-4 paragraphs of prose BEFORE any list**
+3. **Never have back-to-back bullet lists in the same section**
+4. **"Use cases" and "Benefits" sections must be PROSE, not lists**
+
+### Instant Fail Patterns
+
+These patterns indicate an article that needs to be rewritten:
+
+```markdown
+## Benefits of X
+
+X offers several advantages:
+
+- **Benefit 1** - Description here
+- **Benefit 2** - Description here
+- **Benefit 3** - Description here
+```
+
+```markdown
+## Use Cases
+
+### Use Case 1
+- Point A
+- Point B
+
+### Use Case 2
+- Point A
+- Point B
+```
+
+```markdown
+## How to Do X
+
+1. Step one
+2. Step two
+3. Step three
+
+## Best Practices
+
+- Practice 1
+- Practice 2
+- Practice 3
+```
+
+**ALL of the above are WRONG.** They read like internal notes, not published content.
+
+### What These Sections Should Look Like
+
+```markdown
+## Why X Changes Everything
+
+Imagine [concrete scenario that illustrates the problem]. With traditional
+approaches, you'd face [specific pain point]. X eliminates this entirely.
+
+The key insight is [explanation of how it works]. When someone [action],
+the system [what happens], which means [benefit]. This transforms the
+experience from [before state] to [after state].
+
+The implications extend further. [Second benefit explained in context].
+[Third benefit explained with example]. Each of these capabilities builds
+on the core concept to create something genuinely more powerful than the
+sum of its parts.
+```
+
+See the difference? The good version **tells a story**, **explains WHY**, and **uses concrete examples**. The bad version just lists facts.
+
+---
+
 ## Usage
 
 ```
@@ -264,3 +343,48 @@ Before finalizing content:
 - [ ] Internal links to related content
 - [ ] CTA to /signup or /plans
 - [ ] relatedSlugs reference actual existing articles
+
+---
+
+## MANDATORY: Pre-Submission Bullet Audit
+
+**Before finishing ANY article, you MUST perform this check:**
+
+1. **Count your H2 sections.** How many are there?
+
+2. **For each H2, answer:** Does it start with at least 2 paragraphs of prose before any list/table?
+   - If NO for any section, STOP and rewrite that section.
+
+3. **Count total bullet points in the article.** Include numbered lists.
+   - For a 1000-word article, max ~15-20 bullet items across the entire piece.
+   - For a 600-word article, max ~10-12 bullet items.
+   - If over limit, convert the weakest list to prose.
+
+4. **Identify your "Use Cases" or "Benefits" section.** Is it written as prose explaining scenarios, or as a bullet list?
+   - If it's a bullet list, REWRITE IT as prose with concrete examples.
+
+5. **Read the article aloud.** Does it sound like a person explaining something, or like someone reading a PowerPoint deck?
+   - If it sounds like bullets, rewrite until it flows.
+
+### Example Self-Audit
+
+Article: "QR Codes for Restaurants"
+- H2 sections: 6 (all start with prose) ✓
+- Total bullets: 14 (under 20 for ~1100 words) ✓
+- "Use Cases" section: Written as 4 prose paragraphs with examples ✓
+- Read aloud: Flows naturally ✓
+
+**Only submit after passing all checks.**
+
+---
+
+## Reference: The Audit That Prompted These Rules
+
+An audit of 97 content articles found:
+- 14% (14 articles) were SEVERE bullet bloat - needed complete rewrites
+- 33% (32 articles) were MODERATE - acceptable but not great
+- 53% (51 articles) were GOOD - proper prose-first writing
+
+The SEVERE articles all shared the same pattern: every section was a bulleted list, with minimal prose connecting ideas. They read like internal documentation, not published content that represents the brand.
+
+**Don't add to the rewrite queue. Write it right the first time.**

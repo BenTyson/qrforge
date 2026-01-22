@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
 > **Last Updated**: January 21, 2026
-> **Total Content**: 26 blog posts, 61 learn articles
+> **Total Content**: 28 blog posts, 69 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -31,11 +31,13 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 
 ## Existing Content Inventory
 
-### Blog Posts (17)
+### Blog Posts (28)
 
 | Title | Category | Primary Keyword | Slug |
 |-------|----------|-----------------|------|
 | QR Codes in 2025: Trends and What's Next | news | qr code trends 2025 | qr-codes-in-2025 |
+| QR Code Generator Comparison: Top 10 Tools | guides | qr code generator comparison | qr-code-generator-comparison |
+| Free vs Paid QR Code Generators | guides | free vs paid qr code | free-vs-paid-qr-code-generators |
 | How Small Businesses Can Use QR Codes | guides | qr codes for small business | qr-codes-for-small-business |
 | How to Track QR Code Scans and Measure ROI | tutorials | qr code tracking | how-to-track-qr-code-scans |
 | WiFi QR Codes: The Complete Guide | guides | wifi qr code | wifi-qr-codes-complete-guide |
@@ -62,7 +64,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How to Create a QR Code for TikTok | tutorials | tiktok qr code | qr-code-for-tiktok |
 | How to Create a QR Code for Google Docs | tutorials | google docs qr code | qr-code-for-google-docs |
 
-### Learn Articles (61)
+### Learn Articles (69)
 
 #### qr-basics (10)
 | Title | Primary Keyword | Slug |
@@ -78,17 +80,21 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | Types of QR Codes: Complete Guide to All 16 | types of qr codes | types-of-qr-codes |
 | QR Code FAQs: 30 Common Questions Answered | qr code faq | qr-code-faqs |
 
-#### how-it-works (3)
+#### how-it-works (4)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | How QR Code Error Correction Works | qr code error correction | qr-code-error-correction |
 | How QR Code Scanning Works | how qr code scanning works | how-qr-code-scanning-works |
 | How WiFi QR Codes Work | how wifi qr code works | how-wifi-qr-codes-work |
+| How to Change QR Code Destination | change qr code link | how-to-change-qr-code-destination |
 
-#### use-cases (13)
+#### use-cases (18)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | Restaurant QR Code Menus | restaurant qr code menu | restaurant-menu-qr-codes |
+| Social Profile QR Codes | social media qr code | social-profile-qr-codes |
+| QR Codes for Portfolios & Resumes | resume qr code | qr-codes-for-portfolios |
+| QR Codes for Wedding Invitations | wedding qr code | qr-codes-for-weddings |
 | QR Code Business Cards | qr code business card | business-card-qr-codes |
 | QR Codes for Event Marketing | qr code event marketing | qr-codes-for-event-marketing |
 | QR Codes for Product Packaging | qr code product packaging | qr-codes-for-product-packaging |
@@ -108,10 +114,12 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | Facebook QR Code: Connect Your Page | facebook qr code | facebook-qr-code |
 | Image Gallery QR Codes | image qr code | image-gallery-qr-codes |
 
-#### industries (14)
+#### industries (16)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Codes for Retail | qr codes for retail | qr-codes-for-retail |
+| QR Codes for Churches & Religious Organizations | qr codes church | qr-codes-for-churches |
+| QR Codes for Museums & Galleries | qr codes museum | qr-codes-for-museums |
 | QR Codes for Healthcare | qr codes for healthcare | qr-codes-for-healthcare |
 | QR Codes for Real Estate | qr codes for real estate | qr-codes-for-real-estate |
 | QR Codes for Hotels & Hospitality | qr codes for hotels | qr-codes-for-hotels |
@@ -362,15 +370,25 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 55. ~~Facebook QR Code: Connect Your Page (use-cases)~~ - ✅ Created
 56. ~~Image Gallery QR Codes (use-cases)~~ - ✅ Created
 
+**COMPLETED:**
+57. ~~QR Codes for Churches & Religious Organizations (industries)~~ - ✅ Created
+58. ~~QR Codes for Museums & Galleries (industries)~~ - ✅ Created
+59. ~~Social Profile QR Codes (use-cases)~~ - ✅ Created
+60. ~~QR Codes for Portfolios & Resumes (use-cases)~~ - ✅ Created
+61. ~~QR Codes for Wedding Invitations (use-cases)~~ - ✅ Created
+62. ~~QR Code Generator Comparison: Top 10 Tools (blog)~~ - ✅ Created
+63. ~~Free vs Paid QR Code Generators (blog)~~ - ✅ Created
+64. ~~How to Change QR Code Destination (how-it-works)~~ - ✅ Created
+
 **NEXT PRIORITIES (from Expansion Plan Month 3-4):**
-57. QR Codes for Churches & Religious Organizations (industries)
-58. QR Codes for Museums & Galleries (industries)
-59. Social Profile QR Codes (use-cases)
-60. QR Codes for Portfolios & Resumes (use-cases)
-61. QR Codes for Wedding Invitations (use-cases)
-62. QR Code Generator Comparison: Top 10 Tools (blog)
-63. Free vs Paid QR Code Generators (blog)
-64. How to Change QR Code Destination (how-it-works)
+65. QR Codes for Libraries (industries)
+66. QR Codes for Government & Public Sector (industries)
+67. QR Codes for Insurance Agencies (industries)
+68. QR Codes for Financial Services (industries)
+69. QR Codes for Flyers & Posters (use-cases)
+70. QR Codes for Packaging Labels (use-cases)
+71. QR Codes for Conference Badges (use-cases)
+72. How Dynamic QR Code Redirects Work (how-it-works)
 
 **ALL REWRITES COMPLETE!**
 - ~~static-vs-dynamic-qr-codes.mdx~~ - ✅ Done
@@ -690,6 +708,7 @@ Common competitor content we should create:
 
 | Date | Changes |
 |------|---------|
+| 2026-01-21 | Added Churches, Museums (industries) + Social Profile, Portfolios, Weddings (use-cases) + Generator Comparison, Free vs Paid (blogs) + Change Destination (how-it-works) - Now 28 blog, 69 learn (97 total) |
 | 2026-01-21 | Added TikTok, Google Docs blogs + Law, Auto, Travel, Beauty, Facebook, Gallery articles - Now 26 blog, 61 learn (87 total) |
 | 2026-01-21 | Added Statistics, LinkedIn, Spotify, Business Cards, Print blogs + Restaurants, Construction, Colors articles - Now 24 blog, 55 learn (79 total) |
 | 2026-01-21 | Added Google Reviews, YouTube blogs + Text, Email, Phone, SMS, Testing, Sizing articles - Now 19 blog, 52 learn (71 total) |

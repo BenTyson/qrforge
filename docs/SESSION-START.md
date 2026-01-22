@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 21, 2026 (SEO Content Expansion: 24 new articles, 87 total)
+> **Last Updated**: January 21, 2026 (Content Quality Audit: 97 articles assessed, skill guidelines strengthened)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -560,6 +560,17 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - Best-practices (2): How to Test QR Codes, How to Make QR Code Smaller
   - Technical (1): QR Code Colors & Contrast Guide
   - Total content now: 26 blog posts, 61 learn articles (87 total)
+- **Content Quality Audit & Guidelines Update** (January 21, 2026):
+  - Full audit of all 97 content articles for "bullet bloat" (outline-style writing)
+  - Results: 53% GOOD, 33% MODERATE, 14% SEVERE (needs rewrite)
+  - 11 articles identified for prose-first rewrites
+  - Rewrote qr-codes-for-product-packaging.mdx as example
+  - Created comprehensive audit report: `.claude/skills/content/BULLET-BLOAT-AUDIT.md`
+  - Strengthened content skill with explicit anti-bullet-bloat guidelines:
+    - Hard rules: max 20% bullets, prose-first for every H2
+    - "Instant Fail Patterns" showing what NOT to do
+    - Mandatory pre-submission bullet audit checklist
+  - Total content: 28 blog posts, 69 learn articles (97 total)
 
 ### Planned Enhancements
 - Webhooks for scan notifications
@@ -1020,8 +1031,10 @@ npm run dev               # Dev server on port 3322
 - **Logo background styles** - Circle, square, rounded, transparent
 
 ### SEO & Content (Ongoing)
-- Current: 26 blog posts, 61 learn articles (87 total)
+- Current: 28 blog posts, 69 learn articles (97 total)
 - Target: 50 blog posts, 100 learn articles (150 total)
-- Remaining: ~63 articles to reach target
+- Remaining: ~53 articles to reach target
+- **Quality audit completed**: 11 articles flagged for prose-first rewrites
 - See `.claude/skills/content/CONTENT-PLAN.md` for expansion plan
+- See `.claude/skills/content/BULLET-BLOAT-AUDIT.md` for quality audit results
 - Add FAQ schema to knowledge base pages

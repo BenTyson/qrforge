@@ -6,6 +6,17 @@ Session-by-session history of development work. Most recent first.
 
 ## January 23, 2026
 
+### Blog & Learn Search Bars
+- Added search functionality to `/blog` and `/learn` pages
+- Real-time filtering by title, description, and tags
+- Search results show count and clear button
+- Maintains category filters and featured sections when not searching
+
+### Publish Date Removal
+- Removed publish dates from article cards on blog/learn pages
+- Dates were clustered (all generated within days) which could appear artificial
+- Cards now show: category badge, reading time, title, description, tags
+
 ### Snapchat & Threads QR Code Types
 - Two new free-tier social QR types for Snapchat and Threads profile links
 - Username-based input with smart URL parsing

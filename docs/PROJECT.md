@@ -170,10 +170,10 @@ src/
 
 ## Content Stats
 
-- **Blog posts**: 36
-- **Learn articles**: 91
-- **Total**: 127 articles
-- **Target**: 150 articles
+- **Blog posts**: 52
+- **Learn articles**: 99
+- **Total**: 151 articles
+- **Target**: 150 articles (achieved)
 
 See `.claude/skills/content/CONTENT-PLAN.md` for SEO strategy.
 

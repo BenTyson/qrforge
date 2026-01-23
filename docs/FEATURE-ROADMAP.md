@@ -2,7 +2,7 @@
 
 > **Last Updated**: January 23, 2026
 > **Status**: Active development
-> **Current Features**: 22 QR types, Analytics, Bulk generation, API, 135 SEO articles
+> **Current Features**: 22 QR types, Analytics, Bulk generation, API, 151 SEO articles
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.

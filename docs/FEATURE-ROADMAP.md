@@ -2,7 +2,7 @@
 
 > **Last Updated**: January 23, 2026
 > **Status**: Active development
-> **Current Features**: 18 QR types, Analytics, Bulk generation, API, 135 SEO articles
+> **Current Features**: 22 QR types, Analytics, Bulk generation, API, 135 SEO articles
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -664,6 +664,10 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Snapchat QR Code Type | 2026-01-23 | 21st QR type. Username-based input. Direct redirect to snapchat.com/add/username. Free tier social type. |
+| Threads QR Code Type | 2026-01-23 | 22nd QR type. Username-based input. Direct redirect to threads.net/@username. Free tier social type. |
+| TikTok QR Code Type | 2026-01-23 | 20th QR type. Username-based input with smart URL parsing. Direct redirect to tiktok.com/@username. Free tier social type. |
+| X (Twitter) QR Code Type | 2026-01-23 | 19th QR type. Username-based input with smart URL parsing (x.com/twitter.com). Direct redirect. Free tier social type. |
 | LinkedIn QR Code Type | 2026-01-23 | 18th QR type. Username-based input with smart URL parsing. Direct redirect (no landing page). Free tier social type. |
 | Google Reviews QR Type | 2026-01-22 | 17th QR type. Landing page at `/r/[code]/review` with business name, 5-star visual, customizable accent color. Place ID input with validation. Free tier. |
 | QR Code Reader Tool | 2026-01-21 | Route: `/tools/qr-reader`. Drag-and-drop image upload, camera support on mobile, jsQR decoding, content type detection (URL, email, phone, WiFi, vCard), copy to clipboard, action buttons. |
@@ -725,7 +729,10 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
-| 2026-01-23 | Completed LinkedIn QR Code Type (Feature #14), updated priorities |
+| 2026-01-23 | Completed Snapchat and Threads QR Code Types, 21st/22nd QR types |
+| 2026-01-23 | Completed TikTok QR Code Type (Feature #14), 20th QR type |
+| 2026-01-23 | Completed X (Twitter) QR Code Type, 19th QR type |
+| 2026-01-23 | Completed LinkedIn QR Code Type, updated priorities |
 | 2026-01-21 | Completed Contrast Checker and QR Reader tools - Tools section complete |
 | 2026-01-21 | Completed Tools Hub Page (Feature #4), added Tools to nav |
 | 2026-01-21 | Completed QR Code Size Calculator Tool (Feature #1) |

@@ -12,6 +12,10 @@ export type QRContentType =
   | 'facebook'
   | 'instagram'
   | 'linkedin'
+  | 'x'
+  | 'tiktok'
+  | 'snapchat'
+  | 'threads'
   | 'apps'
   // Reviews (free tier)
   | 'google-review'
@@ -180,6 +184,26 @@ export interface LinkedInContent {
   username: string;
 }
 
+export interface XContent {
+  type: 'x';
+  username: string;
+}
+
+export interface TikTokContent {
+  type: 'tiktok';
+  username: string;
+}
+
+export interface SnapchatContent {
+  type: 'snapchat';
+  username: string;
+}
+
+export interface ThreadsContent {
+  type: 'threads';
+  username: string;
+}
+
 export interface AppsContent {
   type: 'apps';
   appStoreUrl?: string;
@@ -326,6 +350,10 @@ export type QRContent =
   | FacebookContent
   | InstagramContent
   | LinkedInContent
+  | XContent
+  | TikTokContent
+  | SnapchatContent
+  | ThreadsContent
   | AppsContent
   // Reviews
   | GoogleReviewContent
@@ -372,6 +400,10 @@ export const QR_TYPE_LABELS: Record<QRContentType, string> = {
   facebook: 'Facebook',
   instagram: 'Instagram',
   linkedin: 'LinkedIn',
+  x: 'X (Twitter)',
+  tiktok: 'TikTok',
+  snapchat: 'Snapchat',
+  threads: 'Threads',
   apps: 'App Download',
   // Reviews
   'google-review': 'Google Review',
@@ -402,6 +434,10 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
   facebook: 'facebook',
   instagram: 'instagram',
   linkedin: 'linkedin',
+  x: 'twitter',
+  tiktok: 'music',
+  snapchat: 'ghost',
+  threads: 'at-sign',
   apps: 'smartphone',
   // Reviews
   'google-review': 'star',
@@ -421,7 +457,7 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
 // Type categories for UI grouping
 export const QR_TYPE_CATEGORIES = {
   basic: ['url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms'] as const,
-  social: ['whatsapp', 'facebook', 'instagram', 'linkedin', 'apps'] as const,
+  social: ['whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'apps'] as const,
   media: ['pdf', 'images', 'video', 'mp3'] as const,
   landing: ['menu', 'business', 'links', 'coupon', 'social'] as const,
 };

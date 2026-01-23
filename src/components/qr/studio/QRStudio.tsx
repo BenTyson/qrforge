@@ -26,6 +26,10 @@ import type {
   FacebookContent,
   InstagramContent,
   LinkedInContent,
+  XContent,
+  TikTokContent,
+  SnapchatContent,
+  ThreadsContent,
   AppsContent,
   GoogleReviewContent,
   PDFContent,
@@ -54,6 +58,10 @@ import { WhatsAppForm } from '@/components/qr/forms/WhatsAppForm';
 import { FacebookForm } from '@/components/qr/forms/FacebookForm';
 import { InstagramForm } from '@/components/qr/forms/InstagramForm';
 import { LinkedInForm } from '@/components/qr/forms/LinkedInForm';
+import { XForm } from '@/components/qr/forms/XForm';
+import { TikTokForm } from '@/components/qr/forms/TikTokForm';
+import { SnapchatForm } from '@/components/qr/forms/SnapchatForm';
+import { ThreadsForm } from '@/components/qr/forms/ThreadsForm';
 import { AppsForm } from '@/components/qr/forms/AppsForm';
 import { GoogleReviewForm } from '@/components/qr/forms/GoogleReviewForm';
 import { PDFForm } from '@/components/qr/forms/PDFForm';
@@ -867,6 +875,14 @@ function ContentStep({
         return <InstagramForm content={(content as Partial<InstagramContent>) || {}} onChange={onContentChange} />;
       case 'linkedin':
         return <LinkedInForm content={(content as Partial<LinkedInContent>) || {}} onChange={onContentChange} />;
+      case 'x':
+        return <XForm content={(content as Partial<XContent>) || {}} onChange={onContentChange} />;
+      case 'tiktok':
+        return <TikTokForm content={(content as Partial<TikTokContent>) || {}} onChange={onContentChange} />;
+      case 'snapchat':
+        return <SnapchatForm content={(content as Partial<SnapchatContent>) || {}} onChange={onContentChange} />;
+      case 'threads':
+        return <ThreadsForm content={(content as Partial<ThreadsContent>) || {}} onChange={onContentChange} />;
       case 'apps':
         return <AppsForm content={(content as Partial<AppsContent>) || {}} onChange={onContentChange} />;
       case 'google-review':

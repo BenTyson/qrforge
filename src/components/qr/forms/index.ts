@@ -3,6 +3,10 @@ export { WhatsAppForm } from './WhatsAppForm';
 export { FacebookForm } from './FacebookForm';
 export { InstagramForm } from './InstagramForm';
 export { LinkedInForm } from './LinkedInForm';
+export { XForm } from './XForm';
+export { TikTokForm } from './TikTokForm';
+export { SnapchatForm } from './SnapchatForm';
+export { ThreadsForm } from './ThreadsForm';
 export { AppsForm } from './AppsForm';
 
 // Reviews (free tier)

@@ -14,7 +14,7 @@ Premium QR code generator with analytics and dynamic codes. Goal: passive income
 
 ---
 
-## QR Code Types (17 Total)
+## QR Code Types (22 Total)
 
 ### Basic Types (All Tiers)
 | Type | Output |
@@ -33,6 +33,11 @@ Premium QR code generator with analytics and dynamic codes. Goal: passive income
 | WhatsApp | wa.me link |
 | Facebook | facebook.com link |
 | Instagram | instagram.com link |
+| LinkedIn | linkedin.com/in link |
+| X (Twitter) | x.com link |
+| TikTok | tiktok.com/@ link |
+| Snapchat | snapchat.com/add link |
+| Threads | threads.net/@ link |
 | Apps | Smart app redirect |
 | Google Review | Google review link |
 

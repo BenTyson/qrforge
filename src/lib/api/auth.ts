@@ -300,7 +300,7 @@ export const validators = {
       // Basic types
       'url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms',
       // Simple URL types
-      'whatsapp', 'facebook', 'instagram', 'linkedin', 'apps',
+      'whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'apps',
       // Reviews
       'google-review',
       // File upload types
@@ -415,6 +415,30 @@ export const validators = {
       case 'linkedin':
         if (!content.username || typeof content.username !== 'string') {
           return { valid: false, error: 'content.username is required for LinkedIn type' };
+        }
+        break;
+
+      case 'x':
+        if (!content.username || typeof content.username !== 'string') {
+          return { valid: false, error: 'content.username is required for X type' };
+        }
+        break;
+
+      case 'tiktok':
+        if (!content.username || typeof content.username !== 'string') {
+          return { valid: false, error: 'content.username is required for TikTok type' };
+        }
+        break;
+
+      case 'snapchat':
+        if (!content.username || typeof content.username !== 'string') {
+          return { valid: false, error: 'content.username is required for Snapchat type' };
+        }
+        break;
+
+      case 'threads':
+        if (!content.username || typeof content.username !== 'string') {
+          return { valid: false, error: 'content.username is required for Threads type' };
         }
         break;
 

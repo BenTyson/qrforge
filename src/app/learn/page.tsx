@@ -3,10 +3,9 @@ import Link from 'next/link';
 import { learnArticles, blogPosts } from '#content';
 import { PublicNav } from '@/components/layout/PublicNav';
 import { Footer } from '@/components/layout/Footer';
-import { ArticleCard } from '@/components/content';
+import { LearnSearch, ArticleCard } from '@/components/content';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { LEARN_CATEGORIES } from '@/lib/content/utils';
 import { BookOpen, Cog, Lightbulb, Building2, CheckCircle2, Code2, ArrowRight, Newspaper, GraduationCap } from 'lucide-react';
 
@@ -82,69 +81,8 @@ export default function LearnPage() {
             </p>
           </div>
 
-          {/* Category Grid */}
-          <section className="mb-20">
-            <h2 className="text-2xl font-semibold mb-8 flex items-center gap-3">
-              <div className="w-1 h-6 bg-gradient-to-b from-primary to-cyan-500 rounded-full" />
-              Browse by Category
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {articlesByCategory.map((category, index) => (
-                <Link
-                  key={category.slug}
-                  href={`/learn/category/${category.slug}`}
-                  className="group animate-slide-up"
-                  style={{ animationDelay: `${index * 80}ms` }}
-                >
-                  <Card className="h-full bg-slate-800/50 backdrop-blur-xl border-slate-700/50 transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 hover:scale-[1.02] hover:-translate-y-1">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-cyan-500/20 flex items-center justify-center text-primary mb-4 group-hover:shadow-lg group-hover:shadow-primary/20 transition-shadow">
-                          {category.icon}
-                        </div>
-                        <Badge variant="outline" className="text-xs border-slate-600/50 text-slate-400">
-                          {category.count} {category.count === 1 ? 'article' : 'articles'}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-lg group-hover:text-primary transition-colors flex items-center gap-2">
-                        {category.label}
-                        <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                      </CardTitle>
-                      <CardDescription className="text-slate-400">
-                        {category.description}
-                      </CardDescription>
-                    </CardHeader>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          {/* Featured/Getting Started */}
-          {featuredArticles.length > 0 && (
-            <section className="mb-20">
-              <h2 className="text-2xl font-semibold mb-8 flex items-center gap-3">
-                <div className="w-1 h-6 bg-gradient-to-b from-primary to-cyan-500 rounded-full" />
-                Getting Started
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {featuredArticles.map((article, index) => (
-                  <ArticleCard
-                    key={article.slug}
-                    title={article.title}
-                    description={article.description}
-                    slug={article.slug}
-                    category={article.category}
-                    tags={article.tags}
-                    image={article.image}
-                    wordCount={article.metadata.wordCount}
-                    type="learn"
-                    animationDelay={index * 80}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
+          {/* Search and Content */}
+          <LearnSearch categories={articlesByCategory} featuredArticles={featuredArticles} />
 
           {/* Latest from the Blog */}
           {blogPosts.filter(p => !p.draft).length > 0 && (

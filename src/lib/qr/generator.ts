@@ -149,6 +149,25 @@ export function contentToString(content: QRContent): string {
       const linkedinUsername = content.username.replace(/^@/, '');
       return `https://linkedin.com/in/${linkedinUsername}`;
 
+    case 'x':
+      // Build X (Twitter) profile URL
+      const xUsername = content.username.replace(/^@/, '');
+      return `https://x.com/${xUsername}`;
+
+    case 'tiktok':
+      // Build TikTok profile URL
+      const tiktokUsername = content.username.replace(/^@/, '');
+      return `https://tiktok.com/@${tiktokUsername}`;
+
+    case 'snapchat':
+      // Build Snapchat add URL
+      return `https://snapchat.com/add/${content.username}`;
+
+    case 'threads':
+      // Build Threads profile URL
+      const threadsUsername = content.username.replace(/^@/, '');
+      return `https://threads.net/@${threadsUsername}`;
+
     case 'apps':
       // Return fallback URL or first available store URL
       // For smart redirects, this will point to a landing page
@@ -744,6 +763,22 @@ export function validateContent(content: QRContent): { valid: boolean; error?: s
 
     case 'linkedin':
       if (!content.username) return { valid: false, error: 'LinkedIn username is required' };
+      return { valid: true };
+
+    case 'x':
+      if (!content.username) return { valid: false, error: 'X username is required' };
+      return { valid: true };
+
+    case 'tiktok':
+      if (!content.username) return { valid: false, error: 'TikTok username is required' };
+      return { valid: true };
+
+    case 'snapchat':
+      if (!content.username) return { valid: false, error: 'Snapchat username is required' };
+      return { valid: true };
+
+    case 'threads':
+      if (!content.username) return { valid: false, error: 'Threads username is required' };
       return { valid: true };
 
     case 'apps':

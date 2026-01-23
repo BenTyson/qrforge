@@ -6,12 +6,30 @@ Session-by-session history of development work. Most recent first.
 
 ## January 23, 2026
 
+### Snapchat & Threads QR Code Types
+- Two new free-tier social QR types for Snapchat and Threads profile links
+- Username-based input with smart URL parsing
+- Direct redirects: `https://snapchat.com/add/{username}` and `https://threads.net/@{username}`
+- Added to Social category (now 9 social types total)
+- Total QR types: 22 (was 20)
+
+### TikTok QR Code Type
+- New free-tier social QR type for TikTok profile links
+- Username-based input with smart URL parsing (extracts username from tiktok.com URLs)
+- Direct redirect to `https://tiktok.com/@{username}` (no landing page needed)
+- Added to Social category alongside WhatsApp, Instagram, Facebook, LinkedIn, X
+
+### X (Twitter) QR Code Type
+- New free-tier social QR type for X (Twitter) profile links
+- Username-based input with smart URL parsing (extracts username from x.com or twitter.com URLs)
+- Direct redirect to `https://x.com/{username}` (no landing page needed)
+- Added to Social category alongside WhatsApp, Instagram, Facebook, LinkedIn
+
 ### LinkedIn QR Code Type
 - New free-tier social QR type for LinkedIn profile links
 - Username-based input with smart URL parsing (extracts username from full LinkedIn URLs)
 - Direct redirect to `https://linkedin.com/in/{username}` (no landing page needed)
 - Added to Social category alongside WhatsApp, Instagram, Facebook
-- Total QR types: 18 (was 17)
 - Updated New QR Type skill with test file step
 
 ### SEO Content Expansion (to 135 articles)

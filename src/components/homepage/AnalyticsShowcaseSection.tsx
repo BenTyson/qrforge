@@ -16,7 +16,7 @@ export function AnalyticsShowcaseSection() {
   return (
     <section className="py-24 px-4 bg-secondary/30">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left: Mock Dashboard */}
           <div className="order-2 lg:order-1">
             <Card className="p-6 glass glow overflow-hidden">

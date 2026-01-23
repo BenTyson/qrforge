@@ -203,10 +203,10 @@ export default async function AdminAnalyticsPage() {
             <thead>
               <tr className="border-b border-border/50">
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">QR Code</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Owner</th>
+                <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Owner</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Location</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Device</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Browser</th>
+                <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Device</th>
+                <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Browser</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Time</th>
               </tr>
             </thead>
@@ -216,12 +216,12 @@ export default async function AdminAnalyticsPage() {
                 recentScans.map((scan: any) => (
                   <tr key={scan.id} className="hover:bg-secondary/30 transition-colors">
                     <td className="px-6 py-4 text-sm font-medium">{scan.qr_codes?.name || 'Unnamed'}</td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{scan.qr_codes?.profiles?.email || 'Unknown'}</td>
+                    <td className="hidden md:table-cell px-6 py-4 text-sm text-muted-foreground">{scan.qr_codes?.profiles?.email || 'Unknown'}</td>
                     <td className="px-6 py-4 text-sm text-muted-foreground">
                       {scan.city && scan.country ? `${scan.city}, ${scan.country}` : scan.country || 'Unknown'}
                     </td>
-                    <td className="px-6 py-4 text-sm capitalize">{scan.device_type || 'Unknown'}</td>
-                    <td className="px-6 py-4 text-sm">{scan.browser || 'Unknown'}</td>
+                    <td className="hidden md:table-cell px-6 py-4 text-sm capitalize">{scan.device_type || 'Unknown'}</td>
+                    <td className="hidden md:table-cell px-6 py-4 text-sm">{scan.browser || 'Unknown'}</td>
                     <td className="px-6 py-4 text-sm text-muted-foreground">
                       {formatTimeAgo(new Date(scan.scanned_at))}
                     </td>

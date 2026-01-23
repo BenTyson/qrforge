@@ -1,172 +1,184 @@
 # Development Workflow
 
-> **Last Updated**: January 19, 2026
 > **Live URL**: https://qrwolf.com
-
-See also:
-- `docs/SESSION-START.md` - Full project context
-- `docs/DEVELOPMENT.md` - Dev environment setup & testing
+> **Branch**: `develop` (default) → PR → `main` (production)
 
 ---
 
-## ⛔ LIVE PAYING USERS - READ FIRST
+## Critical Safety Rules
 
-> **Production contains REAL CUSTOMER DATA from paying subscribers.**
->
-> Their QR codes are printed on physical materials. Breaking production breaks their businesses.
+**Production has LIVE PAYING CUSTOMERS. Their QR codes are printed on physical materials.**
 
-**Consequences of production mistakes:**
-- Customer QR codes stop working → their printed menus/cards become useless
-- Data corruption → customers lose their analytics and QR code history
-- Payment data issues → legal and trust implications
-
-**Always use the dev database for development:** `npm run safety-check`
+1. **Never push to `main`** - Always work on `develop`
+2. **Never connect dev to production DB** - Run `npm run safety-check`
+3. **Run tests before commits** - `npm run precommit`
+4. **Test locally before PRs** - Run `npm run build`
 
 ---
 
 ## Branch Strategy
 
 ```
-develop (default) ──PR──> main (production)
-    ↓                        ↓
- Local dev              Railway auto-deploys
+develop (default) ──PR──> main ──auto──> Railway (production)
 ```
 
-| Branch | Purpose | Deploys To |
-|--------|---------|------------|
-| `develop` | Active development, default branch | Nothing (local only) |
-| `main` | Production releases only | Railway (live site) |
+| Branch | Purpose | Auto-deploys? |
+|--------|---------|---------------|
+| `develop` | Active development | No |
+| `main` | Production releases | Yes → Railway |
 
-## Golden Rules
-
-1. **NEVER push directly to `main`** - Always use a PR from `develop`
-2. **All development happens on `develop`** - This is your working branch
-3. **`main` = production** - Anything merged to `main` goes live immediately
-4. **Test locally before PR** - Run `npm run build` before creating PR
+---
 
 ## Daily Workflow
 
 ### Starting Work
+
 ```bash
-cd /Users/bentyson/QRForge
-git checkout develop
+git branch                # Should show: * develop
+git checkout develop      # If not on develop
 git pull origin develop
+npm run safety-check      # Verify dev database
 ```
 
 ### Making Changes
+
 ```bash
-# Work on develop branch
-git add .
-git commit -m "Your commit message"
+# Work on files...
+npm run precommit         # lint + type-check + test
+git add <files>           # Add specific files (not git add .)
+git commit -m "Description"
 git push origin develop
 ```
 
 ### Deploying to Production
-1. Ensure all changes are committed and pushed to `develop`
-2. Run `npm run build` locally to verify no errors
-3. Go to GitHub: https://github.com/BenTyson/qrwolf
-4. Click "Pull requests" → "New pull request"
-5. Set: `base: main` ← `compare: develop`
-6. Create PR with descriptive title
-7. Review changes, then "Merge pull request"
-8. Railway auto-deploys within ~2 minutes
 
-### Checking Deployment Status
+1. Ensure all changes pushed to `develop`
+2. Run `npm run build` locally
+3. Create PR: `develop` → `main` on GitHub
+4. Merge PR
+5. Railway auto-deploys (~2 min)
+
+---
+
+## Commands Reference
+
+### Safe Commands
+
 ```bash
-railway status
-railway logs
+git checkout develop          # Switch to develop
+git pull origin develop       # Get latest
+git push origin develop       # Push changes
+git status                    # Check status
+npm run dev                   # Start dev server (port 3322)
+npm run precommit             # lint + type-check + test
+npm test                      # Run tests only
 ```
 
-Or visit: https://qrwolf.com
+### Dangerous Commands (Avoid)
 
-## Rollback (If Something Breaks)
+```bash
+git push origin main          # NO - bypasses PR
+git checkout main && git push # NO
+git merge main                # NO - wrong direction
+git add .                     # Avoid - use specific files
+```
 
-### Quick Rollback via GitHub
-1. Go to the merged PR on GitHub
-2. Click "Revert" button
-3. Merge the revert PR to `main`
-4. Railway auto-deploys the rollback
+---
 
-### Manual Rollback
+## Testing
+
+```bash
+npm test              # Run all 185 tests
+npm run test:watch    # Watch mode
+npm run test:coverage # With coverage report
+npm run precommit     # lint + type-check + test (before commits!)
+```
+
+### Test Suite
+
+| Suite | Tests | Coverage |
+|-------|-------|----------|
+| API Validation | 47 | URL validation, hex colors, content types |
+| QR Generation | 58 | Content generation, WiFi, vCard |
+| Subscription Plans | 31 | Tier limits, features, scan limits |
+| Environment Safety | 23 | Environment detection, safety blocks |
+| useQRStudioState | 16 | State management, race conditions |
+| QR Creation Flow | 10 | Integration tests |
+
+---
+
+## Environments
+
+| Environment | Supabase | Purpose |
+|-------------|----------|---------|
+| Dev | `fxcvxomvkgioxwbwmbsy` | Local development |
+| Production | `otdlggbhsmgqhsviazho` | Live customers |
+
+### Before Running Migrations
+
+```bash
+# Check which project is linked
+npx supabase projects list
+
+# Link to correct project
+npx supabase link --project-ref fxcvxomvkgioxwbwmbsy  # Dev
+npx supabase link --project-ref otdlggbhsmgqhsviazho  # Prod (careful!)
+
+# Push migration
+npx supabase db push
+```
+
+**Always push to dev first. Never experiment on production.**
+
+---
+
+## Agent Instructions
+
+### At Session Start
+
+```bash
+git branch              # Verify on develop
+git checkout develop    # If not
+git pull origin develop
+npm run safety-check    # Verify dev environment
+```
+
+### At Session End
+
+```bash
+npm run precommit       # Run lint + type-check + test
+git push origin develop
+# Tell user: "Changes pushed to develop. Create PR to main to deploy."
+```
+
+### Never Do
+
+- Push to `main` directly
+- Create PRs automatically
+- Merge anything without user approval
+- Run destructive operations on production
+
+---
+
+## Rollback (If Production Breaks)
+
+### Via GitHub
+1. Go to merged PR
+2. Click "Revert"
+3. Merge the revert PR
+
+### Via CLI
 ```bash
 git checkout main
 git revert HEAD
 git push origin main
-```
-
-## Environment Setup
-
-### Local Development (Safe Mode)
-
-**IMPORTANT**: Development now uses a **separate dev Supabase database** to protect customer data.
-
-```
-Local dev → Dev Supabase (fxcvxomvkgioxwbwmbsy)
-Production → Prod Supabase (otdlggbhsmgqhsviazho)
-```
-
-- Uses `.env.development.local` for dev credentials
-- Supabase: **Development database** (safe to experiment!)
-- Stripe: Uses test mode keys
-- Run: `npm run dev` (port 3322)
-- Safety check runs automatically on startup
-
-**Before Starting:**
-```bash
-npm run safety-check   # Verify dev environment is configured
-npm run dev            # Start dev server
-```
-
-See `docs/DEVELOPMENT.md` for full environment setup.
-
-### Production (Railway) ⛔ LIVE CUSTOMERS
-- Environment variables set in Railway dashboard
-- Supabase: **Production database** → REAL CUSTOMER DATA
-- Stripe: **Live mode keys** → REAL PAYMENTS
-- URL: https://qrwolf.com
-- **NEVER test against production. NEVER run scripts against production.**
-
-## Railway Configuration
-
-**IMPORTANT**: Verify Railway is set to deploy from `main` branch:
-
-1. Go to Railway dashboard → QRWolf project
-2. Click on the service → Settings
-3. Under "Source", ensure "Branch" is set to `main`
-4. If it shows `develop`, change it to `main`
-
-## For AI Agents
-
-**CRITICAL INSTRUCTIONS FOR FUTURE AGENTS:**
-
-1. Always check which branch you're on: `git branch`
-2. If on `main`, switch to `develop`: `git checkout develop`
-3. Never commit directly to `main`
-4. After finishing work, remind user to create PR to deploy
-5. Do NOT run `git push origin main` unless explicitly merging a PR
-6. **Run tests before committing**: `npm run precommit`
-
-### Agent Workflow
-```bash
-# At start of session
 git checkout develop
-git pull origin develop
-npm run safety-check  # Verify dev environment
-
-# After making changes
-npm run precommit     # Run lint + type-check + test
-git add .
-git commit -m "Description of changes"
-git push origin develop
-
-# Tell user:
-# "Changes pushed to develop. Create a PR to main when ready to deploy."
 ```
 
-### Testing Commands
-```bash
-npm test              # Run all tests (159 tests)
-npm run test:watch    # Watch mode
-npm run test:coverage # With coverage report
-npm run precommit     # lint + type-check + test (run before commits)
-```
+---
+
+## Related Docs
+
+- [PROJECT.md](./PROJECT.md) - Project overview
+- [DEVELOPMENT.md](./DEVELOPMENT.md) - Dev environment details
+- [DEPLOYMENT.md](./DEPLOYMENT.md) - Railway configuration

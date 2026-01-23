@@ -31,7 +31,7 @@ npm run dev           # Start dev server on port 3322
 - ALWAYS verify environment before running migrations or data scripts
 - ALWAYS run tests before committing: `npm run precommit`
 
-**Full documentation:** See `docs/SESSION-START.md` for complete development context.
+**Full documentation:** See `docs/README.md` for documentation entry point.
 
 ---
 
@@ -87,7 +87,11 @@ src/
 └── lib/
     └── qr/                # QR generation logic
 docs/
-└── SESSION-START.md       # Development context
+├── README.md              # Documentation entry point
+├── PROJECT.md             # Project overview
+├── WORKFLOW.md            # Branch workflow
+├── DEVELOPMENT.md         # Dev environment
+└── FEATURE-ROADMAP.md     # Planned features
 ```
 
 ## Environment Variables

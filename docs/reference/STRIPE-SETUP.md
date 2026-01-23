@@ -3,7 +3,7 @@
 > **Status**: Live Mode (Production)
 > **Live URL**: https://qrwolf.com
 
-See also: `docs/SESSION-START.md` for full project context
+See also: [docs/PROJECT.md](../PROJECT.md) for project overview
 
 ## Current Configuration
 

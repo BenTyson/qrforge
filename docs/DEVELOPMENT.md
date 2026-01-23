@@ -4,7 +4,7 @@
 > **Status**: COMPLETED
 > **Phase**: Development Environment & Data Protection
 
-See also: `docs/SESSION-START.md` for full project context
+See also: [docs/PROJECT.md](./PROJECT.md) for project overview
 
 ---
 

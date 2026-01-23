@@ -90,10 +90,12 @@ See `.claude/skills/qr-type/SKILL.md` for the comprehensive checklist. Key files
 
 | Doc | Purpose |
 |-----|---------|
-| `docs/SESSION-START.md` | Full project context, status, structure |
+| `docs/README.md` | Entry point - quick links to all docs |
+| `docs/PROJECT.md` | Project overview, features, structure |
 | `docs/DEVELOPMENT.md` | Dev environment, testing, CI/CD |
-| `docs/WORKFLOW.md` | Branch workflow details |
+| `docs/WORKFLOW.md` | Branch workflow, agent rules |
 | `docs/FEATURE-ROADMAP.md` | Planned features |
+| `docs/sessions/CHANGELOG.md` | Session history |
 
 ---
 

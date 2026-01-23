@@ -5,7 +5,7 @@
 > **Last Updated**: January 1, 2026 (Logo Upload UX + Image Optimization)
 > **Admin Dashboard**: https://qrwolf.com/admin
 
-See also: `docs/SESSION-START.md` for full project context
+See also: [docs/PROJECT.md](../PROJECT.md) for project overview
 
 ---
 

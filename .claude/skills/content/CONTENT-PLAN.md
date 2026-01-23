@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
 > **Last Updated**: January 22, 2026
-> **Total Content**: 34 blog posts, 89 learn articles
+> **Total Content**: 36 blog posts, 91 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -71,8 +71,10 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How to Create a QR Code for Twitter/X | tutorials | twitter qr code | qr-code-for-twitter |
 | How to Create a QR Code for Facebook Page | tutorials | facebook page qr code | qr-code-for-facebook-page |
 | How to Create Multiple QR Codes at Once | tutorials | bulk qr codes | how-to-create-bulk-qr-codes |
+| QR Code ROI Calculator: Measure Your Success | guides | qr code roi | qr-code-roi-calculator |
+| The Future of QR Codes: What's Next | news | future of qr codes | future-of-qr-codes |
 
-### Learn Articles (83)
+### Learn Articles (91)
 
 #### qr-basics (10)
 | Title | Primary Keyword | Slug |
@@ -131,6 +133,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Codes for Flyers & Posters | flyer qr code, poster qr code | qr-codes-for-flyers |
 | QR Codes for Packaging Labels | packaging label qr code | qr-codes-for-packaging-labels |
 | QR Codes for Conference Badges | conference badge qr code | qr-codes-for-conference-badges |
+| QR Codes for Signage | signage qr code | qr-codes-for-signage |
 
 #### industries (20)
 | Title | Primary Keyword | Slug |
@@ -185,6 +188,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Code Analytics: Metrics That Matter | qr code analytics | qr-code-analytics-metrics |
 | QR Code Colors: Contrast and Readability Guide | qr code colors | qr-code-colors-contrast |
 | QR Code Quiet Zone: Why Margins Matter | qr code quiet zone | qr-code-quiet-zone |
+| QR Code Structured Append: Linking Multiple Codes | structured append | qr-code-structured-append |
 
 ---
 
@@ -457,11 +461,20 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 97. ~~Micro QR Codes vs Standard QR Codes (technical)~~ - ✅ Created
 98. ~~vcard-qr-codes-digital-business-cards.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
 
+**COMPLETED (January 22, 2026 - Session 8):**
+99. ~~QR Code ROI Calculator (blog)~~ - ✅ Created
+100. ~~QR Codes for Signage (use-cases)~~ - ✅ Created
+101. ~~QR Code Structured Append (technical)~~ - ✅ Created
+102. ~~The Future of QR Codes (blog)~~ - ✅ Created
+103. ~~qr-code-error-correction.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
+104. ~~how-qr-code-scanning-works.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
+105. ~~qr-code-for-pdf.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
+
 **NEXT PRIORITIES:**
-99. QR Code ROI Calculator article (blog)
-100. QR Codes for Signage (use-cases)
-101. QR Code Structured Append (technical)
-102. The Future of QR Codes (blog)
+106. QR Codes for Signage: Part 2 - Vehicle Wraps (use-cases)
+107. QR Code Generator for Business (blog)
+108. QR Code Trends to Watch in 2026 (blog)
+109. QR Code Best Practices Checklist (blog)
 
 **ALL SEVERE REWRITES COMPLETE!**
 The following 8 articles were rewritten to prose-first style (uncommitted, pending review):
@@ -799,6 +812,7 @@ There are 10 articles with severe bullet bloat that need prose-first rewrites. S
 
 | Date | Changes |
 |------|---------|
+| 2026-01-22 | Added ROI Calculator, Future of QR Codes (blog) + Signage, Structured Append (learn). Rewrote qr-code-error-correction.mdx, how-qr-code-scanning-works.mdx, qr-code-for-pdf.mdx (MODERATE → GOOD). Now 36 blog, 91 learn (127 total) |
 | 2026-01-22 | Added Warranty Registration, Asset Tagging (use-cases) + Micro QR Codes (technical). Rewrote vcard-qr-codes-digital-business-cards.mdx (MODERATE → GOOD). Now 34 blog, 89 learn (123 total) |
 | 2026-01-22 | Added Feedback Form (blog) + Inventory Management, Employee ID Cards, Loyalty Programs (use-cases). Rewrote how-to-create-a-qr-code.mdx (MODERATE → GOOD). Now 34 blog, 86 learn (120 total) |
 | 2026-01-22 | Rewrote qr-codes-for-small-business.mdx, qr-code-vs-barcode.mdx, wifi-qr-codes-complete-guide.mdx (MODERATE → GOOD). Quality now: 69% GOOD, 28% MODERATE, 0% SEVERE |

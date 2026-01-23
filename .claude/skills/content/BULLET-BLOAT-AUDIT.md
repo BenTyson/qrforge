@@ -1,15 +1,15 @@
 # Content Bullet Bloat Audit Report
 
 **Date:** 2026-01-22 (Updated)
-**Total Files Audited:** 110
+**Total Files Audited:** 127
 **Status:** All SEVERE rewrites complete!
 
 ## Summary
 
 | Rating | Count | Percentage |
 |--------|-------|------------|
-| GOOD (prose-first) | 78 | 71% |
-| MODERATE (some issues) | 26 | 24% |
+| GOOD (prose-first) | 85 | 77% |
+| MODERATE (some issues) | 20 | 18% |
 | SEVERE (needs rewrite) | 0 | 0% |
 
 *Note: 12 articles moved from SEVERE to GOOD after prose-first rewrites.*
@@ -18,7 +18,9 @@
 *Note: 1 article moved from MODERATE to GOOD (how-to-create-a-qr-code.mdx) on 2026-01-22.*
 *Note: 4 new articles added (Feedback Form, Inventory Management, Employee ID Cards, Loyalty Programs) - all GOOD quality.*
 *Note: 1 article moved from MODERATE to GOOD (vcard-qr-codes-digital-business-cards.mdx) on 2026-01-22.*
-*Note: 3 new articles added (Warranty Registration, Asset Tagging, Micro QR Codes) - all GOOD quality.*
+*Note: 3 new articles added (Warranty Registration, Asset Tagging, Micro QR Codes) - all GOOD quality.
+*Note: 3 articles moved from MODERATE to GOOD (qr-code-error-correction, how-qr-code-scanning-works, qr-code-for-pdf) on 2026-01-22.
+*Note: 4 new articles added (ROI Calculator, Future of QR Codes, Signage, Structured Append) - all GOOD quality on 2026-01-22.*
 
 ## Rating Criteria
 
@@ -52,40 +54,37 @@
 
 ---
 
-## MODERATE - Acceptable But Could Improve (26 files)
+## MODERATE - Acceptable But Could Improve (20 files)
 
 These have some bullet-heavy sections but include enough prose to not feel like pure outlines.
 
-1. qr-code-error-correction.mdx
-2. how-qr-code-scanning-works.mdx
-3. qr-code-data-capacity.mdx
-4. qr-code-versions-explained.mdx
-5. qr-code-security.mdx
-6. how-to-track-qr-code-scans.mdx
-7. qr-code-size-requirements.mdx
-8. qr-code-not-scanning.mdx
-9. qr-code-for-pdf.mdx
-10. qr-code-file-formats.mdx
-11. qr-code-encoding-modes.mdx
-12. qr-code-analytics-metrics.mdx
-13. qr-code-myths-debunked.mdx
-14. qr-code-glossary.mdx (format-appropriate)
-15. types-of-qr-codes.mdx
-16. qr-code-faqs.mdx (format-appropriate)
-17. best-free-qr-code-generators.mdx
-18. qr-code-for-google-reviews.mdx
-19. qr-code-for-youtube.mdx
-20. how-to-test-qr-codes.mdx
-21. how-to-make-qr-code-smaller.mdx
-22. qr-code-colors-contrast.mdx
-23. facebook-qr-code.mdx
-24. image-gallery-qr-codes.mdx
-25. qr-codes-for-churches.mdx
-26. how-wifi-qr-codes-work.mdx
+1. qr-code-data-capacity.mdx
+2. qr-code-versions-explained.mdx
+3. qr-code-security.mdx
+4. how-to-track-qr-code-scans.mdx
+5. qr-code-size-requirements.mdx
+6. qr-code-not-scanning.mdx
+7. qr-code-file-formats.mdx
+8. qr-code-encoding-modes.mdx
+9. qr-code-analytics-metrics.mdx
+10. qr-code-myths-debunked.mdx
+11. qr-code-glossary.mdx (format-appropriate)
+12. types-of-qr-codes.mdx
+13. qr-code-faqs.mdx (format-appropriate)
+14. best-free-qr-code-generators.mdx
+15. qr-code-for-google-reviews.mdx
+16. qr-code-for-youtube.mdx
+17. how-to-test-qr-codes.mdx
+18. how-to-make-qr-code-smaller.mdx
+19. qr-code-colors-contrast.mdx
+20. facebook-qr-code.mdx
+21. image-gallery-qr-codes.mdx
+22. qr-codes-for-churches.mdx
+23. how-wifi-qr-codes-work.mdx
 
 ---
 
-## GOOD - Prose-First Writing (60 files)
+## GOOD - Prose-First Writing (70 files)
 
 These articles demonstrate the quality we're aiming for: flowing prose with bullets used only where appropriate.
 
@@ -148,6 +147,13 @@ These articles demonstrate the quality we're aiming for: flowing prose with bull
 57. qr-codes-for-warranty-registration.mdx (new 2026-01-22)
 58. qr-codes-for-asset-tagging.mdx (new 2026-01-22)
 59. micro-qr-codes.mdx (new 2026-01-22)
+60. qr-code-error-correction.mdx (after rewrite 2026-01-22)
+61. how-qr-code-scanning-works.mdx (after rewrite 2026-01-22)
+62. qr-code-for-pdf.mdx (after rewrite 2026-01-22)
+63. qr-code-roi-calculator.mdx (new 2026-01-22)
+64. future-of-qr-codes.mdx (new 2026-01-22)
+65. qr-codes-for-signage.mdx (new 2026-01-22)
+66. qr-code-structured-append.mdx (new 2026-01-22)
 
 *Plus 5 additional files verified as GOOD by the audit agent*
 

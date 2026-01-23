@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
-> **Last Updated**: January 22, 2026
-> **Total Content**: 36 blog posts, 91 learn articles
+> **Last Updated**: January 23, 2026
+> **Total Content**: 43 blog posts, 92 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -31,7 +31,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 
 ## Existing Content Inventory
 
-### Blog Posts (34)
+### Blog Posts (43)
 
 | Title | Category | Primary Keyword | Slug |
 |-------|----------|-----------------|------|
@@ -73,8 +73,15 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How to Create Multiple QR Codes at Once | tutorials | bulk qr codes | how-to-create-bulk-qr-codes |
 | QR Code ROI Calculator: Measure Your Success | guides | qr code roi | qr-code-roi-calculator |
 | The Future of QR Codes: What's Next | news | future of qr codes | future-of-qr-codes |
+| QR Code Generator for Business: How to Choose | guides | qr code generator business | qr-code-generator-for-business |
+| QR Code Trends to Watch in 2026 | news | qr code trends 2026 | qr-code-trends-2026 |
+| QR Code Best Practices Checklist | guides | qr code checklist | qr-code-best-practices-checklist |
+| QR Codes for Product Labels | guides | product label qr code | qr-codes-for-product-labels |
+| QR Codes for Trade Shows and Events | guides | trade show qr code | qr-codes-for-trade-shows |
+| QR Codes for Brochures and Catalogs | guides | brochure qr code | qr-codes-for-brochures |
+| QR Code Monkey Alternative | guides | qr code monkey alternative | qr-code-monkey-alternative |
 
-### Learn Articles (91)
+### Learn Articles (92)
 
 #### qr-basics (10)
 | Title | Primary Keyword | Slug |
@@ -100,7 +107,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How Dynamic QR Code Redirects Work | qr code redirect | how-dynamic-qr-redirects-work |
 | How to Password Protect a QR Code | password protected qr code | how-to-password-protect-qr-code |
 
-#### use-cases (26)
+#### use-cases (27)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
 | QR Codes for Warranty Registration | warranty qr code | qr-codes-for-warranty-registration |
@@ -134,6 +141,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Codes for Packaging Labels | packaging label qr code | qr-codes-for-packaging-labels |
 | QR Codes for Conference Badges | conference badge qr code | qr-codes-for-conference-badges |
 | QR Codes for Signage | signage qr code | qr-codes-for-signage |
+| QR Codes for Vehicle Wraps | vehicle wrap qr code | qr-codes-for-vehicle-wraps |
 
 #### industries (20)
 | Title | Primary Keyword | Slug |
@@ -470,11 +478,23 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 104. ~~how-qr-code-scanning-works.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
 105. ~~qr-code-for-pdf.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
 
+**COMPLETED (January 23, 2026):**
+106. ~~QR Codes for Vehicle Wraps (use-cases)~~ - ✅ Created
+107. ~~QR Code Generator for Business (blog)~~ - ✅ Created
+108. ~~QR Code Trends to Watch in 2026 (blog)~~ - ✅ Created
+109. ~~QR Code Best Practices Checklist (blog)~~ - ✅ Created
+
+**COMPLETED (January 23, 2026 - Session 2):**
+110. ~~QR Codes for Product Labels (blog)~~ - ✅ Created
+111. ~~QR Codes for Trade Shows & Events (blog)~~ - ✅ Created
+112. ~~QR Codes for Brochures & Catalogs (blog)~~ - ✅ Created
+113. ~~QR Code Monkey Alternative (blog)~~ - ✅ Created
+
 **NEXT PRIORITIES:**
-106. QR Codes for Signage: Part 2 - Vehicle Wraps (use-cases)
-107. QR Code Generator for Business (blog)
-108. QR Code Trends to Watch in 2026 (blog)
-109. QR Code Best Practices Checklist (blog)
+114. QR Tiger Alternative (blog)
+115. Beaconstac Alternative (blog)
+116. QR Code Generator API Comparison (blog)
+117. QR Code Fails: What Not to Do (blog)
 
 **ALL SEVERE REWRITES COMPLETE!**
 The following 8 articles were rewritten to prose-first style (uncommitted, pending review):
@@ -812,6 +832,8 @@ There are 10 articles with severe bullet bloat that need prose-first rewrites. S
 
 | Date | Changes |
 |------|---------|
+| 2026-01-23 | Added Product Labels, Trade Shows, Brochures, QR Code Monkey Alternative (blogs). Now 43 blog, 92 learn (135 total) |
+| 2026-01-23 | Added Vehicle Wraps (use-cases) + QR Code Generator for Business, Trends 2026, Best Practices Checklist (blogs). Now 39 blog, 92 learn (131 total) |
 | 2026-01-22 | Added ROI Calculator, Future of QR Codes (blog) + Signage, Structured Append (learn). Rewrote qr-code-error-correction.mdx, how-qr-code-scanning-works.mdx, qr-code-for-pdf.mdx (MODERATE → GOOD). Now 36 blog, 91 learn (127 total) |
 | 2026-01-22 | Added Warranty Registration, Asset Tagging (use-cases) + Micro QR Codes (technical). Rewrote vcard-qr-codes-digital-business-cards.mdx (MODERATE → GOOD). Now 34 blog, 89 learn (123 total) |
 | 2026-01-22 | Added Feedback Form (blog) + Inventory Management, Employee ID Cards, Loyalty Programs (use-cases). Rewrote how-to-create-a-qr-code.mdx (MODERATE → GOOD). Now 34 blog, 86 learn (120 total) |

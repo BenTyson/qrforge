@@ -2,7 +2,7 @@
 
 > **Last Updated**: January 23, 2026
 > **Status**: Active development
-> **Current Features**: 17 QR types, Analytics, Bulk generation, API, 135 SEO articles
+> **Current Features**: 18 QR types, Analytics, Bulk generation, API, 135 SEO articles
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -32,7 +32,7 @@ This document tracks planned features in priority order. Work through sequential
 ## NEXT UP
 
 ### 1. Event/Calendar QR Code Type
-**Tier**: STANDARD | **Priority**: 6 of 25 | **Effort**: ~1-2 days
+**Tier**: STANDARD | **Priority**: 6 of 24 | **Effort**: ~1-2 days
 
 **What**: QR code that adds an event to the user's calendar (iCal format).
 
@@ -87,7 +87,7 @@ This document tracks planned features in priority order. Work through sequential
 ---
 
 ### 7. Geo/Location QR Code Type
-**Tier**: STANDARD | **Priority**: 7 of 25 | **Effort**: ~1 day
+**Tier**: STANDARD | **Priority**: 7 of 24 | **Effort**: ~1 day
 
 **What**: QR code that opens a specific location in the user's maps app.
 
@@ -129,7 +129,7 @@ This document tracks planned features in priority order. Work through sequential
 ---
 
 ### 8. A/B Testing for Dynamic QR Codes
-**Tier**: MAJOR | **Priority**: 8 of 25 | **Effort**: ~1 week
+**Tier**: MAJOR | **Priority**: 8 of 24 | **Effort**: ~1 week
 
 **What**: Split traffic between two destinations to test which performs better.
 
@@ -197,7 +197,7 @@ if (qrCode.ab_enabled && qrCode.ab_variant_b_url) {
 ---
 
 ### 9. Template Gallery
-**Tier**: STANDARD | **Priority**: 9 of 25 | **Effort**: ~2-3 days
+**Tier**: STANDARD | **Priority**: 9 of 24 | **Effort**: ~2-3 days
 
 **What**: Pre-designed QR code templates by industry/use case.
 
@@ -261,7 +261,7 @@ interface QRTemplate {
 ---
 
 ### 10. Print-Ready PDF Export
-**Tier**: STANDARD | **Priority**: 10 of 25 | **Effort**: ~1-2 days
+**Tier**: STANDARD | **Priority**: 10 of 24 | **Effort**: ~1-2 days
 
 **What**: Download QR codes as print-ready PDF with crop marks and bleed.
 
@@ -303,7 +303,7 @@ interface QRTemplate {
 ---
 
 ### 11. Simple Feedback Form QR Type
-**Tier**: MAJOR | **Priority**: 11 of 25 | **Effort**: ~1 week
+**Tier**: MAJOR | **Priority**: 11 of 24 | **Effort**: ~1 week
 
 **What**: QR code that links to a simple branded feedback form, responses collected in dashboard.
 
@@ -375,7 +375,7 @@ CREATE TABLE feedback_responses (
 ---
 
 ### 12. YouTube QR Code Type (Enhanced)
-**Tier**: STANDARD | **Priority**: 12 of 25 | **Effort**: ~1 day
+**Tier**: STANDARD | **Priority**: 12 of 24 | **Effort**: ~1 day
 
 **What**: Dedicated YouTube QR type with video preview landing page.
 
@@ -417,7 +417,7 @@ CREATE TABLE feedback_responses (
 ---
 
 ### 13. Spotify QR Code Type (Enhanced)
-**Tier**: STANDARD | **Priority**: 13 of 25 | **Effort**: ~1 day
+**Tier**: STANDARD | **Priority**: 13 of 24 | **Effort**: ~1 day
 
 **What**: Dedicated Spotify QR type for tracks, albums, playlists, or artists.
 
@@ -454,41 +454,8 @@ CREATE TABLE feedback_responses (
 
 ---
 
-### 14. LinkedIn QR Code Type
-**Tier**: QUICK WIN | **Priority**: 14 of 25 | **Effort**: ~4-6 hours
-
-**What**: Dedicated LinkedIn QR for profiles or company pages.
-
-**Why build this**:
-- "linkedin qr code" 6K+ searches
-- Professional users want this
-- Simple to implement
-
-**Implementation**:
-- New QR type: `linkedin`
-- Input: LinkedIn profile/company URL or username
-- Landing page with profile preview
-
-**Landing page** (`/r/[code]/linkedin`):
-- LinkedIn branding
-- Profile name/headline
-- "View Profile" button
-- "Connect" button (deep link)
-
-**Files to create**:
-- `src/components/qr/forms/LinkedInForm.tsx`
-- `src/app/r/[code]/linkedin/page.tsx`
-
-**Acceptance criteria**:
-- [ ] Accepts LinkedIn URLs
-- [ ] Validates URL format
-- [ ] Clean landing page
-- [ ] Mobile app deep linking
-
----
-
-### 15. TikTok QR Code Type
-**Tier**: QUICK WIN | **Priority**: 15 of 25 | **Effort**: ~4-6 hours
+### 14. TikTok QR Code Type
+**Tier**: QUICK WIN | **Priority**: 14 of 24 | **Effort**: ~4-6 hours
 
 **What**: Dedicated TikTok QR for profiles or videos.
 
@@ -508,8 +475,8 @@ CREATE TABLE feedback_responses (
 
 ---
 
-### 16. Multi-Platform Review QR (Google + Yelp + TripAdvisor)
-**Tier**: STANDARD | **Priority**: 16 of 25 | **Effort**: ~2 days
+### 15. Multi-Platform Review QR (Google + Yelp + TripAdvisor)
+**Tier**: STANDARD | **Priority**: 15 of 24 | **Effort**: ~2 days
 
 **What**: Landing page with buttons for multiple review platforms.
 
@@ -533,8 +500,8 @@ CREATE TABLE feedback_responses (
 
 ---
 
-### 17. Embed Code Generator
-**Tier**: QUICK WIN | **Priority**: 17 of 25 | **Effort**: ~4 hours
+### 16. Embed Code Generator
+**Tier**: QUICK WIN | **Priority**: 16 of 24 | **Effort**: ~4 hours
 
 **What**: Generate HTML embed code to display QR code on websites.
 
@@ -556,8 +523,8 @@ CREATE TABLE feedback_responses (
 
 ---
 
-### 18. Campaign Grouping
-**Tier**: STANDARD | **Priority**: 18 of 25 | **Effort**: ~2-3 days
+### 17. Campaign Grouping
+**Tier**: STANDARD | **Priority**: 17 of 24 | **Effort**: ~2-3 days
 
 **What**: Group QR codes into campaigns with combined analytics.
 
@@ -589,8 +556,8 @@ campaign_id UUID REFERENCES campaigns(id)
 
 ---
 
-### 19. QR Code Scheduling (Enhanced)
-**Tier**: QUICK WIN | **Priority**: 19 of 25 | **Effort**: ~4 hours
+### 18. QR Code Scheduling (Enhanced)
+**Tier**: QUICK WIN | **Priority**: 18 of 24 | **Effort**: ~4 hours
 
 **What**: Improve existing scheduling with timezone support and recurring schedules.
 
@@ -605,8 +572,8 @@ campaign_id UUID REFERENCES campaigns(id)
 
 ---
 
-### 20. Bulk QR Code Analytics
-**Tier**: STANDARD | **Priority**: 20 of 25 | **Effort**: ~1-2 days
+### 19. Bulk QR Code Analytics
+**Tier**: STANDARD | **Priority**: 19 of 24 | **Effort**: ~1-2 days
 
 **What**: Combined analytics view for bulk-generated QR codes.
 
@@ -621,8 +588,8 @@ campaign_id UUID REFERENCES campaigns(id)
 
 ---
 
-### 21. Webhook Notifications
-**Tier**: MAJOR | **Priority**: 21 of 25 | **Effort**: ~1 week
+### 20. Webhook Notifications
+**Tier**: MAJOR | **Priority**: 20 of 24 | **Effort**: ~1 week
 
 **What**: Send HTTP webhooks when QR codes are scanned.
 
@@ -638,8 +605,8 @@ campaign_id UUID REFERENCES campaigns(id)
 
 ---
 
-### 22. Custom Short URL Slugs
-**Tier**: STANDARD | **Priority**: 22 of 25 | **Effort**: ~1 day
+### 21. Custom Short URL Slugs
+**Tier**: STANDARD | **Priority**: 21 of 24 | **Effort**: ~1 day
 
 **What**: Let users choose their own short code (e.g., qrwolf.com/r/mybrand).
 
@@ -654,8 +621,8 @@ campaign_id UUID REFERENCES campaigns(id)
 
 ---
 
-### 23. QR Code Duplication
-**Tier**: QUICK WIN | **Priority**: 23 of 25 | **Effort**: ~2 hours
+### 22. QR Code Duplication
+**Tier**: QUICK WIN | **Priority**: 22 of 24 | **Effort**: ~2 hours
 
 **What**: One-click duplicate a QR code with all settings.
 
@@ -666,8 +633,8 @@ campaign_id UUID REFERENCES campaigns(id)
 
 ---
 
-### 24. QR Code Archive/Restore
-**Tier**: QUICK WIN | **Priority**: 24 of 25 | **Effort**: ~4 hours
+### 23. QR Code Archive/Restore
+**Tier**: QUICK WIN | **Priority**: 23 of 24 | **Effort**: ~4 hours
 
 **What**: Archive QR codes instead of deleting, with restore option.
 
@@ -677,8 +644,8 @@ campaign_id UUID REFERENCES campaigns(id)
 
 ---
 
-### 25. White-Label Landing Pages
-**Tier**: EPIC | **Priority**: 25 of 25 | **Effort**: ~2-3 weeks
+### 24. White-Label Landing Pages
+**Tier**: EPIC | **Priority**: 24 of 24 | **Effort**: ~2-3 weeks
 
 **What**: Remove QRWolf branding from landing pages (Business tier).
 
@@ -697,6 +664,7 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| LinkedIn QR Code Type | 2026-01-23 | 18th QR type. Username-based input with smart URL parsing. Direct redirect (no landing page). Free tier social type. |
 | Google Reviews QR Type | 2026-01-22 | 17th QR type. Landing page at `/r/[code]/review` with business name, 5-star visual, customizable accent color. Place ID input with validation. Free tier. |
 | QR Code Reader Tool | 2026-01-21 | Route: `/tools/qr-reader`. Drag-and-drop image upload, camera support on mobile, jsQR decoding, content type detection (URL, email, phone, WiFi, vCard), copy to clipboard, action buttons. |
 | QR Code Contrast Checker Tool | 2026-01-21 | Route: `/tools/contrast-checker`. Dual color pickers, WCAG contrast ratio calculation, pass/fail indicator with scale, live QR preview, preset color combinations, deep link to QR creator with colors. |
@@ -757,6 +725,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-23 | Completed LinkedIn QR Code Type (Feature #14), updated priorities |
 | 2026-01-21 | Completed Contrast Checker and QR Reader tools - Tools section complete |
 | 2026-01-21 | Completed Tools Hub Page (Feature #4), added Tools to nav |
 | 2026-01-21 | Completed QR Code Size Calculator Tool (Feature #1) |

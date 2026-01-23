@@ -109,6 +109,11 @@ export function [Type]Form({ content, onChange }: [Type]FormProps) {
 - [ ] Add type to `isValidContentType()` array
 - [ ] Add case to `validators.validateContent()` switch
 
+### 8b. API Validation Tests - `src/lib/api/__tests__/auth.test.ts`
+
+- [ ] Add type to `validTypes` array in test
+- [ ] Update count in "should count exactly N valid content types" test
+
 ### 9. QR Studio - `src/components/qr/studio/QRStudio.tsx`
 
 - [ ] Import content type interface

@@ -52,9 +52,15 @@ describe('API Validators', () => {
 
   describe('isValidContentType', () => {
     const validTypes = [
+      // Basic types
       'url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms',
-      'whatsapp', 'facebook', 'instagram', 'apps',
+      // Simple URL types
+      'whatsapp', 'facebook', 'instagram', 'linkedin', 'apps',
+      // Reviews
+      'google-review',
+      // File upload types
       'pdf', 'images', 'video', 'mp3',
+      // Landing page types
       'menu', 'business', 'links', 'coupon', 'social',
     ];
 
@@ -64,9 +70,9 @@ describe('API Validators', () => {
       });
     });
 
-    it('should count exactly 20 valid content types', () => {
-      // 7 basic + 4 social + 4 file + 5 landing = 20
-      expect(validTypes.length).toBe(20);
+    it('should count exactly 22 valid content types', () => {
+      // 7 basic + 5 social + 1 reviews + 4 file + 5 landing = 22
+      expect(validTypes.length).toBe(22);
     });
 
     it('should reject invalid content types', () => {

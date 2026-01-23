@@ -25,6 +25,7 @@ import type {
   WhatsAppContent,
   FacebookContent,
   InstagramContent,
+  LinkedInContent,
   AppsContent,
   GoogleReviewContent,
   PDFContent,
@@ -52,6 +53,7 @@ import type { WizardStep } from '../wizard';
 import { WhatsAppForm } from '@/components/qr/forms/WhatsAppForm';
 import { FacebookForm } from '@/components/qr/forms/FacebookForm';
 import { InstagramForm } from '@/components/qr/forms/InstagramForm';
+import { LinkedInForm } from '@/components/qr/forms/LinkedInForm';
 import { AppsForm } from '@/components/qr/forms/AppsForm';
 import { GoogleReviewForm } from '@/components/qr/forms/GoogleReviewForm';
 import { PDFForm } from '@/components/qr/forms/PDFForm';
@@ -863,6 +865,8 @@ function ContentStep({
         return <FacebookForm content={(content as Partial<FacebookContent>) || {}} onChange={onContentChange} />;
       case 'instagram':
         return <InstagramForm content={(content as Partial<InstagramContent>) || {}} onChange={onContentChange} />;
+      case 'linkedin':
+        return <LinkedInForm content={(content as Partial<LinkedInContent>) || {}} onChange={onContentChange} />;
       case 'apps':
         return <AppsForm content={(content as Partial<AppsContent>) || {}} onChange={onContentChange} />;
       case 'google-review':

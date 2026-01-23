@@ -300,7 +300,7 @@ export const validators = {
       // Basic types
       'url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms',
       // Simple URL types
-      'whatsapp', 'facebook', 'instagram', 'apps',
+      'whatsapp', 'facebook', 'instagram', 'linkedin', 'apps',
       // Reviews
       'google-review',
       // File upload types
@@ -409,6 +409,12 @@ export const validators = {
       case 'instagram':
         if (!content.username || typeof content.username !== 'string') {
           return { valid: false, error: 'content.username is required for Instagram type' };
+        }
+        break;
+
+      case 'linkedin':
+        if (!content.username || typeof content.username !== 'string') {
+          return { valid: false, error: 'content.username is required for LinkedIn type' };
         }
         break;
 

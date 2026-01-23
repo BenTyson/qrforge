@@ -18,6 +18,7 @@ import type {
   FacebookContent,
   InstagramContent,
   AppsContent,
+  GoogleReviewContent,
   PDFContent,
   ImagesContent,
   VideoContent,
@@ -250,6 +251,14 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         const appsContent = content as AppsContent;
         return !!(appsContent.appStoreUrl?.trim() || appsContent.playStoreUrl?.trim() || appsContent.fallbackUrl?.trim());
       }
+      case 'google-review': {
+        const reviewContent = content as GoogleReviewContent;
+        return !!(
+          reviewContent.placeId?.trim() &&
+          reviewContent.placeId.length >= 20 &&
+          reviewContent.businessName?.trim()
+        );
+      }
       case 'pdf':
         return !!(content as PDFContent).fileUrl?.trim() || !!(content as PDFContent).fileName?.trim();
       case 'images':
@@ -478,8 +487,13 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         return { id: data.id, shortCode: newShortCode };
       }
     } catch (err) {
-      console.error('Failed to save QR code:', err);
-      setSaveError(err instanceof Error ? err.message : 'Failed to save QR code');
+      console.error('Failed to save QR code:', JSON.stringify(err, null, 2), err);
+      // Handle Supabase errors (plain objects with message property) and Error instances
+      const supaErr = err as { message?: string; code?: string; details?: string; hint?: string };
+      const errorMessage = err instanceof Error
+        ? err.message
+        : supaErr?.message || supaErr?.details || supaErr?.code || 'Failed to save QR code';
+      setSaveError(errorMessage);
       return null;
     } finally {
       setIsSaving(false);

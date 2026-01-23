@@ -12,6 +12,8 @@ export type QRContentType =
   | 'facebook'
   | 'instagram'
   | 'apps'
+  // Reviews (free tier)
+  | 'google-review'
   // File upload types (Pro+)
   | 'pdf'
   | 'images'
@@ -179,6 +181,15 @@ export interface AppsContent {
   fallbackUrl?: string;
 }
 
+// === Reviews ===
+
+export interface GoogleReviewContent {
+  type: 'google-review';
+  placeId: string;        // Google Place ID (e.g., ChIJ...)
+  businessName: string;   // For landing page display
+  accentColor?: string;   // Landing page accent color
+}
+
 // === File Upload Types (Pro+) ===
 
 export interface PDFContent {
@@ -309,6 +320,8 @@ export type QRContent =
   | FacebookContent
   | InstagramContent
   | AppsContent
+  // Reviews
+  | GoogleReviewContent
   // File upload types
   | PDFContent
   | ImagesContent
@@ -352,6 +365,8 @@ export const QR_TYPE_LABELS: Record<QRContentType, string> = {
   facebook: 'Facebook',
   instagram: 'Instagram',
   apps: 'App Download',
+  // Reviews
+  'google-review': 'Google Review',
   // File upload types
   pdf: 'PDF Document',
   images: 'Image Gallery',
@@ -379,6 +394,8 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
   facebook: 'facebook',
   instagram: 'instagram',
   apps: 'smartphone',
+  // Reviews
+  'google-review': 'star',
   // File upload types
   pdf: 'file-text',
   images: 'images',
@@ -408,6 +425,7 @@ export const PRO_ONLY_TYPES: QRContentType[] = [
 
 // Types that require dynamic QR codes (landing pages)
 export const DYNAMIC_REQUIRED_TYPES: QRContentType[] = [
+  'google-review',
   'pdf', 'images', 'video', 'mp3',
   'menu', 'business', 'links', 'coupon', 'social',
 ];

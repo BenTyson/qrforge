@@ -124,6 +124,7 @@ export async function GET(
     wifi: 'wifi',
     text: 'text',
     vcard: 'vcard',
+    'google-review': 'review',
   };
 
   const contentType = qrCode.content_type as string;

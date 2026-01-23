@@ -1,7 +1,7 @@
 # QRWolf Content Plan
 
 > **Last Updated**: January 22, 2026
-> **Total Content**: 33 blog posts, 83 learn articles
+> **Total Content**: 36 blog posts, 91 learn articles
 > **Strategy**: SEO-driven organic acquisition (no paid ads)
 
 This document tracks existing content and planned articles. Agents should reference this instead of reading all content files.
@@ -31,10 +31,11 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 
 ## Existing Content Inventory
 
-### Blog Posts (33)
+### Blog Posts (34)
 
 | Title | Category | Primary Keyword | Slug |
 |-------|----------|-----------------|------|
+| How to Create a QR Code for Feedback Form | tutorials | feedback qr code | qr-code-for-feedback-form |
 | QR Codes in 2025: Trends and What's Next | news | qr code trends 2025 | qr-codes-in-2025 |
 | QR Code Generator Comparison: Top 10 Tools | guides | qr code generator comparison | qr-code-generator-comparison |
 | Free vs Paid QR Code Generators | guides | free vs paid qr code | free-vs-paid-qr-code-generators |
@@ -70,8 +71,10 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How to Create a QR Code for Twitter/X | tutorials | twitter qr code | qr-code-for-twitter |
 | How to Create a QR Code for Facebook Page | tutorials | facebook page qr code | qr-code-for-facebook-page |
 | How to Create Multiple QR Codes at Once | tutorials | bulk qr codes | how-to-create-bulk-qr-codes |
+| QR Code ROI Calculator: Measure Your Success | guides | qr code roi | qr-code-roi-calculator |
+| The Future of QR Codes: What's Next | news | future of qr codes | future-of-qr-codes |
 
-### Learn Articles (83)
+### Learn Articles (91)
 
 #### qr-basics (10)
 | Title | Primary Keyword | Slug |
@@ -97,9 +100,14 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | How Dynamic QR Code Redirects Work | qr code redirect | how-dynamic-qr-redirects-work |
 | How to Password Protect a QR Code | password protected qr code | how-to-password-protect-qr-code |
 
-#### use-cases (21)
+#### use-cases (26)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
+| QR Codes for Warranty Registration | warranty qr code | qr-codes-for-warranty-registration |
+| QR Codes for Asset Tagging | asset tagging qr code | qr-codes-for-asset-tagging |
+| QR Codes for Inventory Management | inventory qr code | qr-codes-for-inventory-management |
+| QR Codes for Employee ID Cards | employee id qr code | qr-codes-for-employee-id-cards |
+| QR Codes for Loyalty Programs | loyalty program qr code | qr-codes-for-loyalty-programs |
 | Restaurant QR Code Menus | restaurant qr code menu | restaurant-menu-qr-codes |
 | Social Profile QR Codes | social media qr code | social-profile-qr-codes |
 | QR Codes for Portfolios & Resumes | resume qr code | qr-codes-for-portfolios |
@@ -125,6 +133,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Codes for Flyers & Posters | flyer qr code, poster qr code | qr-codes-for-flyers |
 | QR Codes for Packaging Labels | packaging label qr code | qr-codes-for-packaging-labels |
 | QR Codes for Conference Badges | conference badge qr code | qr-codes-for-conference-badges |
+| QR Codes for Signage | signage qr code | qr-codes-for-signage |
 
 #### industries (20)
 | Title | Primary Keyword | Slug |
@@ -166,9 +175,10 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Code Campaign Planning Template | qr code campaign | qr-code-campaign-planning |
 | QR Code Print Checklist | print qr code checklist | qr-code-print-checklist |
 
-#### technical (9)
+#### technical (10)
 | Title | Primary Keyword | Slug |
 |-------|-----------------|------|
+| Micro QR Codes vs Standard QR Codes | micro qr code | micro-qr-codes |
 | QR Code Data Capacity | qr code data capacity | qr-code-data-capacity |
 | QR Code Versions Explained | qr code versions | qr-code-versions-explained |
 | QR Code Security: Risks and Best Practices | qr code security | qr-code-security |
@@ -178,6 +188,7 @@ QRWolf relies 100% on organic traffic - no paid ads. Content is our primary acqu
 | QR Code Analytics: Metrics That Matter | qr code analytics | qr-code-analytics-metrics |
 | QR Code Colors: Contrast and Readability Guide | qr code colors | qr-code-colors-contrast |
 | QR Code Quiet Zone: Why Margins Matter | qr code quiet zone | qr-code-quiet-zone |
+| QR Code Structured Append: Linking Multiple Codes | structured append | qr-code-structured-append |
 
 ---
 
@@ -437,11 +448,33 @@ Builds E-E-A-T (Experience, Expertise, Authority, Trust) signals.
 88. ~~How to Create Multiple QR Codes at Once (blog)~~ - ✅ Created
 89. ~~QR Code Print Checklist (best-practices)~~ - ✅ Created
 
+**COMPLETED (January 22, 2026 - Session 6):**
+90. ~~How to Create a QR Code for Feedback Form (blog)~~ - ✅ Created
+91. ~~QR Codes for Inventory Management (use-cases)~~ - ✅ Created
+92. ~~QR Codes for Employee ID Cards (use-cases)~~ - ✅ Created
+93. ~~QR Codes for Loyalty Programs (use-cases)~~ - ✅ Created
+94. ~~how-to-create-a-qr-code.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
+
+**COMPLETED (January 22, 2026 - Session 7):**
+95. ~~QR Codes for Warranty Registration (use-cases)~~ - ✅ Created
+96. ~~QR Codes for Asset Tagging (use-cases)~~ - ✅ Created
+97. ~~Micro QR Codes vs Standard QR Codes (technical)~~ - ✅ Created
+98. ~~vcard-qr-codes-digital-business-cards.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
+
+**COMPLETED (January 22, 2026 - Session 8):**
+99. ~~QR Code ROI Calculator (blog)~~ - ✅ Created
+100. ~~QR Codes for Signage (use-cases)~~ - ✅ Created
+101. ~~QR Code Structured Append (technical)~~ - ✅ Created
+102. ~~The Future of QR Codes (blog)~~ - ✅ Created
+103. ~~qr-code-error-correction.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
+104. ~~how-qr-code-scanning-works.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
+105. ~~qr-code-for-pdf.mdx~~ - ✅ Rewritten (MODERATE → GOOD)
+
 **NEXT PRIORITIES:**
-90. How to Create a QR Code for Feedback Form (blog)
-91. QR Codes for Inventory Management (use-cases)
-92. QR Codes for Employee ID Cards (use-cases)
-93. QR Codes for Loyalty Programs (use-cases)
+106. QR Codes for Signage: Part 2 - Vehicle Wraps (use-cases)
+107. QR Code Generator for Business (blog)
+108. QR Code Trends to Watch in 2026 (blog)
+109. QR Code Best Practices Checklist (blog)
 
 **ALL SEVERE REWRITES COMPLETE!**
 The following 8 articles were rewritten to prose-first style (uncommitted, pending review):
@@ -465,9 +498,9 @@ The following 8 articles were rewritten to prose-first style (uncommitted, pendi
 ## EXPANSION PLAN: Road to 150 Pieces
 
 > **Goal**: 125-150 total pieces for topical authority leadership
-> **Current**: 113 pieces (32 blog, 81 learn)
+> **Current**: 123 pieces (34 blog, 89 learn)
 > **Target**: 150 pieces (50 blog, 100 learn)
-> **Gap**: ~37 new pieces
+> **Gap**: ~27 new pieces
 
 ### PHASE 1: Platform-Specific "How To" Content (High Conversion)
 
@@ -779,6 +812,9 @@ There are 10 articles with severe bullet bloat that need prose-first rewrites. S
 
 | Date | Changes |
 |------|---------|
+| 2026-01-22 | Added ROI Calculator, Future of QR Codes (blog) + Signage, Structured Append (learn). Rewrote qr-code-error-correction.mdx, how-qr-code-scanning-works.mdx, qr-code-for-pdf.mdx (MODERATE → GOOD). Now 36 blog, 91 learn (127 total) |
+| 2026-01-22 | Added Warranty Registration, Asset Tagging (use-cases) + Micro QR Codes (technical). Rewrote vcard-qr-codes-digital-business-cards.mdx (MODERATE → GOOD). Now 34 blog, 89 learn (123 total) |
+| 2026-01-22 | Added Feedback Form (blog) + Inventory Management, Employee ID Cards, Loyalty Programs (use-cases). Rewrote how-to-create-a-qr-code.mdx (MODERATE → GOOD). Now 34 blog, 86 learn (120 total) |
 | 2026-01-22 | Rewrote qr-codes-for-small-business.mdx, qr-code-vs-barcode.mdx, wifi-qr-codes-complete-guide.mdx (MODERATE → GOOD). Quality now: 69% GOOD, 28% MODERATE, 0% SEVERE |
 | 2026-01-22 | Added Campaign Planning (best-practices), Print Checklist (best-practices), Bulk QR Codes (blog). Now 33 blog, 83 learn (116 total) |
 | 2026-01-22 | Added Libraries, Government, Insurance, Financial Services (industries) + Flyers, Packaging Labels, Conference Badges (use-cases) + Dynamic Redirects (how-it-works). Rewrote dynamic-qr-codes-complete-guide.mdx (SEVERE→GOOD). Added "1 rewrite per batch" rule. Now 28 blog, 77 learn (105 total) |

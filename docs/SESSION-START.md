@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 22, 2026 (Homepage Modularization)
+> **Last Updated**: January 22, 2026 (Google Reviews QR Type - 17 QR types total)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -82,7 +82,7 @@ See `docs/DEVELOPMENT.md` for test data factories and CI/CD info.
 
 QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: passive income via SEO-driven traffic and recurring subscriptions.
 
-## QR Code Types (16 Total)
+## QR Code Types (17 Total)
 
 ### Basic Types (All Tiers)
 | Type | Description | Output |
@@ -103,6 +103,11 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
 | **Instagram** | Instagram profile | instagram.com link |
 | **Apps** | App store links | Smart app redirect |
 
+### Reviews (All Tiers)
+| Type | Description | Landing Page |
+|------|-------------|--------------|
+| **Google Review** | Collect Google reviews | Business name + review CTA |
+
 ### File Upload Types (Pro+ Only)
 | Type | Description | Landing Page |
 |------|-------------|--------------|
@@ -121,6 +126,7 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
 | **Social** | Social media aggregator | Profile + social links |
 
 **Landing Page Routes:**
+- `/r/[code]/review` - Google review
 - `/r/[code]/pdf` - PDF viewer
 - `/r/[code]/gallery` - Image gallery
 - `/r/[code]/video` - Video player
@@ -135,7 +141,7 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
 
 ### Completed
 - Next.js 15 app with TypeScript + Tailwind CSS v4
-- **QR generator with 16 content types** (see QR Types section below)
+- **QR generator with 17 content types** (see QR Types section below)
 - Real-time preview with style customization
 - PNG and SVG downloads
 - Full landing page with pricing, features, FAQ
@@ -707,6 +713,35 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - **Eliminated code duplication**: CheckIcon, XIcon, ArrowIcon repeated 40+ times now single components
   - **Improved maintainability**: Each section independently editable and testable
   - **Better IDE performance**: Smaller file sizes improve developer experience
+- **SEO Content Expansion to 123 Articles** (January 22, 2026):
+  - **7 new articles** created across blog and learn categories:
+    - Blog (1): How to Create a QR Code for Feedback Form
+    - Use-cases (5): Inventory Management, Employee ID Cards, Loyalty Programs, Warranty Registration, Asset Tagging
+    - Technical (1): Micro QR Codes vs Standard QR Codes
+  - **2 articles rewritten** from MODERATE to GOOD (prose-first):
+    - how-to-create-a-qr-code.mdx (foundational article)
+    - vcard-qr-codes-digital-business-cards.mdx (high-value keyword)
+  - **Content quality improved**: 71% GOOD, 24% MODERATE, 0% SEVERE (up from 66% GOOD)
+  - **Total content now**: 34 blog posts, 89 learn articles (123 total)
+- **SEO Content Expansion to 127 Articles** (January 22, 2026):
+  - **4 new articles** created (all prose-first quality):
+    - Blog (2): QR Code ROI Calculator, The Future of QR Codes
+    - Use-cases (1): QR Codes for Signage (indoor/outdoor guide)
+    - Technical (1): QR Code Structured Append (multi-code sequences)
+  - **3 articles rewritten** from MODERATE to GOOD (prose-first):
+    - qr-code-error-correction.mdx (Reed-Solomon technical guide)
+    - how-qr-code-scanning-works.mdx (scanning process deep dive)
+    - qr-code-for-pdf.mdx (PDF sharing use case)
+  - **Content quality improved**: 77% GOOD, 18% MODERATE, 0% SEVERE (up from 71% GOOD)
+  - **Total content now**: 36 blog posts, 91 learn articles (127 total)
+  - **Gap to target**: 23 articles remaining to reach 150 total
+- **Google Reviews QR Type** (January 22, 2026):
+  - New free-tier QR type for collecting Google reviews
+  - Landing page with business name, 5-star visual, and "Leave a Google Review" CTA
+  - Place ID input with validation and help section for finding Place IDs
+  - Customizable accent color for landing page branding
+  - Created reusable New QR Type skill (`.claude/skills/qr-type/`) for future QR type additions
+  - Total QR types now: 17 (was 16)
 
 ### Planned Enhancements
 - Webhooks for scan notifications
@@ -1201,10 +1236,10 @@ npm run dev               # Dev server on port 3322
 - **Logo background styles** - Circle, square, rounded, transparent
 
 ### SEO & Content (Ongoing)
-- Current: 32 blog posts, 81 learn articles (113 total)
+- Current: 36 blog posts, 91 learn articles (127 total)
 - Target: 50 blog posts, 100 learn articles (150 total)
-- Remaining: ~37 articles to reach target
-- **Quality audit**: All SEVERE rewrites complete! 66% now GOOD, 31% MODERATE
+- Remaining: ~23 articles to reach target
+- **Quality audit**: All SEVERE rewrites complete! 77% now GOOD, 18% MODERATE
 - See `.claude/skills/content/CONTENT-PLAN.md` for expansion plan
 - See `.claude/skills/content/BULLET-BLOAT-AUDIT.md` for quality audit results
 - Add FAQ schema to knowledge base pages

@@ -65,6 +65,9 @@ export function QRPreview({
           return (content.appStoreUrl && content.appStoreUrl.length > 0) ||
                  (content.playStoreUrl && content.playStoreUrl.length > 0) ||
                  (content.fallbackUrl && content.fallbackUrl.length > 0);
+        case 'google-review':
+          return content.placeId && content.placeId.length >= 20 &&
+                 content.businessName && content.businessName.length > 0;
         // Pro types - these generate preview QR codes
         case 'pdf':
           return (content.fileUrl && content.fileUrl.length > 0) || (content.fileName && content.fileName.length > 0);

@@ -301,6 +301,8 @@ export const validators = {
       'url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms',
       // Simple URL types
       'whatsapp', 'facebook', 'instagram', 'apps',
+      // Reviews
+      'google-review',
       // File upload types
       'pdf', 'images', 'video', 'mp3',
       // Landing page types
@@ -423,6 +425,18 @@ export const validators = {
         }
         if (content.fallbackUrl && typeof content.fallbackUrl === 'string' && !validators.isValidUrl(content.fallbackUrl)) {
           return { valid: false, error: 'Invalid fallback URL' };
+        }
+        break;
+
+      case 'google-review':
+        if (!content.placeId || typeof content.placeId !== 'string') {
+          return { valid: false, error: 'content.placeId is required for google-review type' };
+        }
+        if (content.placeId.length < 20) {
+          return { valid: false, error: 'Place ID must be at least 20 characters' };
+        }
+        if (!content.businessName || typeof content.businessName !== 'string') {
+          return { valid: false, error: 'content.businessName is required for google-review type' };
         }
         break;
 

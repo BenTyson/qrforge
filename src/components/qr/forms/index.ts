@@ -4,6 +4,9 @@ export { FacebookForm } from './FacebookForm';
 export { InstagramForm } from './InstagramForm';
 export { AppsForm } from './AppsForm';
 
+// Reviews (free tier)
+export { GoogleReviewForm } from './GoogleReviewForm';
+
 // File upload type forms (Pro+)
 export { PDFForm } from './PDFForm';
 export { ImagesForm } from './ImagesForm';

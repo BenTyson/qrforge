@@ -95,7 +95,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats Grid - More visual variety */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {/* Primary stat - larger and highlighted */}
         <div className="col-span-2 lg:col-span-1 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4">

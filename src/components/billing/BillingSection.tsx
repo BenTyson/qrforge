@@ -145,7 +145,7 @@ export function BillingSection({
       {/* Usage */}
       <div className="pt-4 border-t border-border">
         <h3 className="text-sm font-medium mb-3">Current Usage</h3>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-3 bg-secondary/20 rounded-lg">
             <p className="text-2xl font-bold">{staticCount}</p>
             <p className="text-sm text-muted-foreground">Static QR Codes</p>

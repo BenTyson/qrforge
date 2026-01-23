@@ -151,7 +151,7 @@ export function DashboardNav({ user }: DashboardNavProps) {
                       {user.email?.[0].toUpperCase()}
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuContent align="end" className="w-56 max-w-[calc(100vw-2rem)]">
                     <div className="px-2 py-1.5">
                       <p className="text-sm font-medium truncate">{user.email}</p>
                       <p className={cn(

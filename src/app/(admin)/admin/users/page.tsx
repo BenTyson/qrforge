@@ -140,10 +140,10 @@ export default async function AdminUsersPage({
               <tr className="border-b border-border/50">
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">User</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Tier</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">QR Codes</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Scans</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Joined</th>
+                <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">QR Codes</th>
+                <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Scans</th>
+                <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Joined</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -166,7 +166,7 @@ export default async function AdminUsersPage({
                         {user.subscription_tier || 'free'}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="hidden md:table-cell px-6 py-4">
                       <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
                         user.subscription_status === 'active' ? 'bg-emerald-500/20 text-emerald-400' :
                         user.subscription_status === 'past_due' ? 'bg-amber-500/20 text-amber-400' :
@@ -175,9 +175,9 @@ export default async function AdminUsersPage({
                         {user.subscription_status || 'active'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm">{qrCountMap[user.id] || 0}</td>
-                    <td className="px-6 py-4 text-sm">{user.monthly_scan_count || 0}</td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                    <td className="hidden md:table-cell px-6 py-4 text-sm">{qrCountMap[user.id] || 0}</td>
+                    <td className="hidden md:table-cell px-6 py-4 text-sm">{user.monthly_scan_count || 0}</td>
+                    <td className="hidden md:table-cell px-6 py-4 text-sm text-muted-foreground">
                       {new Date(user.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">

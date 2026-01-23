@@ -215,8 +215,8 @@ export default async function AdminSubscriptionsPage() {
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">User</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Plan</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Stripe Customer</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Updated</th>
+                <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Stripe Customer</th>
+                <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Updated</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/30">
@@ -249,10 +249,10 @@ export default async function AdminSubscriptionsPage() {
                         {user.subscription_status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground font-mono">
+                    <td className="hidden md:table-cell px-6 py-4 text-sm text-muted-foreground font-mono">
                       {user.stripe_customer_id ? user.stripe_customer_id.slice(0, 18) + '...' : '-'}
                     </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                    <td className="hidden md:table-cell px-6 py-4 text-sm text-muted-foreground">
                       {new Date(user.updated_at).toLocaleDateString()}
                     </td>
                   </tr>

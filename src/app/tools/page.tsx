@@ -56,9 +56,9 @@ export default function ToolsPage() {
         {/* Background decorations */}
         <div className="absolute inset-0 pointer-events-none">
           {/* Floating orbs */}
-          <div className="absolute top-32 left-10 w-72 h-72 rounded-full bg-primary/20 blur-[120px] animate-pulse" />
-          <div className="absolute top-64 right-20 w-96 h-96 rounded-full bg-cyan-500/15 blur-[150px]" />
-          <div className="absolute bottom-32 left-1/3 w-64 h-64 rounded-full bg-primary/10 blur-[100px]" />
+          <div className="absolute top-32 left-10 w-40 sm:w-56 md:w-72 h-40 sm:h-56 md:h-72 rounded-full bg-primary/20 blur-[80px] sm:blur-[100px] md:blur-[120px] animate-pulse" />
+          <div className="absolute top-64 right-20 w-56 sm:w-72 md:w-96 h-56 sm:h-72 md:h-96 rounded-full bg-cyan-500/15 blur-[100px] sm:blur-[120px] md:blur-[150px]" />
+          <div className="absolute bottom-32 left-1/3 w-40 sm:w-52 md:w-64 h-40 sm:h-52 md:h-64 rounded-full bg-primary/10 blur-[70px] sm:blur-[85px] md:blur-[100px]" />
           {/* Dot pattern */}
           <div
             className="absolute inset-0 opacity-30"

@@ -551,7 +551,31 @@ function AnalyticsContent({
           </div>
         ) : (
           <div className="overflow-x-auto -mx-6 px-6">
-            <table className="w-full text-sm min-w-[600px]">
+            {/* Mobile Card Layout */}
+            <div className="sm:hidden space-y-3">
+              {recentScans.map((scan, index) => (
+                <div key={scan.id} className="p-4 rounded-lg bg-secondary/20 border border-border/30">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${index === 0 ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
+                      <span className="font-medium">{scan.qrName}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{formatTimeAgo(scan.scanned_at)}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
+                    <div>
+                      <span className="text-xs uppercase tracking-wider">Device</span>
+                      <p className="capitalize">{scan.device_type || 'Unknown'}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs uppercase tracking-wider">Location</span>
+                      <p>{scan.city && scan.country ? `${scan.city}, ${scan.country}` : scan.country || '-'}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <table className="w-full text-sm hidden sm:table">
               <thead>
                 <tr className="text-left text-muted-foreground">
                   <th className="pb-3 font-medium">QR Code</th>
@@ -591,7 +615,7 @@ function AnalyticsContent({
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/30">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-4 pt-4 border-t border-border/30">
                 <p className="text-sm text-muted-foreground">
                   Page {currentPage} of {totalPages} ({totalScans.toLocaleString()} total scans)
                 </p>

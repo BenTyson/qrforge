@@ -218,6 +218,12 @@ export async function GET(
           destinationUrl = `https://instagram.com/${username}`;
         }
         break;
+      case 'linkedin':
+        if (content.username) {
+          const linkedinUsername = String(content.username).replace('@', '');
+          destinationUrl = `https://linkedin.com/in/${linkedinUsername}`;
+        }
+        break;
       case 'apps':
         // Use fallbackUrl, or platform-specific URL
         destinationUrl = (content.fallbackUrl || content.appStoreUrl || content.playStoreUrl) as string;

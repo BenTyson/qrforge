@@ -61,6 +61,8 @@ export function QRPreview({
           return content.profileUrl && content.profileUrl.length > 0;
         case 'instagram':
           return content.username && content.username.length > 0;
+        case 'linkedin':
+          return content.username && content.username.length > 0;
         case 'apps':
           return (content.appStoreUrl && content.appStoreUrl.length > 0) ||
                  (content.playStoreUrl && content.playStoreUrl.length > 0) ||

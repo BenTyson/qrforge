@@ -6,6 +6,22 @@ Session-by-session history of development work. Most recent first.
 
 ## January 23, 2026
 
+### LinkedIn QR Code Type
+- New free-tier social QR type for LinkedIn profile links
+- Username-based input with smart URL parsing (extracts username from full LinkedIn URLs)
+- Direct redirect to `https://linkedin.com/in/{username}` (no landing page needed)
+- Added to Social category alongside WhatsApp, Instagram, Facebook
+- Total QR types: 18 (was 17)
+- Updated New QR Type skill with test file step
+
+### SEO Content Expansion (to 135 articles)
+- **8 new articles** added targeting high-value SEO keywords
+- New blog posts: QR Code Generator for Business, Trends 2026, Best Practices Checklist, Product Labels, Trade Shows, Brochures, QR Code Monkey Alternative
+- New learn article: QR Codes for Vehicle Wraps (use-cases)
+- All articles written prose-first following quality guidelines
+- Total content: 135 pieces (43 blog, 92 learn)
+- Progress toward 150-piece target: 90% complete
+
 ### Mobile Optimization
 - **Admin Area**: Added mobile hamburger menu with sliding drawer navigation
 - **Admin Tables**: Hide non-essential columns on mobile (Status, QR Codes, Scans, Joined, Owner, Content, Device, Browser, etc.)

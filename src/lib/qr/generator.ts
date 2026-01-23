@@ -144,6 +144,11 @@ export function contentToString(content: QRContent): string {
       const username = content.username.replace(/^@/, '');
       return `https://instagram.com/${username}`;
 
+    case 'linkedin':
+      // Build LinkedIn profile URL
+      const linkedinUsername = content.username.replace(/^@/, '');
+      return `https://linkedin.com/in/${linkedinUsername}`;
+
     case 'apps':
       // Return fallback URL or first available store URL
       // For smart redirects, this will point to a landing page
@@ -735,6 +740,10 @@ export function validateContent(content: QRContent): { valid: boolean; error?: s
 
     case 'instagram':
       if (!content.username) return { valid: false, error: 'Instagram username is required' };
+      return { valid: true };
+
+    case 'linkedin':
+      if (!content.username) return { valid: false, error: 'LinkedIn username is required' };
       return { valid: true };
 
     case 'apps':

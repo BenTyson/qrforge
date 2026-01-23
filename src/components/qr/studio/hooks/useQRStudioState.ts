@@ -17,6 +17,7 @@ import type {
   WhatsAppContent,
   FacebookContent,
   InstagramContent,
+  LinkedInContent,
   AppsContent,
   GoogleReviewContent,
   PDFContent,
@@ -247,6 +248,8 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         return !!(content as FacebookContent).profileUrl?.trim();
       case 'instagram':
         return !!(content as InstagramContent).username?.trim();
+      case 'linkedin':
+        return !!(content as LinkedInContent).username?.trim();
       case 'apps': {
         const appsContent = content as AppsContent;
         return !!(appsContent.appStoreUrl?.trim() || appsContent.playStoreUrl?.trim() || appsContent.fallbackUrl?.trim());

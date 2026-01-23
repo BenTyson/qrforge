@@ -11,6 +11,7 @@ export type QRContentType =
   | 'whatsapp'
   | 'facebook'
   | 'instagram'
+  | 'linkedin'
   | 'apps'
   // Reviews (free tier)
   | 'google-review'
@@ -174,6 +175,11 @@ export interface InstagramContent {
   username: string;
 }
 
+export interface LinkedInContent {
+  type: 'linkedin';
+  username: string;
+}
+
 export interface AppsContent {
   type: 'apps';
   appStoreUrl?: string;
@@ -319,6 +325,7 @@ export type QRContent =
   | WhatsAppContent
   | FacebookContent
   | InstagramContent
+  | LinkedInContent
   | AppsContent
   // Reviews
   | GoogleReviewContent
@@ -364,6 +371,7 @@ export const QR_TYPE_LABELS: Record<QRContentType, string> = {
   whatsapp: 'WhatsApp',
   facebook: 'Facebook',
   instagram: 'Instagram',
+  linkedin: 'LinkedIn',
   apps: 'App Download',
   // Reviews
   'google-review': 'Google Review',
@@ -393,6 +401,7 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
   whatsapp: 'message-circle',
   facebook: 'facebook',
   instagram: 'instagram',
+  linkedin: 'linkedin',
   apps: 'smartphone',
   // Reviews
   'google-review': 'star',
@@ -412,7 +421,7 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
 // Type categories for UI grouping
 export const QR_TYPE_CATEGORIES = {
   basic: ['url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms'] as const,
-  social: ['whatsapp', 'facebook', 'instagram', 'apps'] as const,
+  social: ['whatsapp', 'facebook', 'instagram', 'linkedin', 'apps'] as const,
   media: ['pdf', 'images', 'video', 'mp3'] as const,
   landing: ['menu', 'business', 'links', 'coupon', 'social'] as const,
 };

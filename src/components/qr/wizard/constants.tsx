@@ -44,6 +44,7 @@ export const TYPE_CATEGORIES: TypeCategory[] = [
     types: [
       { id: 'whatsapp', name: 'WhatsApp', description: 'Start a chat instantly' },
       { id: 'instagram', name: 'Instagram', description: 'Link to your profile' },
+      { id: 'linkedin', name: 'LinkedIn', description: 'Link to your profile' },
       { id: 'facebook', name: 'Facebook', description: 'Link to page or profile' },
     ],
   },

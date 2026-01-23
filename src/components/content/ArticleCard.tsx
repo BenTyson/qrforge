@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { formatDateShort, getReadingTime } from '@/lib/content/utils';
+import { getReadingTime } from '@/lib/content/utils';
 import { Clock, Sparkles } from 'lucide-react';
 
 interface ArticleCardProps {
@@ -23,7 +23,7 @@ export function ArticleCard({
   title,
   description,
   slug,
-  date,
+  date: _date,
   category,
   tags = [],
   image,
@@ -78,11 +78,6 @@ export function ArticleCard({
             >
               {category.replace('-', ' ')}
             </Badge>
-            {date && (
-              <span className="text-xs text-muted-foreground">
-                {formatDateShort(date)}
-              </span>
-            )}
             {wordCount && (
               <span className="text-xs text-muted-foreground flex items-center gap-1">
                 <Clock className="w-3 h-3" />

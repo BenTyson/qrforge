@@ -18,6 +18,10 @@ import type {
   FacebookContent,
   InstagramContent,
   LinkedInContent,
+  XContent,
+  TikTokContent,
+  SnapchatContent,
+  ThreadsContent,
   AppsContent,
   GoogleReviewContent,
   PDFContent,
@@ -250,6 +254,14 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         return !!(content as InstagramContent).username?.trim();
       case 'linkedin':
         return !!(content as LinkedInContent).username?.trim();
+      case 'x':
+        return !!(content as XContent).username?.trim();
+      case 'tiktok':
+        return !!(content as TikTokContent).username?.trim();
+      case 'snapchat':
+        return !!(content as SnapchatContent).username?.trim();
+      case 'threads':
+        return !!(content as ThreadsContent).username?.trim();
       case 'apps': {
         const appsContent = content as AppsContent;
         return !!(appsContent.appStoreUrl?.trim() || appsContent.playStoreUrl?.trim() || appsContent.fallbackUrl?.trim());

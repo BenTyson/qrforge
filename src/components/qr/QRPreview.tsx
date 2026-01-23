@@ -63,6 +63,14 @@ export function QRPreview({
           return content.username && content.username.length > 0;
         case 'linkedin':
           return content.username && content.username.length > 0;
+        case 'x':
+          return content.username && content.username.length > 0;
+        case 'tiktok':
+          return content.username && content.username.length > 0;
+        case 'snapchat':
+          return content.username && content.username.length > 0;
+        case 'threads':
+          return content.username && content.username.length > 0;
         case 'apps':
           return (content.appStoreUrl && content.appStoreUrl.length > 0) ||
                  (content.playStoreUrl && content.playStoreUrl.length > 0) ||

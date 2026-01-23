@@ -224,6 +224,29 @@ export async function GET(
           destinationUrl = `https://linkedin.com/in/${linkedinUsername}`;
         }
         break;
+      case 'x':
+        if (content.username) {
+          const xUsername = String(content.username).replace('@', '');
+          destinationUrl = `https://x.com/${xUsername}`;
+        }
+        break;
+      case 'tiktok':
+        if (content.username) {
+          const tiktokUsername = String(content.username).replace('@', '');
+          destinationUrl = `https://tiktok.com/@${tiktokUsername}`;
+        }
+        break;
+      case 'snapchat':
+        if (content.username) {
+          destinationUrl = `https://snapchat.com/add/${content.username}`;
+        }
+        break;
+      case 'threads':
+        if (content.username) {
+          const threadsUsername = String(content.username).replace('@', '');
+          destinationUrl = `https://threads.net/@${threadsUsername}`;
+        }
+        break;
       case 'apps':
         // Use fallbackUrl, or platform-specific URL
         destinationUrl = (content.fallbackUrl || content.appStoreUrl || content.playStoreUrl) as string;

@@ -1,6 +1,6 @@
 # Supabase Auth Email Templates
 
-> **See also:** `docs/SESSION-START.md` for full project context
+> **See also:** [docs/PROJECT.md](../PROJECT.md) for project overview
 
 These are the on-brand email templates for Supabase authentication flows.
 

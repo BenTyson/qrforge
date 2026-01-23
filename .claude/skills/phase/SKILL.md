@@ -28,131 +28,83 @@ Systematically update documentation when project phases change status.
 
 When updating a phase, systematically update these files in order:
 
-### 1. `docs/SESSION-START.md` (Primary)
+### 1. `docs/sessions/CHANGELOG.md` (Primary)
 
 **For `completed` phases:**
-- Add entry to "### Completed" section with date and bullet points
-- Remove from "### Planned Enhancements" if listed there
-- Update "Last Updated" date and parenthetical summary at top
+- Add entry at the TOP with date and bullet points
+- Use the same format as existing entries
 
-**For `in_dev` phases:**
-- Keep in or add to "### Planned Enhancements" with "(in development)" note
-- Update "Last Updated" date at top
+**Example entry:**
+```markdown
+## January 20, 2026
 
-**For `planned` phases:**
-- Add to "### Planned Enhancements" if not already there
+### Phase Name
+- Key accomplishment 1
+- Key accomplishment 2
+- Technical details as bullet points
+```
 
-### 2. `docs/DEVELOPMENT.md` (If Related)
+### 2. `docs/FEATURE-ROADMAP.md` (If Feature)
+
+**For `completed` features:**
+- Move from "NEXT UP" section to "Completed Features" table
+- Add completion date and notes
+
+**For `in_dev` features:**
+- Add "(in development)" note to the feature
+
+### 3. `docs/PROJECT.md` (If Major Change)
 
 Update if the phase affects:
-- Development workflow
+- QR types (add to types table)
+- Business model (pricing, features)
+- Tech stack
+- Project structure
+- Database tables
+
+### 4. `docs/DEVELOPMENT.md` (If Dev Workflow)
+
+Update if the phase affects:
 - Testing infrastructure
 - CI/CD pipelines
 - Environment configuration
 - Safety mechanisms
 
-Update the "Phase Status" table at the bottom:
+### 5. Other Docs (As Needed)
 
-```markdown
-## Phase Status
-
-| Item | Status |
-|------|--------|
-| Dev Supabase project | Completed |
-| Schema sync (14 migrations) | Completed |
-| ...
-```
-
-### 3. `docs/WORKFLOW.md` (If Related)
-
-Update if the phase affects:
-- Branch workflow
-- Deployment process
-- Environment setup
-- Developer commands
-
-### 4. Other Docs (As Needed)
-
-- `docs/DEPLOYMENT.md` - If deployment process changes
-- `docs/LAUNCH-CHECKLIST.md` - If launch items change
-- `docs/STRIPE-SETUP.md` - If Stripe configuration changes
-
-## Entry Format
-
-### Completed Phase Entry (SESSION-START.md)
-
-```markdown
-- **Phase Name** (Month Day, Year):
-  - Key accomplishment 1
-  - Key accomplishment 2
-  - Key accomplishment 3
-  - Technical details as bullet points
-```
-
-### Planned Enhancement Entry (SESSION-START.md)
-
-```markdown
-### Planned Enhancements
-- Email scan alerts
-- Webhooks for scan notifications
-- Custom domain for short URLs
-```
-
-## Date Format
-
-Use: `January 17, 2026` format (full month name, day, year)
+- `docs/WORKFLOW.md` - If deployment/branch process changes
+- `docs/DEPLOYMENT.md` - If deployment configuration changes
 
 ## Update Checklist
 
 When running `/phase completed`:
 
-1. [ ] Add completed entry to SESSION-START.md with date
-2. [ ] Remove from Planned Enhancements if listed
-3. [ ] Update "Last Updated" header in SESSION-START.md
-4. [ ] Update DEVELOPMENT.md Phase Status table if applicable
-5. [ ] Update WORKFLOW.md if workflow changes
-6. [ ] Update related docs as needed
-7. [ ] Verify all cross-references are correct
+1. [ ] Add completed entry to sessions/CHANGELOG.md with date
+2. [ ] Update FEATURE-ROADMAP.md if it's a tracked feature
+3. [ ] Update PROJECT.md if major project changes
+4. [ ] Update DEVELOPMENT.md if dev workflow changes
+5. [ ] Update other docs as needed
+6. [ ] Verify all cross-references are correct
 
-## Common Phases
+## Date Format
 
-### Recently Completed Phases
-- Development Environment & Data Protection (January 17, 2026)
-- Image Optimization (January 1, 2026)
-- Logo Upload UX Enhancement (January 1, 2026)
-- Plausible Analytics (December 31, 2025)
-- Folder Organization (December 31, 2025)
-
-### Planned Phases (from SESSION-START.md)
-- Email scan alerts
-- Webhooks for scan notifications
-- Custom domain for short URLs
-- Event QR type
-- Geo QR type
-- Calendar QR type
-- Custom module shapes
-- Logo background styles
-- Decorative frames
-- Custom eye patterns
+Use: `January 17, 2026` format (full month name, day, year)
 
 ## Example Update
 
 If user says: `/phase completed "Email Scan Alerts"`
 
-1. Add to SESSION-START.md Completed section:
+1. Add to sessions/CHANGELOG.md at TOP:
 ```markdown
-- **Email Scan Alerts** (January 20, 2026):
-  - Configurable email notifications when QR codes are scanned
-  - Threshold settings (every scan, daily digest, custom)
-  - Resend integration for reliable delivery
-  - Pro+ feature with tier gating
+## January 20, 2026
+
+### Email Scan Alerts
+- Configurable email notifications when QR codes are scanned
+- Threshold settings (every scan, daily digest, custom)
+- Resend integration for reliable delivery
+- Pro+ feature with tier gating
 ```
 
-2. Remove from Planned Enhancements section
+2. Move from FEATURE-ROADMAP.md "NEXT UP" to "Completed Features" table
 
-3. Update header:
-```markdown
-> **Last Updated**: January 20, 2026 (Email Scan Alerts)
-```
-
-4. If relevant, update DEVELOPMENT.md Phase Status table
+3. If relevant, update PROJECT.md features list

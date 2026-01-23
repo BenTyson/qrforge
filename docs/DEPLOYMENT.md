@@ -3,7 +3,7 @@
 > **Live URL**: https://qrwolf.com
 > **Custom Domain**: qrwolf.com (configured)
 
-See also: `docs/SESSION-START.md` for full project context
+See also: [docs/PROJECT.md](./PROJECT.md) for project overview
 
 ---
 

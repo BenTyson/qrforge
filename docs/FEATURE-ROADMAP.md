@@ -1,8 +1,8 @@
 # QRWolf Feature Roadmap
 
-> **Last Updated**: January 21, 2026
+> **Last Updated**: January 23, 2026
 > **Status**: Active development
-> **Current Features**: 16 QR types, Analytics, Bulk generation, API
+> **Current Features**: 17 QR types, Analytics, Bulk generation, API, 135 SEO articles
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -31,61 +31,7 @@ This document tracks planned features in priority order. Work through sequential
 
 ## NEXT UP
 
-### 1. Google Reviews QR Code Type
-**Tier**: STANDARD | **Priority**: 1 of 21 | **Effort**: ~1-2 days
-
-**What**: Dedicated QR type that generates a direct link to leave a Google review.
-
-**Why build this**:
-- "google review qr code" = 10K+ monthly searches
-- Extremely high commercial intent (local businesses)
-- Direct conversion to Pro tier (businesses want analytics)
-
-**Implementation**:
-- New QR type: `google-review`
-- Input: Google Place ID or business search
-- Output: Direct review URL (`https://search.google.com/local/writereview?placeid=XXX`)
-
-**UI Components (Content Step)**:
-- Business name search input
-- Google Places autocomplete (requires API key)
-- OR manual Place ID input with help text
-- Preview of review page link
-
-**Landing page** (`/r/[code]/review`):
-- Business name and rating display
-- Large "Leave a Review" button
-- Google logo/branding
-- Star rating visual
-
-**Technical considerations**:
-- Google Places API for business search ($0.017/request)
-- Could offer manual Place ID entry to avoid API costs
-- Store place_id in QR content data
-
-**Files to create/modify**:
-- `src/components/qr/forms/GoogleReviewForm.tsx`
-- `src/app/r/[code]/review/page.tsx`
-- Update `src/lib/qr/types.ts` with new type
-- Update QR type selector
-
-**Database**:
-- Add `google-review` to content_type enum
-
-**Content to publish after**:
-- New blog: "How to Create a QR Code for Google Reviews"
-
-**Acceptance criteria**:
-- [ ] New QR type in selector
-- [ ] Business search or manual Place ID entry
-- [ ] Generates correct review URL
-- [ ] Branded landing page option
-- [ ] Analytics tracking works
-- [ ] Mobile-optimized landing page
-
----
-
-### 6. Event/Calendar QR Code Type
+### 1. Event/Calendar QR Code Type
 **Tier**: STANDARD | **Priority**: 6 of 25 | **Effort**: ~1-2 days
 
 **What**: QR code that adds an event to the user's calendar (iCal format).
@@ -751,6 +697,7 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Google Reviews QR Type | 2026-01-22 | 17th QR type. Landing page at `/r/[code]/review` with business name, 5-star visual, customizable accent color. Place ID input with validation. Free tier. |
 | QR Code Reader Tool | 2026-01-21 | Route: `/tools/qr-reader`. Drag-and-drop image upload, camera support on mobile, jsQR decoding, content type detection (URL, email, phone, WiFi, vCard), copy to clipboard, action buttons. |
 | QR Code Contrast Checker Tool | 2026-01-21 | Route: `/tools/contrast-checker`. Dual color pickers, WCAG contrast ratio calculation, pass/fail indicator with scale, live QR preview, preset color combinations, deep link to QR creator with colors. |
 | Tools Hub Page | 2026-01-21 | Route: `/tools`. Lists all free tools with cards. Added "Tools" link to PublicNav and Footer. |

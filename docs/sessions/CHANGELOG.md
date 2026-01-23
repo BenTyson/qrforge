@@ -6,6 +6,14 @@ Session-by-session history of development work. Most recent first.
 
 ## January 23, 2026
 
+### SEO Content Expansion (to 135 articles)
+- **8 new articles** added targeting high-value SEO keywords
+- New blog posts: QR Code Generator for Business, Trends 2026, Best Practices Checklist, Product Labels, Trade Shows, Brochures, QR Code Monkey Alternative
+- New learn article: QR Codes for Vehicle Wraps (use-cases)
+- All articles written prose-first following quality guidelines
+- Total content: 135 pieces (43 blog, 92 learn)
+- Progress toward 150-piece target: 90% complete
+
 ### Mobile Optimization
 - **Admin Area**: Added mobile hamburger menu with sliding drawer navigation
 - **Admin Tables**: Hide non-essential columns on mobile (Status, QR Codes, Scans, Joined, Owner, Content, Device, Browser, etc.)

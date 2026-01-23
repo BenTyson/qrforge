@@ -149,6 +149,10 @@ export function contentToString(content: QRContent): string {
       // For smart redirects, this will point to a landing page
       return content.fallbackUrl || content.appStoreUrl || content.playStoreUrl || '';
 
+    // === Reviews ===
+    case 'google-review':
+      return `https://qrwolf.com/preview/${content.type}`;
+
     // === File Upload & Landing Page Types ===
     // These types always use dynamic QR codes with landing pages
     // The QR code points to /r/[shortCode] which handles the redirect
@@ -737,6 +741,13 @@ export function validateContent(content: QRContent): { valid: boolean; error?: s
       if (!content.appStoreUrl && !content.playStoreUrl && !content.fallbackUrl) {
         return { valid: false, error: 'At least one app store URL or fallback URL is required' };
       }
+      return { valid: true };
+
+    // === Reviews ===
+    case 'google-review':
+      if (!content.placeId) return { valid: false, error: 'Place ID is required' };
+      if (content.placeId.length < 20) return { valid: false, error: 'Place ID must be at least 20 characters' };
+      if (!content.businessName) return { valid: false, error: 'Business name is required' };
       return { valid: true };
 
     // === File Upload Types ===

@@ -1,6 +1,6 @@
 # QRWolf - Session Start Guide
 
-> **Last Updated**: January 22, 2026 (SEO Content Expansion - 127 articles)
+> **Last Updated**: January 22, 2026 (Google Reviews QR Type - 17 QR types total)
 > **Status**: Live
 > **Live URL**: https://qrwolf.com
 > **Admin Dashboard**: https://qrwolf.com/admin (restricted to ideaswithben@gmail.com)
@@ -82,7 +82,7 @@ See `docs/DEVELOPMENT.md` for test data factories and CI/CD info.
 
 QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: passive income via SEO-driven traffic and recurring subscriptions.
 
-## QR Code Types (16 Total)
+## QR Code Types (17 Total)
 
 ### Basic Types (All Tiers)
 | Type | Description | Output |
@@ -103,6 +103,11 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
 | **Instagram** | Instagram profile | instagram.com link |
 | **Apps** | App store links | Smart app redirect |
 
+### Reviews (All Tiers)
+| Type | Description | Landing Page |
+|------|-------------|--------------|
+| **Google Review** | Collect Google reviews | Business name + review CTA |
+
 ### File Upload Types (Pro+ Only)
 | Type | Description | Landing Page |
 |------|-------------|--------------|
@@ -121,6 +126,7 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
 | **Social** | Social media aggregator | Profile + social links |
 
 **Landing Page Routes:**
+- `/r/[code]/review` - Google review
 - `/r/[code]/pdf` - PDF viewer
 - `/r/[code]/gallery` - Image gallery
 - `/r/[code]/video` - Video player
@@ -135,7 +141,7 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
 
 ### Completed
 - Next.js 15 app with TypeScript + Tailwind CSS v4
-- **QR generator with 16 content types** (see QR Types section below)
+- **QR generator with 17 content types** (see QR Types section below)
 - Real-time preview with style customization
 - PNG and SVG downloads
 - Full landing page with pricing, features, FAQ
@@ -729,6 +735,13 @@ QRWolf is a premium QR code generator with analytics and dynamic codes. Goal: pa
   - **Content quality improved**: 77% GOOD, 18% MODERATE, 0% SEVERE (up from 71% GOOD)
   - **Total content now**: 36 blog posts, 91 learn articles (127 total)
   - **Gap to target**: 23 articles remaining to reach 150 total
+- **Google Reviews QR Type** (January 22, 2026):
+  - New free-tier QR type for collecting Google reviews
+  - Landing page with business name, 5-star visual, and "Leave a Google Review" CTA
+  - Place ID input with validation and help section for finding Place IDs
+  - Customizable accent color for landing page branding
+  - Created reusable New QR Type skill (`.claude/skills/qr-type/`) for future QR type additions
+  - Total QR types now: 17 (was 16)
 
 ### Planned Enhancements
 - Webhooks for scan notifications

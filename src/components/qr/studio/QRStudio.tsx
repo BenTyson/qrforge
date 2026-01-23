@@ -26,6 +26,7 @@ import type {
   FacebookContent,
   InstagramContent,
   AppsContent,
+  GoogleReviewContent,
   PDFContent,
   ImagesContent,
   VideoContent,
@@ -52,6 +53,7 @@ import { WhatsAppForm } from '@/components/qr/forms/WhatsAppForm';
 import { FacebookForm } from '@/components/qr/forms/FacebookForm';
 import { InstagramForm } from '@/components/qr/forms/InstagramForm';
 import { AppsForm } from '@/components/qr/forms/AppsForm';
+import { GoogleReviewForm } from '@/components/qr/forms/GoogleReviewForm';
 import { PDFForm } from '@/components/qr/forms/PDFForm';
 import { ImagesForm } from '@/components/qr/forms/ImagesForm';
 import { VideoForm } from '@/components/qr/forms/VideoForm';
@@ -863,6 +865,8 @@ function ContentStep({
         return <InstagramForm content={(content as Partial<InstagramContent>) || {}} onChange={onContentChange} />;
       case 'apps':
         return <AppsForm content={(content as Partial<AppsContent>) || {}} onChange={onContentChange} />;
+      case 'google-review':
+        return <GoogleReviewForm content={(content as Partial<GoogleReviewContent>) || {}} onChange={onContentChange} />;
       case 'pdf':
         return <PDFForm content={(content as Partial<PDFContent>) || {}} onChange={onContentChange} />;
       case 'images':

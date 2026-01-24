@@ -168,6 +168,15 @@ export function contentToString(content: QRContent): string {
       const threadsUsername = content.username.replace(/^@/, '');
       return `https://threads.net/@${threadsUsername}`;
 
+    case 'youtube':
+      // Build YouTube video URL
+      return `https://www.youtube.com/watch?v=${content.videoId}`;
+
+    case 'pinterest':
+      // Build Pinterest profile URL
+      const pinterestUsername = content.username.replace(/^@/, '');
+      return `https://pinterest.com/${pinterestUsername}`;
+
     case 'apps':
       // Return fallback URL or first available store URL
       // For smart redirects, this will point to a landing page
@@ -779,6 +788,15 @@ export function validateContent(content: QRContent): { valid: boolean; error?: s
 
     case 'threads':
       if (!content.username) return { valid: false, error: 'Threads username is required' };
+      return { valid: true };
+
+    case 'youtube':
+      if (!content.videoId) return { valid: false, error: 'YouTube video ID is required' };
+      if (content.videoId.length !== 11) return { valid: false, error: 'Invalid YouTube video ID' };
+      return { valid: true };
+
+    case 'pinterest':
+      if (!content.username) return { valid: false, error: 'Pinterest username is required' };
       return { valid: true };
 
     case 'apps':

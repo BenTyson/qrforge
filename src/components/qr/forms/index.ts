@@ -7,6 +7,8 @@ export { XForm } from './XForm';
 export { TikTokForm } from './TikTokForm';
 export { SnapchatForm } from './SnapchatForm';
 export { ThreadsForm } from './ThreadsForm';
+export { YouTubeForm } from './YouTubeForm';
+export { PinterestForm } from './PinterestForm';
 export { AppsForm } from './AppsForm';
 
 // Reviews (free tier)

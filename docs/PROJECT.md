@@ -14,7 +14,7 @@ Premium QR code generator with analytics and dynamic codes. Goal: passive income
 
 ---
 
-## QR Code Types (22 Total)
+## QR Code Types (24 Total)
 
 ### Basic Types (All Tiers)
 | Type | Output |
@@ -38,6 +38,8 @@ Premium QR code generator with analytics and dynamic codes. Goal: passive income
 | TikTok | tiktok.com/@ link |
 | Snapchat | snapchat.com/add link |
 | Threads | threads.net/@ link |
+| YouTube | Landing page with video embed |
+| Pinterest | pinterest.com link |
 | Apps | Smart app redirect |
 | Google Review | Google review link |
 
@@ -170,10 +172,10 @@ src/
 
 ## Content Stats
 
-- **Blog posts**: 36
-- **Learn articles**: 91
-- **Total**: 127 articles
-- **Target**: 150 articles
+- **Blog posts**: 52
+- **Learn articles**: 99
+- **Total**: 151 articles
+- **Target**: 150 articles (achieved)
 
 See `.claude/skills/content/CONTENT-PLAN.md` for SEO strategy.
 

@@ -2,7 +2,7 @@
 
 > **Last Updated**: January 23, 2026
 > **Status**: Active development
-> **Current Features**: 22 QR types, Analytics, Bulk generation, API, 135 SEO articles
+> **Current Features**: 24 QR types, Analytics, Bulk generation, API, 151 SEO articles
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -374,49 +374,7 @@ CREATE TABLE feedback_responses (
 
 ---
 
-### 12. YouTube QR Code Type (Enhanced)
-**Tier**: STANDARD | **Priority**: 12 of 24 | **Effort**: ~1 day
-
-**What**: Dedicated YouTube QR type with video preview landing page.
-
-**Why build this**:
-- "youtube qr code" high search volume
-- Better UX than plain URL
-- Showcases landing page capabilities
-
-**Implementation**:
-- New QR type: `youtube`
-- Input: YouTube URL or video ID
-- Parse and validate YouTube URLs
-- Landing page with embedded video
-
-**Landing page** (`/r/[code]/youtube`):
-- Video thumbnail/embed
-- Video title (fetched via oEmbed)
-- Channel name
-- "Watch on YouTube" button
-- Subscribe button
-
-**Technical**:
-- YouTube oEmbed API for metadata (no API key needed)
-- URL parsing for video ID extraction
-- Embedded player option
-
-**Files to create**:
-- `src/components/qr/forms/YouTubeForm.tsx`
-- `src/app/r/[code]/youtube/page.tsx`
-- `src/lib/youtube.ts` (URL parsing, oEmbed fetching)
-
-**Acceptance criteria**:
-- [ ] Accepts various YouTube URL formats
-- [ ] Extracts video ID correctly
-- [ ] Landing page shows video info
-- [ ] Embedded player works
-- [ ] Mobile responsive
-
----
-
-### 13. Spotify QR Code Type (Enhanced)
+### 12. Spotify QR Code Type (Enhanced)
 **Tier**: STANDARD | **Priority**: 13 of 24 | **Effort**: ~1 day
 
 **What**: Dedicated Spotify QR type for tracks, albums, playlists, or artists.
@@ -664,6 +622,8 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Pinterest QR Code Type | 2026-01-23 | 24th QR type. Username-based input with URL parsing. Direct redirect to pinterest.com/username. Free tier social type. |
+| YouTube QR Code Type | 2026-01-23 | 23rd QR type. Smart URL parsing for all YouTube formats. Landing page with video embed, metadata via oEmbed. Free tier. |
 | Snapchat QR Code Type | 2026-01-23 | 21st QR type. Username-based input. Direct redirect to snapchat.com/add/username. Free tier social type. |
 | Threads QR Code Type | 2026-01-23 | 22nd QR type. Username-based input. Direct redirect to threads.net/@username. Free tier social type. |
 | TikTok QR Code Type | 2026-01-23 | 20th QR type. Username-based input with smart URL parsing. Direct redirect to tiktok.com/@username. Free tier social type. |
@@ -729,6 +689,8 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-23 | Completed YouTube QR Code Type (Feature #12), 23rd QR type with landing page |
+| 2026-01-23 | Completed Pinterest QR Code Type, 24th QR type |
 | 2026-01-23 | Completed Snapchat and Threads QR Code Types, 21st/22nd QR types |
 | 2026-01-23 | Completed TikTok QR Code Type (Feature #14), 20th QR type |
 | 2026-01-23 | Completed X (Twitter) QR Code Type, 19th QR type |

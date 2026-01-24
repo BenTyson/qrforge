@@ -49,6 +49,8 @@ export const TYPE_CATEGORIES: TypeCategory[] = [
       { id: 'tiktok', name: 'TikTok', description: 'Link to your profile' },
       { id: 'snapchat', name: 'Snapchat', description: 'Add me on Snapchat' },
       { id: 'threads', name: 'Threads', description: 'Link to your profile' },
+      { id: 'youtube', name: 'YouTube', description: 'Share a video' },
+      { id: 'pinterest', name: 'Pinterest', description: 'Link to your profile' },
       { id: 'facebook', name: 'Facebook', description: 'Link to page or profile' },
     ],
   },

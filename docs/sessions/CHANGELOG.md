@@ -6,6 +6,33 @@ Session-by-session history of development work. Most recent first.
 
 ## January 23, 2026
 
+### YouTube QR Code Type
+- New free-tier QR type for sharing YouTube videos
+- Smart URL parsing handles all YouTube formats (youtube.com, youtu.be, shorts, embed, live, music, mobile)
+- Landing page at `/r/[code]/youtube` with embedded video player
+- Fetches video metadata (title, channel) via YouTube oEmbed API
+- Thumbnail fallback for localhost development (embeds blocked on localhost)
+- "Watch on YouTube" CTA button
+- 23rd QR type
+
+### Pinterest QR Code Type
+- New free-tier social QR type for Pinterest profile links
+- Username-based input with smart URL parsing (extracts username from pinterest.com URLs)
+- Direct redirect to `https://pinterest.com/{username}` (no landing page needed)
+- Added to Social category alongside other social platforms
+- 24th QR type (11 social types total)
+
+### Blog & Learn Search Bars
+- Added search functionality to `/blog` and `/learn` pages
+- Real-time filtering by title, description, and tags
+- Search results show count and clear button
+- Maintains category filters and featured sections when not searching
+
+### Publish Date Removal
+- Removed publish dates from article cards on blog/learn pages
+- Dates were clustered (all generated within days) which could appear artificial
+- Cards now show: category badge, reading time, title, description, tags
+
 ### Snapchat & Threads QR Code Types
 - Two new free-tier social QR types for Snapchat and Threads profile links
 - Username-based input with smart URL parsing

@@ -177,6 +177,19 @@ export function contentToString(content: QRContent): string {
       const pinterestUsername = content.username.replace(/^@/, '');
       return `https://pinterest.com/${pinterestUsername}`;
 
+    case 'spotify':
+      // Spotify uses landing page
+      return `https://qrwolf.com/preview/${content.type}`;
+
+    case 'reddit':
+      // Build Reddit URL based on content type
+      if (content.contentType === 'subreddit' && content.subreddit) {
+        return `https://reddit.com/r/${content.subreddit}`;
+      } else if (content.username) {
+        return `https://reddit.com/u/${content.username}`;
+      }
+      return '';
+
     case 'apps':
       // Return fallback URL or first available store URL
       // For smart redirects, this will point to a landing page
@@ -797,6 +810,19 @@ export function validateContent(content: QRContent): { valid: boolean; error?: s
 
     case 'pinterest':
       if (!content.username) return { valid: false, error: 'Pinterest username is required' };
+      return { valid: true };
+
+    case 'spotify':
+      if (!content.spotifyId) return { valid: false, error: 'Spotify URL is required' };
+      if (!content.contentType) return { valid: false, error: 'Invalid Spotify content type' };
+      return { valid: true };
+
+    case 'reddit':
+      if (content.contentType === 'subreddit') {
+        if (!content.subreddit) return { valid: false, error: 'Subreddit name is required' };
+      } else {
+        if (!content.username) return { valid: false, error: 'Reddit username is required' };
+      }
       return { valid: true };
 
     case 'apps':

@@ -4,6 +4,35 @@ Session-by-session history of development work. Most recent first.
 
 ---
 
+## January 24, 2026
+
+### Spotify QR Code Type
+- New free-tier QR type for sharing Spotify content
+- Parses all Spotify URL formats and URI schemes (spotify:track:...)
+- Supports tracks, albums, playlists, artists, podcasts (shows), and episodes
+- Landing page at `/r/[code]/spotify` with embedded Spotify player
+- Content type detection with visual badge (Track, Album, Playlist, etc.)
+- Localhost fallback placeholder (Spotify embeds blocked on localhost)
+- "Open in Spotify" CTA button
+- 25th QR type
+
+### Reddit QR Code Type
+- New free-tier social QR type for Reddit profile and subreddit links
+- Tab-based selection: User Profile (u/username) or Subreddit (r/subreddit)
+- Smart URL parsing extracts username/subreddit from reddit.com URLs
+- Direct redirect (no landing page) to `reddit.com/u/` or `reddit.com/r/`
+- Added to Social category (now 13 social types total)
+- 26th QR type
+
+### QR Creator UX Improvements
+- **Type selector**: Compact category buttons (4 columns on large screens), auto-scroll to type options when category selected
+- **Gradient presets**: Now auto-set dark background (#0f172a) for proper contrast with colorful gradients
+- **Gradient section**: Collapses when disabled for cleaner interface
+- **Gradient tip**: Added info note explaining dark backgrounds work best with colorful gradients
+- **Contrast checker**: Correctly calculates worst-case contrast for gradient colors vs background
+
+---
+
 ## January 23, 2026
 
 ### QR Card Quick View & Download Options

@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -20,6 +21,17 @@ export function TypeStep({
   canAccessProTypes,
   userTier,
 }: TypeStepProps) {
+  const typesSectionRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to types section when category is selected
+  useEffect(() => {
+    if (selectedCategory && typesSectionRef.current) {
+      setTimeout(() => {
+        typesSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [selectedCategory]);
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -27,32 +39,32 @@ export function TypeStep({
         <p className="text-slate-400">Choose the type of QR code you need</p>
       </div>
 
-      {/* Category Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {/* Category Grid - Compact */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {TYPE_CATEGORIES.map((category) => (
           <button
             key={category.id}
             onClick={() => onCategorySelect(category.id)}
             className={cn(
-              'relative p-6 rounded-xl border-2 transition-all text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900',
+              'relative p-4 rounded-xl border-2 transition-all text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900',
               selectedCategory === category.id
                 ? 'border-primary bg-primary/10'
                 : 'border-slate-700 bg-slate-800/50 hover:border-slate-600 hover:bg-slate-800'
             )}
           >
             {category.pro && !canAccessProTypes && (
-              <span className="absolute top-3 right-3 text-[10px] font-medium bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+              <span className="absolute top-2 right-2 text-[10px] font-medium bg-primary/20 text-primary px-1.5 py-0.5 rounded-full">
                 Pro
               </span>
             )}
             <div className={cn(
-              'mb-3 transition-colors',
+              'mb-2 transition-colors [&>svg]:w-6 [&>svg]:h-6',
               selectedCategory === category.id ? 'text-primary' : 'text-slate-400 group-hover:text-slate-300'
             )}>
               {category.icon}
             </div>
-            <h4 className="font-semibold text-white mb-1">{category.name}</h4>
-            <p className="text-xs text-slate-400">
+            <h4 className="font-medium text-white text-sm mb-0.5">{category.name}</h4>
+            <p className="text-xs text-slate-500">
               {category.types.length} option{category.types.length > 1 ? 's' : ''}
             </p>
           </button>
@@ -61,7 +73,7 @@ export function TypeStep({
 
       {/* Type options for selected category */}
       {selectedCategory && (
-        <div className="mt-8 pt-6 border-t border-slate-700/50">
+        <div ref={typesSectionRef} className="mt-6 pt-6 border-t border-slate-700/50 scroll-mt-4">
           <h4 className="text-lg font-semibold text-white mb-4">
             Choose a type
           </h4>

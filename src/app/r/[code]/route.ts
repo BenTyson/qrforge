@@ -126,6 +126,7 @@ export async function GET(
     vcard: 'vcard',
     'google-review': 'review',
     youtube: 'youtube',
+    spotify: 'spotify',
   };
 
   const contentType = qrCode.content_type as string;
@@ -252,6 +253,13 @@ export async function GET(
         if (content.username) {
           const pinterestUsername = String(content.username).replace('@', '');
           destinationUrl = `https://pinterest.com/${pinterestUsername}`;
+        }
+        break;
+      case 'reddit':
+        if (content.contentType === 'subreddit' && content.subreddit) {
+          destinationUrl = `https://reddit.com/r/${content.subreddit}`;
+        } else if (content.username) {
+          destinationUrl = `https://reddit.com/u/${content.username}`;
         }
         break;
       case 'apps':

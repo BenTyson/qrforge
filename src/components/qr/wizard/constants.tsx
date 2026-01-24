@@ -51,6 +51,8 @@ export const TYPE_CATEGORIES: TypeCategory[] = [
       { id: 'threads', name: 'Threads', description: 'Link to your profile' },
       { id: 'youtube', name: 'YouTube', description: 'Share a video' },
       { id: 'pinterest', name: 'Pinterest', description: 'Link to your profile' },
+      { id: 'spotify', name: 'Spotify', description: 'Share music or podcasts' },
+      { id: 'reddit', name: 'Reddit', description: 'Link to profile or subreddit' },
       { id: 'facebook', name: 'Facebook', description: 'Link to page or profile' },
     ],
   },

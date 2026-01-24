@@ -1,8 +1,8 @@
 # QRWolf Feature Roadmap
 
-> **Last Updated**: January 23, 2026
+> **Last Updated**: January 24, 2026
 > **Status**: Active development
-> **Current Features**: 24 QR types, Analytics, Bulk generation, API, 151 SEO articles
+> **Current Features**: 26 QR types, Analytics, Bulk generation, API, 151 SEO articles
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -374,65 +374,6 @@ CREATE TABLE feedback_responses (
 
 ---
 
-### 12. Spotify QR Code Type (Enhanced)
-**Tier**: STANDARD | **Priority**: 13 of 24 | **Effort**: ~1 day
-
-**What**: Dedicated Spotify QR type for tracks, albums, playlists, or artists.
-
-**Why build this**:
-- "spotify qr code" growing search volume
-- Musicians/podcasters are target users
-- Aligns with existing Audio type
-
-**Implementation**:
-- New QR type: `spotify`
-- Input: Spotify URL
-- Parse track/album/playlist/artist
-- Landing page with Spotify embed
-
-**Landing page** (`/r/[code]/spotify`):
-- Spotify embed player
-- Track/album artwork
-- "Listen on Spotify" button
-- Artist info
-
-**Technical**:
-- Spotify oEmbed for embed code
-- URL parsing for content type detection
-
-**Files to create**:
-- `src/components/qr/forms/SpotifyForm.tsx`
-- `src/app/r/[code]/spotify/page.tsx`
-
-**Acceptance criteria**:
-- [ ] Accepts Spotify URLs
-- [ ] Detects content type (track/album/playlist/artist)
-- [ ] Embed player works
-- [ ] Mobile responsive
-
----
-
-### 14. TikTok QR Code Type
-**Tier**: QUICK WIN | **Priority**: 14 of 24 | **Effort**: ~4-6 hours
-
-**What**: Dedicated TikTok QR for profiles or videos.
-
-**Why build this**:
-- Growing platform, younger demographic
-- "tiktok qr code" increasing searches
-- Aligns with social media focus
-
-**Implementation**:
-- New QR type: `tiktok`
-- Input: TikTok profile or video URL
-- Landing page with TikTok branding
-
-**Files to create**:
-- `src/components/qr/forms/TikTokForm.tsx`
-- `src/app/r/[code]/tiktok/page.tsx`
-
----
-
 ### 15. Multi-Platform Review QR (Google + Yelp + TripAdvisor)
 **Tier**: STANDARD | **Priority**: 15 of 24 | **Effort**: ~2 days
 
@@ -622,6 +563,8 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Reddit QR Code Type | 2026-01-24 | 26th QR type. Supports user profiles (u/username) and subreddits (r/subreddit). Tab-based selection in form. Direct redirect to reddit.com. Free tier social type. |
+| Spotify QR Code Type | 2026-01-24 | 25th QR type. Parses Spotify URLs and URIs for tracks, albums, playlists, artists, shows, and episodes. Landing page with Spotify embed player. Free tier. |
 | Pinterest QR Code Type | 2026-01-23 | 24th QR type. Username-based input with URL parsing. Direct redirect to pinterest.com/username. Free tier social type. |
 | YouTube QR Code Type | 2026-01-23 | 23rd QR type. Smart URL parsing for all YouTube formats. Landing page with video embed, metadata via oEmbed. Free tier. |
 | Snapchat QR Code Type | 2026-01-23 | 21st QR type. Username-based input. Direct redirect to snapchat.com/add/username. Free tier social type. |
@@ -689,6 +632,8 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-24 | Completed Spotify QR Code Type (Feature #12), 25th QR type with landing page and embed |
+| 2026-01-24 | Completed Reddit QR Code Type, 26th QR type (users and subreddits) |
 | 2026-01-23 | Completed YouTube QR Code Type (Feature #12), 23rd QR type with landing page |
 | 2026-01-23 | Completed Pinterest QR Code Type, 24th QR type |
 | 2026-01-23 | Completed Snapchat and Threads QR Code Types, 21st/22nd QR types |

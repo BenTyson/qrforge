@@ -18,6 +18,8 @@ export type QRContentType =
   | 'threads'
   | 'youtube'
   | 'pinterest'
+  | 'spotify'
+  | 'reddit'
   | 'apps'
   // Reviews (free tier)
   | 'google-review'
@@ -217,6 +219,20 @@ export interface PinterestContent {
   username: string;
 }
 
+export interface SpotifyContent {
+  type: 'spotify';
+  spotifyUrl: string;       // Original URL for display
+  spotifyId: string;        // Extracted ID (track/album/playlist/artist ID)
+  contentType: 'track' | 'album' | 'playlist' | 'artist' | 'show' | 'episode';
+}
+
+export interface RedditContent {
+  type: 'reddit';
+  username?: string;        // For user profiles (u/username)
+  subreddit?: string;       // For subreddits (r/subreddit)
+  contentType: 'user' | 'subreddit';
+}
+
 export interface AppsContent {
   type: 'apps';
   appStoreUrl?: string;
@@ -369,6 +385,8 @@ export type QRContent =
   | ThreadsContent
   | YouTubeContent
   | PinterestContent
+  | SpotifyContent
+  | RedditContent
   | AppsContent
   // Reviews
   | GoogleReviewContent
@@ -421,6 +439,8 @@ export const QR_TYPE_LABELS: Record<QRContentType, string> = {
   threads: 'Threads',
   youtube: 'YouTube Video',
   pinterest: 'Pinterest',
+  spotify: 'Spotify',
+  reddit: 'Reddit',
   apps: 'App Download',
   // Reviews
   'google-review': 'Google Review',
@@ -457,6 +477,8 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
   threads: 'at-sign',
   youtube: 'play-circle',
   pinterest: 'pin',
+  spotify: 'music',
+  reddit: 'message-circle',
   apps: 'smartphone',
   // Reviews
   'google-review': 'star',
@@ -476,7 +498,7 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
 // Type categories for UI grouping
 export const QR_TYPE_CATEGORIES = {
   basic: ['url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms'] as const,
-  social: ['whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'apps'] as const,
+  social: ['whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'spotify', 'reddit', 'apps'] as const,
   media: ['pdf', 'images', 'video', 'mp3'] as const,
   landing: ['menu', 'business', 'links', 'coupon', 'social'] as const,
 };
@@ -491,6 +513,7 @@ export const PRO_ONLY_TYPES: QRContentType[] = [
 export const DYNAMIC_REQUIRED_TYPES: QRContentType[] = [
   'google-review',
   'youtube',
+  'spotify',
   'pdf', 'images', 'video', 'mp3',
   'menu', 'business', 'links', 'coupon', 'social',
 ];

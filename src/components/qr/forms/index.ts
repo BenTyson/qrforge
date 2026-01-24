@@ -9,6 +9,8 @@ export { SnapchatForm } from './SnapchatForm';
 export { ThreadsForm } from './ThreadsForm';
 export { YouTubeForm } from './YouTubeForm';
 export { PinterestForm } from './PinterestForm';
+export { SpotifyForm } from './SpotifyForm';
+export { RedditForm } from './RedditForm';
 export { AppsForm } from './AppsForm';
 
 // Reviews (free tier)

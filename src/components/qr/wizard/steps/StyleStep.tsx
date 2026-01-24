@@ -143,14 +143,14 @@ function PatternTabContent({ style, onStyleChange, canAccessProTypes }: PatternT
   );
 }
 
-// Gradient presets
+// Gradient presets with recommended background colors for good contrast
 const GRADIENT_PRESETS = [
-  { name: 'Sunset', start: '#f97316', end: '#ec4899', type: 'linear' as const, angle: 45 },
-  { name: 'Ocean', start: '#06b6d4', end: '#3b82f6', type: 'linear' as const, angle: 135 },
-  { name: 'Forest', start: '#22c55e', end: '#14b8a6', type: 'linear' as const, angle: 90 },
-  { name: 'Royal', start: '#8b5cf6', end: '#ec4899', type: 'linear' as const, angle: 45 },
-  { name: 'Fire', start: '#ef4444', end: '#f97316', type: 'radial' as const },
-  { name: 'Sky', start: '#0ea5e9', end: '#6366f1', type: 'radial' as const },
+  { name: 'Sunset', start: '#f97316', end: '#ec4899', type: 'linear' as const, angle: 45, bg: '#0f172a' },
+  { name: 'Ocean', start: '#06b6d4', end: '#3b82f6', type: 'linear' as const, angle: 135, bg: '#0f172a' },
+  { name: 'Forest', start: '#22c55e', end: '#14b8a6', type: 'linear' as const, angle: 90, bg: '#0f172a' },
+  { name: 'Royal', start: '#8b5cf6', end: '#ec4899', type: 'linear' as const, angle: 45, bg: '#0f172a' },
+  { name: 'Fire', start: '#ef4444', end: '#f97316', type: 'radial' as const, bg: '#0f172a' },
+  { name: 'Sky', start: '#0ea5e9', end: '#6366f1', type: 'radial' as const, bg: '#0f172a' },
 ];
 
 // Colors Tab Content
@@ -168,6 +168,7 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
     if (enabled) {
       onStyleChange({
         ...style,
+        backgroundColor: '#0f172a', // Dark background for better gradient contrast
         gradient: {
           enabled: true,
           type: 'linear',
@@ -179,6 +180,7 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
     } else {
       onStyleChange({
         ...style,
+        backgroundColor: '#ffffff', // Reset to white when disabling gradient
         gradient: undefined,
       });
     }
@@ -188,6 +190,7 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
     if (!canAccessProTypes) return;
     onStyleChange({
       ...style,
+      backgroundColor: preset.bg, // Set matching background for good contrast
       gradient: {
         enabled: true,
         type: preset.type,
@@ -244,7 +247,8 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
           </button>
         </div>
 
-        {/* Always show gradient presets preview */}
+        {/* Show gradient options only when enabled (or show preview for non-pro users) */}
+        {(gradientEnabled || !canAccessProTypes) && (
         <div className={cn(
           "space-y-4 pt-3 border-t border-slate-700",
           !canAccessProTypes && "opacity-50 pointer-events-none"
@@ -271,6 +275,15 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
               />
             ))}
           </div>
+
+          {/* Tip about dark backgrounds */}
+          <p className="text-xs text-slate-500 flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4M12 8h.01" />
+            </svg>
+            Dark backgrounds work best with colorful gradients for scannability
+          </p>
 
           {/* Custom Gradient Colors */}
           <div className="grid grid-cols-2 gap-3">
@@ -381,6 +394,7 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
             )}
           </div>
         </div>
+        )}
 
         {/* Upgrade overlay for non-pro users */}
         {!canAccessProTypes && (

@@ -300,7 +300,7 @@ export const validators = {
       // Basic types
       'url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms',
       // Simple URL types
-      'whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'apps',
+      'whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'spotify', 'reddit', 'apps',
       // Reviews
       'google-review',
       // File upload types
@@ -454,6 +454,27 @@ export const validators = {
       case 'pinterest':
         if (!content.username || typeof content.username !== 'string') {
           return { valid: false, error: 'content.username is required for Pinterest type' };
+        }
+        break;
+
+      case 'spotify':
+        if (!content.spotifyId || typeof content.spotifyId !== 'string') {
+          return { valid: false, error: 'content.spotifyId is required for Spotify type' };
+        }
+        if (!content.contentType || !['track', 'album', 'playlist', 'artist', 'show', 'episode'].includes(content.contentType as string)) {
+          return { valid: false, error: 'content.contentType must be track, album, playlist, artist, show, or episode' };
+        }
+        break;
+
+      case 'reddit':
+        if (!content.contentType || !['user', 'subreddit'].includes(content.contentType as string)) {
+          return { valid: false, error: 'content.contentType must be user or subreddit' };
+        }
+        if (content.contentType === 'user' && (!content.username || typeof content.username !== 'string')) {
+          return { valid: false, error: 'content.username is required for Reddit user type' };
+        }
+        if (content.contentType === 'subreddit' && (!content.subreddit || typeof content.subreddit !== 'string')) {
+          return { valid: false, error: 'content.subreddit is required for Reddit subreddit type' };
         }
         break;
 

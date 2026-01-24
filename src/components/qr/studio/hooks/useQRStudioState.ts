@@ -476,10 +476,10 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password }),
         });
-        if (!hashResponse.ok) {
-          throw new Error('Failed to hash password');
-        }
         const hashData = await hashResponse.json();
+        if (!hashResponse.ok) {
+          throw new Error(hashData.error || 'Failed to hash password');
+        }
         if (hashData.hash) {
           insertData.password_hash = hashData.hash;
         }

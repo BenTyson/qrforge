@@ -27,22 +27,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate password strength
-    if (password.length < 8) {
+    // Validate password length
+    if (password.length < 4) {
       return NextResponse.json(
-        { error: 'Password must be at least 8 characters' },
-        { status: 400 }
-      );
-    }
-
-    // Require at least one uppercase, one lowercase, and one number
-    const hasUppercase = /[A-Z]/.test(password);
-    const hasLowercase = /[a-z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
-
-    if (!hasUppercase || !hasLowercase || !hasNumber) {
-      return NextResponse.json(
-        { error: 'Password must contain at least one uppercase letter, one lowercase letter, and one number' },
+        { error: 'Password must be at least 4 characters' },
         { status: 400 }
       );
     }

@@ -26,6 +26,8 @@ import type {
   PinterestContent,
   SpotifyContent,
   RedditContent,
+  TwitchContent,
+  DiscordContent,
   AppsContent,
   GoogleReviewContent,
   PDFContent,
@@ -279,6 +281,10 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         }
         return !!redditContent.username?.trim();
       }
+      case 'twitch':
+        return !!(content as TwitchContent).username?.trim();
+      case 'discord':
+        return !!(content as DiscordContent).inviteCode?.trim();
       case 'apps': {
         const appsContent = content as AppsContent;
         return !!(appsContent.appStoreUrl?.trim() || appsContent.playStoreUrl?.trim() || appsContent.fallbackUrl?.trim());

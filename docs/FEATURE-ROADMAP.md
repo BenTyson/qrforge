@@ -563,6 +563,8 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Discord QR Code Type | 2026-01-24 | 28th QR type. Invite code-based input with URL parsing (discord.gg and discord.com/invite). Direct redirect to discord.gg/code. Free tier social type. |
+| Twitch QR Code Type | 2026-01-24 | 27th QR type. Username-based input with URL parsing. Direct redirect to twitch.tv/username. Free tier social type. |
 | Reddit QR Code Type | 2026-01-24 | 26th QR type. Supports user profiles (u/username) and subreddits (r/subreddit). Tab-based selection in form. Direct redirect to reddit.com. Free tier social type. |
 | Spotify QR Code Type | 2026-01-24 | 25th QR type. Parses Spotify URLs and URIs for tracks, albums, playlists, artists, shows, and episodes. Landing page with Spotify embed player. Free tier. |
 | Pinterest QR Code Type | 2026-01-23 | 24th QR type. Username-based input with URL parsing. Direct redirect to pinterest.com/username. Free tier social type. |

@@ -6,6 +6,21 @@ Session-by-session history of development work. Most recent first.
 
 ## January 24, 2026
 
+### Twitch QR Code Type
+- New free-tier social QR type for sharing Twitch channels
+- Username-based input with smart URL parsing (extracts from twitch.tv URLs)
+- Direct redirect to `twitch.tv/username` (no landing page)
+- Custom Twitch brand icon in type selector
+- 27th QR type
+
+### Discord QR Code Type
+- New free-tier social QR type for sharing Discord server invites
+- Invite code-based input with smart URL parsing
+- Handles both `discord.gg/code` and `discord.com/invite/code` formats
+- Direct redirect to `discord.gg/code` (no landing page)
+- Custom Discord brand icon in type selector
+- 28th QR type
+
 ### Spotify QR Code Type
 - New free-tier QR type for sharing Spotify content
 - Parses all Spotify URL formats and URI schemes (spotify:track:...)

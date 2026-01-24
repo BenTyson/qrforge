@@ -11,6 +11,8 @@ export { YouTubeForm } from './YouTubeForm';
 export { PinterestForm } from './PinterestForm';
 export { SpotifyForm } from './SpotifyForm';
 export { RedditForm } from './RedditForm';
+export { TwitchForm } from './TwitchForm';
+export { DiscordForm } from './DiscordForm';
 export { AppsForm } from './AppsForm';
 
 // Reviews (free tier)

@@ -80,6 +80,10 @@ export function QRPreview({
         case 'reddit':
           return (content.username && content.username.length > 0) ||
                  (content.subreddit && content.subreddit.length > 0);
+        case 'twitch':
+          return content.username && content.username.length > 0;
+        case 'discord':
+          return content.inviteCode && content.inviteCode.length > 0;
         case 'apps':
           return (content.appStoreUrl && content.appStoreUrl.length > 0) ||
                  (content.playStoreUrl && content.playStoreUrl.length > 0) ||

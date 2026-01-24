@@ -12,9 +12,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { generateQRDataURL, downloadQRPNG } from '@/lib/qr/generator';
+import { generateQRDataURL, downloadQRPNG, generateQRSVG, downloadQRSVG } from '@/lib/qr/generator';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
-import type { Folder } from '@/lib/supabase/types';
+import type { Folder, SubscriptionTier } from '@/lib/supabase/types';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { getAppUrl } from '@/lib/utils';
@@ -44,13 +51,19 @@ interface QRCodeCardProps {
   folderColor?: string | null;
   folders?: Folder[];
   onFolderChange?: (qrCodeId: string, folderId: string | null) => void;
+  userTier?: SubscriptionTier;
 }
 
-export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folderColor, folders = [], onFolderChange }: QRCodeCardProps) {
+export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folderColor, folders = [], onFolderChange, userTier = 'free' }: QRCodeCardProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showActions, setShowActions] = useState(false);
   const [qrDataURL, setQRDataURL] = useState<string | null>(null);
+  const [showQuickView, setShowQuickView] = useState(false);
+  const [largeQRDataURL, setLargeQRDataURL] = useState<string | null>(null);
+
+  // Check if user can download SVG (Pro or Business tier)
+  const canDownloadSVG = userTier === 'pro' || userTier === 'business';
 
   // Generate QR preview on mount
   // IMPORTANT: If the QR has a short_code, generate the QR with the redirect URL
@@ -68,6 +81,20 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
       .then(setQRDataURL)
       .catch(console.error);
   }, [qrCode.content, qrCode.style, qrCode.short_code]);
+
+  // Generate large QR when quick view opens
+  useEffect(() => {
+    if (!showQuickView) return;
+
+    let qrContent: QRContent = qrCode.content as QRContent;
+    if (qrCode.short_code) {
+      qrContent = { type: 'url', url: `${getAppUrl()}/r/${qrCode.short_code}` };
+    }
+
+    generateQRDataURL(qrContent, { ...(qrCode.style as QRStyleOptions), width: 300 })
+      .then(setLargeQRDataURL)
+      .catch(console.error);
+  }, [showQuickView, qrCode.content, qrCode.style, qrCode.short_code]);
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this QR code? This action cannot be undone.')) {
@@ -108,6 +135,23 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
       toast.success('PNG downloaded');
     } catch {
       toast.error('Failed to download PNG');
+    }
+  };
+
+  const handleDownloadSVG = async () => {
+    if (!canDownloadSVG) return;
+
+    try {
+      let qrContent: QRContent = qrCode.content as QRContent;
+      if (qrCode.short_code) {
+        qrContent = { type: 'url', url: `${getAppUrl()}/r/${qrCode.short_code}` };
+      }
+
+      const svg = await generateQRSVG(qrContent, { ...(qrCode.style as QRStyleOptions), width: 1024 });
+      downloadQRSVG(svg, `qrwolf-${(qrCode.name || 'code').toLowerCase().replace(/\s+/g, '-')}`);
+      toast.success('SVG downloaded');
+    } catch {
+      toast.error('Failed to download SVG');
     }
   };
 
@@ -293,8 +337,12 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
 
       <div className="p-4">
         <div className="flex gap-4">
-          {/* QR Preview */}
-          <div className="relative w-20 h-20 bg-white rounded-xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+          {/* QR Preview - Clickable for Quick View */}
+          <button
+            onClick={() => setShowQuickView(true)}
+            className="relative w-20 h-20 bg-white rounded-xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm cursor-pointer hover:ring-2 hover:ring-primary/50 hover:shadow-md transition-all group/qr"
+            aria-label="View larger QR code"
+          >
             {qrDataURL ? (
               <Image src={qrDataURL} alt={qrCode.name} width={80} height={80} className="w-full h-full object-contain p-1" unoptimized />
             ) : (
@@ -306,7 +354,11 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
                 {qrCode.scan_count > 999 ? '999+' : qrCode.scan_count}
               </div>
             )}
-          </div>
+            {/* Zoom hint on hover */}
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/qr:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
+              <ZoomIcon className="w-5 h-5 text-white" />
+            </div>
+          </button>
 
           {/* Info */}
           <div className="flex-1 min-w-0">
@@ -319,11 +371,6 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
                 {getContentTypeIcon()}
                 <span className="capitalize">{qrCode.content_type}</span>
               </span>
-              {qrCode.type === 'dynamic' && (
-                <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-medium">
-                  Dynamic
-                </span>
-              )}
             </div>
 
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2 text-[11px] text-muted-foreground">
@@ -373,12 +420,41 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
           <Button
             variant="outline"
             size="sm"
-            className="h-8 text-xs px-3"
+            className="h-8 text-xs px-2"
             onClick={handleDownloadPNG}
+            title="Download PNG"
             aria-label="Download as PNG"
           >
-            <DownloadIcon className="w-3 h-3" aria-hidden="true" />
+            <DownloadIcon className="w-3 h-3 mr-1" aria-hidden="true" />
+            <span className="text-[10px] font-medium">PNG</span>
           </Button>
+          {canDownloadSVG ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 text-xs px-2"
+              onClick={handleDownloadSVG}
+              title="Download SVG"
+              aria-label="Download as SVG"
+            >
+              <DownloadIcon className="w-3 h-3 mr-1" aria-hidden="true" />
+              <span className="text-[10px] font-medium">SVG</span>
+            </Button>
+          ) : (
+            <Link href="/plans">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs px-2 opacity-60"
+                title="SVG download - Pro feature"
+                aria-label="Upgrade to Pro for SVG download"
+              >
+                <DownloadIcon className="w-3 h-3 mr-1" aria-hidden="true" />
+                <span className="text-[10px] font-medium">SVG</span>
+                <span className="ml-1 text-[8px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-400 font-medium">Pro</span>
+              </Button>
+            </Link>
+          )}
           {qrCode.short_code && (
             <Button
               variant="outline"
@@ -438,6 +514,51 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
           </Button>
         </div>
       </div>
+
+      {/* Quick View Modal */}
+      <Dialog open={showQuickView} onOpenChange={setShowQuickView}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="truncate">{qrCode.name}</DialogTitle>
+          </DialogHeader>
+          <div className="flex justify-center py-4">
+            {largeQRDataURL ? (
+              <div className="bg-white p-4 rounded-xl shadow-sm">
+                <Image
+                  src={largeQRDataURL}
+                  alt={qrCode.name}
+                  width={300}
+                  height={300}
+                  className="w-[300px] h-[300px] object-contain"
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <div className="w-[300px] h-[300px] bg-gray-100 animate-pulse rounded-xl" />
+            )}
+          </div>
+          <DialogFooter className="flex gap-2 sm:justify-center">
+            <Button onClick={handleDownloadPNG} className="gap-2">
+              <DownloadIcon className="w-4 h-4" />
+              Download PNG
+            </Button>
+            {canDownloadSVG ? (
+              <Button onClick={handleDownloadSVG} variant="outline" className="gap-2">
+                <DownloadIcon className="w-4 h-4" />
+                Download SVG
+              </Button>
+            ) : (
+              <Link href="/plans">
+                <Button variant="outline" className="gap-2">
+                  <DownloadIcon className="w-4 h-4" />
+                  Download SVG
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-medium">Pro</span>
+                </Button>
+              </Link>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -696,6 +817,17 @@ function FolderIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
+
+function ZoomIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      <line x1="11" y1="8" x2="11" y2="14" />
+      <line x1="8" y1="11" x2="14" y2="11" />
     </svg>
   );
 }

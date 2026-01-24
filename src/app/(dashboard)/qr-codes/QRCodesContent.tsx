@@ -306,7 +306,7 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
 
           {/* Folder Manager (Pro+ only) */}
           {tier !== 'free' && (
-            <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-4">
+            <div className="rounded-xl border border-border/50 bg-card/30 backdrop-blur px-3 py-2">
               <FolderManager
                 folders={folders}
                 qrCodes={qrCodes}
@@ -371,6 +371,7 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
                 folderColor={getFolderColor(qr.folder_id)}
                 folders={tier !== 'free' ? folders : undefined}
                 onFolderChange={tier !== 'free' ? handleFolderAssign : undefined}
+                userTier={tier}
               />
             ))}
           </div>
@@ -389,7 +390,7 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
           </h2>
           <div className="space-y-4">
             {bulkBatchList.map((batch, index) => (
-              <BulkBatchCard key={batch.id} batch={batch} index={index} />
+              <BulkBatchCard key={batch.id} batch={batch} index={index} userTier={tier} />
             ))}
           </div>
         </div>

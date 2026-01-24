@@ -53,6 +53,8 @@ export const TYPE_CATEGORIES: TypeCategory[] = [
       { id: 'pinterest', name: 'Pinterest', description: 'Link to your profile' },
       { id: 'spotify', name: 'Spotify', description: 'Share music or podcasts' },
       { id: 'reddit', name: 'Reddit', description: 'Link to profile or subreddit' },
+      { id: 'twitch', name: 'Twitch', description: 'Link to your channel' },
+      { id: 'discord', name: 'Discord', description: 'Share server invite' },
       { id: 'facebook', name: 'Facebook', description: 'Link to page or profile' },
     ],
   },

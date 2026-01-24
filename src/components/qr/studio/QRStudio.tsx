@@ -34,6 +34,8 @@ import type {
   PinterestContent,
   SpotifyContent,
   RedditContent,
+  TwitchContent,
+  DiscordContent,
   AppsContent,
   GoogleReviewContent,
   PDFContent,
@@ -70,6 +72,8 @@ import { YouTubeForm } from '@/components/qr/forms/YouTubeForm';
 import { PinterestForm } from '@/components/qr/forms/PinterestForm';
 import { SpotifyForm } from '@/components/qr/forms/SpotifyForm';
 import { RedditForm } from '@/components/qr/forms/RedditForm';
+import { TwitchForm } from '@/components/qr/forms/TwitchForm';
+import { DiscordForm } from '@/components/qr/forms/DiscordForm';
 import { AppsForm } from '@/components/qr/forms/AppsForm';
 import { GoogleReviewForm } from '@/components/qr/forms/GoogleReviewForm';
 import { PDFForm } from '@/components/qr/forms/PDFForm';
@@ -899,6 +903,10 @@ function ContentStep({
         return <SpotifyForm content={(content as Partial<SpotifyContent>) || {}} onChange={onContentChange} />;
       case 'reddit':
         return <RedditForm content={(content as Partial<RedditContent>) || {}} onChange={onContentChange} />;
+      case 'twitch':
+        return <TwitchForm content={(content as Partial<TwitchContent>) || {}} onChange={onContentChange} />;
+      case 'discord':
+        return <DiscordForm content={(content as Partial<DiscordContent>) || {}} onChange={onContentChange} />;
       case 'apps':
         return <AppsForm content={(content as Partial<AppsContent>) || {}} onChange={onContentChange} />;
       case 'google-review':

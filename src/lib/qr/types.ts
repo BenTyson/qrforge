@@ -20,6 +20,8 @@ export type QRContentType =
   | 'pinterest'
   | 'spotify'
   | 'reddit'
+  | 'twitch'
+  | 'discord'
   | 'apps'
   // Reviews (free tier)
   | 'google-review'
@@ -233,6 +235,16 @@ export interface RedditContent {
   contentType: 'user' | 'subreddit';
 }
 
+export interface TwitchContent {
+  type: 'twitch';
+  username: string;
+}
+
+export interface DiscordContent {
+  type: 'discord';
+  inviteCode: string;
+}
+
 export interface AppsContent {
   type: 'apps';
   appStoreUrl?: string;
@@ -387,6 +399,8 @@ export type QRContent =
   | PinterestContent
   | SpotifyContent
   | RedditContent
+  | TwitchContent
+  | DiscordContent
   | AppsContent
   // Reviews
   | GoogleReviewContent
@@ -441,6 +455,8 @@ export const QR_TYPE_LABELS: Record<QRContentType, string> = {
   pinterest: 'Pinterest',
   spotify: 'Spotify',
   reddit: 'Reddit',
+  twitch: 'Twitch',
+  discord: 'Discord',
   apps: 'App Download',
   // Reviews
   'google-review': 'Google Review',
@@ -479,6 +495,8 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
   pinterest: 'pin',
   spotify: 'music',
   reddit: 'message-circle',
+  twitch: 'tv',
+  discord: 'message-circle',
   apps: 'smartphone',
   // Reviews
   'google-review': 'star',
@@ -498,7 +516,7 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
 // Type categories for UI grouping
 export const QR_TYPE_CATEGORIES = {
   basic: ['url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms'] as const,
-  social: ['whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'spotify', 'reddit', 'apps'] as const,
+  social: ['whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'spotify', 'reddit', 'twitch', 'discord', 'apps'] as const,
   media: ['pdf', 'images', 'video', 'mp3'] as const,
   landing: ['menu', 'business', 'links', 'coupon', 'social'] as const,
 };

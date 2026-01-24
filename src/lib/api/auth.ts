@@ -300,7 +300,7 @@ export const validators = {
       // Basic types
       'url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms',
       // Simple URL types
-      'whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'spotify', 'reddit', 'apps',
+      'whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'spotify', 'reddit', 'twitch', 'discord', 'apps',
       // Reviews
       'google-review',
       // File upload types
@@ -475,6 +475,18 @@ export const validators = {
         }
         if (content.contentType === 'subreddit' && (!content.subreddit || typeof content.subreddit !== 'string')) {
           return { valid: false, error: 'content.subreddit is required for Reddit subreddit type' };
+        }
+        break;
+
+      case 'twitch':
+        if (!content.username || typeof content.username !== 'string') {
+          return { valid: false, error: 'content.username is required for Twitch type' };
+        }
+        break;
+
+      case 'discord':
+        if (!content.inviteCode || typeof content.inviteCode !== 'string') {
+          return { valid: false, error: 'content.inviteCode is required for Discord type' };
         }
         break;
 

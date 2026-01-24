@@ -262,6 +262,16 @@ export async function GET(
           destinationUrl = `https://reddit.com/u/${content.username}`;
         }
         break;
+      case 'twitch':
+        if (content.username) {
+          destinationUrl = `https://twitch.tv/${content.username}`;
+        }
+        break;
+      case 'discord':
+        if (content.inviteCode) {
+          destinationUrl = `https://discord.gg/${content.inviteCode}`;
+        }
+        break;
       case 'apps':
         // Use fallbackUrl, or platform-specific URL
         destinationUrl = (content.fallbackUrl || content.appStoreUrl || content.playStoreUrl) as string;

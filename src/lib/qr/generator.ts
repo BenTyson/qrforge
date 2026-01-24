@@ -190,6 +190,14 @@ export function contentToString(content: QRContent): string {
       }
       return '';
 
+    case 'twitch':
+      // Build Twitch channel URL
+      return `https://twitch.tv/${content.username}`;
+
+    case 'discord':
+      // Build Discord invite URL
+      return `https://discord.gg/${content.inviteCode}`;
+
     case 'apps':
       // Return fallback URL or first available store URL
       // For smart redirects, this will point to a landing page
@@ -823,6 +831,14 @@ export function validateContent(content: QRContent): { valid: boolean; error?: s
       } else {
         if (!content.username) return { valid: false, error: 'Reddit username is required' };
       }
+      return { valid: true };
+
+    case 'twitch':
+      if (!content.username) return { valid: false, error: 'Twitch username is required' };
+      return { valid: true };
+
+    case 'discord':
+      if (!content.inviteCode) return { valid: false, error: 'Discord invite code is required' };
       return { valid: true };
 
     case 'apps':

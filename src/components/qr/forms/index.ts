@@ -18,6 +18,9 @@ export { AppsForm } from './AppsForm';
 // Reviews (free tier)
 export { GoogleReviewForm } from './GoogleReviewForm';
 
+// Events (free tier)
+export { EventForm } from './EventForm';
+
 // File upload type forms (Pro+)
 export { PDFForm } from './PDFForm';
 export { ImagesForm } from './ImagesForm';

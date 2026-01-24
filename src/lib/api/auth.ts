@@ -303,6 +303,8 @@ export const validators = {
       'whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'spotify', 'reddit', 'twitch', 'discord', 'apps',
       // Reviews
       'google-review',
+      // Events
+      'event',
       // File upload types
       'pdf', 'images', 'video', 'mp3',
       // Landing page types
@@ -515,6 +517,28 @@ export const validators = {
         }
         if (!content.businessName || typeof content.businessName !== 'string') {
           return { valid: false, error: 'content.businessName is required for google-review type' };
+        }
+        break;
+
+      case 'event':
+        if (!content.title || typeof content.title !== 'string') {
+          return { valid: false, error: 'content.title is required for event type' };
+        }
+        if (!content.startDate || typeof content.startDate !== 'string') {
+          return { valid: false, error: 'content.startDate is required for event type' };
+        }
+        if (!content.endDate || typeof content.endDate !== 'string') {
+          return { valid: false, error: 'content.endDate is required for event type' };
+        }
+        {
+          const start = new Date(content.startDate as string);
+          const end = new Date(content.endDate as string);
+          if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            return { valid: false, error: 'Invalid date format for startDate or endDate' };
+          }
+          if (end <= start) {
+            return { valid: false, error: 'endDate must be after startDate' };
+          }
         }
         break;
 

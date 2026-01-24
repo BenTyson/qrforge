@@ -91,6 +91,14 @@ export function QRPreview({
         case 'google-review':
           return content.placeId && content.placeId.length >= 20 &&
                  content.businessName && content.businessName.length > 0;
+        case 'event': {
+          if (!content.title || content.title.length === 0) return false;
+          if (!content.startDate || content.startDate.length === 0) return false;
+          if (!content.endDate || content.endDate.length === 0) return false;
+          const start = new Date(content.startDate);
+          const end = new Date(content.endDate);
+          return end > start;
+        }
         // Pro types - these generate preview QR codes
         case 'pdf':
           return (content.fileUrl && content.fileUrl.length > 0) || (content.fileName && content.fileName.length > 0);

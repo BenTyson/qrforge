@@ -207,6 +207,10 @@ export function contentToString(content: QRContent): string {
     case 'google-review':
       return `https://qrwolf.com/preview/${content.type}`;
 
+    // === Events ===
+    case 'event':
+      return `https://qrwolf.com/preview/${content.type}`;
+
     // === File Upload & Landing Page Types ===
     // These types always use dynamic QR codes with landing pages
     // The QR code points to /r/[shortCode] which handles the redirect
@@ -852,6 +856,18 @@ export function validateContent(content: QRContent): { valid: boolean; error?: s
       if (!content.placeId) return { valid: false, error: 'Place ID is required' };
       if (content.placeId.length < 20) return { valid: false, error: 'Place ID must be at least 20 characters' };
       if (!content.businessName) return { valid: false, error: 'Business name is required' };
+      return { valid: true };
+
+    // === Events ===
+    case 'event':
+      if (!content.title?.trim()) return { valid: false, error: 'Event title is required' };
+      if (!content.startDate?.trim()) return { valid: false, error: 'Start date is required' };
+      if (!content.endDate?.trim()) return { valid: false, error: 'End date is required' };
+      {
+        const start = new Date(content.startDate);
+        const end = new Date(content.endDate);
+        if (end <= start) return { valid: false, error: 'End date must be after start date' };
+      }
       return { valid: true };
 
     // === File Upload Types ===

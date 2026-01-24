@@ -127,6 +127,7 @@ export async function GET(
     'google-review': 'review',
     youtube: 'youtube',
     spotify: 'spotify',
+    event: 'event',
   };
 
   const contentType = qrCode.content_type as string;

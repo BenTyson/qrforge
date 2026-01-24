@@ -6,6 +6,17 @@ Session-by-session history of development work. Most recent first.
 
 ## January 24, 2026
 
+### Event/Calendar QR Code Type
+- New free-tier QR type for creating calendar event invites
+- Event form with title, start/end dates, location, description, event URL, accent color
+- All-day event toggle (switches between date and datetime pickers)
+- Landing page at `/r/[code]/event` with glassmorphism design
+- Calendar buttons: Add to Google Calendar, Apple Calendar (.ics), Outlook
+- ICS file generation utility (`src/lib/calendar.ts`) for Apple/Outlook downloads
+- Google Calendar URL generation with proper date formatting
+- Outlook Web URL generation
+- 27th QR type (now 33 total content types)
+
 ### Twitch QR Code Type
 - New free-tier social QR type for sharing Twitch channels
 - Username-based input with smart URL parsing (extracts from twitch.tv URLs)

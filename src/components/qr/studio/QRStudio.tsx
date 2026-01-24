@@ -38,6 +38,7 @@ import type {
   DiscordContent,
   AppsContent,
   GoogleReviewContent,
+  EventContent,
   PDFContent,
   ImagesContent,
   VideoContent,
@@ -76,6 +77,7 @@ import { TwitchForm } from '@/components/qr/forms/TwitchForm';
 import { DiscordForm } from '@/components/qr/forms/DiscordForm';
 import { AppsForm } from '@/components/qr/forms/AppsForm';
 import { GoogleReviewForm } from '@/components/qr/forms/GoogleReviewForm';
+import { EventForm } from '@/components/qr/forms/EventForm';
 import { PDFForm } from '@/components/qr/forms/PDFForm';
 import { ImagesForm } from '@/components/qr/forms/ImagesForm';
 import { VideoForm } from '@/components/qr/forms/VideoForm';
@@ -911,6 +913,8 @@ function ContentStep({
         return <AppsForm content={(content as Partial<AppsContent>) || {}} onChange={onContentChange} />;
       case 'google-review':
         return <GoogleReviewForm content={(content as Partial<GoogleReviewContent>) || {}} onChange={onContentChange} />;
+      case 'event':
+        return <EventForm content={(content as Partial<EventContent>) || {}} onChange={onContentChange} />;
       case 'pdf':
         return <PDFForm content={(content as Partial<PDFContent>) || {}} onChange={onContentChange} />;
       case 'images':

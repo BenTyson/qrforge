@@ -2,7 +2,7 @@
 
 > **Last Updated**: January 24, 2026
 > **Status**: Active development
-> **Current Features**: 26 QR types, Analytics, Bulk generation, API, 151 SEO articles
+> **Current Features**: 27 QR types, Analytics, Bulk generation, API, 151 SEO articles
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -30,61 +30,6 @@ This document tracks planned features in priority order. Work through sequential
 ---
 
 ## NEXT UP
-
-### 1. Event/Calendar QR Code Type
-**Tier**: STANDARD | **Priority**: 6 of 24 | **Effort**: ~1-2 days
-
-**What**: QR code that adds an event to the user's calendar (iCal format).
-
-**Why build this**:
-- Already in your roadmap
-- Common use case (conferences, weddings, appointments)
-- Differentiator from basic generators
-
-**Implementation**:
-- New QR type: `event`
-- Input: Event name, date/time, end time, location, description
-- Output: Either vCalendar data URI or landing page with "Add to Calendar" button
-
-**UI Components (Content Step)**:
-- Event name input
-- Date picker
-- Start time / End time
-- Location (optional)
-- Description (optional)
-- All-day toggle
-
-**Two approaches**:
-1. **Direct iCal**: Encode vCalendar data in QR (works offline, limited data)
-2. **Landing page**: `/r/[code]/event` with Add to Calendar buttons (Google, Apple, Outlook)
-
-**Recommendation**: Landing page approach - more reliable, better UX, enables analytics
-
-**Landing page** (`/r/[code]/event`):
-- Event details display
-- "Add to Google Calendar" button
-- "Add to Apple Calendar" button (.ics download)
-- "Add to Outlook" button
-- Share buttons
-
-**Files to create/modify**:
-- `src/components/qr/forms/EventForm.tsx`
-- `src/app/r/[code]/event/page.tsx`
-- `src/lib/calendar.ts` (iCal generation utility)
-- Update type definitions
-
-**Content to publish after**:
-- New article: "QR Codes for Events: Complete Guide"
-
-**Acceptance criteria**:
-- [ ] Event form with all fields
-- [ ] Landing page with calendar buttons
-- [ ] Google Calendar link works
-- [ ] .ics file download works
-- [ ] Timezone handling correct
-- [ ] All-day events supported
-
----
 
 ### 7. Geo/Location QR Code Type
 **Tier**: STANDARD | **Priority**: 7 of 24 | **Effort**: ~1 day
@@ -563,6 +508,7 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Event/Calendar QR Code Type | 2026-01-24 | 27th QR type. Event form with title, dates, location, description. Landing page with Add to Google Calendar, Apple Calendar (.ics), and Outlook buttons. All-day event support. Free tier. |
 | Discord QR Code Type | 2026-01-24 | 28th QR type. Invite code-based input with URL parsing (discord.gg and discord.com/invite). Direct redirect to discord.gg/code. Free tier social type. |
 | Twitch QR Code Type | 2026-01-24 | 27th QR type. Username-based input with URL parsing. Direct redirect to twitch.tv/username. Free tier social type. |
 | Reddit QR Code Type | 2026-01-24 | 26th QR type. Supports user profiles (u/username) and subreddits (r/subreddit). Tab-based selection in form. Direct redirect to reddit.com. Free tier social type. |
@@ -634,6 +580,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-24 | Completed Event/Calendar QR Code Type, 27th QR type with landing page and calendar buttons |
 | 2026-01-24 | Completed Spotify QR Code Type (Feature #12), 25th QR type with landing page and embed |
 | 2026-01-24 | Completed Reddit QR Code Type, 26th QR type (users and subreddits) |
 | 2026-01-23 | Completed YouTube QR Code Type (Feature #12), 23rd QR type with landing page |

@@ -6,6 +6,14 @@ Session-by-session history of development work. Most recent first.
 
 ## January 23, 2026
 
+### QR Card Quick View & Download Options
+- Quick View modal: click QR preview on cards to view larger scannable version (300px)
+- Download options: PNG + SVG buttons on each card (replaces single download button)
+- SVG download gated by Pro/Business tier (free users see "Pro" badge with link to /plans)
+- Download buttons also available in Quick View modal footer
+- Compact folder manager: redesigned from vertical list to horizontal chip/pill layout
+- Removed "Dynamic" badge from QR cards (reduces visual clutter)
+
 ### YouTube QR Code Type
 - New free-tier QR type for sharing YouTube videos
 - Smart URL parsing handles all YouTube formats (youtube.com, youtu.be, shorts, embed, live, music, mobile)

@@ -125,6 +125,7 @@ export async function GET(
     text: 'text',
     vcard: 'vcard',
     'google-review': 'review',
+    youtube: 'youtube',
   };
 
   const contentType = qrCode.content_type as string;
@@ -245,6 +246,12 @@ export async function GET(
         if (content.username) {
           const threadsUsername = String(content.username).replace('@', '');
           destinationUrl = `https://threads.net/@${threadsUsername}`;
+        }
+        break;
+      case 'pinterest':
+        if (content.username) {
+          const pinterestUsername = String(content.username).replace('@', '');
+          destinationUrl = `https://pinterest.com/${pinterestUsername}`;
         }
         break;
       case 'apps':

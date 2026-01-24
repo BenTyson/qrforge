@@ -71,6 +71,10 @@ export function QRPreview({
           return content.username && content.username.length > 0;
         case 'threads':
           return content.username && content.username.length > 0;
+        case 'youtube':
+          return content.videoId && content.videoId.length > 0;
+        case 'pinterest':
+          return content.username && content.username.length > 0;
         case 'apps':
           return (content.appStoreUrl && content.appStoreUrl.length > 0) ||
                  (content.playStoreUrl && content.playStoreUrl.length > 0) ||

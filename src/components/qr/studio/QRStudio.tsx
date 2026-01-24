@@ -30,6 +30,8 @@ import type {
   TikTokContent,
   SnapchatContent,
   ThreadsContent,
+  YouTubeContent,
+  PinterestContent,
   AppsContent,
   GoogleReviewContent,
   PDFContent,
@@ -62,6 +64,8 @@ import { XForm } from '@/components/qr/forms/XForm';
 import { TikTokForm } from '@/components/qr/forms/TikTokForm';
 import { SnapchatForm } from '@/components/qr/forms/SnapchatForm';
 import { ThreadsForm } from '@/components/qr/forms/ThreadsForm';
+import { YouTubeForm } from '@/components/qr/forms/YouTubeForm';
+import { PinterestForm } from '@/components/qr/forms/PinterestForm';
 import { AppsForm } from '@/components/qr/forms/AppsForm';
 import { GoogleReviewForm } from '@/components/qr/forms/GoogleReviewForm';
 import { PDFForm } from '@/components/qr/forms/PDFForm';
@@ -883,6 +887,10 @@ function ContentStep({
         return <SnapchatForm content={(content as Partial<SnapchatContent>) || {}} onChange={onContentChange} />;
       case 'threads':
         return <ThreadsForm content={(content as Partial<ThreadsContent>) || {}} onChange={onContentChange} />;
+      case 'youtube':
+        return <YouTubeForm content={(content as Partial<YouTubeContent>) || {}} onChange={onContentChange} />;
+      case 'pinterest':
+        return <PinterestForm content={(content as Partial<PinterestContent>) || {}} onChange={onContentChange} />;
       case 'apps':
         return <AppsForm content={(content as Partial<AppsContent>) || {}} onChange={onContentChange} />;
       case 'google-review':

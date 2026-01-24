@@ -300,7 +300,7 @@ export const validators = {
       // Basic types
       'url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms',
       // Simple URL types
-      'whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'apps',
+      'whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'apps',
       // Reviews
       'google-review',
       // File upload types
@@ -439,6 +439,21 @@ export const validators = {
       case 'threads':
         if (!content.username || typeof content.username !== 'string') {
           return { valid: false, error: 'content.username is required for Threads type' };
+        }
+        break;
+
+      case 'youtube':
+        if (!content.videoId || typeof content.videoId !== 'string') {
+          return { valid: false, error: 'content.videoId is required for YouTube type' };
+        }
+        if (content.videoId.length !== 11) {
+          return { valid: false, error: 'YouTube video ID must be 11 characters' };
+        }
+        break;
+
+      case 'pinterest':
+        if (!content.username || typeof content.username !== 'string') {
+          return { valid: false, error: 'content.username is required for Pinterest type' };
         }
         break;
 

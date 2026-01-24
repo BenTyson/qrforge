@@ -16,6 +16,8 @@ export type QRContentType =
   | 'tiktok'
   | 'snapchat'
   | 'threads'
+  | 'youtube'
+  | 'pinterest'
   | 'apps'
   // Reviews (free tier)
   | 'google-review'
@@ -204,6 +206,17 @@ export interface ThreadsContent {
   username: string;
 }
 
+export interface YouTubeContent {
+  type: 'youtube';
+  videoId: string;      // Extracted video ID
+  videoUrl?: string;    // Original URL for display
+}
+
+export interface PinterestContent {
+  type: 'pinterest';
+  username: string;
+}
+
 export interface AppsContent {
   type: 'apps';
   appStoreUrl?: string;
@@ -354,6 +367,8 @@ export type QRContent =
   | TikTokContent
   | SnapchatContent
   | ThreadsContent
+  | YouTubeContent
+  | PinterestContent
   | AppsContent
   // Reviews
   | GoogleReviewContent
@@ -404,6 +419,8 @@ export const QR_TYPE_LABELS: Record<QRContentType, string> = {
   tiktok: 'TikTok',
   snapchat: 'Snapchat',
   threads: 'Threads',
+  youtube: 'YouTube Video',
+  pinterest: 'Pinterest',
   apps: 'App Download',
   // Reviews
   'google-review': 'Google Review',
@@ -438,6 +455,8 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
   tiktok: 'music',
   snapchat: 'ghost',
   threads: 'at-sign',
+  youtube: 'play-circle',
+  pinterest: 'pin',
   apps: 'smartphone',
   // Reviews
   'google-review': 'star',
@@ -457,7 +476,7 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
 // Type categories for UI grouping
 export const QR_TYPE_CATEGORIES = {
   basic: ['url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms'] as const,
-  social: ['whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'apps'] as const,
+  social: ['whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'apps'] as const,
   media: ['pdf', 'images', 'video', 'mp3'] as const,
   landing: ['menu', 'business', 'links', 'coupon', 'social'] as const,
 };
@@ -471,6 +490,7 @@ export const PRO_ONLY_TYPES: QRContentType[] = [
 // Types that require dynamic QR codes (landing pages)
 export const DYNAMIC_REQUIRED_TYPES: QRContentType[] = [
   'google-review',
+  'youtube',
   'pdf', 'images', 'video', 'mp3',
   'menu', 'business', 'links', 'coupon', 'social',
 ];

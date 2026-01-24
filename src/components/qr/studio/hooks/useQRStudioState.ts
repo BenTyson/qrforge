@@ -22,6 +22,8 @@ import type {
   TikTokContent,
   SnapchatContent,
   ThreadsContent,
+  YouTubeContent,
+  PinterestContent,
   AppsContent,
   GoogleReviewContent,
   PDFContent,
@@ -262,6 +264,10 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         return !!(content as SnapchatContent).username?.trim();
       case 'threads':
         return !!(content as ThreadsContent).username?.trim();
+      case 'youtube':
+        return !!(content as YouTubeContent).videoId?.trim();
+      case 'pinterest':
+        return !!(content as PinterestContent).username?.trim();
       case 'apps': {
         const appsContent = content as AppsContent;
         return !!(appsContent.appStoreUrl?.trim() || appsContent.playStoreUrl?.trim() || appsContent.fallbackUrl?.trim());

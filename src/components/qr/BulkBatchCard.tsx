@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { QRCodeCard } from './QRCodeCard';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
+import type { SubscriptionTier } from '@/lib/supabase/types';
 
 interface QRCodeInBatch {
   id: string;
@@ -30,9 +31,10 @@ interface BulkBatchCardProps {
     totalScans: number;
   };
   index?: number;
+  userTier?: SubscriptionTier;
 }
 
-export function BulkBatchCard({ batch, index = 0 }: BulkBatchCardProps) {
+export function BulkBatchCard({ batch, index = 0, userTier = 'free' }: BulkBatchCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const createdDate = new Date(batch.createdAt).toLocaleDateString('en-US', {
     month: 'short',
@@ -92,7 +94,7 @@ export function BulkBatchCard({ batch, index = 0 }: BulkBatchCardProps) {
         <div className="px-4 pb-4 pt-2 border-t border-border/50 relative z-20">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
             {batch.codes.map((qr, codeIndex) => (
-              <QRCodeCard key={qr.id} qrCode={qr} index={codeIndex} compact />
+              <QRCodeCard key={qr.id} qrCode={qr} index={codeIndex} compact userTier={userTier} />
             ))}
           </div>
         </div>

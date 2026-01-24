@@ -96,100 +96,92 @@ export function FolderManager({
   }
 
   return (
-    <div className="space-y-3">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h3 className="font-medium text-sm text-muted-foreground">Folders</h3>
-        {canCreateMore ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCreateFolder}
-            className="h-7 px-2 text-xs"
-          >
-            <FolderPlus className="w-3.5 h-3.5 mr-1" />
-            New
-          </Button>
-        ) : (
-          <span className="text-xs text-muted-foreground">
-            {folders.length}/{folderLimit} folders
-          </span>
-        )}
-      </div>
+    <div className="flex items-center gap-2 flex-wrap">
+      {/* All QR Codes chip */}
+      <button
+        onClick={() => onFolderSelect(null)}
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
+          selectedFolder === null
+            ? 'bg-primary text-primary-foreground'
+            : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
+        }`}
+      >
+        <LayoutGrid className="w-3.5 h-3.5" />
+        All
+        <span className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[10px] ${
+          selectedFolder === null ? 'bg-white/20' : 'bg-background/50'
+        }`}>
+          {getCodeCount(null)}
+        </span>
+      </button>
 
-      {/* Folder list */}
-      <div className="space-y-1">
-        {/* All QR Codes */}
-        <button
-          onClick={() => onFolderSelect(null)}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
-            selectedFolder === null
-              ? 'bg-primary/10 text-primary border border-primary/20'
-              : 'hover:bg-secondary/50 text-muted-foreground hover:text-foreground'
+      {/* Uncategorized chip */}
+      <button
+        onClick={() => onFolderSelect('uncategorized')}
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
+          selectedFolder === 'uncategorized'
+            ? 'bg-primary text-primary-foreground'
+            : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
+        }`}
+      >
+        <FolderOpen className="w-3.5 h-3.5" />
+        Uncategorized
+        <span className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[10px] ${
+          selectedFolder === 'uncategorized' ? 'bg-white/20' : 'bg-background/50'
+        }`}>
+          {getCodeCount('uncategorized')}
+        </span>
+      </button>
+
+      {/* User folder chips */}
+      {folders.map((folder) => (
+        <div
+          key={folder.id}
+          role="button"
+          tabIndex={0}
+          onClick={() => onFolderSelect(folder.id)}
+          onKeyDown={(e) => e.key === 'Enter' && onFolderSelect(folder.id)}
+          className={`group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer ${
+            selectedFolder === folder.id
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
           }`}
         >
-          <LayoutGrid className="w-4 h-4" />
-          <span className="flex-1 text-left text-sm font-medium">All QR Codes</span>
-          <span className="text-xs bg-secondary/50 px-2 py-0.5 rounded-full">
-            {getCodeCount(null)}
-          </span>
-        </button>
-
-        {/* Uncategorized */}
-        <button
-          onClick={() => onFolderSelect('uncategorized')}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
-            selectedFolder === 'uncategorized'
-              ? 'bg-primary/10 text-primary border border-primary/20'
-              : 'hover:bg-secondary/50 text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          <FolderOpen className="w-4 h-4" />
-          <span className="flex-1 text-left text-sm">Uncategorized</span>
-          <span className="text-xs bg-secondary/50 px-2 py-0.5 rounded-full">
-            {getCodeCount('uncategorized')}
-          </span>
-        </button>
-
-        {/* User folders */}
-        {folders.map((folder) => (
           <div
-            key={folder.id}
-            role="button"
-            tabIndex={0}
-            onClick={() => onFolderSelect(folder.id)}
-            onKeyDown={(e) => e.key === 'Enter' && onFolderSelect(folder.id)}
-            className={`group w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer ${
-              selectedFolder === folder.id
-                ? 'bg-primary/10 text-primary border border-primary/20'
-                : 'hover:bg-secondary/50 text-muted-foreground hover:text-foreground'
-            }`}
+            className="w-2.5 h-2.5 rounded-full"
+            style={{ backgroundColor: folder.color }}
+          />
+          <span className="max-w-[100px] truncate">{folder.name}</span>
+          <button
+            onClick={(e) => handleEditFolder(folder, e)}
+            className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-white/20 rounded transition-opacity"
+            aria-label={`Edit ${folder.name}`}
           >
-            <div
-              className="w-4 h-4 rounded-md"
-              style={{ backgroundColor: folder.color }}
-            />
-            <span className="flex-1 text-left text-sm truncate">
-              {folder.name}
-            </span>
-            <button
-              onClick={(e) => handleEditFolder(folder, e)}
-              className="opacity-0 group-hover:opacity-100 p-1 hover:bg-secondary rounded transition-opacity"
-            >
-              <Pencil className="w-3 h-3" />
-            </button>
-            <span className="text-xs bg-secondary/50 px-2 py-0.5 rounded-full">
-              {getCodeCount(folder.id)}
-            </span>
-          </div>
-        ))}
-      </div>
+            <Pencil className="w-2.5 h-2.5" />
+          </button>
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+            selectedFolder === folder.id ? 'bg-white/20' : 'bg-background/50'
+          }`}>
+            {getCodeCount(folder.id)}
+          </span>
+        </div>
+      ))}
 
-      {/* Empty state */}
-      {folders.length === 0 && (
-        <p className="text-xs text-muted-foreground text-center py-4">
-          No folders yet. Create one to organize your QR codes.
-        </p>
+      {/* New folder button */}
+      {canCreateMore ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleCreateFolder}
+          className="h-7 px-2.5 text-xs rounded-full"
+        >
+          <FolderPlus className="w-3.5 h-3.5 mr-1" />
+          New
+        </Button>
+      ) : (
+        <span className="text-[10px] text-muted-foreground px-2">
+          {folders.length}/{folderLimit}
+        </span>
       )}
 
       {/* Folder modal */}

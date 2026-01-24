@@ -71,7 +71,9 @@ npm run build
 npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the app.
+Open [http://localhost:3322](http://localhost:3322) to see the app.
+
+> **Note:** This project always uses port 3322 (not the default 3000).
 
 ## Project Structure
 

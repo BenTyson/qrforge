@@ -30,6 +30,7 @@ import type {
   DiscordContent,
   AppsContent,
   GoogleReviewContent,
+  EventContent,
   PDFContent,
   ImagesContent,
   VideoContent,
@@ -296,6 +297,15 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
           reviewContent.placeId.length >= 20 &&
           reviewContent.businessName?.trim()
         );
+      }
+      case 'event': {
+        const eventContent = content as EventContent;
+        if (!eventContent.title?.trim()) return false;
+        if (!eventContent.startDate?.trim()) return false;
+        if (!eventContent.endDate?.trim()) return false;
+        const start = new Date(eventContent.startDate);
+        const end = new Date(eventContent.endDate);
+        return end > start;
       }
       case 'pdf':
         return !!(content as PDFContent).fileUrl?.trim() || !!(content as PDFContent).fileName?.trim();

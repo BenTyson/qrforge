@@ -35,7 +35,9 @@ export type QRContentType =
   | 'business'
   | 'links'
   | 'coupon'
-  | 'social';
+  | 'social'
+  // Events (free tier)
+  | 'event';
 
 export interface GradientOptions {
   enabled: boolean;
@@ -261,6 +263,19 @@ export interface GoogleReviewContent {
   accentColor?: string;   // Landing page accent color
 }
 
+export interface EventContent {
+  type: 'event';
+  title: string;
+  description?: string;
+  startDate: string;      // ISO 8601 datetime
+  endDate: string;        // ISO 8601 datetime
+  location?: string;
+  allDay?: boolean;
+  timezone?: string;      // e.g., 'America/New_York'
+  url?: string;           // Event website
+  accentColor?: string;   // Landing page accent color
+}
+
 // === File Upload Types (Pro+) ===
 
 export interface PDFContent {
@@ -404,6 +419,8 @@ export type QRContent =
   | AppsContent
   // Reviews
   | GoogleReviewContent
+  // Events
+  | EventContent
   // File upload types
   | PDFContent
   | ImagesContent
@@ -460,6 +477,8 @@ export const QR_TYPE_LABELS: Record<QRContentType, string> = {
   apps: 'App Download',
   // Reviews
   'google-review': 'Google Review',
+  // Events
+  event: 'Event / Calendar',
   // File upload types
   pdf: 'PDF Document',
   images: 'Image Gallery',
@@ -500,6 +519,8 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
   apps: 'smartphone',
   // Reviews
   'google-review': 'star',
+  // Events
+  event: 'calendar',
   // File upload types
   pdf: 'file-text',
   images: 'images',
@@ -532,6 +553,7 @@ export const DYNAMIC_REQUIRED_TYPES: QRContentType[] = [
   'google-review',
   'youtube',
   'spotify',
+  'event',
   'pdf', 'images', 'video', 'mp3',
   'menu', 'business', 'links', 'coupon', 'social',
 ];

@@ -451,18 +451,21 @@ export default function EditQRCodePage() {
                 </div>
               </div>
               {isPasswordProtected && (
-                <div>
+                <div className="space-y-1">
                   <Input
                     type="password"
-                    placeholder={hasExistingPassword ? "Enter new password to change" : "Enter password"}
+                    placeholder={hasExistingPassword ? "Enter new password to change" : "Enter password (min. 4 characters)"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="bg-secondary/50"
                   />
-                  {hasExistingPassword && (
-                    <p className="text-xs text-muted-foreground mt-1">
+                  {hasExistingPassword && !password && (
+                    <p className="text-xs text-muted-foreground">
                       Leave blank to keep existing password
                     </p>
+                  )}
+                  {password && password.length > 0 && password.length < 4 && (
+                    <p className="text-xs text-yellow-500">Password must be at least 4 characters</p>
                   )}
                 </div>
               )}

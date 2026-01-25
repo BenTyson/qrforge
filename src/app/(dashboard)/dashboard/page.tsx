@@ -1,7 +1,10 @@
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { SCAN_LIMITS } from '@/lib/stripe/config';
+import { SCAN_LIMITS, getEffectiveTier, isTrialActive, getTrialDaysRemaining } from '@/lib/stripe/config';
+import { ReferralWidget } from '@/components/dashboard/ReferralWidget';
+import { TrialBanner } from '@/components/dashboard/TrialBanner';
+import { StartTrialPrompt } from '@/components/dashboard/StartTrialPrompt';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -12,7 +15,7 @@ export default async function DashboardPage() {
   }
 
   // Fetch real stats from database
-  const [qrCodesResult, scansResult, recentScansResult, profileResult] = await Promise.all([
+  const [qrCodesResult, scansResult, recentScansResult, profileResult, referralsResult] = await Promise.all([
     // Total QR codes and dynamic count
     supabase
       .from('qr_codes')
@@ -36,17 +39,30 @@ export default async function DashboardPage() {
       .eq('qr_codes.user_id', user.id)
       .order('scanned_at', { ascending: false })
       .limit(10),
-    // User profile for scan limits
+    // User profile for scan limits, referral info, and trial status
     supabase
       .from('profiles')
-      .select('subscription_tier, monthly_scan_count, scan_count_reset_at')
+      .select('subscription_tier, subscription_status, monthly_scan_count, scan_count_reset_at, referral_code, referral_credits, trial_ends_at, trial_used')
       .eq('id', user.id)
       .single(),
+    // Referral stats
+    supabase
+      .from('referrals')
+      .select('status')
+      .eq('referrer_id', user.id),
   ]);
 
   // Get profile data for scan usage
   const profile = profileResult.data;
-  const tier = (profile?.subscription_tier || 'free') as keyof typeof SCAN_LIMITS;
+  const baseTier = (profile?.subscription_tier || 'free') as keyof typeof SCAN_LIMITS;
+  const subscriptionStatus = profile?.subscription_status;
+  const trialEndsAt = profile?.trial_ends_at;
+  const tier = getEffectiveTier(baseTier, trialEndsAt, subscriptionStatus) as keyof typeof SCAN_LIMITS;
+  const trialActive = isTrialActive(trialEndsAt, subscriptionStatus);
+  const trialDaysRemaining = getTrialDaysRemaining(trialEndsAt);
+  const trialUsed = profile?.trial_used || false;
+  // Show trial prompt for free users who haven't used trial and aren't currently on a Stripe trial
+  const showTrialPrompt = baseTier === 'free' && !trialActive && !trialUsed;
   const scanLimit = SCAN_LIMITS[tier];
   const monthlyScanCount = profile?.monthly_scan_count || 0;
 
@@ -82,6 +98,16 @@ export default async function DashboardPage() {
     country: scan.country,
   }));
 
+  // Calculate referral stats
+  const referrals = referralsResult.data || [];
+  const referralStats = {
+    referralCode: profile?.referral_code || '',
+    totalReferrals: referrals.length,
+    pendingReferrals: referrals.filter(r => r.status === 'pending').length,
+    convertedReferrals: referrals.filter(r => r.status === 'converted' || r.status === 'credited').length,
+    totalCredits: profile?.referral_credits || 0,
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Welcome Header */}
@@ -93,6 +119,12 @@ export default async function DashboardPage() {
           Here&apos;s what&apos;s happening with your QR codes
         </p>
       </div>
+
+      {/* Trial Banner */}
+      {trialActive && <TrialBanner daysRemaining={trialDaysRemaining} />}
+
+      {/* Start Trial Prompt - for free users who haven't tried Pro */}
+      {showTrialPrompt && <StartTrialPrompt />}
 
       {/* Stats Grid - More visual variety */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -265,6 +297,17 @@ export default async function DashboardPage() {
               </>
             )}
           </div>
+
+          {/* Referral Widget */}
+          {referralStats.referralCode && (
+            <ReferralWidget
+              referralCode={referralStats.referralCode}
+              totalReferrals={referralStats.totalReferrals}
+              pendingReferrals={referralStats.pendingReferrals}
+              convertedReferrals={referralStats.convertedReferrals}
+              totalCredits={referralStats.totalCredits}
+            />
+          )}
         </div>
 
         {/* Right Column - Recent Activity */}

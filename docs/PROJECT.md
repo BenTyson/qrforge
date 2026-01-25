@@ -67,8 +67,14 @@ Premium QR code generator with analytics and dynamic codes. Goal: passive income
 | Tier | Price | Dynamic QRs | Analytics | Key Features |
 |------|-------|-------------|-----------|--------------|
 | Free | $0 | 0 | No | Basic types, 100 scans/mo |
-| Pro | $9/mo | 50 | Yes | All types, logo, landing pages, 10k scans/mo |
+| Pro | $9/mo | 50 | Yes | All types, logo, landing pages, 10k scans/mo, **7-day free trial** |
 | Business | $29/mo | Unlimited | Yes | Bulk generation, API access, unlimited scans |
+
+### Growth Features
+- **Referral Program**: Users get unique referral code, earn $5 credit when referrals upgrade
+- **7-Day Pro Trial**: Stripe-based trial with auto-conversion (requires credit card)
+- **Onboarding Emails**: Day 1, 3, 7 email sequence for new users
+- **Milestone Emails**: Celebration at 50 scans, 5 QR codes; warning at 80% usage
 
 ---
 
@@ -135,13 +141,23 @@ src/
 
 | Table | Purpose |
 |-------|---------|
-| `profiles` | Users + subscription state |
+| `profiles` | Users + subscription state + trial + referral |
 | `qr_codes` | QR codes + content + style |
 | `scans` | Scan analytics (device, location) |
 | `folders` | QR organization (Pro+) |
 | `api_keys` | API authentication (Business) |
 | `teams`, `team_members`, `team_invites` | Team management |
+| `referrals` | Referral tracking (referrer, referee, status) |
+| `onboarding_emails` | Track sent onboarding/milestone emails |
 | `admin_audit_log` | Admin action tracking |
+
+**Key profile columns for growth:**
+- `referral_code` - Unique code for sharing
+- `referred_by` - UUID of referrer
+- `referral_credits` - Earned credits (cents)
+- `trial_ends_at` - Stripe trial end date
+- `trial_used` - Prevents multiple trials
+- `subscription_status` - active, trialing, past_due, canceled
 
 **Storage buckets**: `qr-logos`, `qr-media`
 
@@ -167,6 +183,11 @@ src/
 - `/tools/size-calculator` - QR size calculator
 - `/tools/contrast-checker` - Color contrast checker
 - `/tools/qr-reader` - QR code decoder
+
+### Comparison Pages (SEO)
+- `/vs/qr-code-monkey` - QRWolf vs QR Code Monkey
+- `/vs/qr-tiger` - QRWolf vs QR Tiger
+- `/vs/beaconstac` - QRWolf vs Beaconstac
 
 ---
 

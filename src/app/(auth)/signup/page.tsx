@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Footer } from '@/components/layout';
 
+const REFERRAL_STORAGE_KEY = 'qrwolf_referral_code';
+
 export default function SignUpPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,6 +21,15 @@ export default function SignUpPage() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Store referral code from URL in localStorage
+  useEffect(() => {
+    const refCode = searchParams.get('ref');
+    if (refCode) {
+      localStorage.setItem(REFERRAL_STORAGE_KEY, refCode.toUpperCase());
+    }
+  }, [searchParams]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,11 +49,17 @@ export default function SignUpPage() {
     }
 
     const supabase = createClient();
+    // Include referral code in callback if present
+    const storedRef = localStorage.getItem(REFERRAL_STORAGE_KEY);
+    const callbackUrl = storedRef
+      ? `${window.location.origin}/callback?ref=${storedRef}`
+      : `${window.location.origin}/callback`;
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/callback`,
+        emailRedirectTo: callbackUrl,
       },
     });
 
@@ -66,10 +83,16 @@ export default function SignUpPage() {
 
   const handleGoogleSignUp = async () => {
     const supabase = createClient();
+    // Include referral code in callback if present
+    const storedRef = localStorage.getItem(REFERRAL_STORAGE_KEY);
+    const callbackUrl = storedRef
+      ? `${window.location.origin}/callback?ref=${storedRef}`
+      : `${window.location.origin}/callback`;
+
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/callback`,
+        redirectTo: callbackUrl,
       },
     });
   };

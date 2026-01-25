@@ -95,7 +95,12 @@ export function PricingSection({ isAuthenticated = false, currentTier = 'free' }
             Popular
           </div>
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-2">Pro</h3>
+            <div className="flex items-center gap-2 mb-2">
+              <h3 className="text-lg font-semibold">Pro</h3>
+              <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full font-medium">
+                7-day free trial
+              </span>
+            </div>
             <div className="flex items-baseline gap-1">
               <span className="text-4xl font-bold">${interval === 'monthly' ? '9' : '90'}</span>
               <span className="text-muted-foreground">/{interval === 'monthly' ? 'month' : 'year'}</span>
@@ -126,7 +131,7 @@ export function PricingSection({ isAuthenticated = false, currentTier = 'free' }
             onClick={() => handleUpgrade()}
             disabled={currentTier === 'pro'}
           >
-            {currentTier === 'pro' ? 'Current Plan' : isAuthenticated ? 'Select Plan' : 'Get Started'}
+            {currentTier === 'pro' ? 'Current Plan' : isAuthenticated ? 'Select Plan' : 'Start Free Trial'}
           </Button>
         </Card>
 

@@ -1,6 +1,11 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
+import { checkRateLimit, resetRateLimit, getClientIP } from '@/lib/rate-limit';
+
+// Rate limit configuration
+const RATE_LIMIT_ATTEMPTS = 5;
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
 // Types that have dedicated landing pages (must match route.ts)
 const LANDING_PAGE_ROUTES: Record<string, string> = {
@@ -25,6 +30,31 @@ const LANDING_PAGE_ROUTES: Record<string, string> = {
 
 export async function POST(request: Request) {
   try {
+    // Check rate limit first
+    const clientIP = getClientIP(request);
+    const rateLimitKey = `password:${clientIP}`;
+    const rateLimit = await checkRateLimit(rateLimitKey, RATE_LIMIT_ATTEMPTS, RATE_LIMIT_WINDOW_MS);
+
+    if (!rateLimit.success) {
+      console.warn(`[Security] Rate limit exceeded for IP: ${clientIP}`);
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Too many attempts. Please try again later.',
+          retryAfter: rateLimit.reset,
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(rateLimit.reset - Math.floor(Date.now() / 1000)),
+            'X-RateLimit-Limit': String(RATE_LIMIT_ATTEMPTS),
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': String(rateLimit.reset),
+          },
+        }
+      );
+    }
+
     const { code, password } = await request.json();
 
     if (!code || !password) {
@@ -61,11 +91,25 @@ export async function POST(request: Request) {
     const isValid = await bcrypt.compare(password, qrCode.password_hash);
 
     if (!isValid) {
+      console.warn(`[Security] Failed password attempt for QR code: ${code} from IP: ${clientIP}`);
       return NextResponse.json(
-        { success: false, error: 'Invalid password' },
-        { status: 401 }
+        {
+          success: false,
+          error: 'Invalid password',
+          attemptsRemaining: rateLimit.remaining,
+        },
+        {
+          status: 401,
+          headers: {
+            'X-RateLimit-Remaining': String(rateLimit.remaining),
+            'X-RateLimit-Reset': String(rateLimit.reset),
+          },
+        }
       );
     }
+
+    // Reset rate limit on successful verification
+    await resetRateLimit(rateLimitKey);
 
     // If custom landing page is enabled, redirect there
     if (qrCode.show_landing_page) {

@@ -4,6 +4,12 @@ import { TeamInviteEmail } from '@/emails/TeamInviteEmail';
 import { SubscriptionConfirmEmail } from '@/emails/SubscriptionConfirmEmail';
 import { PaymentFailedEmail } from '@/emails/PaymentFailedEmail';
 import { ScanLimitReachedEmail } from '@/emails/ScanLimitReachedEmail';
+import { OnboardingDay1 } from '@/emails/OnboardingDay1';
+import { OnboardingDay3 } from '@/emails/OnboardingDay3';
+import { OnboardingDay7 } from '@/emails/OnboardingDay7';
+import { TrialEndingSoon } from '@/emails/TrialEndingSoon';
+import { MilestoneEmail } from '@/emails/MilestoneEmail';
+import { UsageLimitWarning } from '@/emails/UsageLimitWarning';
 
 // Lazy initialization of Resend client
 let resendClient: Resend | null = null;
@@ -189,6 +195,196 @@ export async function sendScanLimitReachedEmail(
     return { success: true, id: data?.id };
   } catch (err) {
     console.error('Error sending scan limit reached email:', err);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+/**
+ * Send Day 1 onboarding email
+ */
+export async function sendOnboardingDay1Email(
+  to: string,
+  userName?: string
+): Promise<EmailResult> {
+  try {
+    const resend = getResend();
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      replyTo: REPLY_TO,
+      subject: 'Create your first QR code in 60 seconds',
+      react: OnboardingDay1({ userName }),
+    });
+
+    if (error) {
+      console.error('Failed to send onboarding day 1 email:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, id: data?.id };
+  } catch (err) {
+    console.error('Error sending onboarding day 1 email:', err);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+/**
+ * Send Day 3 onboarding email
+ */
+export async function sendOnboardingDay3Email(
+  to: string,
+  userName?: string
+): Promise<EmailResult> {
+  try {
+    const resend = getResend();
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      replyTo: REPLY_TO,
+      subject: '3 powerful features you might not know about',
+      react: OnboardingDay3({ userName }),
+    });
+
+    if (error) {
+      console.error('Failed to send onboarding day 3 email:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, id: data?.id };
+  } catch (err) {
+    console.error('Error sending onboarding day 3 email:', err);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+/**
+ * Send Day 7 onboarding email
+ */
+export async function sendOnboardingDay7Email(
+  to: string,
+  userName?: string
+): Promise<EmailResult> {
+  try {
+    const resend = getResend();
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      replyTo: REPLY_TO,
+      subject: 'You\'ve been using QRWolf for a week - here\'s what\'s next',
+      react: OnboardingDay7({ userName }),
+    });
+
+    if (error) {
+      console.error('Failed to send onboarding day 7 email:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, id: data?.id };
+  } catch (err) {
+    console.error('Error sending onboarding day 7 email:', err);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+/**
+ * Send trial ending soon email (Day 11 of trial)
+ */
+export async function sendTrialEndingSoonEmail(
+  to: string,
+  userName: string | undefined,
+  daysRemaining: number
+): Promise<EmailResult> {
+  try {
+    const resend = getResend();
+    const dayText = daysRemaining === 1 ? '1 day' : `${daysRemaining} days`;
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      replyTo: REPLY_TO,
+      subject: `Your Pro trial ends in ${dayText}`,
+      react: TrialEndingSoon({ userName, daysRemaining }),
+    });
+
+    if (error) {
+      console.error('Failed to send trial ending email:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, id: data?.id };
+  } catch (err) {
+    console.error('Error sending trial ending email:', err);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+/**
+ * Send milestone celebration email
+ */
+export async function sendMilestoneEmail(
+  to: string,
+  userName: string | undefined,
+  milestoneType: 'scans_50' | 'qr_codes_5',
+  milestoneValue: number
+): Promise<EmailResult> {
+  try {
+    const resend = getResend();
+
+    const subjects = {
+      scans_50: 'Your QR codes hit 50 scans!',
+      qr_codes_5: "You've created 5 QR codes!",
+    };
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      replyTo: REPLY_TO,
+      subject: subjects[milestoneType],
+      react: MilestoneEmail({ userName, milestoneType, milestoneValue }),
+    });
+
+    if (error) {
+      console.error('Failed to send milestone email:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, id: data?.id };
+  } catch (err) {
+    console.error('Error sending milestone email:', err);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+/**
+ * Send 80% usage warning email
+ */
+export async function sendUsageLimitWarningEmail(
+  to: string,
+  userName: string | undefined,
+  currentUsage: number,
+  limit: number,
+  currentPlan: 'free' | 'pro'
+): Promise<EmailResult> {
+  try {
+    const resend = getResend();
+    const percentUsed = Math.round((currentUsage / limit) * 100);
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      replyTo: REPLY_TO,
+      subject: `You've used ${percentUsed}% of your monthly scans`,
+      react: UsageLimitWarning({ userName, currentUsage, limit, currentPlan }),
+    });
+
+    if (error) {
+      console.error('Failed to send usage warning email:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, id: data?.id };
+  } catch (err) {
+    console.error('Error sending usage warning email:', err);
     return { success: false, error: 'Failed to send email' };
   }
 }

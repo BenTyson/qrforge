@@ -69,3 +69,61 @@ export function isWithinScanLimit(tier: SubscriptionTier, currentCount: number):
   if (limit === -1) return true; // unlimited
   return currentCount < limit;
 }
+
+/**
+ * Get effective tier considering trial status
+ * Handles both Stripe trials (subscription_status: 'trialing') and legacy database trials
+ */
+export function getEffectiveTier(
+  subscriptionTier: SubscriptionTier,
+  trialEndsAt: string | null | undefined,
+  subscriptionStatus?: string | null
+): SubscriptionTier {
+  // If on a Stripe trial (status is 'trialing'), they have Pro access
+  if (subscriptionStatus === 'trialing' && subscriptionTier === 'pro') {
+    return 'pro';
+  }
+
+  // If already paid (active subscription), return actual tier
+  if (subscriptionTier !== 'free') {
+    return subscriptionTier;
+  }
+
+  // Legacy: Check database-based trial (trial_ends_at field)
+  if (trialEndsAt) {
+    const trialEnd = new Date(trialEndsAt);
+    if (trialEnd > new Date()) {
+      return 'pro'; // Trial gives Pro features
+    }
+  }
+
+  return 'free';
+}
+
+/**
+ * Check if user's trial is active
+ * Handles both Stripe trials and legacy database trials
+ */
+export function isTrialActive(
+  trialEndsAt: string | null | undefined,
+  subscriptionStatus?: string | null
+): boolean {
+  // Stripe trial
+  if (subscriptionStatus === 'trialing') return true;
+  // Legacy database trial
+  if (!trialEndsAt) return false;
+  return new Date(trialEndsAt) > new Date();
+}
+
+/**
+ * Get days remaining in trial
+ * For Stripe trials, this requires fetching from Stripe (not available here)
+ * For legacy trials, uses the trial_ends_at field
+ */
+export function getTrialDaysRemaining(trialEndsAt: string | null | undefined): number {
+  if (!trialEndsAt) return 0;
+  const now = new Date();
+  const end = new Date(trialEndsAt);
+  if (end <= now) return 0;
+  return Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+}

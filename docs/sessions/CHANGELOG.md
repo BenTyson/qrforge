@@ -4,6 +4,80 @@ Session-by-session history of development work. Most recent first.
 
 ---
 
+## January 25, 2026 (Evening Session)
+
+### Growth Roadmap Implementation (Sessions 1-10)
+Implemented all 10 sessions from the Growth Roadmap in a single extended session.
+
+#### Session 1: Referral Program
+- Database migration: `20260125000001_add_referral_system.sql`
+- Added `referral_code`, `referred_by`, `referral_credits` to profiles table
+- Created `referrals` tracking table with RLS policies
+- `src/lib/referrals/index.ts` - Server-side referral logic
+- `src/lib/referrals/client.ts` - Client-side utilities (copy link, generate link)
+- `src/components/dashboard/ReferralWidget.tsx` - Dashboard widget with copy link, stats
+- Updated signup flow to track `?ref=CODE` parameter
+- Stripe webhook credits referrer $5 when referee upgrades
+
+#### Session 2: Onboarding Email Sequence
+- Database migration: `20260125000002_add_onboarding_email_tracking.sql`
+- Email templates: `OnboardingDay1.tsx`, `OnboardingDay3.tsx`, `OnboardingDay7.tsx`
+- Cron endpoint: `/api/cron/onboarding-emails`
+- Tracks sent emails to prevent duplicates
+
+#### Session 3: 7-Day Stripe Trial (changed from 14-day database trial)
+- Database migration: `20260125000003_add_trial_support.sql`
+- **Stripe-based trial** (requires credit card, auto-converts)
+- Updated `/api/stripe/checkout` to add `trial_period_days: 7` for Pro plan
+- Webhook handles `trialing` status and `customer.subscription.trial_will_end` event
+- `src/components/dashboard/TrialBanner.tsx` - Shows days remaining
+- `src/components/dashboard/StartTrialPrompt.tsx` - "Start Free Trial" CTA (redirects to Stripe checkout)
+- Updated `getEffectiveTier()` and `isTrialActive()` to handle Stripe trial status
+- Pricing section shows "7-day free trial" badge on Pro tier
+
+#### Session 4: Sentry Error Tracking (Prepared)
+- Made Sentry imports conditional in `next.config.ts`
+- Updated `error.tsx` and `global-error.tsx` error boundaries
+- Ready to install: `npx @sentry/wizard@latest -i nextjs`
+
+#### Session 5: Password Rate Limiting
+- Created `src/lib/rate-limit.ts` with Redis (Upstash) + in-memory fallback
+- Updated `/api/qr/verify-password` - 5 attempts per IP per 15 minutes
+- Returns 429 Too Many Requests when limit exceeded
+
+#### Session 6: Expanded Social Proof
+- Expanded testimonials from 3 to 10 in `src/constants/homepage.tsx`
+- Added trust badges to `TestimonialsSection.tsx`:
+  - "500+ businesses"
+  - "99.9% uptime"
+  - "GDPR compliant"
+  - "Privacy-first"
+
+#### Session 7: Milestone Emails
+- `src/emails/MilestoneEmail.tsx` - 50 scans, 5 QR codes celebration
+- `src/emails/UsageLimitWarning.tsx` - 80% usage warning
+- Cron endpoint: `/api/cron/milestone-emails`
+
+#### Session 8: Print-Ready PDF Export (Code Only)
+- Created `src/lib/qr/pdf-generator.ts` - PDF generation with crop marks, bleed, paper sizes
+- Created `src/components/qr/PDFOptionsModal.tsx` - Options UI
+- **TODO**: Install `jspdf`, add UI button to QR Studio
+
+#### Session 9: Comparison Pages
+- Created `src/lib/competitors.ts` - Competitor data (QR Code Monkey, QR Tiger, Beaconstac)
+- Created `/vs/[competitor]/page.tsx` - Dynamic comparison pages
+- Pages: `/vs/qr-code-monkey`, `/vs/qr-tiger`, `/vs/beaconstac`
+
+#### Session 10: Content CTAs (Component Only)
+- Created `src/components/content/ArticleCTA.tsx` - Inline and banner CTAs
+- **TODO**: Add to top-traffic articles
+
+#### Documentation
+- Created `docs/GROWTH-IMPLEMENTATION-TODO.md` - Remaining tasks checklist
+- Updated `docs/README.md` - Added link to TODO doc
+
+---
+
 ## January 25, 2026
 
 ### Landing Page Background Modernization

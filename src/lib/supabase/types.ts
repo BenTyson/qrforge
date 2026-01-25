@@ -63,6 +63,41 @@ export interface Scan {
   referrer: string | null;
 }
 
+// A/B Testing types
+export type ABTestStatus = 'draft' | 'running' | 'paused' | 'completed';
+
+export interface ABTest {
+  id: string;
+  qr_code_id: string;
+  name: string;
+  status: ABTestStatus;
+  started_at: string | null;
+  completed_at: string | null;
+  winner_variant_id: string | null;
+  target_confidence: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ABVariant {
+  id: string;
+  test_id: string;
+  name: string;
+  slug: string;
+  destination_url: string;
+  weight: number;
+  scan_count: number;
+  created_at: string;
+}
+
+export interface ABAssignment {
+  id: string;
+  test_id: string;
+  ip_hash: string;
+  variant_id: string;
+  assigned_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -79,6 +114,21 @@ export interface Database {
       scans: {
         Row: Scan;
         Insert: Omit<Scan, 'id' | 'scanned_at'>;
+        Update: never;
+      };
+      ab_tests: {
+        Row: ABTest;
+        Insert: Omit<ABTest, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<ABTest, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      ab_variants: {
+        Row: ABVariant;
+        Insert: Omit<ABVariant, 'id' | 'created_at' | 'scan_count'>;
+        Update: Partial<Omit<ABVariant, 'id' | 'created_at'>>;
+      };
+      ab_assignments: {
+        Row: ABAssignment;
+        Insert: Omit<ABAssignment, 'id' | 'assigned_at'>;
         Update: never;
       };
     };

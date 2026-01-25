@@ -1,8 +1,8 @@
 # QRWolf Feature Roadmap
 
-> **Last Updated**: January 24, 2026
+> **Last Updated**: January 25, 2026
 > **Status**: Active development
-> **Current Features**: 28 QR types, Analytics, Bulk generation, API, 151 SEO articles
+> **Current Features**: 28 QR types, Analytics, Bulk generation, API, A/B Testing, 151 SEO articles
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -30,74 +30,6 @@ This document tracks planned features in priority order. Work through sequential
 ---
 
 ## NEXT UP
-
-### 8. A/B Testing for Dynamic QR Codes
-**Tier**: MAJOR | **Priority**: 8 of 24 | **Effort**: ~1 week
-
-**What**: Split traffic between two destinations to test which performs better.
-
-**Why build this**:
-- No free QR generator offers this
-- Strong upsell to Pro/Business (marketing teams need this)
-- Positions QRWolf as "marketing-focused"
-
-**Implementation**:
-- Pro feature (or Business only)
-- Add A/B configuration to dynamic QR codes
-- Split traffic 50/50 (or configurable)
-- Track conversions per variant
-
-**Database changes**:
-```sql
--- Add to qr_codes table
-ab_enabled BOOLEAN DEFAULT false,
-ab_variant_b_url TEXT,
-ab_split_percentage INTEGER DEFAULT 50, -- percentage to variant B
-
--- Add to scans table
-ab_variant CHAR(1) -- 'A' or 'B'
-```
-
-**UI Components**:
-- Toggle: "Enable A/B Testing" in Options step
-- Input: Variant B destination URL
-- Slider: Traffic split percentage
-- Analytics: Side-by-side comparison chart
-
-**Redirect logic update** (`/r/[code]/route.ts`):
-```typescript
-if (qrCode.ab_enabled && qrCode.ab_variant_b_url) {
-  const variant = Math.random() * 100 < qrCode.ab_split_percentage ? 'B' : 'A';
-  const destination = variant === 'B' ? qrCode.ab_variant_b_url : qrCode.destination_url;
-  // Log variant in scan record
-  // Redirect to destination
-}
-```
-
-**Analytics UI**:
-- Variant A vs B scan counts
-- Conversion tracking (requires destination pixel/callback)
-- Statistical significance indicator
-- "Winner" declaration when confidence reached
-
-**Files to create/modify**:
-- Update Options step with A/B toggle
-- Update redirect route with split logic
-- `src/components/analytics/ABTestResults.tsx`
-- Database migration
-
-**Content to publish after**:
-- New article: "QR Code A/B Testing Guide"
-
-**Acceptance criteria**:
-- [ ] A/B toggle in QR options (Pro+)
-- [ ] Variant B URL input
-- [ ] Traffic split works correctly
-- [ ] Scans tracked per variant
-- [ ] Analytics shows comparison
-- [ ] Can disable A/B test
-
----
 
 ### 9. Template Gallery
 **Tier**: STANDARD | **Priority**: 9 of 24 | **Effort**: ~2-3 days
@@ -466,6 +398,7 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| A/B Testing for Dynamic QR Codes | 2026-01-25 | Pro+ feature. Split traffic between destinations with configurable weights (10-90%). Deterministic variant assignment (same visitor = same variant). Statistical significance calculations with 95% confidence threshold. Dashboard with comparison charts, pause/resume, declare winner. Separate tables: ab_tests, ab_variants, ab_assignments. |
 | Geo/Location QR Code Type | 2026-01-24 | 28th QR type. Coordinates input with "Use my current location" button. Landing page with OpenStreetMap embed, Open in Google Maps, Open in Apple Maps, and Get Directions buttons. Free tier. |
 | Event/Calendar QR Code Type | 2026-01-24 | 27th QR type. Event form with title, dates, location, description. Landing page with Add to Google Calendar, Apple Calendar (.ics), and Outlook buttons. All-day event support. Free tier. |
 | Discord QR Code Type | 2026-01-24 | 28th QR type. Invite code-based input with URL parsing (discord.gg and discord.com/invite). Direct redirect to discord.gg/code. Free tier social type. |

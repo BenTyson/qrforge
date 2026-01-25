@@ -104,6 +104,40 @@ interface QRStudioProps {
   qrCodeId?: string;
 }
 
+// Helper function to extract destination URL from content for A/B testing display
+function getDestinationUrlFromContent(content: QRContent | null, contentType: QRContentType | null): string | undefined {
+  if (!content || !contentType) return undefined;
+
+  const c = content as unknown as Record<string, unknown>;
+
+  switch (contentType) {
+    case 'url':
+      return c.url as string || undefined;
+    case 'facebook':
+      return c.profileUrl as string || undefined;
+    case 'instagram':
+      return c.username ? `instagram.com/${String(c.username).replace('@', '')}` : undefined;
+    case 'linkedin':
+      return c.username ? `linkedin.com/in/${String(c.username).replace('@', '')}` : undefined;
+    case 'x':
+      return c.username ? `x.com/${String(c.username).replace('@', '')}` : undefined;
+    case 'tiktok':
+      return c.username ? `tiktok.com/@${String(c.username).replace('@', '')}` : undefined;
+    case 'youtube':
+      return c.videoId ? `youtube.com/watch?v=${c.videoId}` : undefined;
+    case 'spotify':
+      return c.spotifyId ? `open.spotify.com/.../${c.spotifyId}` : undefined;
+    case 'twitch':
+      return c.username ? `twitch.tv/${c.username}` : undefined;
+    case 'discord':
+      return c.inviteCode ? `discord.gg/${c.inviteCode}` : undefined;
+    case 'whatsapp':
+      return c.phone ? `wa.me/${String(c.phone).replace(/\D/g, '')}` : undefined;
+    default:
+      return undefined;
+  }
+}
+
 export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
   const router = useRouter();
   const [state, actions] = useQRStudioState({ mode, qrCodeId });
@@ -461,6 +495,13 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
                 onActiveFromChange={actions.setActiveFrom}
                 activeUntil={state.activeUntil}
                 onActiveUntilChange={actions.setActiveUntil}
+                abTestEnabled={state.abTestEnabled}
+                onAbTestEnabledChange={actions.setAbTestEnabled}
+                abVariantBUrl={state.abVariantBUrl}
+                onAbVariantBUrlChange={actions.setAbVariantBUrl}
+                abSplitPercentage={state.abSplitPercentage}
+                onAbSplitPercentageChange={actions.setAbSplitPercentage}
+                currentDestinationUrl={getDestinationUrlFromContent(state.content, state.selectedType)}
                 canAccessProTypes={canAccessProTypes}
                 userTier={state.userTier}
                 onContinue={actions.goForward}

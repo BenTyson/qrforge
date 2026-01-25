@@ -84,6 +84,11 @@ export interface QRStudioState {
   landingPageDescription: string;
   landingPageButtonText: string;
 
+  // A/B Testing
+  abTestEnabled: boolean;
+  abVariantBUrl: string;
+  abSplitPercentage: number;  // 10-90, represents variant B percentage
+
   // User context
   userId: string | null;
   userTier: 'free' | 'pro' | 'business' | null;
@@ -131,6 +136,11 @@ export interface QRStudioActions {
   setLandingPageDescription: (description: string) => void;
   setLandingPageButtonText: (text: string) => void;
 
+  // A/B Testing
+  setAbTestEnabled: (enabled: boolean) => void;
+  setAbVariantBUrl: (url: string) => void;
+  setAbSplitPercentage: (percent: number) => void;
+
   // Persistence
   saveQRCode: () => Promise<{ id: string; shortCode: string } | null>;
   loadQRCode: (id: string) => Promise<boolean>;
@@ -170,6 +180,11 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
   const [landingPageTitle, setLandingPageTitle] = useState('');
   const [landingPageDescription, setLandingPageDescription] = useState('');
   const [landingPageButtonText, setLandingPageButtonText] = useState('Continue');
+
+  // A/B Testing
+  const [abTestEnabled, setAbTestEnabled] = useState(false);
+  const [abVariantBUrl, setAbVariantBUrl] = useState('');
+  const [abSplitPercentage, setAbSplitPercentage] = useState(50);
 
   // User context
   const [userId, setUserId] = useState<string | null>(null);
@@ -440,6 +455,46 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     return `qrwolf-${selectedType || 'code'}`;
   }, [qrName, selectedType]);
 
+  // Helper: Extract destination URL from content based on type
+  const getDestinationUrlFromContent = useCallback((contentData: QRContent, type: QRContentType | null): string | null => {
+    if (!contentData || !type) return null;
+
+    const c = contentData as unknown as Record<string, unknown>;
+
+    switch (type) {
+      case 'url':
+        return c.url as string || null;
+      case 'facebook':
+        return c.profileUrl as string || null;
+      case 'instagram':
+        return c.username ? `https://instagram.com/${String(c.username).replace('@', '')}` : null;
+      case 'linkedin':
+        return c.username ? `https://linkedin.com/in/${String(c.username).replace('@', '')}` : null;
+      case 'x':
+        return c.username ? `https://x.com/${String(c.username).replace('@', '')}` : null;
+      case 'tiktok':
+        return c.username ? `https://tiktok.com/@${String(c.username).replace('@', '')}` : null;
+      case 'youtube':
+        return c.videoId ? `https://youtube.com/watch?v=${c.videoId}` : null;
+      case 'spotify':
+        return c.spotifyId ? `https://open.spotify.com/${c.contentType || 'track'}/${c.spotifyId}` : null;
+      case 'twitch':
+        return c.username ? `https://twitch.tv/${c.username}` : null;
+      case 'discord':
+        return c.inviteCode ? `https://discord.gg/${c.inviteCode}` : null;
+      case 'whatsapp': {
+        if (!c.phone) return null;
+        const phone = String(c.phone).replace(/\D/g, '');
+        let url = `https://wa.me/${phone}`;
+        if (c.message) url += `?text=${encodeURIComponent(String(c.message))}`;
+        return url;
+      }
+      default:
+        // For other types, there might not be a simple URL
+        return null;
+    }
+  }, []);
+
   // Save QR code
   const saveQRCode = useCallback(async (): Promise<{ id: string; shortCode: string } | null> => {
     // Clear any previous blocked reason
@@ -520,6 +575,7 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
       }
 
       // Update or insert based on mode
+      let qrCodeId: string;
       if (mode === 'edit' && savedQRId) {
         const { error } = await supabase
           .from('qr_codes')
@@ -527,7 +583,7 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
           .eq('id', savedQRId);
 
         if (error) throw error;
-        return { id: savedQRId, shortCode: newShortCode };
+        qrCodeId = savedQRId;
       } else {
         const { data, error } = await supabase
           .from('qr_codes')
@@ -539,8 +595,76 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
 
         setSavedQRId(data.id);
         setShortCode(newShortCode);
-        return { id: data.id, shortCode: newShortCode };
+        qrCodeId = data.id;
       }
+
+      // Handle A/B testing in a separate try-catch so it doesn't fail the main save
+      // A/B test creation is optional - QR code save should succeed even if A/B test fails
+      try {
+        if (abTestEnabled && abVariantBUrl.trim()) {
+          // Get the primary destination URL from content
+          const primaryUrl = getDestinationUrlFromContent(normalizedContent, selectedType);
+
+          if (primaryUrl) {
+            // First, delete any existing A/B test for this QR code (we'll recreate it)
+            // This handles the case where user modifies an existing test
+            await supabase
+              .from('ab_tests')
+              .delete()
+              .eq('qr_code_id', qrCodeId)
+              .neq('status', 'completed');  // Don't delete completed tests
+
+            // Create the A/B test
+            const { data: testData, error: testError } = await supabase
+              .from('ab_tests')
+              .insert({
+                qr_code_id: qrCodeId,
+                name: `A/B Test for ${qrName.trim() || selectedType}`,
+                status: 'running',
+                started_at: new Date().toISOString(),
+                target_confidence: 0.95,
+              })
+              .select('id')
+              .single();
+
+            if (testError) {
+              console.error('Failed to create A/B test:', testError);
+            } else if (testData) {
+              // Create the variants
+              const variantA = {
+                test_id: testData.id,
+                name: 'Control',
+                slug: 'a',
+                destination_url: primaryUrl,
+                weight: 100 - abSplitPercentage,
+              };
+
+              const variantB = {
+                test_id: testData.id,
+                name: 'Variant B',
+                slug: 'b',
+                destination_url: abVariantBUrl.trim(),
+                weight: abSplitPercentage,
+              };
+
+              const { error: variantsError } = await supabase
+                .from('ab_variants')
+                .insert([variantA, variantB]);
+
+              if (variantsError) {
+                console.error('Failed to create A/B variants:', variantsError);
+              }
+            }
+          }
+        }
+        // Note: We don't auto-pause tests when abTestEnabled is false
+        // Users can pause tests explicitly from the A/B test management page
+      } catch (abTestError) {
+        // Log A/B test error but don't fail the QR code save
+        console.error('A/B test operation failed (non-critical):', abTestError);
+      }
+
+      return { id: qrCodeId, shortCode: newShortCode };
     } catch (err) {
       console.error('Failed to save QR code:', JSON.stringify(err, null, 2), err);
       // Handle Supabase errors (plain objects with message property) and Error instances
@@ -553,7 +677,7 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     } finally {
       setIsSaving(false);
     }
-  }, [content, selectedType, userId, userTierLoading, qrName, style, mode, savedQRId, shortCode, generateShortCode, expiresAt, passwordEnabled, password, scheduledEnabled, activeFrom, activeUntil]);
+  }, [content, selectedType, userId, userTierLoading, qrName, style, mode, savedQRId, shortCode, generateShortCode, expiresAt, passwordEnabled, password, scheduledEnabled, activeFrom, activeUntil, abTestEnabled, abVariantBUrl, abSplitPercentage]);
 
   // Load existing QR code for edit mode
   const loadQRCode = useCallback(async (id: string): Promise<boolean> => {
@@ -605,6 +729,39 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         }
       }
 
+      // Load A/B test if exists (optional, don't fail if it doesn't work)
+      try {
+        const { data: testData } = await supabase
+          .from('ab_tests')
+          .select(`
+            id,
+            status,
+            ab_variants (
+              id,
+              name,
+              slug,
+              destination_url,
+              weight
+            )
+          `)
+          .eq('qr_code_id', id)
+          .in('status', ['draft', 'running', 'paused'])
+          .single();
+
+        if (testData?.ab_variants && Array.isArray(testData.ab_variants) && testData.ab_variants.length >= 2) {
+          setAbTestEnabled(testData.status === 'running');
+          // Find variant B (slug = 'b')
+          const variantB = testData.ab_variants.find((v: { slug: string }) => v.slug === 'b');
+          if (variantB) {
+            setAbVariantBUrl(variantB.destination_url);
+            setAbSplitPercentage(variantB.weight);
+          }
+        }
+      } catch (abTestError) {
+        // A/B test loading is optional - don't fail the main load
+        console.error('Failed to load A/B test (non-critical):', abTestError);
+      }
+
       return true;
     } catch (err) {
       console.error('Failed to load QR code:', err);
@@ -630,6 +787,9 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     setLandingPageTitle('');
     setLandingPageDescription('');
     setLandingPageButtonText('Continue');
+    setAbTestEnabled(false);
+    setAbVariantBUrl('');
+    setAbSplitPercentage(50);
     setSavedQRId(null);
     setShortCode(null);
     setSaveError(null);
@@ -656,6 +816,9 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     landingPageTitle,
     landingPageDescription,
     landingPageButtonText,
+    abTestEnabled,
+    abVariantBUrl,
+    abSplitPercentage,
     userId,
     userTier,
     userTierLoading,
@@ -690,6 +853,9 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     setLandingPageTitle,
     setLandingPageDescription,
     setLandingPageButtonText,
+    setAbTestEnabled,
+    setAbVariantBUrl,
+    setAbSplitPercentage,
     saveQRCode,
     loadQRCode,
     reset,

@@ -5,6 +5,8 @@ import { headers } from 'next/headers';
 import crypto from 'crypto';
 import { SCAN_LIMITS } from '@/lib/stripe/config';
 import { sendScanLimitReachedEmail } from '@/lib/email';
+import { selectVariant } from '@/lib/ab-testing/variant-selector';
+import type { ABVariant, ABAssignment } from '@/lib/ab-testing/types';
 
 // Get the base URL for redirects (supports ngrok/proxy scenarios)
 function getBaseUrl(request: Request): string {
@@ -191,8 +193,83 @@ export async function GET(
     }
   }
 
-  // Get destination URL
-  let destinationUrl = qrCode.destination_url;
+  // Check for active A/B test and select variant
+  const adminClient = createAdminClient();
+  let abVariantUrl: string | null = null;
+
+  try {
+    const { data: test } = await adminClient
+      .from('ab_tests')
+      .select(`
+        id,
+        ab_variants (
+          id,
+          test_id,
+          name,
+          slug,
+          destination_url,
+          weight,
+          scan_count,
+          created_at
+        )
+      `)
+      .eq('qr_code_id', qrCode.id)
+      .eq('status', 'running')
+      .single();
+
+    if (test?.ab_variants && Array.isArray(test.ab_variants) && test.ab_variants.length >= 2) {
+      const variants = test.ab_variants as ABVariant[];
+
+      // Get visitor's IP hash for deterministic assignment
+      const headersList = await headers();
+      const ip = headersList.get('x-forwarded-for')?.split(',')[0] ||
+                 headersList.get('x-real-ip') ||
+                 'unknown';
+      const visitorIpHash = crypto.createHash('sha256').update(ip).digest('hex').slice(0, 16);
+
+      // Check for existing assignment
+      const { data: existingAssignment } = await adminClient
+        .from('ab_assignments')
+        .select('id, test_id, ip_hash, variant_id, assigned_at')
+        .eq('test_id', test.id)
+        .eq('ip_hash', visitorIpHash)
+        .single();
+
+      // Select variant (deterministic based on hash)
+      const selectedVariantResult = selectVariant(
+        test.id,
+        visitorIpHash,
+        variants,
+        existingAssignment as ABAssignment | null
+      );
+
+      // Create assignment if new visitor (async, non-blocking)
+      if (!existingAssignment) {
+        adminClient
+          .from('ab_assignments')
+          .insert({
+            test_id: test.id,
+            ip_hash: visitorIpHash,
+            variant_id: selectedVariantResult.id,
+          })
+          .then(({ error }) => {
+            if (error) {
+              console.error('[A/B Test] Failed to create assignment:', error);
+            }
+          });
+      }
+
+      // Use variant's destination URL
+      abVariantUrl = selectedVariantResult.destination_url;
+      console.log('[A/B Test] Routing to variant:', selectedVariantResult.slug, selectedVariantResult.name);
+    }
+  } catch (err) {
+    // A/B test lookup failed, continue with normal routing
+    console.error('[A/B Test] Error checking for test:', err);
+  }
+
+  // Get destination URL (A/B variant URL takes priority if set)
+  let destinationUrl = abVariantUrl || qrCode.destination_url;
 
   // If no destination URL, construct from content based on type
   if (!destinationUrl && qrCode.content) {

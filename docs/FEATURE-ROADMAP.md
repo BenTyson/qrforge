@@ -2,7 +2,7 @@
 
 > **Last Updated**: January 25, 2026
 > **Status**: Active development
-> **Current Features**: 28 QR types, Analytics, Bulk generation, API, A/B Testing, 151 SEO articles
+> **Current Features**: 28 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, 151 SEO articles
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -30,70 +30,6 @@ This document tracks planned features in priority order. Work through sequential
 ---
 
 ## NEXT UP
-
-### 9. Template Gallery
-**Tier**: STANDARD | **Priority**: 9 of 24 | **Effort**: ~2-3 days
-
-**What**: Pre-designed QR code templates by industry/use case.
-
-**Why build this**:
-- Reduces friction for new users
-- SEO opportunity: "QR code template for restaurant"
-- Upsell path (Pro templates with logos)
-
-**Implementation**:
-```
-Route: /templates
-Route: /templates/[category]
-```
-
-**Template structure**:
-```typescript
-interface QRTemplate {
-  id: string;
-  name: string;
-  category: 'restaurant' | 'retail' | 'real-estate' | 'events' | 'business';
-  description: string;
-  qrType: QRContentType;
-  defaultContent: Partial<QRContent>;
-  style: QRStyleConfig;
-  thumbnail: string;
-  isPro: boolean;
-}
-```
-
-**Categories**:
-- Restaurants (menu, reviews, wifi)
-- Retail (product info, loyalty, feedback)
-- Real Estate (listing, contact, virtual tour)
-- Events (registration, schedule, feedback)
-- Business Cards (vCard, LinkedIn, portfolio)
-
-**UI Components**:
-- Template gallery grid
-- Category filters
-- "Use This Template" button → pre-fills QR creator
-- Pro badge on premium templates
-
-**Files to create**:
-- `src/app/(marketing)/templates/page.tsx`
-- `src/app/(marketing)/templates/[category]/page.tsx`
-- `src/lib/templates/index.ts` (template definitions)
-- `src/components/templates/TemplateCard.tsx`
-- `src/components/templates/TemplateGallery.tsx`
-
-**Content to publish after**:
-- New blog: "QR Code Templates for Every Industry"
-
-**Acceptance criteria**:
-- [ ] Gallery page with all templates
-- [ ] Category filtering
-- [ ] "Use Template" pre-fills creator
-- [ ] Pro templates marked
-- [ ] Templates look professional
-- [ ] Mobile responsive gallery
-
----
 
 ### 10. Print-Ready PDF Export
 **Tier**: STANDARD | **Priority**: 10 of 24 | **Effort**: ~1-2 days
@@ -398,6 +334,7 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Template Gallery | 2026-01-25 | 40 templates across 7 categories (Restaurant, Business, Marketing, Events, Social, Retail, Creative). Templates are style presets (type + colors/patterns/frames). 13 free, 27 Pro. Gallery at `/templates` with filtering/search. Creator integration via `?template=` param. |
 | A/B Testing for Dynamic QR Codes | 2026-01-25 | Pro+ feature. Split traffic between destinations with configurable weights (10-90%). Deterministic variant assignment (same visitor = same variant). Statistical significance calculations with 95% confidence threshold. Dashboard with comparison charts, pause/resume, declare winner. Separate tables: ab_tests, ab_variants, ab_assignments. |
 | Geo/Location QR Code Type | 2026-01-24 | 28th QR type. Coordinates input with "Use my current location" button. Landing page with OpenStreetMap embed, Open in Google Maps, Open in Apple Maps, and Get Directions buttons. Free tier. |
 | Event/Calendar QR Code Type | 2026-01-24 | 27th QR type. Event form with title, dates, location, description. Landing page with Add to Google Calendar, Apple Calendar (.ics), and Outlook buttons. All-day event support. Free tier. |
@@ -472,6 +409,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-25 | Completed Template Gallery (Feature #9), 40 templates across 7 categories |
 | 2026-01-24 | Completed Geo/Location QR Code Type, 28th QR type with landing page and map buttons |
 | 2026-01-24 | Completed Event/Calendar QR Code Type, 27th QR type with landing page and calendar buttons |
 | 2026-01-24 | Completed Spotify QR Code Type (Feature #12), 25th QR type with landing page and embed |

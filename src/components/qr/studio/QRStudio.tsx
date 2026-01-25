@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useQRStudioState } from './hooks/useQRStudioState';
 import { QRStudioSidebar } from './QRStudioSidebar';
@@ -51,6 +51,8 @@ import type {
   SocialContent,
 } from '@/lib/qr/types';
 import { PRO_ONLY_TYPES } from '@/lib/qr/types';
+import { getTemplateById } from '@/lib/templates';
+import { Sparkles } from 'lucide-react';
 
 // Import step components from wizard
 import {
@@ -140,10 +142,26 @@ function getDestinationUrlFromContent(content: QRContent | null, contentType: QR
 
 export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [state, actions] = useQRStudioState({ mode, qrCodeId });
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [mobilePreviewExpanded, setMobilePreviewExpanded] = useState(false);
   const [isLoaded, setIsLoaded] = useState(mode === 'create');
+  const [templateLoaded, setTemplateLoaded] = useState(false);
+
+  // Load template from URL param in create mode
+  useEffect(() => {
+    if (mode !== 'create' || templateLoaded) return;
+
+    const templateParam = searchParams.get('template');
+    if (templateParam) {
+      const template = getTemplateById(templateParam);
+      if (template) {
+        actions.loadTemplate(template);
+      }
+    }
+    setTemplateLoaded(true);
+  }, [mode, searchParams, templateLoaded, actions]);
 
   // Load QR code data in edit mode
   useEffect(() => {
@@ -465,6 +483,8 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
                 onContinue={actions.goForward}
                 canContinue={actions.canGoForward()}
                 userTier={state.userTier}
+                templateId={state.templateId}
+                templateName={state.templateName}
               />
             )}
 
@@ -643,6 +663,8 @@ interface ContentStepProps {
   onContinue: () => void;
   canContinue: boolean;
   userTier: 'free' | 'pro' | 'business' | null;
+  templateId?: string | null;
+  templateName?: string;
 }
 
 function ContentStep({
@@ -654,6 +676,8 @@ function ContentStep({
   onContinue,
   canContinue,
   userTier: _userTier,
+  templateId,
+  templateName,
 }: ContentStepProps) {
   // State for basic form types
   const [urlValue, setUrlValue] = useState((content as URLContent | null)?.url || '');
@@ -986,6 +1010,23 @@ function ContentStep({
 
   return (
     <div className="space-y-6">
+      {/* Template banner */}
+      {templateId && templateName && (
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-primary/10 border border-primary/20">
+          <Sparkles className="w-5 h-5 text-primary flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="font-medium">Using template: {templateName}</p>
+            <p className="text-sm text-slate-400">Style applied. Add your content below.</p>
+          </div>
+          <Link
+            href="/templates"
+            className="text-xs text-slate-500 hover:text-slate-300 transition-colors flex-shrink-0"
+          >
+            Change
+          </Link>
+        </div>
+      )}
+
       <div>
         <h2 className="text-xl font-semibold mb-1">Enter Content</h2>
         <p className="text-muted-foreground text-sm">

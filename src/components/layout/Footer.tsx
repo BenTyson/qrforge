@@ -19,6 +19,7 @@ export function Footer() {
             &copy; {new Date().getFullYear()} QRWolf. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
+            <Link href="/templates" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Templates</Link>
             <Link href="/tools" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Tools</Link>
             <Link href="/learn" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Learn</Link>
             <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>

@@ -6,6 +6,19 @@ Session-by-session history of development work. Most recent first.
 
 ## January 25, 2026
 
+### Template Gallery
+- 40 pre-designed QR code templates across 7 categories (Restaurant, Business, Marketing, Events, Social, Retail, Creative)
+- Templates are style presets: pre-selected QR type + colors, patterns, gradients, and frames
+- 13 free templates, 27 Pro templates with tier gating
+- Gallery page at `/templates` with category filtering and search
+- Template cards show live QR preview with template styling
+- Pro upgrade modal for free users clicking Pro templates
+- Creator integration: `/qr-codes/create?template=[id]` loads template
+- Template banner in content step shows which template is being used
+- New components: `TemplateCard`, `TemplateSearch`, `TemplateGallery`, `ProTemplateModal`
+- Template data in `src/lib/templates/` with helper functions
+- Added "Templates" link to PublicNav and Footer
+
 ### A/B Testing for Dynamic QR Codes
 - New Pro+ feature for split-testing QR code destinations
 - Database schema: `ab_tests`, `ab_variants`, `ab_assignments` tables with RLS policies

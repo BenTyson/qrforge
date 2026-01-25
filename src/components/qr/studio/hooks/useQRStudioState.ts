@@ -42,7 +42,8 @@ import type {
   CouponContent,
   SocialContent,
 } from '@/lib/qr/types';
-import { DYNAMIC_REQUIRED_TYPES } from '@/lib/qr/types';
+import { DYNAMIC_REQUIRED_TYPES, QR_TYPE_CATEGORIES } from '@/lib/qr/types';
+import type { Template } from '@/lib/templates/types';
 import type { WizardStep } from '../../wizard';
 
 export const DEFAULT_STYLE: QRStyleOptions = {
@@ -57,6 +58,10 @@ export interface QRStudioState {
   // Mode
   mode: 'create' | 'edit';
   qrCodeId: string | null;
+
+  // Template
+  templateId: string | null;
+  templateName: string;
 
   // Current step
   currentStep: WizardStep;
@@ -115,6 +120,10 @@ export interface QRStudioActions {
   selectCategory: (category: string | null) => void;
   selectType: (type: QRContentType) => void;
 
+  // Template
+  loadTemplate: (template: Template) => void;
+  clearTemplate: () => void;
+
   // Content
   setContent: (content: QRContent | null) => void;
   setQrName: (name: string) => void;
@@ -160,6 +169,23 @@ interface UseQRStudioStateProps {
   qrCodeId?: string;
 }
 
+// Helper to get category for a QR type
+function getCategoryForType(type: QRContentType): string | null {
+  if (QR_TYPE_CATEGORIES.basic.includes(type as typeof QR_TYPE_CATEGORIES.basic[number])) {
+    return 'basic';
+  }
+  if (QR_TYPE_CATEGORIES.social.includes(type as typeof QR_TYPE_CATEGORIES.social[number])) {
+    return 'social';
+  }
+  if (QR_TYPE_CATEGORIES.media.includes(type as typeof QR_TYPE_CATEGORIES.media[number])) {
+    return 'media';
+  }
+  if (QR_TYPE_CATEGORIES.landing.includes(type as typeof QR_TYPE_CATEGORIES.landing[number])) {
+    return 'landing';
+  }
+  return null;
+}
+
 export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QRStudioState, QRStudioActions] {
   // Core state
   const [currentStep, setCurrentStep] = useState<WizardStep>(mode === 'edit' ? 'content' : 'type');
@@ -168,6 +194,10 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
   const [content, setContent] = useState<QRContent | null>(null);
   const [qrName, setQrName] = useState('');
   const [style, setStyle] = useState<QRStyleOptions>(DEFAULT_STYLE);
+
+  // Template state
+  const [templateId, setTemplateId] = useState<string | null>(null);
+  const [templateName, setTemplateName] = useState('');
 
   // Pro options
   const [expiresAt, setExpiresAt] = useState('');
@@ -441,6 +471,22 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
       setCurrentStep('content');
     }
   }, [mode]);
+
+  // Template loading
+  const loadTemplate = useCallback((template: Template) => {
+    setTemplateId(template.id);
+    setTemplateName(template.name);
+    setSelectedType(template.qrType);
+    setSelectedCategory(getCategoryForType(template.qrType));
+    setStyle({ ...DEFAULT_STYLE, ...template.style });
+    setContent(null); // Reset content - user will fill in
+    setCurrentStep('content'); // Skip type step
+  }, []);
+
+  const clearTemplate = useCallback(() => {
+    setTemplateId(null);
+    setTemplateName('');
+  }, []);
 
   // Style updates
   const updateStyle = useCallback((updates: Partial<QRStyleOptions>) => {
@@ -777,6 +823,8 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     setContent(null);
     setQrName('');
     setStyle(DEFAULT_STYLE);
+    setTemplateId(null);
+    setTemplateName('');
     setExpiresAt('');
     setPasswordEnabled(false);
     setPassword('');
@@ -800,6 +848,8 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
   const state: QRStudioState = {
     mode,
     qrCodeId: savedQRId,
+    templateId,
+    templateName,
     currentStep,
     selectedCategory,
     selectedType,
@@ -838,6 +888,8 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     canGoForward,
     selectCategory: setSelectedCategory,
     selectType,
+    loadTemplate,
+    clearTemplate,
     setContent,
     setQrName,
     isContentValid,

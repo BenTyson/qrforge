@@ -2,10 +2,14 @@
 
 import { createClient } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState, useCallback } from 'react';
 import type { ImagesContent } from '@/lib/qr/types';
+import {
+  LandingBackground,
+  LandingFooter,
+  LandingLoader
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -62,75 +66,38 @@ export default function GalleryLandingPage({ params }: PageProps) {
   }, [handleKeyDown]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LandingLoader />;
   }
 
   if (!content) {
     notFound();
   }
 
-  const accentColor = '#14b8a6'; // Default teal accent
+  const accentColor = '#14b8a6';
 
   return (
-    <div
-      className="min-h-screen py-8 px-4 relative overflow-hidden"
-      style={{
-        background: `radial-gradient(ellipse at top, ${accentColor}15 0%, transparent 50%),
-                     radial-gradient(ellipse at bottom right, ${accentColor}10 0%, transparent 50%),
-                     linear-gradient(to bottom, #0f172a, #1e293b)`,
-      }}
-    >
-      {/* Floating orbs */}
-      <div
-        className="absolute top-20 right-[10%] w-72 h-72 rounded-full blur-3xl opacity-15 animate-pulse"
-        style={{ backgroundColor: accentColor }}
-      />
-      <div
-        className="absolute bottom-40 left-[5%] w-56 h-56 rounded-full blur-2xl opacity-10 animate-pulse"
-        style={{ backgroundColor: accentColor, animationDelay: '1s' }}
-      />
-
-      {/* Dot pattern */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `radial-gradient(${accentColor} 1px, transparent 1px)`,
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      <div className="max-w-5xl mx-auto relative z-10">
+    <LandingBackground accentColor={accentColor} className="py-8 px-4">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div
-          className="text-center mb-8 animate-fade-in"
-        >
+        <div className="text-center mb-8 animate-fade-in">
           {content.title && (
-            <h1
-              className="text-3xl font-bold text-white mb-2"
-              style={{ textShadow: `0 0 40px ${accentColor}30` }}
-            >
+            <h1 className="text-3xl font-bold text-white mb-2">
               {content.title}
             </h1>
           )}
-          <div
-            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800/50 backdrop-blur rounded-full border border-white/10"
-          >
-            <svg className="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-800/50 backdrop-blur rounded-full border border-white/10">
+            <svg className="w-4 h-4 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
               <circle cx="8.5" cy="8.5" r="1.5" />
               <polyline points="21 15 16 10 5 21" />
             </svg>
-            <span className="text-slate-300 text-sm">
+            <span className="text-zinc-300 text-sm">
               {content.images.length} {content.images.length === 1 ? 'image' : 'images'}
             </span>
           </div>
         </div>
 
-        {/* Gallery Grid - Masonry-style */}
+        {/* Gallery Grid */}
         <div
           className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 animate-slide-up"
           style={{ animationDelay: '100ms' }}
@@ -139,11 +106,8 @@ export default function GalleryLandingPage({ params }: PageProps) {
             <button
               key={index}
               onClick={() => setSelectedIndex(index)}
-              className="group relative aspect-square overflow-hidden rounded-xl bg-slate-800/50 backdrop-blur border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300 hover:border-white/20 animate-fade-in"
-              style={{
-                animationDelay: `${150 + index * 50}ms`,
-                boxShadow: `0 8px 32px ${accentColor}10`,
-              }}
+              className="group relative aspect-square overflow-hidden rounded-xl bg-zinc-800/50 backdrop-blur border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300 hover:border-white/20 animate-fade-in"
+              style={{ animationDelay: `${150 + index * 50}ms` }}
             >
               <Image
                 src={image.url}
@@ -178,20 +142,7 @@ export default function GalleryLandingPage({ params }: PageProps) {
           ))}
         </div>
 
-        {/* Powered by */}
-        <p
-          className="mt-10 text-center text-sm text-slate-500 animate-slide-up"
-          style={{ animationDelay: '400ms' }}
-        >
-          Powered by{' '}
-          <Link
-            href="/"
-            className="font-medium transition-colors hover:text-primary"
-            style={{ color: accentColor }}
-          >
-            QRWolf
-          </Link>
-        </p>
+        <LandingFooter accentColor={accentColor} />
       </div>
 
       {/* Lightbox */}
@@ -247,7 +198,7 @@ export default function GalleryLandingPage({ params }: PageProps) {
             />
             {content.images[selectedIndex].caption && (
               <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-full text-center">
-                <p className="text-white text-lg font-medium px-4 py-2 bg-slate-900/80 backdrop-blur-sm rounded-full inline-block">
+                <p className="text-white text-lg font-medium px-4 py-2 bg-zinc-900/80 backdrop-blur-sm rounded-full inline-block">
                   {content.images[selectedIndex].caption}
                 </p>
               </div>
@@ -272,13 +223,13 @@ export default function GalleryLandingPage({ params }: PageProps) {
           )}
 
           {/* Counter */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-slate-900/80 backdrop-blur-sm rounded-full text-white/70 text-sm">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-zinc-900/80 backdrop-blur-sm rounded-full text-white/70 text-sm">
             {selectedIndex + 1} / {content.images.length}
           </div>
 
           {/* Thumbnail strip */}
           {content.images.length > 1 && (
-            <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2 p-2 bg-slate-900/80 backdrop-blur-sm rounded-lg max-w-[80vw] overflow-x-auto">
+            <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2 p-2 bg-zinc-900/80 backdrop-blur-sm rounded-lg max-w-[80vw] overflow-x-auto">
               {content.images.map((image, index) => (
                 <button
                   key={index}
@@ -321,6 +272,6 @@ export default function GalleryLandingPage({ params }: PageProps) {
           animation: scale-up 0.2s ease-out forwards;
         }
       `}</style>
-    </div>
+    </LandingBackground>
   );
 }

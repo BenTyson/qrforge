@@ -1,10 +1,15 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
 import type { BusinessContent } from '@/lib/qr/types';
 import type { ReactNode } from 'react';
 import { normalizeUrl } from '@/lib/utils';
+import {
+  LandingBackground,
+  LandingCard,
+  LandingCardContent,
+  LandingFooter
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -33,284 +38,222 @@ export default async function BusinessLandingPage({ params }: PageProps) {
   const vCardUrl = `data:text/vcard;charset=utf-8,${encodeURIComponent(vCardData)}`;
 
   return (
-    <div
-      className="min-h-screen py-12 px-4 relative overflow-hidden"
-      style={{
-        background: `radial-gradient(ellipse at top, ${accentColor}20 0%, transparent 50%),
-                     radial-gradient(ellipse at bottom right, ${accentColor}10 0%, transparent 40%),
-                     linear-gradient(180deg, #0f172a 0%, #020617 100%)`,
-      }}
-    >
-      {/* Background decoration */}
-      <div
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage: `radial-gradient(${accentColor}15 1px, transparent 1px)`,
-          backgroundSize: '32px 32px',
-        }}
-      />
-
-      {/* Floating accent orbs */}
-      <div
-        className="absolute top-20 left-10 w-64 h-64 rounded-full blur-[100px] opacity-20"
-        style={{ backgroundColor: accentColor }}
-      />
-      <div
-        className="absolute bottom-20 right-10 w-48 h-48 rounded-full blur-[80px] opacity-15"
-        style={{ backgroundColor: accentColor }}
-      />
-
-      <div className="max-w-md mx-auto relative z-10">
-        {/* Profile Card */}
-        <div
-          className="backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/10 animate-fade-in"
-          style={{
-            background: `linear-gradient(145deg, ${accentColor}08 0%, rgba(30,41,59,0.5) 50%, rgba(30,41,59,0.3) 100%)`,
-            boxShadow: `0 8px 32px ${accentColor}15`,
-          }}
-        >
-          {/* Photo */}
-          <div className="flex justify-center mb-5">
-            {content.photoUrl ? (
-              <div className="relative">
-                <div
-                  className="absolute inset-0 rounded-full blur-xl opacity-50"
-                  style={{ backgroundColor: accentColor }}
-                />
+    <LandingBackground accentColor={accentColor} className="py-12 px-4">
+      <div className="max-w-md mx-auto">
+        <LandingCard>
+          <LandingCardContent>
+            {/* Photo */}
+            <div className="flex justify-center mb-5">
+              {content.photoUrl ? (
                 <Image
                   src={content.photoUrl}
                   alt={content.name}
                   width={112}
                   height={112}
-                  className="relative w-28 h-28 rounded-full object-cover border-4 shadow-2xl"
-                  style={{
-                    borderColor: accentColor,
-                    boxShadow: `0 0 30px ${accentColor}40`,
-                  }}
+                  className="w-28 h-28 rounded-full object-cover border-2 border-white/10"
                   unoptimized
                 />
-              </div>
-            ) : (
-              <div
-                className="w-28 h-28 rounded-full flex items-center justify-center text-3xl font-bold text-white border-4"
-                style={{
-                  backgroundColor: `${accentColor}30`,
-                  borderColor: accentColor,
-                  boxShadow: `0 0 30px ${accentColor}40`,
-                }}
-              >
-                {content.name.charAt(0).toUpperCase()}
-              </div>
-            )}
-          </div>
-
-          {/* Name & Title */}
-          <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-white">{content.name}</h1>
-            {content.title && (
-              <p className="text-slate-300 mt-1">{content.title}</p>
-            )}
-            {content.company && (
-              <p className="text-slate-400 text-sm mt-1">{content.company}</p>
-            )}
-          </div>
-
-          {/* Bio */}
-          {content.bio && (
-            <p className="text-slate-300 text-center mb-6 text-sm leading-relaxed">{content.bio}</p>
-          )}
-
-          {/* Contact Info */}
-          <div className="space-y-3">
-            {content.email && (
-              <a
-                href={`mailto:${content.email}`}
-                className="flex items-center gap-3 p-3 rounded-xl backdrop-blur-md border border-white/5
-                           transition-all duration-300 hover:scale-[1.02] hover:border-white/10 animate-slide-up"
-                style={{
-                  background: `linear-gradient(135deg, ${accentColor}10 0%, transparent 100%)`,
-                  animationDelay: '100ms',
-                  animationFillMode: 'backwards',
-                }}
-              >
+              ) : (
                 <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: `${accentColor}25` }}
+                  className="w-28 h-28 rounded-full flex items-center justify-center text-3xl font-bold text-white border-2 border-white/10"
+                  style={{ backgroundColor: `${accentColor}30` }}
                 >
-                  <svg className="w-5 h-5" style={{ color: accentColor }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="2" y="4" width="20" height="16" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
+                  {content.name.charAt(0).toUpperCase()}
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs text-slate-400">Email</p>
-                  <p className="text-white text-sm truncate">{content.email}</p>
-                </div>
-                <svg className="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="m9 18 6-6-6-6"/>
-                </svg>
-              </a>
+              )}
+            </div>
+
+            {/* Name & Title */}
+            <div className="text-center mb-6">
+              <h1 className="text-2xl font-bold text-white">{content.name}</h1>
+              {content.title && (
+                <p className="text-zinc-300 mt-1">{content.title}</p>
+              )}
+              {content.company && (
+                <p className="text-zinc-400 text-sm mt-1">{content.company}</p>
+              )}
+            </div>
+
+            {/* Bio */}
+            {content.bio && (
+              <p className="text-zinc-300 text-center mb-6 text-sm leading-relaxed">{content.bio}</p>
             )}
 
-            {content.phone && (
-              <a
-                href={`tel:${content.phone}`}
-                className="flex items-center gap-3 p-3 rounded-xl backdrop-blur-md border border-white/5
-                           transition-all duration-300 hover:scale-[1.02] hover:border-white/10 animate-slide-up"
-                style={{
-                  background: `linear-gradient(135deg, ${accentColor}10 0%, transparent 100%)`,
-                  animationDelay: '150ms',
-                  animationFillMode: 'backwards',
-                }}
-              >
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: `${accentColor}25` }}
-                >
-                  <svg className="w-5 h-5" style={{ color: accentColor }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs text-slate-400">Phone</p>
-                  <p className="text-white text-sm truncate">{content.phone}</p>
-                </div>
-                <svg className="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="m9 18 6-6-6-6"/>
-                </svg>
-              </a>
-            )}
-
-            {content.website && (
-              <a
-                href={normalizeUrl(content.website)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 rounded-xl backdrop-blur-md border border-white/5
-                           transition-all duration-300 hover:scale-[1.02] hover:border-white/10 animate-slide-up"
-                style={{
-                  background: `linear-gradient(135deg, ${accentColor}10 0%, transparent 100%)`,
-                  animationDelay: '200ms',
-                  animationFillMode: 'backwards',
-                }}
-              >
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: `${accentColor}25` }}
-                >
-                  <svg className="w-5 h-5" style={{ color: accentColor }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="2" y1="12" x2="22" y2="12" />
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                  </svg>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs text-slate-400">Website</p>
-                  <p className="text-white text-sm truncate">{content.website}</p>
-                </div>
-                <svg className="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="m9 18 6-6-6-6"/>
-                </svg>
-              </a>
-            )}
-
-            {content.address && (
-              <a
-                href={`https://maps.google.com/?q=${encodeURIComponent(content.address)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 rounded-xl backdrop-blur-md border border-white/5
-                           transition-all duration-300 hover:scale-[1.02] hover:border-white/10 animate-slide-up"
-                style={{
-                  background: `linear-gradient(135deg, ${accentColor}10 0%, transparent 100%)`,
-                  animationDelay: '250ms',
-                  animationFillMode: 'backwards',
-                }}
-              >
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: `${accentColor}25` }}
-                >
-                  <svg className="w-5 h-5" style={{ color: accentColor }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs text-slate-400">Address</p>
-                  <p className="text-white text-sm">{content.address}</p>
-                </div>
-                <svg className="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="m9 18 6-6-6-6"/>
-                </svg>
-              </a>
-            )}
-          </div>
-
-          {/* Social Links */}
-          {content.socialLinks && content.socialLinks.length > 0 && (
-            <div
-              className="flex justify-center gap-3 mt-6 pt-6 border-t border-white/10 animate-fade-in"
-              style={{ animationDelay: '350ms', animationFillMode: 'backwards' }}
-            >
-              {content.socialLinks.map((social, index) => (
+            {/* Contact Info */}
+            <div className="space-y-3">
+              {content.email && (
                 <a
-                  key={index}
-                  href={normalizeUrl(social.url)}
+                  href={`mailto:${content.email}`}
+                  className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]
+                             transition-all duration-300 hover:bg-white/[0.05] animate-slide-up"
+                  style={{
+                    animationDelay: '100ms',
+                    animationFillMode: 'backwards',
+                  }}
+                >
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                    style={{ backgroundColor: `${accentColor}20` }}
+                  >
+                    <svg className="w-5 h-5" style={{ color: accentColor }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-zinc-400">Email</p>
+                    <p className="text-white text-sm truncate">{content.email}</p>
+                  </div>
+                  <svg className="w-4 h-4 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="m9 18 6-6-6-6"/>
+                  </svg>
+                </a>
+              )}
+
+              {content.phone && (
+                <a
+                  href={`tel:${content.phone}`}
+                  className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]
+                             transition-all duration-300 hover:bg-white/[0.05] animate-slide-up"
+                  style={{
+                    animationDelay: '150ms',
+                    animationFillMode: 'backwards',
+                  }}
+                >
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                    style={{ backgroundColor: `${accentColor}20` }}
+                  >
+                    <svg className="w-5 h-5" style={{ color: accentColor }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-zinc-400">Phone</p>
+                    <p className="text-white text-sm truncate">{content.phone}</p>
+                  </div>
+                  <svg className="w-4 h-4 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="m9 18 6-6-6-6"/>
+                  </svg>
+                </a>
+              )}
+
+              {content.website && (
+                <a
+                  href={normalizeUrl(content.website)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group w-11 h-11 rounded-full backdrop-blur-md border border-white/10
-                             flex items-center justify-center transition-all duration-300
-                             hover:scale-110 hover:border-white/30"
+                  className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]
+                             transition-all duration-300 hover:bg-white/[0.05] animate-slide-up"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    animationDelay: '200ms',
+                    animationFillMode: 'backwards',
                   }}
-                  title={social.platform}
                 >
-                  <SocialIcon platform={social.platform} />
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                    style={{ backgroundColor: `${accentColor}20` }}
+                  >
+                    <svg className="w-5 h-5" style={{ color: accentColor }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="2" y1="12" x2="22" y2="12" />
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-zinc-400">Website</p>
+                    <p className="text-white text-sm truncate">{content.website}</p>
+                  </div>
+                  <svg className="w-4 h-4 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="m9 18 6-6-6-6"/>
+                  </svg>
                 </a>
-              ))}
+              )}
+
+              {content.address && (
+                <a
+                  href={`https://maps.google.com/?q=${encodeURIComponent(content.address)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]
+                             transition-all duration-300 hover:bg-white/[0.05] animate-slide-up"
+                  style={{
+                    animationDelay: '250ms',
+                    animationFillMode: 'backwards',
+                  }}
+                >
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                    style={{ backgroundColor: `${accentColor}20` }}
+                  >
+                    <svg className="w-5 h-5" style={{ color: accentColor }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-zinc-400">Address</p>
+                    <p className="text-white text-sm">{content.address}</p>
+                  </div>
+                  <svg className="w-4 h-4 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="m9 18 6-6-6-6"/>
+                  </svg>
+                </a>
+              )}
             </div>
-          )}
 
-          {/* Save Contact Button */}
-          <div
-            className="mt-6 animate-slide-up"
-            style={{ animationDelay: '400ms', animationFillMode: 'backwards' }}
-          >
-            <a
-              href={vCardUrl}
-              download={`${content.name.replace(/\s+/g, '_')}.vcf`}
-              className="flex items-center justify-center gap-2 w-full p-4 rounded-xl font-medium
-                         transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
-              style={{
-                backgroundColor: accentColor,
-                color: 'white',
-                boxShadow: `0 4px 20px ${accentColor}40`,
-              }}
+            {/* Social Links */}
+            {content.socialLinks && content.socialLinks.length > 0 && (
+              <div
+                className="flex justify-center gap-3 mt-6 pt-6 border-t border-white/[0.06] animate-fade-in"
+                style={{ animationDelay: '350ms', animationFillMode: 'backwards' }}
+              >
+                {content.socialLinks.map((social, index) => (
+                  <a
+                    key={index}
+                    href={normalizeUrl(social.url)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group w-11 h-11 rounded-full bg-white/[0.03] border border-white/[0.06]
+                               flex items-center justify-center transition-all duration-300
+                               hover:scale-110 hover:bg-white/[0.05]"
+                    title={social.platform}
+                  >
+                    <SocialIcon platform={social.platform} />
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {/* Save Contact Button */}
+            <div
+              className="mt-6 animate-slide-up"
+              style={{ animationDelay: '400ms', animationFillMode: 'backwards' }}
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                <polyline points="17 21 17 13 7 13 7 21" />
-                <polyline points="7 3 7 8 15 8" />
-              </svg>
-              Save Contact
-            </a>
-          </div>
-        </div>
+              <a
+                href={vCardUrl}
+                download={`${content.name.replace(/\s+/g, '_')}.vcf`}
+                className="flex items-center justify-center gap-2 w-full p-4 rounded-xl font-medium
+                           transition-all duration-300 hover:scale-[1.02]"
+                style={{
+                  backgroundColor: accentColor,
+                  color: 'white',
+                }}
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                  <polyline points="17 21 17 13 7 13 7 21" />
+                  <polyline points="7 3 7 8 15 8" />
+                </svg>
+                Save Contact
+              </a>
+            </div>
+          </LandingCardContent>
+        </LandingCard>
 
-        {/* Powered by */}
-        <p
-          className="mt-10 text-center text-sm text-slate-600 animate-fade-in"
-          style={{ animationDelay: '500ms', animationFillMode: 'backwards' }}
-        >
-          Powered by{' '}
-          <Link href="/" className="text-slate-500 hover:text-primary transition-colors">
-            QRWolf
-          </Link>
-        </p>
+        <LandingFooter accentColor={accentColor} delay={500} />
       </div>
-    </div>
+    </LandingBackground>
   );
 }
 

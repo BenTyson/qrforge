@@ -2,9 +2,15 @@
 
 import { createClient } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import type { GoogleReviewContent } from '@/lib/qr/types';
+import {
+  LandingBackground,
+  LandingCard,
+  LandingCardContent,
+  LandingFooter,
+  LandingLoader
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -39,11 +45,7 @@ export default function GoogleReviewLandingPage({ params }: PageProps) {
   }, [params]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LandingLoader />;
   }
 
   if (!content) {
@@ -55,44 +57,11 @@ export default function GoogleReviewLandingPage({ params }: PageProps) {
   const googleReviewUrl = `https://search.google.com/local/writereview?placeid=${content.placeId}`;
 
   return (
-    <div
-      className="min-h-screen py-12 px-4 flex items-center justify-center relative overflow-hidden"
-      style={{
-        background: `radial-gradient(ellipse at top, ${accentColor}15 0%, transparent 50%),
-                     radial-gradient(ellipse at bottom, ${accentColor}10 0%, transparent 50%),
-                     linear-gradient(to bottom, #0f172a, #1e293b)`,
-      }}
-    >
-      {/* Floating orbs */}
-      <div
-        className="absolute top-20 right-[15%] w-64 h-64 rounded-full blur-3xl opacity-20 animate-pulse"
-        style={{ backgroundColor: accentColor }}
-      />
-      <div
-        className="absolute bottom-32 left-[10%] w-48 h-48 rounded-full blur-2xl opacity-15 animate-pulse"
-        style={{ backgroundColor: accentColor, animationDelay: '1s' }}
-      />
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl opacity-10"
-        style={{ backgroundColor: accentColor }}
-      />
-
-      {/* Dot pattern */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `radial-gradient(${accentColor} 1px, transparent 1px)`,
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      <div className="max-w-md w-full relative z-10">
+    <LandingBackground accentColor={accentColor} className="py-12 px-4 flex items-center justify-center">
+      <div className="max-w-md w-full">
         {/* Review Card */}
-        <div
-          className="relative bg-slate-800/60 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 animate-fade-in"
-          style={{ boxShadow: `0 25px 50px -12px ${accentColor}30` }}
-        >
-          <div className="p-8">
+        <LandingCard>
+          <LandingCardContent>
             {/* Business Logo / Initial */}
             <div
               className="text-center mb-6 animate-slide-up"
@@ -102,7 +71,6 @@ export default function GoogleReviewLandingPage({ params }: PageProps) {
                 className="w-20 h-20 mx-auto mb-4 rounded-2xl flex items-center justify-center text-white font-bold text-2xl"
                 style={{
                   background: `linear-gradient(135deg, ${accentColor}40, ${accentColor}20)`,
-                  boxShadow: `0 8px 24px ${accentColor}20`,
                 }}
               >
                 {content.businessName.charAt(0).toUpperCase()}
@@ -140,7 +108,7 @@ export default function GoogleReviewLandingPage({ params }: PageProps) {
               <p className="text-lg text-white/90 font-medium mb-2">
                 We&apos;d love your feedback!
               </p>
-              <p className="text-slate-400 text-sm">
+              <p className="text-zinc-400 text-sm">
                 Your review helps us improve and helps others discover us.
               </p>
             </div>
@@ -183,28 +151,15 @@ export default function GoogleReviewLandingPage({ params }: PageProps) {
 
             {/* Secondary Info */}
             <p
-              className="text-center text-xs text-slate-500 mt-6 animate-slide-up"
+              className="text-center text-xs text-zinc-500 mt-6 animate-slide-up"
               style={{ animationDelay: '500ms' }}
             >
               You&apos;ll be redirected to Google to leave your review
             </p>
-          </div>
-        </div>
+          </LandingCardContent>
+        </LandingCard>
 
-        {/* Powered by */}
-        <p
-          className="mt-10 text-center text-sm text-slate-500 animate-slide-up"
-          style={{ animationDelay: '600ms' }}
-        >
-          Powered by{' '}
-          <Link
-            href="/"
-            className="font-medium transition-colors hover:text-primary"
-            style={{ color: accentColor }}
-          >
-            QRWolf
-          </Link>
-        </p>
+        <LandingFooter accentColor={accentColor} delay={600} />
       </div>
 
       {/* Star pulse animation */}
@@ -218,6 +173,6 @@ export default function GoogleReviewLandingPage({ params }: PageProps) {
           }
         }
       `}</style>
-    </div>
+    </LandingBackground>
   );
 }

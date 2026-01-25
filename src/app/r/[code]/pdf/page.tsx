@@ -1,8 +1,11 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
 import type { PDFContent } from '@/lib/qr/types';
+import {
+  LandingBackground,
+  LandingFooter
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -35,46 +38,16 @@ export default async function PDFLandingPage({ params }: PageProps) {
   const accentColor = '#14b8a6';
 
   return (
-    <div
-      className="min-h-screen py-8 px-4 relative overflow-hidden"
-      style={{
-        background: `radial-gradient(ellipse at top, ${accentColor}15 0%, transparent 50%),
-                     radial-gradient(ellipse at bottom right, #ef444420 0%, transparent 50%),
-                     linear-gradient(to bottom, #0f172a, #1e293b)`,
-      }}
-    >
-      {/* Floating orbs */}
-      <div
-        className="absolute top-20 right-[15%] w-64 h-64 rounded-full blur-3xl opacity-15 animate-pulse"
-        style={{ backgroundColor: accentColor }}
-      />
-      <div
-        className="absolute bottom-40 left-[10%] w-48 h-48 rounded-full blur-2xl opacity-20 animate-pulse"
-        style={{ backgroundColor: '#ef4444', animationDelay: '1s' }}
-      />
-
-      {/* Dot pattern */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `radial-gradient(${accentColor} 1px, transparent 1px)`,
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      <div className="max-w-4xl mx-auto relative z-10">
+    <LandingBackground accentColor={accentColor} className="py-8 px-4">
+      <div className="max-w-4xl mx-auto">
         {/* Header Card */}
-        <div
-          className="bg-slate-800/60 backdrop-blur-xl rounded-2xl border border-white/10 p-6 mb-6 animate-fade-in"
-          style={{ boxShadow: `0 20px 40px ${accentColor}15` }}
-        >
+        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.06] p-6 mb-6 animate-fade-in shadow-2xl shadow-black/40">
           <div className="flex items-start gap-4">
             {/* PDF Icon */}
             <div
               className="w-16 h-20 rounded-xl flex items-center justify-center flex-shrink-0"
               style={{
                 background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                boxShadow: '0 8px 24px rgba(239, 68, 68, 0.3)',
               }}
             >
               <span className="text-white font-bold text-lg">PDF</span>
@@ -96,7 +69,7 @@ export default async function PDFLandingPage({ params }: PageProps) {
                 {content.fileName || qrCode.name}
               </h1>
               <div className="flex items-center gap-3 mt-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-700/50 rounded-full text-xs text-slate-300">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-zinc-700/50 rounded-full text-xs text-zinc-300">
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                     <polyline points="14 2 14 8 20 8" />
@@ -104,7 +77,7 @@ export default async function PDFLandingPage({ params }: PageProps) {
                   PDF Document
                 </span>
                 {content.fileSize > 0 && (
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-zinc-400">
                     {formatFileSize(content.fileSize)}
                   </span>
                 )}
@@ -133,23 +106,23 @@ export default async function PDFLandingPage({ params }: PageProps) {
 
         {/* PDF Preview */}
         <div
-          className="bg-slate-800/40 backdrop-blur rounded-2xl border border-white/10 overflow-hidden animate-slide-up"
-          style={{ animationDelay: '100ms', boxShadow: `0 20px 40px rgba(0,0,0,0.3)` }}
+          className="bg-white/[0.03] backdrop-blur rounded-2xl border border-white/[0.06] overflow-hidden animate-slide-up shadow-2xl shadow-black/40"
+          style={{ animationDelay: '100ms' }}
         >
           {/* Toolbar */}
-          <div className="flex items-center justify-between px-4 py-3 bg-slate-800/80 border-b border-white/10">
+          <div className="flex items-center justify-between px-4 py-3 bg-zinc-800/80 border-b border-white/10">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-red-500/80" />
               <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
               <div className="w-3 h-3 rounded-full bg-green-500/80" />
             </div>
-            <span className="text-xs text-slate-400 truncate max-w-[200px]">{content.fileName}</span>
+            <span className="text-xs text-zinc-400 truncate max-w-[200px]">{content.fileName}</span>
             <div className="flex items-center gap-2">
               <a
                 href={content.fileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+                className="p-2 text-zinc-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
                 title="Open in new tab"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -191,21 +164,8 @@ export default async function PDFLandingPage({ params }: PageProps) {
           </a>
         </div>
 
-        {/* Powered by */}
-        <p
-          className="mt-10 text-center text-sm text-slate-500 animate-slide-up"
-          style={{ animationDelay: '300ms' }}
-        >
-          Powered by{' '}
-          <Link
-            href="/"
-            className="font-medium transition-colors hover:text-primary"
-            style={{ color: accentColor }}
-          >
-            QRWolf
-          </Link>
-        </p>
+        <LandingFooter accentColor={accentColor} delay={300} />
       </div>
-    </div>
+    </LandingBackground>
   );
 }

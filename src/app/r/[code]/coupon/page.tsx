@@ -2,10 +2,16 @@
 
 import { createClient } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import type { CouponContent } from '@/lib/qr/types';
+import {
+  LandingBackground,
+  LandingCard,
+  LandingCardContent,
+  LandingFooter,
+  LandingLoader
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -41,11 +47,7 @@ export default function CouponLandingPage({ params }: PageProps) {
   }, [params]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LandingLoader />;
   }
 
   if (!content) {
@@ -64,60 +66,20 @@ export default function CouponLandingPage({ params }: PageProps) {
   };
 
   return (
-    <div
-      className="min-h-screen py-12 px-4 flex items-center justify-center relative overflow-hidden"
-      style={{
-        background: `radial-gradient(ellipse at top, ${accentColor}15 0%, transparent 50%),
-                     radial-gradient(ellipse at bottom, ${accentColor}10 0%, transparent 50%),
-                     linear-gradient(to bottom, #0f172a, #1e293b)`,
-      }}
-    >
-      {/* Floating orbs */}
-      <div
-        className="absolute top-20 right-[15%] w-64 h-64 rounded-full blur-3xl opacity-20 animate-pulse"
-        style={{ backgroundColor: accentColor }}
-      />
-      <div
-        className="absolute bottom-32 left-[10%] w-48 h-48 rounded-full blur-2xl opacity-15 animate-pulse"
-        style={{ backgroundColor: accentColor, animationDelay: '1s' }}
-      />
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl opacity-10"
-        style={{ backgroundColor: accentColor }}
-      />
-
-      {/* Dot pattern */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `radial-gradient(${accentColor} 1px, transparent 1px)`,
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      <div className="max-w-md w-full relative z-10">
-        {/* Coupon Card */}
-        <div
-          className="relative bg-slate-800/60 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 animate-fade-in"
-          style={{ boxShadow: `0 25px 50px -12px ${accentColor}30` }}
-        >
+    <LandingBackground accentColor={accentColor} className="py-12 px-4 flex items-center justify-center">
+      <div className="max-w-md w-full">
+        <LandingCard>
           {/* Coupon perforations */}
           <div
             className="absolute left-0 top-1/2 -translate-y-1/2 w-6 h-12 rounded-r-full"
-            style={{
-              background: `radial-gradient(ellipse at top, ${accentColor}15 0%, transparent 50%),
-                           linear-gradient(to bottom, #0f172a, #1e293b)`,
-            }}
+            style={{ backgroundColor: '#09090b' }}
           />
           <div
             className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-12 rounded-l-full"
-            style={{
-              background: `radial-gradient(ellipse at top, ${accentColor}15 0%, transparent 50%),
-                           linear-gradient(to bottom, #0f172a, #1e293b)`,
-            }}
+            style={{ backgroundColor: '#09090b' }}
           />
 
-          <div className="p-8">
+          <LandingCardContent>
             {/* Logo & Business Name */}
             <div
               className="text-center mb-8 animate-slide-up"
@@ -128,7 +90,6 @@ export default function CouponLandingPage({ params }: PageProps) {
                   className="w-20 h-20 mx-auto mb-4 rounded-2xl p-2 flex items-center justify-center"
                   style={{
                     background: `linear-gradient(135deg, ${accentColor}20, transparent)`,
-                    boxShadow: `0 8px 24px ${accentColor}20`,
                   }}
                 >
                   <Image
@@ -145,7 +106,6 @@ export default function CouponLandingPage({ params }: PageProps) {
                   className="w-20 h-20 mx-auto mb-4 rounded-2xl flex items-center justify-center text-white font-bold text-2xl"
                   style={{
                     background: `linear-gradient(135deg, ${accentColor}40, ${accentColor}20)`,
-                    boxShadow: `0 8px 24px ${accentColor}20`,
                   }}
                 >
                   {content.businessName.charAt(0).toUpperCase()}
@@ -156,15 +116,12 @@ export default function CouponLandingPage({ params }: PageProps) {
 
             {/* Main Offer */}
             <div
-              className="text-center py-8 border-y border-dashed border-slate-600/50 animate-slide-up"
+              className="text-center py-8 border-y border-dashed border-zinc-700/50 animate-slide-up"
               style={{ animationDelay: '200ms' }}
             >
               <p
                 className="text-6xl font-black mb-3 tracking-tight"
-                style={{
-                  color: accentColor,
-                  textShadow: `0 0 40px ${accentColor}50`,
-                }}
+                style={{ color: accentColor }}
               >
                 {content.headline}
               </p>
@@ -177,7 +134,7 @@ export default function CouponLandingPage({ params }: PageProps) {
                 className="mt-8 animate-slide-up"
                 style={{ animationDelay: '300ms' }}
               >
-                <p className="text-sm text-slate-400 text-center mb-3">Tap to copy code:</p>
+                <p className="text-sm text-zinc-400 text-center mb-3">Tap to copy code:</p>
                 <button
                   onClick={copyCode}
                   disabled={isExpired}
@@ -206,7 +163,7 @@ export default function CouponLandingPage({ params }: PageProps) {
                     {content.code}
                   </span>
                   <svg
-                    className="w-6 h-6 text-slate-400 transition-all duration-300 group-hover:text-white group-hover:scale-110"
+                    className="w-6 h-6 text-zinc-400 transition-all duration-300 group-hover:text-white group-hover:scale-110"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -227,7 +184,7 @@ export default function CouponLandingPage({ params }: PageProps) {
                     className="text-center text-sm font-medium mt-3 animate-fade-in"
                     style={{ color: accentColor }}
                   >
-                    ✓ Copied to clipboard!
+                    Copied to clipboard!
                   </p>
                 )}
               </div>
@@ -249,12 +206,12 @@ export default function CouponLandingPage({ params }: PageProps) {
                     <span className="text-red-400 font-medium">This coupon has expired</span>
                   </div>
                 ) : (
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700/30 rounded-full">
-                    <svg className="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-800/30 rounded-full">
+                    <svg className="w-4 h-4 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <circle cx="12" cy="12" r="10" />
                       <polyline points="12 6 12 12 16 14" />
                     </svg>
-                    <span className="text-slate-400">
+                    <span className="text-zinc-400">
                       Valid until{' '}
                       <span className="text-white font-medium">
                         {new Date(content.validUntil).toLocaleDateString('en-US', {
@@ -272,30 +229,17 @@ export default function CouponLandingPage({ params }: PageProps) {
             {/* Terms */}
             {content.terms && (
               <div
-                className="mt-8 pt-6 border-t border-slate-700/50 animate-slide-up"
+                className="mt-8 pt-6 border-t border-zinc-700/50 animate-slide-up"
                 style={{ animationDelay: '500ms' }}
               >
-                <p className="text-xs text-slate-500 text-center leading-relaxed">{content.terms}</p>
+                <p className="text-xs text-zinc-500 text-center leading-relaxed">{content.terms}</p>
               </div>
             )}
-          </div>
-        </div>
+          </LandingCardContent>
+        </LandingCard>
 
-        {/* Powered by */}
-        <p
-          className="mt-10 text-center text-sm text-slate-500 animate-slide-up"
-          style={{ animationDelay: '600ms' }}
-        >
-          Powered by{' '}
-          <Link
-            href="/"
-            className="font-medium transition-colors hover:text-primary"
-            style={{ color: accentColor }}
-          >
-            QRWolf
-          </Link>
-        </p>
+        <LandingFooter accentColor={accentColor} delay={600} />
       </div>
-    </div>
+    </LandingBackground>
   );
 }

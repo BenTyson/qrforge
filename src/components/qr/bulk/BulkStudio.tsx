@@ -308,6 +308,12 @@ export function BulkStudio() {
                   onActiveFromChange={actions.setActiveFrom}
                   activeUntil={state.activeUntil}
                   onActiveUntilChange={actions.setActiveUntil}
+                  abTestEnabled={false}
+                  onAbTestEnabledChange={() => {}}
+                  abVariantBUrl=""
+                  onAbVariantBUrlChange={() => {}}
+                  abSplitPercentage={50}
+                  onAbSplitPercentageChange={() => {}}
                   canAccessProTypes={canAccessProTypes}
                   userTier={userData?.tier || null}
                   onContinue={actions.nextStep}

@@ -4,7 +4,45 @@ Session-by-session history of development work. Most recent first.
 
 ---
 
+## January 25, 2026
+
+### A/B Testing for Dynamic QR Codes
+- New Pro+ feature for split-testing QR code destinations
+- Database schema: `ab_tests`, `ab_variants`, `ab_assignments` tables with RLS policies
+- Deterministic variant assignment using hash(test_id + ip_hash) - same visitor always sees same variant
+- Configurable traffic split (10-90%) via slider in Options step
+- Redirect route integration: checks for active A/B test and routes to selected variant
+- Statistical significance calculations with 95% confidence threshold
+- A/B Test Dashboard component (`src/components/analytics/ABTestDashboard.tsx`):
+  - Variant comparison cards with scan counts and progress bars
+  - Statistical confidence indicator with progress bar
+  - Improvement percentage display (Variant B vs Control)
+  - Pause/Resume/Start test actions
+  - "Declare Winner" buttons when statistically significant
+- Dedicated A/B test management page at `/qr-codes/[id]/ab-test`
+- Link to A/B test management from QR code detail page
+- TypeScript types and utilities in `src/lib/ab-testing/`:
+  - `types.ts` - ABTest, ABVariant, ABAssignment interfaces
+  - `variant-selector.ts` - deterministic selection algorithm
+  - `statistics.ts` - z-test significance calculations
+- Positions QRWolf as marketing-focused platform
+
 ## January 24, 2026
+
+### Geo/Location QR Code Type
+- New free-tier QR type for sharing map locations
+- Coordinate input with latitude (-90 to 90) and longitude (-180 to 180) validation
+- "Use my current location" button using browser Geolocation API
+- Optional location name and address fields
+- Accent color customization for landing page
+- Landing page at `/r/[code]/location` with:
+  - OpenStreetMap embed (works on production, placeholder on localhost)
+  - "Get Directions" primary CTA (Google Maps directions)
+  - "Open in Google Maps" button
+  - "Open in Apple Maps" button
+  - Coordinates and address display
+- Fixed password-protected QR codes for landing page types (geo, event, etc.)
+- 28th QR type (now 34 total content types)
 
 ### Event/Calendar QR Code Type
 - New free-tier QR type for creating calendar event invites

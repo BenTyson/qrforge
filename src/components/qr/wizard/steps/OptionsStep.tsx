@@ -35,6 +35,14 @@ interface OptionsStepProps {
   onActiveFromChange: (value: string) => void;
   activeUntil: string;
   onActiveUntilChange: (value: string) => void;
+  // A/B Testing
+  abTestEnabled: boolean;
+  onAbTestEnabledChange: (enabled: boolean) => void;
+  abVariantBUrl: string;
+  onAbVariantBUrlChange: (url: string) => void;
+  abSplitPercentage: number;
+  onAbSplitPercentageChange: (percent: number) => void;
+  currentDestinationUrl?: string;
   // Access
   canAccessProTypes: boolean;
   userTier: 'free' | 'pro' | 'business' | null;
@@ -59,6 +67,13 @@ export function OptionsStep({
   onActiveFromChange,
   activeUntil,
   onActiveUntilChange,
+  abTestEnabled,
+  onAbTestEnabledChange,
+  abVariantBUrl,
+  onAbVariantBUrlChange,
+  abSplitPercentage,
+  onAbSplitPercentageChange,
+  currentDestinationUrl,
   canAccessProTypes,
   userTier,
   onContinue,
@@ -348,10 +363,111 @@ export function OptionsStep({
             </div>
           </div>
         </div>
+
+        {/* A/B Testing */}
+        <div className={cn(
+          'p-4 rounded-xl border transition-all',
+          abTestEnabled
+            ? 'border-primary bg-primary/5'
+            : 'border-slate-700 bg-slate-800/50',
+          !canAccessProTypes && 'opacity-60'
+        )}>
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M16 3h5v5" />
+                <path d="M8 3H3v5" />
+                <path d="M21 3l-7 7" />
+                <path d="M3 3l7 7" />
+                <path d="M21 14v7h-5" />
+                <path d="M3 14v7h5" />
+                <path d="M14 21l7-7" />
+                <path d="M10 21l-7-7" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className="font-semibold text-white">A/B Testing</h4>
+                {!canAccessProTypes && (
+                  <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full">Pro</span>
+                )}
+              </div>
+              <p className="text-xs text-slate-400 mb-3">Split traffic between destinations to test performance</p>
+              {canAccessProTypes ? (
+                <div className="space-y-3">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={abTestEnabled}
+                      onChange={(e) => {
+                        onAbTestEnabledChange(e.target.checked);
+                        if (!e.target.checked) {
+                          onAbVariantBUrlChange('');
+                          onAbSplitPercentageChange(50);
+                        }
+                      }}
+                      className="w-4 h-4 rounded border-slate-600 bg-slate-900 text-primary focus:ring-primary"
+                    />
+                    <span className="text-sm text-slate-300">Enable A/B testing</span>
+                  </label>
+
+                  {abTestEnabled && (
+                    <div className="space-y-3">
+                      {/* Variant A (Control) */}
+                      <div className="p-3 rounded-lg bg-teal-500/10 border border-teal-500/30">
+                        <Label className="text-xs text-teal-400 font-medium">Variant A (Control)</Label>
+                        <p className="text-sm text-white truncate mt-1">
+                          {currentDestinationUrl || 'Current destination'}
+                        </p>
+                      </div>
+
+                      {/* Variant B input */}
+                      <div className="space-y-1">
+                        <Label className="text-xs text-purple-400 font-medium">Variant B</Label>
+                        <Input
+                          placeholder="https://example.com/alternative"
+                          value={abVariantBUrl}
+                          onChange={(e) => onAbVariantBUrlChange(e.target.value)}
+                          className="bg-slate-900 border-slate-600"
+                        />
+                      </div>
+
+                      {/* Traffic split slider */}
+                      <div className="space-y-2">
+                        <Label className="text-xs text-slate-400">Traffic Split</Label>
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-teal-400 font-medium">A: {100 - abSplitPercentage}%</span>
+                          <span className="text-purple-400 font-medium">B: {abSplitPercentage}%</span>
+                        </div>
+                        <Slider
+                          value={[abSplitPercentage]}
+                          onValueChange={([v]) => onAbSplitPercentageChange(v)}
+                          min={10}
+                          max={90}
+                          step={5}
+                          className="w-full"
+                        />
+                        <p className="text-xs text-slate-500 mt-1">
+                          Same visitor always sees the same variant
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link href="/plans">
+                  <Button size="sm" variant="outline" className="border-primary/50 text-primary hover:bg-primary/10">
+                    Upgrade to Pro
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Summary of enabled options */}
-      {(expiresAt || (passwordEnabled && password) || (scheduledEnabled && (activeFrom || activeUntil))) && (
+      {(expiresAt || (passwordEnabled && password) || (scheduledEnabled && (activeFrom || activeUntil)) || (abTestEnabled && abVariantBUrl)) && (
         <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
           <h4 className="font-medium text-white mb-2">Enabled Options</h4>
           <div className="flex flex-wrap gap-2">
@@ -368,6 +484,11 @@ export function OptionsStep({
             {scheduledEnabled && (activeFrom || activeUntil) && (
               <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
                 Scheduled
+              </span>
+            )}
+            {abTestEnabled && abVariantBUrl && (
+              <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
+                A/B Test ({100 - abSplitPercentage}/{abSplitPercentage} split)
               </span>
             )}
           </div>

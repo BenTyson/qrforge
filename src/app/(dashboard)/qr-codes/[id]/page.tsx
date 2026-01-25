@@ -517,6 +517,31 @@ export default function EditQRCodePage() {
             </Card>
           )}
 
+          {/* A/B Testing (Pro+) */}
+          {isDynamic && (tier === 'pro' || tier === 'business') && (
+            <Card className="p-6 glass">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">A/B Testing</p>
+                  <p className="text-sm text-muted-foreground">
+                    Split traffic between destinations
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                    Pro
+                  </span>
+                  <Link href={`/qr-codes/${qrCodeId}/ab-test`}>
+                    <Button variant="outline" size="sm">
+                      <SplitIcon className="w-4 h-4 mr-2" />
+                      Manage Test
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </Card>
+          )}
+
           {/* Landing Page (Pro+) */}
           {isDynamic && (tier === 'pro' || tier === 'business') && (
             <Card className="p-6 glass">
@@ -757,6 +782,21 @@ function ArrowRightIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <line x1="5" y1="12" x2="19" y2="12" />
       <polyline points="12 5 19 12 12 19" />
+    </svg>
+  );
+}
+
+function SplitIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M16 3h5v5" />
+      <path d="M8 3H3v5" />
+      <path d="M21 3l-7 7" />
+      <path d="M3 3l7 7" />
+      <path d="M21 14v7h-5" />
+      <path d="M3 14v7h5" />
+      <path d="M14 21l7-7" />
+      <path d="M10 21l-7-7" />
     </svg>
   );
 }

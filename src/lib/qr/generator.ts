@@ -211,6 +211,10 @@ export function contentToString(content: QRContent): string {
     case 'event':
       return `https://qrwolf.com/preview/${content.type}`;
 
+    // === Location ===
+    case 'geo':
+      return `geo:${content.latitude},${content.longitude}`;
+
     // === File Upload & Landing Page Types ===
     // These types always use dynamic QR codes with landing pages
     // The QR code points to /r/[shortCode] which handles the redirect
@@ -867,6 +871,22 @@ export function validateContent(content: QRContent): { valid: boolean; error?: s
         const start = new Date(content.startDate);
         const end = new Date(content.endDate);
         if (end <= start) return { valid: false, error: 'End date must be after start date' };
+      }
+      return { valid: true };
+
+    // === Location ===
+    case 'geo':
+      if (content.latitude === undefined || content.latitude === null) {
+        return { valid: false, error: 'Latitude is required' };
+      }
+      if (content.longitude === undefined || content.longitude === null) {
+        return { valid: false, error: 'Longitude is required' };
+      }
+      if (content.latitude < -90 || content.latitude > 90) {
+        return { valid: false, error: 'Latitude must be between -90 and 90' };
+      }
+      if (content.longitude < -180 || content.longitude > 180) {
+        return { valid: false, error: 'Longitude must be between -180 and 180' };
       }
       return { valid: true };
 

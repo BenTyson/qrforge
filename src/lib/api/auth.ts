@@ -305,6 +305,8 @@ export const validators = {
       'google-review',
       // Events
       'event',
+      // Location
+      'geo',
       // File upload types
       'pdf', 'images', 'video', 'mp3',
       // Landing page types
@@ -539,6 +541,21 @@ export const validators = {
           if (end <= start) {
             return { valid: false, error: 'endDate must be after startDate' };
           }
+        }
+        break;
+
+      case 'geo':
+        if (content.latitude === undefined || content.latitude === null || typeof content.latitude !== 'number') {
+          return { valid: false, error: 'content.latitude is required for geo type and must be a number' };
+        }
+        if (content.longitude === undefined || content.longitude === null || typeof content.longitude !== 'number') {
+          return { valid: false, error: 'content.longitude is required for geo type and must be a number' };
+        }
+        if (content.latitude < -90 || content.latitude > 90) {
+          return { valid: false, error: 'content.latitude must be between -90 and 90' };
+        }
+        if (content.longitude < -180 || content.longitude > 180) {
+          return { valid: false, error: 'content.longitude must be between -180 and 180' };
         }
         break;
 

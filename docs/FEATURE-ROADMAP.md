@@ -2,7 +2,7 @@
 
 > **Last Updated**: January 24, 2026
 > **Status**: Active development
-> **Current Features**: 27 QR types, Analytics, Bulk generation, API, 151 SEO articles
+> **Current Features**: 28 QR types, Analytics, Bulk generation, API, 151 SEO articles
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -30,48 +30,6 @@ This document tracks planned features in priority order. Work through sequential
 ---
 
 ## NEXT UP
-
-### 7. Geo/Location QR Code Type
-**Tier**: STANDARD | **Priority**: 7 of 24 | **Effort**: ~1 day
-
-**What**: QR code that opens a specific location in the user's maps app.
-
-**Why build this**:
-- Already in your roadmap
-- Simple to implement (geo: URI scheme)
-- Useful for physical locations, parking spots, etc.
-
-**Implementation**:
-- New QR type: `geo`
-- Input: Address search OR manual lat/long
-- Output: `geo:LAT,LONG` URI (universal) or landing page
-
-**UI Components (Content Step)**:
-- Address search with autocomplete
-- OR manual coordinates input
-- Map preview showing pin
-- Location name (for display purposes)
-
-**Landing page** (`/r/[code]/location`):
-- Map embed showing location
-- "Open in Google Maps" button
-- "Open in Apple Maps" button
-- Address display
-- "Get Directions" CTA
-
-**Files to create/modify**:
-- `src/components/qr/forms/GeoForm.tsx`
-- `src/app/r/[code]/location/page.tsx`
-- Update type definitions
-
-**Acceptance criteria**:
-- [ ] Address search works
-- [ ] Manual coordinates work
-- [ ] Map preview in form
-- [ ] Landing page with map embed
-- [ ] Opens native maps apps correctly
-
----
 
 ### 8. A/B Testing for Dynamic QR Codes
 **Tier**: MAJOR | **Priority**: 8 of 24 | **Effort**: ~1 week
@@ -508,6 +466,7 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Geo/Location QR Code Type | 2026-01-24 | 28th QR type. Coordinates input with "Use my current location" button. Landing page with OpenStreetMap embed, Open in Google Maps, Open in Apple Maps, and Get Directions buttons. Free tier. |
 | Event/Calendar QR Code Type | 2026-01-24 | 27th QR type. Event form with title, dates, location, description. Landing page with Add to Google Calendar, Apple Calendar (.ics), and Outlook buttons. All-day event support. Free tier. |
 | Discord QR Code Type | 2026-01-24 | 28th QR type. Invite code-based input with URL parsing (discord.gg and discord.com/invite). Direct redirect to discord.gg/code. Free tier social type. |
 | Twitch QR Code Type | 2026-01-24 | 27th QR type. Username-based input with URL parsing. Direct redirect to twitch.tv/username. Free tier social type. |
@@ -580,6 +539,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-24 | Completed Geo/Location QR Code Type, 28th QR type with landing page and map buttons |
 | 2026-01-24 | Completed Event/Calendar QR Code Type, 27th QR type with landing page and calendar buttons |
 | 2026-01-24 | Completed Spotify QR Code Type (Feature #12), 25th QR type with landing page and embed |
 | 2026-01-24 | Completed Reddit QR Code Type, 26th QR type (users and subreddits) |

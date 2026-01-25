@@ -128,6 +128,7 @@ export async function GET(
     youtube: 'youtube',
     spotify: 'spotify',
     event: 'event',
+    geo: 'location',
   };
 
   const contentType = qrCode.content_type as string;

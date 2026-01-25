@@ -6,6 +6,18 @@ Session-by-session history of development work. Most recent first.
 
 ## January 25, 2026
 
+### Landing Page Background Modernization
+- Complete visual refresh of all 19 landing page types with Apple/Notion-inspired minimalism
+- Created shared component library (`src/components/landing/`):
+  - `LandingBackground` - warm black base (#09090b), subtle accent glow, grain texture
+  - `LandingCard` - refined glass effect (bg-white/[0.03], backdrop-blur-xl)
+  - `LandingFooter` - consistent "Powered by QRWolf" footer
+  - `LandingLoader` - standardized loading spinner
+- Removed visual clutter: 3 animated floating orbs, aggressive dot patterns, accent-colored shadows
+- Updated color palette from cold slate to warm zinc throughout
+- Refined animations: cubic-bezier(0.16, 1, 0.3, 1) easing for smoother transitions
+- Updated pages: event, social, location, business, links, coupon, gallery, menu, vcard, audio, video, pdf, text, wifi, youtube, spotify, review, unlock, landing
+
 ### Template Gallery
 - 40 pre-designed QR code templates across 7 categories (Restaurant, Business, Marketing, Events, Social, Retail, Creative)
 - Templates are style presets: pre-selected QR type + colors, patterns, gradients, and frames

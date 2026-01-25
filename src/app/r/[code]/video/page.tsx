@@ -2,9 +2,13 @@
 
 import { createClient } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import type { VideoContent } from '@/lib/qr/types';
+import {
+  LandingBackground,
+  LandingFooter,
+  LandingLoader
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -43,11 +47,7 @@ export default function VideoLandingPage({ params }: PageProps) {
   }, [params]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LandingLoader />;
   }
 
   if (!content) {
@@ -76,41 +76,12 @@ export default function VideoLandingPage({ params }: PageProps) {
   };
 
   return (
-    <div
-      className="min-h-screen py-8 px-4 flex flex-col relative overflow-hidden"
-      style={{
-        background: `radial-gradient(ellipse at top, ${accentColor}15 0%, transparent 50%),
-                     radial-gradient(ellipse at bottom right, #8b5cf620 0%, transparent 50%),
-                     linear-gradient(to bottom, #0f172a, #1e293b)`,
-      }}
-    >
-      {/* Floating orbs */}
-      <div
-        className="absolute top-20 right-[10%] w-72 h-72 rounded-full blur-3xl opacity-15 animate-pulse"
-        style={{ backgroundColor: accentColor }}
-      />
-      <div
-        className="absolute bottom-32 left-[5%] w-56 h-56 rounded-full blur-2xl opacity-20 animate-pulse"
-        style={{ backgroundColor: '#8b5cf6', animationDelay: '1s' }}
-      />
-
-      {/* Dot pattern */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `radial-gradient(${accentColor} 1px, transparent 1px)`,
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      <div className="max-w-4xl mx-auto flex-1 w-full flex flex-col relative z-10">
+    <LandingBackground accentColor={accentColor} className="py-8 px-4 flex flex-col">
+      <div className="max-w-4xl mx-auto flex-1 w-full flex flex-col">
         {/* Header */}
         {content.title && (
           <div className="text-center mb-6 animate-fade-in">
-            <h1
-              className="text-2xl md:text-3xl font-bold text-white"
-              style={{ textShadow: `0 0 40px ${accentColor}30` }}
-            >
+            <h1 className="text-2xl md:text-3xl font-bold text-white">
               {content.title}
             </h1>
           </div>
@@ -123,12 +94,9 @@ export default function VideoLandingPage({ params }: PageProps) {
             style={{ animationDelay: '100ms' }}
           >
             {/* Video Card */}
-            <div
-              className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden"
-              style={{ boxShadow: `0 25px 50px -12px rgba(0,0,0,0.5), 0 0 60px ${accentColor}10` }}
-            >
+            <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.06] overflow-hidden shadow-2xl shadow-black/40">
               {/* Toolbar */}
-              <div className="flex items-center justify-between px-4 py-3 bg-slate-800/60 border-b border-white/10">
+              <div className="flex items-center justify-between px-4 py-3 bg-zinc-800/60 border-b border-white/10">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-red-500/80" />
                   <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
@@ -179,13 +147,13 @@ export default function VideoLandingPage({ params }: PageProps) {
                     Your browser does not support the video tag.
                   </video>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-slate-800">
+                  <div className="w-full h-full flex items-center justify-center bg-zinc-800">
                     <div className="text-center">
-                      <svg className="w-16 h-16 mx-auto text-slate-600 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <svg className="w-16 h-16 mx-auto text-zinc-600 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <polygon points="23 7 16 12 23 17 23 7" />
                         <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
                       </svg>
-                      <p className="text-slate-500">No video available</p>
+                      <p className="text-zinc-500">No video available</p>
                     </div>
                   </div>
                 )}
@@ -194,21 +162,8 @@ export default function VideoLandingPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Powered by */}
-        <p
-          className="mt-8 text-center text-sm text-slate-500 animate-slide-up"
-          style={{ animationDelay: '300ms' }}
-        >
-          Powered by{' '}
-          <Link
-            href="/"
-            className="font-medium transition-colors hover:text-primary"
-            style={{ color: accentColor }}
-          >
-            QRWolf
-          </Link>
-        </p>
+        <LandingFooter accentColor={accentColor} delay={300} />
       </div>
-    </div>
+    </LandingBackground>
   );
 }

@@ -2,10 +2,16 @@
 
 import { createClient } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import type { EventContent } from '@/lib/qr/types';
 import { generateGoogleCalendarUrl, generateOutlookUrl, downloadICS } from '@/lib/calendar';
+import {
+  LandingBackground,
+  LandingCard,
+  LandingCardContent,
+  LandingFooter,
+  LandingLoader
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -40,11 +46,7 @@ export default function EventLandingPage({ params }: PageProps) {
   }, [params]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LandingLoader />;
   }
 
   if (!content) {
@@ -92,44 +94,10 @@ export default function EventLandingPage({ params }: PageProps) {
   };
 
   return (
-    <div
-      className="min-h-screen py-12 px-4 flex items-center justify-center relative overflow-hidden"
-      style={{
-        background: `radial-gradient(ellipse at top, ${accentColor}15 0%, transparent 50%),
-                     radial-gradient(ellipse at bottom, ${accentColor}10 0%, transparent 50%),
-                     linear-gradient(to bottom, #0f172a, #1e293b)`,
-      }}
-    >
-      {/* Floating orbs */}
-      <div
-        className="absolute top-20 right-[15%] w-64 h-64 rounded-full blur-3xl opacity-20 animate-pulse"
-        style={{ backgroundColor: accentColor }}
-      />
-      <div
-        className="absolute bottom-32 left-[10%] w-48 h-48 rounded-full blur-2xl opacity-15 animate-pulse"
-        style={{ backgroundColor: accentColor, animationDelay: '1s' }}
-      />
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl opacity-10"
-        style={{ backgroundColor: accentColor }}
-      />
-
-      {/* Dot pattern */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `radial-gradient(${accentColor} 1px, transparent 1px)`,
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      <div className="max-w-md w-full relative z-10">
-        {/* Event Card */}
-        <div
-          className="relative bg-slate-800/60 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 animate-fade-in"
-          style={{ boxShadow: `0 25px 50px -12px ${accentColor}30` }}
-        >
-          <div className="p-8">
+    <LandingBackground accentColor={accentColor} className="py-12 px-4 flex items-center justify-center">
+      <div className="max-w-md w-full">
+        <LandingCard>
+          <LandingCardContent>
             {/* Calendar Icon */}
             <div
               className="text-center mb-6 animate-slide-up"
@@ -185,7 +153,7 @@ export default function EventLandingPage({ params }: PageProps) {
                     {content.allDay ? 'All Day' : formatDisplayDate(startDate, content.allDay)}
                   </p>
                   {content.allDay ? (
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-zinc-400">
                       {formatDisplayDate(startDate, true)}
                       {content.startDate !== content.endDate && (
                         <> - {formatDisplayDate(endDate, true)}</>
@@ -193,7 +161,7 @@ export default function EventLandingPage({ params }: PageProps) {
                     </p>
                   ) : (
                     content.startDate.slice(0, 10) !== content.endDate.slice(0, 10) && (
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-zinc-400">
                         to {formatDisplayDate(endDate)}
                       </p>
                     )
@@ -246,7 +214,7 @@ export default function EventLandingPage({ params }: PageProps) {
                     </svg>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-slate-300 whitespace-pre-wrap">{content.description}</p>
+                    <p className="text-sm text-zinc-300 whitespace-pre-wrap">{content.description}</p>
                   </div>
                 </div>
               )}
@@ -289,7 +257,7 @@ export default function EventLandingPage({ params }: PageProps) {
               className="space-y-3 animate-slide-up"
               style={{ animationDelay: '300ms' }}
             >
-              <p className="text-center text-sm font-medium text-slate-400 mb-4">
+              <p className="text-center text-sm font-medium text-zinc-400 mb-4">
                 Add to your calendar
               </p>
 
@@ -312,7 +280,7 @@ export default function EventLandingPage({ params }: PageProps) {
               {/* Apple Calendar / iCal */}
               <button
                 onClick={handleAppleCalendar}
-                className="w-full p-4 rounded-xl text-center font-semibold text-white transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 bg-gradient-to-r from-slate-600 to-slate-700"
+                className="w-full p-4 rounded-xl text-center font-semibold text-white transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 bg-gradient-to-r from-zinc-700 to-zinc-800"
                 style={{
                   boxShadow: `0 8px 24px rgba(71, 85, 105, 0.4)`,
                 }}
@@ -341,7 +309,7 @@ export default function EventLandingPage({ params }: PageProps) {
               {/* Download ICS */}
               <button
                 onClick={handleDownloadICS}
-                className="w-full p-3 rounded-xl text-center font-medium transition-all duration-300 border border-white/20 hover:border-white/40 text-slate-300 hover:text-white flex items-center justify-center gap-2"
+                className="w-full p-3 rounded-xl text-center font-medium transition-all duration-300 border border-white/10 hover:border-white/20 text-zinc-400 hover:text-white flex items-center justify-center gap-2"
               >
                 <svg
                   className="w-4 h-4"
@@ -357,24 +325,11 @@ export default function EventLandingPage({ params }: PageProps) {
                 Download .ics file
               </button>
             </div>
-          </div>
-        </div>
+          </LandingCardContent>
+        </LandingCard>
 
-        {/* Powered by */}
-        <p
-          className="mt-10 text-center text-sm text-slate-500 animate-slide-up"
-          style={{ animationDelay: '400ms' }}
-        >
-          Powered by{' '}
-          <Link
-            href="/"
-            className="font-medium transition-colors hover:text-primary"
-            style={{ color: accentColor }}
-          >
-            QRWolf
-          </Link>
-        </p>
+        <LandingFooter accentColor={accentColor} />
       </div>
-    </div>
+    </LandingBackground>
   );
 }

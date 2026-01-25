@@ -1,8 +1,12 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound, redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
+import {
+  LandingBackground,
+  LandingFooter
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -53,13 +57,63 @@ export default async function LandingPage({ params }: PageProps) {
 
   const theme = qrCode.landing_page_theme || 'dark';
   const isDark = theme === 'dark';
+  const accentColor = '#14b8a6';
+
+  // For light theme, we use a different approach
+  if (!isDark) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-zinc-50 via-white to-zinc-100">
+        <div className="max-w-lg w-full text-center">
+          {/* Logo */}
+          {qrCode.landing_page_logo_url && (
+            <div className="mb-8">
+              <Image
+                src={qrCode.landing_page_logo_url}
+                alt="Logo"
+                width={64}
+                height={64}
+                className="h-16 w-auto mx-auto object-contain"
+                unoptimized
+              />
+            </div>
+          )}
+
+          {/* Title */}
+          {qrCode.landing_page_title && (
+            <h1 className="text-3xl font-bold mb-4 text-zinc-900">
+              {qrCode.landing_page_title}
+            </h1>
+          )}
+
+          {/* Description */}
+          {qrCode.landing_page_description && (
+            <p className="text-lg mb-8 text-zinc-600">
+              {qrCode.landing_page_description}
+            </p>
+          )}
+
+          {/* CTA Button */}
+          <a href={destinationUrl}>
+            <Button size="lg" className="px-8 py-6 text-lg">
+              {qrCode.landing_page_button_text || 'Continue'}
+              <ArrowIcon className="w-5 h-5 ml-2" />
+            </Button>
+          </a>
+
+          {/* Powered by */}
+          <p className="mt-12 text-sm text-zinc-400">
+            Powered by{' '}
+            <Link href="/" className="hover:underline text-zinc-500">
+              QRWolf
+            </Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className={`min-h-screen flex items-center justify-center px-4 ${
-      isDark
-        ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'
-        : 'bg-gradient-to-br from-slate-50 via-white to-slate-100'
-    }`}>
+    <LandingBackground accentColor={accentColor} className="flex items-center justify-center px-4">
       <div className="max-w-lg w-full text-center">
         {/* Logo */}
         {qrCode.landing_page_logo_url && (
@@ -77,18 +131,14 @@ export default async function LandingPage({ params }: PageProps) {
 
         {/* Title */}
         {qrCode.landing_page_title && (
-          <h1 className={`text-3xl font-bold mb-4 ${
-            isDark ? 'text-white' : 'text-slate-900'
-          }`}>
+          <h1 className="text-3xl font-bold mb-4 text-white">
             {qrCode.landing_page_title}
           </h1>
         )}
 
         {/* Description */}
         {qrCode.landing_page_description && (
-          <p className={`text-lg mb-8 ${
-            isDark ? 'text-slate-300' : 'text-slate-600'
-          }`}>
+          <p className="text-lg mb-8 text-zinc-300">
             {qrCode.landing_page_description}
           </p>
         )}
@@ -101,17 +151,9 @@ export default async function LandingPage({ params }: PageProps) {
           </Button>
         </a>
 
-        {/* Powered by */}
-        <p className={`mt-12 text-sm ${
-          isDark ? 'text-slate-500' : 'text-slate-400'
-        }`}>
-          Powered by{' '}
-          <Link href="/" className="hover:underline">
-            QRWolf
-          </Link>
-        </p>
+        <LandingFooter accentColor={accentColor} />
       </div>
-    </div>
+    </LandingBackground>
   );
 }
 

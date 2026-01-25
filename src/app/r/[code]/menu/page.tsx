@@ -1,10 +1,13 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
 import type { MenuContent } from '@/lib/qr/types';
 import { CategoryNav } from '@/components/menu/CategoryNav';
 import { MenuItemCard } from '@/components/menu/MenuItemCard';
+import {
+  LandingBackground,
+  LandingFooter
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -30,12 +33,7 @@ export default async function MenuLandingPage({ params }: PageProps) {
   const categoryNames = content.categories.map(c => c.name).filter(Boolean);
 
   return (
-    <div
-      className="min-h-screen py-8 px-4"
-      style={{
-        background: `linear-gradient(180deg, ${accentColor}15 0%, #0f172a 30%, #0f172a 100%)`,
-      }}
-    >
+    <LandingBackground accentColor={accentColor} className="py-8 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <header className="text-center mb-6 animate-fade-in">
@@ -54,7 +52,7 @@ export default async function MenuLandingPage({ params }: PageProps) {
           <h1 className="text-3xl font-bold text-white tracking-tight">
             {content.restaurantName}
           </h1>
-          <p className="text-slate-400 mt-1 text-sm">Menu</p>
+          <p className="text-zinc-400 mt-1 text-sm">Menu</p>
         </header>
 
         {/* Sticky Category Navigation */}
@@ -77,7 +75,7 @@ export default async function MenuLandingPage({ params }: PageProps) {
                   {category.name}
                 </h2>
                 {category.items.length > 0 && (
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-zinc-500 mt-1">
                     {category.items.length} item{category.items.length !== 1 ? 's' : ''}
                   </p>
                 )}
@@ -102,18 +100,10 @@ export default async function MenuLandingPage({ params }: PageProps) {
         </div>
 
         {/* Footer */}
-        <footer className="mt-16 pt-6 border-t border-slate-700/50">
-          <p className="text-center text-sm text-slate-500">
-            Powered by{' '}
-            <Link
-              href="/"
-              className="text-slate-400 hover:text-primary transition-colors font-medium"
-            >
-              QRWolf
-            </Link>
-          </p>
+        <footer className="mt-16 pt-6 border-t border-zinc-700/50">
+          <LandingFooter accentColor={accentColor} delay={0} />
         </footer>
       </div>
-    </div>
+    </LandingBackground>
   );
 }

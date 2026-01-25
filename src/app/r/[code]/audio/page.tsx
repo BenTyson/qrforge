@@ -2,10 +2,16 @@
 
 import { createClient } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import type { MP3Content } from '@/lib/qr/types';
+import {
+  LandingBackground,
+  LandingCard,
+  LandingCardContent,
+  LandingFooter,
+  LandingLoader
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -84,11 +90,7 @@ export default function AudioLandingPage({ params }: PageProps) {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LandingLoader />;
   }
 
   if (!content) {
@@ -112,44 +114,18 @@ export default function AudioLandingPage({ params }: PageProps) {
   };
 
   return (
-    <div
-      className="min-h-screen py-8 px-4 flex items-center justify-center relative overflow-hidden"
-      style={{
-        background: `radial-gradient(ellipse at top, #1db95420 0%, transparent 50%),
-                     radial-gradient(ellipse at bottom right, #f9731620 0%, transparent 50%),
-                     linear-gradient(to bottom, #0f172a, #1e293b)`,
-      }}
-    >
-      {/* Floating orbs */}
-      <div className="absolute top-20 right-[10%] w-72 h-72 rounded-full blur-3xl opacity-15 animate-pulse bg-green-500" />
-      <div
-        className="absolute bottom-32 left-[5%] w-56 h-56 rounded-full blur-2xl opacity-20 animate-pulse bg-orange-500"
-        style={{ animationDelay: '1s' }}
-      />
-
-      {/* Dot pattern */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `radial-gradient(${accentColor} 1px, transparent 1px)`,
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      <div className="max-w-md w-full relative z-10">
+    <LandingBackground accentColor={accentColor} className="py-8 px-4 flex items-center justify-center">
+      <div className="max-w-md w-full">
         {isEmbed ? (
           // Embedded player (Spotify, SoundCloud, etc.)
-          <div
-            className="bg-slate-800/60 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden animate-fade-in"
-            style={{ boxShadow: `0 25px 50px -12px rgba(0,0,0,0.5)` }}
-          >
+          <LandingCard>
             {/* Header */}
             <div className="p-6 pb-4">
               {content.title && (
                 <h1 className="text-xl font-bold text-white text-center mb-2">{content.title}</h1>
               )}
               {content.artist && (
-                <p className="text-slate-400 text-center text-sm">{content.artist}</p>
+                <p className="text-zinc-400 text-center text-sm">{content.artist}</p>
               )}
               <div className="flex justify-center mt-4">
                 {isSpotify && (
@@ -196,182 +172,163 @@ export default function AudioLandingPage({ params }: PageProps) {
                 />
               )}
             </div>
-          </div>
+          </LandingCard>
         ) : content.audioUrl ? (
           // Custom audio player for uploaded files
-          <div
-            className="bg-slate-800/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10 animate-fade-in"
-            style={{ boxShadow: `0 25px 50px -12px rgba(0,0,0,0.5), 0 0 60px ${accentColor}10` }}
-          >
-            {/* Cover Art */}
-            <div
-              className="flex justify-center mb-8 animate-slide-up"
-              style={{ animationDelay: '100ms' }}
-            >
+          <LandingCard>
+            <LandingCardContent>
+              {/* Cover Art */}
               <div
-                className="relative w-56 h-56 rounded-2xl overflow-hidden"
-                style={{ boxShadow: `0 20px 60px rgba(0,0,0,0.4)` }}
+                className="flex justify-center mb-8 animate-slide-up"
+                style={{ animationDelay: '100ms' }}
               >
-                {content.coverImage ? (
-                  <Image
-                    src={content.coverImage}
-                    alt={content.title || 'Cover'}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                ) : (
-                  <div
-                    className="w-full h-full flex items-center justify-center"
+                <div
+                  className="relative w-56 h-56 rounded-2xl overflow-hidden shadow-2xl"
+                >
+                  {content.coverImage ? (
+                    <Image
+                      src={content.coverImage}
+                      alt={content.title || 'Cover'}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full flex items-center justify-center"
+                      style={{
+                        background: `linear-gradient(135deg, ${accentColor}40, ${accentColor}20)`,
+                      }}
+                    >
+                      <svg className="w-20 h-20 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <circle cx="12" cy="12" r="10" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    </div>
+                  )}
+                  {/* Vinyl effect overlay */}
+                  <div className="absolute inset-0 border-4 border-white/10 rounded-2xl pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Title & Artist */}
+              <div
+                className="text-center mb-8 animate-slide-up"
+                style={{ animationDelay: '200ms' }}
+              >
+                <h1 className="text-2xl font-bold text-white mb-2">
+                  {content.title || 'Untitled'}
+                </h1>
+                {content.artist && (
+                  <p className="text-lg text-zinc-400">{content.artist}</p>
+                )}
+              </div>
+
+              {/* Progress Bar */}
+              <div
+                className="mb-6 animate-slide-up"
+                style={{ animationDelay: '300ms' }}
+              >
+                <div className="relative">
+                  <input
+                    type="range"
+                    min="0"
+                    max={duration || 0}
+                    value={currentTime}
+                    onChange={handleSeek}
+                    className="w-full h-2 bg-zinc-700/50 rounded-full appearance-none cursor-pointer"
                     style={{
-                      background: `linear-gradient(135deg, ${accentColor}40, ${accentColor}20)`,
+                      background: `linear-gradient(to right, ${accentColor} ${(currentTime / (duration || 1)) * 100}%, rgba(63,63,70,0.5) ${(currentTime / (duration || 1)) * 100}%)`,
                     }}
-                  >
-                    <svg className="w-20 h-20 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <circle cx="12" cy="12" r="10" />
-                      <circle cx="12" cy="12" r="3" />
-                    </svg>
-                  </div>
-                )}
-                {/* Vinyl effect overlay */}
-                <div className="absolute inset-0 border-4 border-white/10 rounded-2xl pointer-events-none" />
+                  />
+                </div>
+                <div className="flex justify-between text-sm text-zinc-500 mt-2">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
+                </div>
               </div>
-            </div>
 
-            {/* Title & Artist */}
-            <div
-              className="text-center mb-8 animate-slide-up"
-              style={{ animationDelay: '200ms' }}
-            >
-              <h1
-                className="text-2xl font-bold text-white mb-2"
-                style={{ textShadow: `0 0 40px ${accentColor}30` }}
+              {/* Controls */}
+              <div
+                className="flex items-center justify-center gap-8 animate-slide-up"
+                style={{ animationDelay: '400ms' }}
               >
-                {content.title || 'Untitled'}
-              </h1>
-              {content.artist && (
-                <p className="text-lg text-slate-400">{content.artist}</p>
-              )}
-            </div>
-
-            {/* Progress Bar */}
-            <div
-              className="mb-6 animate-slide-up"
-              style={{ animationDelay: '300ms' }}
-            >
-              <div className="relative">
-                <input
-                  type="range"
-                  min="0"
-                  max={duration || 0}
-                  value={currentTime}
-                  onChange={handleSeek}
-                  className="w-full h-2 bg-slate-700/50 rounded-full appearance-none cursor-pointer"
-                  style={{
-                    background: `linear-gradient(to right, ${accentColor} ${(currentTime / (duration || 1)) * 100}%, rgba(51,65,85,0.5) ${(currentTime / (duration || 1)) * 100}%)`,
+                {/* Rewind */}
+                <button
+                  onClick={() => {
+                    if (audioRef.current) {
+                      audioRef.current.currentTime = Math.max(0, currentTime - 10);
+                    }
                   }}
-                />
-              </div>
-              <div className="flex justify-between text-sm text-slate-500 mt-2">
-                <span>{formatTime(currentTime)}</span>
-                <span>{formatTime(duration)}</span>
-              </div>
-            </div>
-
-            {/* Controls */}
-            <div
-              className="flex items-center justify-center gap-8 animate-slide-up"
-              style={{ animationDelay: '400ms' }}
-            >
-              {/* Rewind */}
-              <button
-                onClick={() => {
-                  if (audioRef.current) {
-                    audioRef.current.currentTime = Math.max(0, currentTime - 10);
-                  }
-                }}
-                className="p-3 text-slate-400 hover:text-white transition-all hover:scale-110"
-              >
-                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
-                  <polygon points="11 19 2 12 11 5 11 19" />
-                  <polygon points="22 19 13 12 22 5 22 19" />
-                </svg>
-              </button>
-
-              {/* Play/Pause */}
-              <button
-                onClick={togglePlay}
-                className="w-20 h-20 rounded-full flex items-center justify-center transition-all hover:scale-105"
-                style={{
-                  background: `linear-gradient(135deg, ${accentColor}, ${accentColor}cc)`,
-                  boxShadow: `0 8px 32px ${accentColor}50`,
-                }}
-              >
-                {isPlaying ? (
-                  <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <rect x="6" y="4" width="4" height="16" rx="1" />
-                    <rect x="14" y="4" width="4" height="16" rx="1" />
+                  className="p-3 text-zinc-400 hover:text-white transition-all hover:scale-110"
+                >
+                  <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="11 19 2 12 11 5 11 19" />
+                    <polygon points="22 19 13 12 22 5 22 19" />
                   </svg>
-                ) : (
-                  <svg className="w-10 h-10 text-white ml-1" viewBox="0 0 24 24" fill="currentColor">
-                    <polygon points="5 3 19 12 5 21 5 3" />
+                </button>
+
+                {/* Play/Pause */}
+                <button
+                  onClick={togglePlay}
+                  className="w-20 h-20 rounded-full flex items-center justify-center transition-all hover:scale-105"
+                  style={{
+                    background: `linear-gradient(135deg, ${accentColor}, ${accentColor}cc)`,
+                    boxShadow: `0 8px 32px ${accentColor}50`,
+                  }}
+                >
+                  {isPlaying ? (
+                    <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="currentColor">
+                      <rect x="6" y="4" width="4" height="16" rx="1" />
+                      <rect x="14" y="4" width="4" height="16" rx="1" />
+                    </svg>
+                  ) : (
+                    <svg className="w-10 h-10 text-white ml-1" viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="5 3 19 12 5 21 5 3" />
+                    </svg>
+                  )}
+                </button>
+
+                {/* Forward */}
+                <button
+                  onClick={() => {
+                    if (audioRef.current) {
+                      audioRef.current.currentTime = Math.min(duration, currentTime + 10);
+                    }
+                  }}
+                  className="p-3 text-zinc-400 hover:text-white transition-all hover:scale-110"
+                >
+                  <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="13 19 22 12 13 5 13 19" />
+                    <polygon points="2 19 11 12 2 5 2 19" />
                   </svg>
-                )}
-              </button>
+                </button>
+              </div>
 
-              {/* Forward */}
-              <button
-                onClick={() => {
-                  if (audioRef.current) {
-                    audioRef.current.currentTime = Math.min(duration, currentTime + 10);
-                  }
-                }}
-                className="p-3 text-slate-400 hover:text-white transition-all hover:scale-110"
-              >
-                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
-                  <polygon points="13 19 22 12 13 5 13 19" />
-                  <polygon points="2 19 11 12 2 5 2 19" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Hidden audio element */}
-            <audio
-              ref={audioRef}
-              src={content.audioUrl}
-              onTimeUpdate={handleTimeUpdate}
-              onLoadedMetadata={handleLoadedMetadata}
-              onEnded={() => setIsPlaying(false)}
-            />
-          </div>
+              {/* Hidden audio element */}
+              <audio
+                ref={audioRef}
+                src={content.audioUrl}
+                onTimeUpdate={handleTimeUpdate}
+                onLoadedMetadata={handleLoadedMetadata}
+                onEnded={() => setIsPlaying(false)}
+              />
+            </LandingCardContent>
+          </LandingCard>
         ) : (
-          <div
-            className="bg-slate-800/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10 text-center"
-            style={{ boxShadow: `0 25px 50px -12px rgba(0,0,0,0.5)` }}
-          >
-            <svg className="w-16 h-16 mx-auto text-slate-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <circle cx="12" cy="12" r="10" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-            <p className="text-slate-400">No audio available</p>
-          </div>
+          <LandingCard>
+            <LandingCardContent className="text-center">
+              <svg className="w-16 h-16 mx-auto text-zinc-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <p className="text-zinc-400">No audio available</p>
+            </LandingCardContent>
+          </LandingCard>
         )}
 
-        {/* Powered by */}
-        <p
-          className="mt-10 text-center text-sm text-slate-500 animate-slide-up"
-          style={{ animationDelay: '500ms' }}
-        >
-          Powered by{' '}
-          <Link
-            href="/"
-            className="font-medium transition-colors hover:text-primary"
-            style={{ color: accentColor }}
-          >
-            QRWolf
-          </Link>
-        </p>
+        <LandingFooter accentColor={accentColor} delay={500} />
       </div>
-    </div>
+    </LandingBackground>
   );
 }

@@ -1,7 +1,12 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { VCardActions } from './VCardActions';
+import {
+  LandingBackground,
+  LandingCard,
+  LandingCardContent,
+  LandingFooter
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -35,107 +40,104 @@ export default async function VCardPage({ params }: PageProps) {
 
   const content = qrCode.content as VCardContent;
   const fullName = [content.firstName, content.lastName].filter(Boolean).join(' ');
+  const accentColor = '#14b8a6';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
+    <LandingBackground accentColor={accentColor} className="flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full">
-        <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-8">
-          {/* Contact Icon */}
-          <div className="flex justify-center mb-6">
-            <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
-              <span className="text-4xl font-bold text-primary">
-                {(content.firstName?.[0] || content.lastName?.[0] || '?').toUpperCase()}
-              </span>
-            </div>
-          </div>
-
-          <h1 className="text-2xl font-bold text-white text-center mb-1">
-            {fullName || 'Contact'}
-          </h1>
-          {content.title && (
-            <p className="text-slate-400 text-center mb-1">{content.title}</p>
-          )}
-          {content.organization && (
-            <p className="text-slate-500 text-center mb-6">{content.organization}</p>
-          )}
-
-          {/* Contact Details */}
-          <div className="space-y-3 mt-6">
-            {content.phone && (
-              <a
-                href={`tel:${content.phone}`}
-                className="flex items-center gap-4 p-4 bg-slate-900/50 rounded-lg hover:bg-slate-900/70 transition-colors"
-              >
-                <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                  <PhoneIcon className="w-5 h-5 text-green-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500 uppercase">Phone</p>
-                  <p className="text-white">{content.phone}</p>
-                </div>
-              </a>
-            )}
-
-            {content.email && (
-              <a
-                href={`mailto:${content.email}`}
-                className="flex items-center gap-4 p-4 bg-slate-900/50 rounded-lg hover:bg-slate-900/70 transition-colors"
-              >
-                <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <EmailIcon className="w-5 h-5 text-blue-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500 uppercase">Email</p>
-                  <p className="text-white">{content.email}</p>
-                </div>
-              </a>
-            )}
-
-            {content.website && (
-              <a
-                href={content.website.startsWith('http') ? content.website : `https://${content.website}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-4 p-4 bg-slate-900/50 rounded-lg hover:bg-slate-900/70 transition-colors"
-              >
-                <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
-                  <GlobeIcon className="w-5 h-5 text-purple-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500 uppercase">Website</p>
-                  <p className="text-white">{content.website}</p>
-                </div>
-              </a>
-            )}
-
-            {content.address && (
-              <div className="flex items-center gap-4 p-4 bg-slate-900/50 rounded-lg">
-                <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center">
-                  <MapIcon className="w-5 h-5 text-orange-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500 uppercase">Address</p>
-                  <p className="text-white">{content.address}</p>
-                </div>
+        <LandingCard>
+          <LandingCardContent>
+            {/* Contact Icon */}
+            <div className="flex justify-center mb-6">
+              <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="text-4xl font-bold text-primary">
+                  {(content.firstName?.[0] || content.lastName?.[0] || '?').toUpperCase()}
+                </span>
               </div>
+            </div>
+
+            <h1 className="text-2xl font-bold text-white text-center mb-1">
+              {fullName || 'Contact'}
+            </h1>
+            {content.title && (
+              <p className="text-zinc-400 text-center mb-1">{content.title}</p>
             )}
-          </div>
+            {content.organization && (
+              <p className="text-zinc-500 text-center mb-6">{content.organization}</p>
+            )}
 
-          {/* Download vCard Button */}
-          <div className="mt-8">
-            <VCardActions content={content} fullName={fullName} />
-          </div>
+            {/* Contact Details */}
+            <div className="space-y-3 mt-6">
+              {content.phone && (
+                <a
+                  href={`tel:${content.phone}`}
+                  className="flex items-center gap-4 p-4 bg-zinc-900/50 rounded-lg hover:bg-zinc-900/70 transition-colors"
+                >
+                  <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                    <PhoneIcon className="w-5 h-5 text-green-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-zinc-500 uppercase">Phone</p>
+                    <p className="text-white">{content.phone}</p>
+                  </div>
+                </a>
+              )}
 
-          {/* Powered by */}
-          <p className="mt-8 text-center text-sm text-slate-500">
-            Powered by{' '}
-            <Link href="/" className="hover:underline text-slate-400">
-              QRWolf
-            </Link>
-          </p>
-        </div>
+              {content.email && (
+                <a
+                  href={`mailto:${content.email}`}
+                  className="flex items-center gap-4 p-4 bg-zinc-900/50 rounded-lg hover:bg-zinc-900/70 transition-colors"
+                >
+                  <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                    <EmailIcon className="w-5 h-5 text-blue-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-zinc-500 uppercase">Email</p>
+                    <p className="text-white">{content.email}</p>
+                  </div>
+                </a>
+              )}
+
+              {content.website && (
+                <a
+                  href={content.website.startsWith('http') ? content.website : `https://${content.website}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 p-4 bg-zinc-900/50 rounded-lg hover:bg-zinc-900/70 transition-colors"
+                >
+                  <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
+                    <GlobeIcon className="w-5 h-5 text-purple-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-zinc-500 uppercase">Website</p>
+                    <p className="text-white">{content.website}</p>
+                  </div>
+                </a>
+              )}
+
+              {content.address && (
+                <div className="flex items-center gap-4 p-4 bg-zinc-900/50 rounded-lg">
+                  <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center">
+                    <MapIcon className="w-5 h-5 text-orange-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-zinc-500 uppercase">Address</p>
+                    <p className="text-white">{content.address}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Download vCard Button */}
+            <div className="mt-8">
+              <VCardActions content={content} fullName={fullName} />
+            </div>
+          </LandingCardContent>
+        </LandingCard>
+
+        <LandingFooter accentColor={accentColor} />
       </div>
-    </div>
+    </LandingBackground>
   );
 }
 

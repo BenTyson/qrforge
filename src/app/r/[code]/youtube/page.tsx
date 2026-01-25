@@ -2,11 +2,16 @@
 
 import { createClient } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import type { YouTubeContent } from '@/lib/qr/types';
 import { getYouTubeUrl, getYouTubeEmbedUrl, getYouTubeThumbnail, getVideoMetadata } from '@/lib/youtube';
+import {
+  LandingBackground,
+  LandingCard,
+  LandingFooter,
+  LandingLoader
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -73,11 +78,7 @@ export default function YouTubeLandingPage({ params }: PageProps) {
   }, [params]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LandingLoader />;
   }
 
   if (!content) {
@@ -87,43 +88,15 @@ export default function YouTubeLandingPage({ params }: PageProps) {
   const youtubeUrl = getYouTubeUrl(content.videoId);
   const embedUrl = getYouTubeEmbedUrl(content.videoId);
   const thumbnailUrl = metadata?.thumbnailUrl || getYouTubeThumbnail(content.videoId, 'maxres');
+  const accentColor = '#FF0000'; // YouTube red
 
   return (
-    <div
-      className="min-h-screen py-12 px-4 flex items-center justify-center relative overflow-hidden"
-      style={{
-        background: `radial-gradient(ellipse at top, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
-                     radial-gradient(ellipse at bottom, rgba(255, 0, 0, 0.05) 0%, transparent 50%),
-                     linear-gradient(to bottom, #0f172a, #1e293b)`,
-      }}
-    >
-      {/* Floating orbs */}
-      <div
-        className="absolute top-20 right-[15%] w-64 h-64 rounded-full blur-3xl opacity-20 animate-pulse"
-        style={{ backgroundColor: '#FF0000' }}
-      />
-      <div
-        className="absolute bottom-32 left-[10%] w-48 h-48 rounded-full blur-2xl opacity-15 animate-pulse"
-        style={{ backgroundColor: '#FF0000', animationDelay: '1s' }}
-      />
-
-      {/* Dot pattern */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: 'radial-gradient(#FF0000 1px, transparent 1px)',
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      <div className="max-w-2xl w-full relative z-10">
+    <LandingBackground accentColor={accentColor} className="py-12 px-4 flex items-center justify-center">
+      <div className="max-w-2xl w-full">
         {/* Video Card */}
-        <div
-          className="relative bg-slate-800/60 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 animate-fade-in"
-          style={{ boxShadow: '0 25px 50px -12px rgba(255, 0, 0, 0.2)' }}
-        >
+        <LandingCard>
           {/* Video Embed or Thumbnail */}
-          <div className="relative w-full aspect-video bg-black">
+          <div className="relative w-full aspect-video bg-black rounded-t-3xl overflow-hidden">
             {!embedError && !isLocalhost ? (
               <iframe
                 src={embedUrl}
@@ -176,7 +149,7 @@ export default function YouTubeLandingPage({ params }: PageProps) {
                 href={metadata.authorUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6 animate-slide-up"
+                className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-6 animate-slide-up"
                 style={{ animationDelay: '200ms' }}
               >
                 <div className="w-8 h-8 rounded-full bg-red-600/20 flex items-center justify-center">
@@ -208,22 +181,10 @@ export default function YouTubeLandingPage({ params }: PageProps) {
               </span>
             </a>
           </div>
-        </div>
+        </LandingCard>
 
-        {/* Powered by */}
-        <p
-          className="mt-10 text-center text-sm text-slate-500 animate-slide-up"
-          style={{ animationDelay: '400ms' }}
-        >
-          Powered by{' '}
-          <Link
-            href="/"
-            className="font-medium text-red-500 transition-colors hover:text-red-400"
-          >
-            QRWolf
-          </Link>
-        </p>
+        <LandingFooter accentColor={accentColor} />
       </div>
-    </div>
+    </LandingBackground>
   );
 }

@@ -2,9 +2,15 @@
 
 import { createClient } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import type { GeoContent } from '@/lib/qr/types';
+import {
+  LandingBackground,
+  LandingCard,
+  LandingCardContent,
+  LandingFooter,
+  LandingLoader
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -39,11 +45,7 @@ export default function LocationLandingPage({ params }: PageProps) {
   }, [params]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LandingLoader />;
   }
 
   if (!content) {
@@ -80,44 +82,10 @@ export default function LocationLandingPage({ params }: PageProps) {
   };
 
   return (
-    <div
-      className="min-h-screen py-12 px-4 flex items-center justify-center relative overflow-hidden"
-      style={{
-        background: `radial-gradient(ellipse at top, ${accentColor}15 0%, transparent 50%),
-                     radial-gradient(ellipse at bottom, ${accentColor}10 0%, transparent 50%),
-                     linear-gradient(to bottom, #0f172a, #1e293b)`,
-      }}
-    >
-      {/* Floating orbs */}
-      <div
-        className="absolute top-20 right-[15%] w-64 h-64 rounded-full blur-3xl opacity-20 animate-pulse"
-        style={{ backgroundColor: accentColor }}
-      />
-      <div
-        className="absolute bottom-32 left-[10%] w-48 h-48 rounded-full blur-2xl opacity-15 animate-pulse"
-        style={{ backgroundColor: accentColor, animationDelay: '1s' }}
-      />
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl opacity-10"
-        style={{ backgroundColor: accentColor }}
-      />
-
-      {/* Dot pattern */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `radial-gradient(${accentColor} 1px, transparent 1px)`,
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      <div className="max-w-md w-full relative z-10">
-        {/* Location Card */}
-        <div
-          className="relative bg-slate-800/60 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 animate-fade-in"
-          style={{ boxShadow: `0 25px 50px -12px ${accentColor}30` }}
-        >
-          <div className="p-8">
+    <LandingBackground accentColor={accentColor} className="py-12 px-4 flex items-center justify-center">
+      <div className="max-w-md w-full">
+        <LandingCard>
+          <LandingCardContent>
             {/* Location Icon */}
             <div
               className="text-center mb-6 animate-slide-up"
@@ -127,7 +95,6 @@ export default function LocationLandingPage({ params }: PageProps) {
                 className="w-20 h-20 mx-auto mb-4 rounded-2xl flex items-center justify-center"
                 style={{
                   background: `linear-gradient(135deg, ${accentColor}40, ${accentColor}20)`,
-                  boxShadow: `0 8px 24px ${accentColor}20`,
                 }}
               >
                 <svg
@@ -171,7 +138,7 @@ export default function LocationLandingPage({ params }: PageProps) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-white">Coordinates</p>
-                  <p className="text-xs text-slate-400 font-mono">
+                  <p className="text-xs text-zinc-400 font-mono">
                     {content.latitude.toFixed(6)}, {content.longitude.toFixed(6)}
                   </p>
                 </div>
@@ -197,7 +164,7 @@ export default function LocationLandingPage({ params }: PageProps) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-white">Address</p>
-                    <p className="text-xs text-slate-400">{content.address}</p>
+                    <p className="text-xs text-zinc-400">{content.address}</p>
                   </div>
                 </div>
               )}
@@ -215,13 +182,13 @@ export default function LocationLandingPage({ params }: PageProps) {
                 style={{ border: 0 }}
                 loading="lazy"
                 title="Location map"
-                className="w-full bg-slate-700/30"
+                className="w-full bg-zinc-800/30"
               />
               <a
                 href={osmLinkUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block bg-slate-700/50 px-3 py-2 text-center text-xs text-slate-400 hover:text-slate-300 transition-colors"
+                className="block bg-zinc-800/50 px-3 py-2 text-center text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
               >
                 View on OpenStreetMap
               </a>
@@ -238,7 +205,6 @@ export default function LocationLandingPage({ params }: PageProps) {
                 className="w-full p-4 rounded-xl text-center font-semibold text-white transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
                 style={{
                   background: `linear-gradient(135deg, ${accentColor}, ${accentColor}cc)`,
-                  boxShadow: `0 8px 24px ${accentColor}40`,
                 }}
               >
                 <svg
@@ -259,7 +225,6 @@ export default function LocationLandingPage({ params }: PageProps) {
                 className="w-full p-4 rounded-xl text-center font-semibold text-white transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
                 style={{
                   background: `linear-gradient(135deg, #4285F4, #3367D6)`,
-                  boxShadow: `0 8px 24px rgba(66, 133, 244, 0.4)`,
                 }}
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -271,10 +236,7 @@ export default function LocationLandingPage({ params }: PageProps) {
               {/* Open in Apple Maps */}
               <button
                 onClick={handleOpenAppleMaps}
-                className="w-full p-4 rounded-xl text-center font-semibold text-white transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 bg-gradient-to-r from-slate-600 to-slate-700"
-                style={{
-                  boxShadow: `0 8px 24px rgba(71, 85, 105, 0.4)`,
-                }}
+                className="w-full p-4 rounded-xl text-center font-semibold text-white transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 bg-gradient-to-r from-zinc-700 to-zinc-800"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
@@ -282,24 +244,11 @@ export default function LocationLandingPage({ params }: PageProps) {
                 Open in Apple Maps
               </button>
             </div>
-          </div>
-        </div>
+          </LandingCardContent>
+        </LandingCard>
 
-        {/* Powered by */}
-        <p
-          className="mt-10 text-center text-sm text-slate-500 animate-slide-up"
-          style={{ animationDelay: '400ms' }}
-        >
-          Powered by{' '}
-          <Link
-            href="/"
-            className="font-medium transition-colors hover:text-primary"
-            style={{ color: accentColor }}
-          >
-            QRWolf
-          </Link>
-        </p>
+        <LandingFooter accentColor={accentColor} />
       </div>
-    </div>
+    </LandingBackground>
   );
 }

@@ -2,11 +2,15 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  LandingBackground,
+  LandingCard,
+  LandingCardContent,
+  LandingFooter
+} from '@/components/landing';
 
 export default function UnlockPage() {
   const params = useParams();
@@ -15,6 +19,8 @@ export default function UnlockPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const accentColor = '#14b8a6';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,53 +54,50 @@ export default function UnlockPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-secondary/20 px-4">
-      <Card className="max-w-md w-full p-8 glass">
-        <div className="text-center mb-6">
-          <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-            <LockIcon className="w-8 h-8 text-primary" />
-          </div>
-          <h1 className="text-2xl font-bold">Password Protected</h1>
-          <p className="text-muted-foreground mt-2">
-            This QR code is protected. Enter the password to continue.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 bg-secondary/50"
-              autoFocus
-            />
-          </div>
-
-          {error && (
-            <div className="text-sm text-red-500 bg-red-500/10 px-4 py-2 rounded-lg">
-              {error}
+    <LandingBackground accentColor={accentColor} className="flex items-center justify-center px-4 py-12">
+      <div className="max-w-md w-full">
+        <LandingCard>
+          <LandingCardContent>
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                <LockIcon className="w-8 h-8 text-primary" />
+              </div>
+              <h1 className="text-2xl font-bold text-white">Password Protected</h1>
+              <p className="text-zinc-400 mt-2">
+                This QR code is protected. Enter the password to continue.
+              </p>
             </div>
-          )}
 
-          <Button type="submit" className="w-full" disabled={!password || isLoading}>
-            {isLoading ? 'Verifying...' : 'Unlock'}
-          </Button>
-        </form>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="password" className="text-zinc-300">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="mt-1 bg-zinc-900/50 border-zinc-700"
+                  autoFocus
+                />
+              </div>
 
-        <div className="mt-6 pt-6 border-t border-border text-center">
-          <p className="text-xs text-muted-foreground">
-            Protected by{' '}
-            <Link href="/" className="text-primary hover:underline">
-              QRWolf
-            </Link>
-          </p>
-        </div>
-      </Card>
-    </div>
+              {error && (
+                <div className="text-sm text-red-500 bg-red-500/10 px-4 py-2 rounded-lg">
+                  {error}
+                </div>
+              )}
+
+              <Button type="submit" className="w-full" disabled={!password || isLoading}>
+                {isLoading ? 'Verifying...' : 'Unlock'}
+              </Button>
+            </form>
+          </LandingCardContent>
+        </LandingCard>
+
+        <LandingFooter accentColor={accentColor} />
+      </div>
+    </LandingBackground>
   );
 }
 

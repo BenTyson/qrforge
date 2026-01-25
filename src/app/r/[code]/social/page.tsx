@@ -1,10 +1,15 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
 import type { SocialContent } from '@/lib/qr/types';
 import type { ReactNode } from 'react';
 import { normalizeUrl } from '@/lib/utils';
+import {
+  LandingBackground,
+  LandingCard,
+  LandingCardContent,
+  LandingFooter
+} from '@/components/landing';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -131,80 +136,38 @@ export default async function SocialLandingPage({ params }: PageProps) {
   const accentColor = content.accentColor || '#14b8a6';
 
   return (
-    <div
-      className="min-h-screen py-12 px-4 relative overflow-hidden"
-      style={{
-        background: `radial-gradient(ellipse at top, ${accentColor}20 0%, transparent 50%),
-                     radial-gradient(ellipse at bottom right, ${accentColor}10 0%, transparent 40%),
-                     linear-gradient(180deg, #0f172a 0%, #020617 100%)`,
-      }}
-    >
-      {/* Background decoration */}
-      <div
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage: `radial-gradient(${accentColor}15 1px, transparent 1px)`,
-          backgroundSize: '32px 32px',
-        }}
-      />
-
-      {/* Floating accent orbs */}
-      <div
-        className="absolute top-20 left-10 w-64 h-64 rounded-full blur-[100px] opacity-20"
-        style={{ backgroundColor: accentColor }}
-      />
-      <div
-        className="absolute bottom-20 right-10 w-48 h-48 rounded-full blur-[80px] opacity-15"
-        style={{ backgroundColor: accentColor }}
-      />
-
-      <div className="max-w-md mx-auto relative z-10">
+    <LandingBackground accentColor={accentColor} className="py-12 px-4">
+      <div className="max-w-md mx-auto">
         {/* Profile Card */}
-        <div
-          className="text-center mb-8 p-6 rounded-2xl backdrop-blur-xl border border-white/10 animate-fade-in"
-          style={{
-            background: `linear-gradient(145deg, ${accentColor}08 0%, transparent 50%)`,
-            boxShadow: `0 8px 32px ${accentColor}10`,
-          }}
-        >
-          {/* Avatar */}
-          {content.avatarUrl ? (
-            <div className="relative inline-block mb-4">
+        <LandingCard className="mb-8">
+          <LandingCardContent className="text-center">
+            {/* Avatar */}
+            {content.avatarUrl ? (
+              <div className="relative inline-block mb-4">
+                <Image
+                  src={content.avatarUrl}
+                  alt={content.name}
+                  width={112}
+                  height={112}
+                  className="relative w-28 h-28 rounded-full object-cover border-2 border-white/10"
+                  unoptimized
+                />
+              </div>
+            ) : (
               <div
-                className="absolute inset-0 rounded-full blur-xl opacity-50"
-                style={{ backgroundColor: accentColor }}
-              />
-              <Image
-                src={content.avatarUrl}
-                alt={content.name}
-                width={112}
-                height={112}
-                className="relative w-28 h-28 rounded-full object-cover border-4 shadow-2xl"
-                style={{
-                  borderColor: accentColor,
-                  boxShadow: `0 0 30px ${accentColor}40`,
-                }}
-                unoptimized
-              />
-            </div>
-          ) : (
-            <div
-              className="w-28 h-28 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold text-white border-4"
-              style={{
-                backgroundColor: `${accentColor}30`,
-                borderColor: accentColor,
-                boxShadow: `0 0 30px ${accentColor}40`,
-              }}
-            >
-              {content.name.charAt(0).toUpperCase()}
-            </div>
-          )}
+                className="w-28 h-28 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold text-white border-2 border-white/10"
+                style={{ backgroundColor: `${accentColor}30` }}
+              >
+                {content.name.charAt(0).toUpperCase()}
+              </div>
+            )}
 
-          <h1 className="text-2xl font-bold text-white">{content.name}</h1>
-          {content.bio && (
-            <p className="text-slate-400 mt-2 max-w-sm mx-auto text-sm leading-relaxed">{content.bio}</p>
-          )}
-        </div>
+            <h1 className="text-2xl font-bold text-white">{content.name}</h1>
+            {content.bio && (
+              <p className="text-zinc-400 mt-2 max-w-sm mx-auto text-sm leading-relaxed">{content.bio}</p>
+            )}
+          </LandingCardContent>
+        </LandingCard>
 
         {/* Social Links */}
         <div className="space-y-3">
@@ -221,10 +184,9 @@ export default async function SocialLandingPage({ params }: PageProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-4 p-4 rounded-xl transition-all duration-300
-                           hover:scale-[1.02] hover:shadow-lg animate-slide-up"
+                           hover:scale-[1.02] animate-slide-up"
                 style={{
                   backgroundColor: platform.color,
-                  boxShadow: `0 4px 20px ${platform.color}40`,
                   animationDelay: `${index * 80}ms`,
                   animationFillMode: 'backwards',
                 }}
@@ -252,17 +214,8 @@ export default async function SocialLandingPage({ params }: PageProps) {
           })}
         </div>
 
-        {/* Powered by */}
-        <p
-          className="mt-12 text-center text-sm text-slate-600 animate-fade-in"
-          style={{ animationDelay: `${content.links.length * 80 + 200}ms`, animationFillMode: 'backwards' }}
-        >
-          Powered by{' '}
-          <Link href="/" className="text-slate-500 hover:text-primary transition-colors">
-            QRWolf
-          </Link>
-        </p>
+        <LandingFooter accentColor={accentColor} delay={content.links.length * 80 + 200} />
       </div>
-    </div>
+    </LandingBackground>
   );
 }

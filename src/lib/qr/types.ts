@@ -37,7 +37,9 @@ export type QRContentType =
   | 'coupon'
   | 'social'
   // Events (free tier)
-  | 'event';
+  | 'event'
+  // Location (free tier)
+  | 'geo';
 
 export interface GradientOptions {
   enabled: boolean;
@@ -276,6 +278,15 @@ export interface EventContent {
   accentColor?: string;   // Landing page accent color
 }
 
+export interface GeoContent {
+  type: 'geo';
+  latitude: number;       // -90 to 90
+  longitude: number;      // -180 to 180
+  locationName?: string;  // Display name
+  address?: string;       // Full address text
+  accentColor?: string;   // Landing page accent color
+}
+
 // === File Upload Types (Pro+) ===
 
 export interface PDFContent {
@@ -421,6 +432,8 @@ export type QRContent =
   | GoogleReviewContent
   // Events
   | EventContent
+  // Location
+  | GeoContent
   // File upload types
   | PDFContent
   | ImagesContent
@@ -479,6 +492,8 @@ export const QR_TYPE_LABELS: Record<QRContentType, string> = {
   'google-review': 'Google Review',
   // Events
   event: 'Event / Calendar',
+  // Location
+  geo: 'Location',
   // File upload types
   pdf: 'PDF Document',
   images: 'Image Gallery',
@@ -521,6 +536,8 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
   'google-review': 'star',
   // Events
   event: 'calendar',
+  // Location
+  geo: 'map-pin',
   // File upload types
   pdf: 'file-text',
   images: 'images',
@@ -554,6 +571,7 @@ export const DYNAMIC_REQUIRED_TYPES: QRContentType[] = [
   'youtube',
   'spotify',
   'event',
+  'geo',
   'pdf', 'images', 'video', 'mp3',
   'menu', 'business', 'links', 'coupon', 'social',
 ];

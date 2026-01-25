@@ -21,6 +21,9 @@ export { GoogleReviewForm } from './GoogleReviewForm';
 // Events (free tier)
 export { EventForm } from './EventForm';
 
+// Location (free tier)
+export { GeoForm } from './GeoForm';
+
 // File upload type forms (Pro+)
 export { PDFForm } from './PDFForm';
 export { ImagesForm } from './ImagesForm';

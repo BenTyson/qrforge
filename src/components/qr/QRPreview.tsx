@@ -99,6 +99,10 @@ export function QRPreview({
           const end = new Date(content.endDate);
           return end > start;
         }
+        case 'geo':
+          return content.latitude !== undefined && content.longitude !== undefined &&
+                 content.latitude >= -90 && content.latitude <= 90 &&
+                 content.longitude >= -180 && content.longitude <= 180;
         // Pro types - these generate preview QR codes
         case 'pdf':
           return (content.fileUrl && content.fileUrl.length > 0) || (content.fileName && content.fileName.length > 0);

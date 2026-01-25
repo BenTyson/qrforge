@@ -2,6 +2,27 @@ import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 
+// Types that have dedicated landing pages (must match route.ts)
+const LANDING_PAGE_ROUTES: Record<string, string> = {
+  pdf: 'pdf',
+  images: 'gallery',
+  video: 'video',
+  mp3: 'audio',
+  menu: 'menu',
+  business: 'business',
+  links: 'links',
+  coupon: 'coupon',
+  social: 'social',
+  wifi: 'wifi',
+  text: 'text',
+  vcard: 'vcard',
+  'google-review': 'review',
+  youtube: 'youtube',
+  spotify: 'spotify',
+  event: 'event',
+  geo: 'location',
+};
+
 export async function POST(request: Request) {
   try {
     const { code, password } = await request.json();
@@ -18,7 +39,7 @@ export async function POST(request: Request) {
     // Find the QR code
     const { data: qrCode, error } = await supabase
       .from('qr_codes')
-      .select('password_hash, destination_url, content, show_landing_page')
+      .select('password_hash, destination_url, content, content_type, show_landing_page')
       .eq('short_code', code)
       .single();
 
@@ -46,7 +67,26 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get destination URL
+    // If custom landing page is enabled, redirect there
+    if (qrCode.show_landing_page) {
+      return NextResponse.json({
+        success: true,
+        redirectUrl: `/r/${code}/landing`,
+        hasLandingPage: true,
+      });
+    }
+
+    // Check if content type has a dedicated landing page
+    const contentType = qrCode.content_type as string;
+    if (LANDING_PAGE_ROUTES[contentType]) {
+      return NextResponse.json({
+        success: true,
+        redirectUrl: `/r/${code}/${LANDING_PAGE_ROUTES[contentType]}`,
+        hasLandingPage: true,
+      });
+    }
+
+    // Get destination URL for redirect types
     let destinationUrl = qrCode.destination_url;
 
     if (!destinationUrl && qrCode.content) {
@@ -61,15 +101,6 @@ export async function POST(request: Request) {
         { success: false, error: 'No destination URL found' },
         { status: 400 }
       );
-    }
-
-    // If landing page is enabled, redirect there instead
-    if (qrCode.show_landing_page) {
-      return NextResponse.json({
-        success: true,
-        redirectUrl: `/r/${code}/landing`,
-        hasLandingPage: true,
-      });
     }
 
     return NextResponse.json({

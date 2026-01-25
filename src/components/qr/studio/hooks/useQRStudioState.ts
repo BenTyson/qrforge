@@ -31,6 +31,7 @@ import type {
   AppsContent,
   GoogleReviewContent,
   EventContent,
+  GeoContent,
   PDFContent,
   ImagesContent,
   VideoContent,
@@ -306,6 +307,12 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
         const start = new Date(eventContent.startDate);
         const end = new Date(eventContent.endDate);
         return end > start;
+      }
+      case 'geo': {
+        const geoContent = content as GeoContent;
+        return geoContent.latitude !== undefined && geoContent.longitude !== undefined &&
+               geoContent.latitude >= -90 && geoContent.latitude <= 90 &&
+               geoContent.longitude >= -180 && geoContent.longitude <= 180;
       }
       case 'pdf':
         return !!(content as PDFContent).fileUrl?.trim() || !!(content as PDFContent).fileName?.trim();

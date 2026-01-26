@@ -282,10 +282,90 @@ Types: `info`, `tip`, `warning`, `error`, `note`
 - Link to learn articles: `[article title](/learn/slug-here)`
 - Link to blog posts: `[post title](/blog/slug-here)`
 
-### CTAs
-Include natural calls-to-action woven into the prose:
-- Near the end: "Ready to create your first QR code? [Get started for free](/signup) with QRWolf."
-- After explaining a Pro feature: "This feature is available on [Pro and Business plans](/plans)."
+### CTAs: ArticleCTA Component (REQUIRED)
+
+**Every article MUST include ArticleCTA components.** These are the primary conversion mechanism for content.
+
+#### Component Syntax
+
+**Inline CTA** - Place after introducing/explaining a specific QR type:
+```mdx
+<ArticleCTA qrType="wifi" />
+```
+
+**Banner CTA** - Place at article end (replaces old prose CTAs):
+```mdx
+<ArticleCTA variant="banner" title="Custom headline" description="Custom description" buttonText="Custom button" qrType="url" />
+```
+
+#### CTA Requirements by Article Type
+
+**Learn Articles (use-cases, industries):**
+- 1-2 inline CTAs after discussing specific QR types
+- 1 banner CTA at the end
+- Match qrType to the article topic (e.g., `menu` for restaurant article)
+
+**Blog How-To Articles:**
+- 1 inline CTA early in the article (after explaining the core concept)
+- 1 banner CTA at the end
+- Use `url` as default qrType for general articles
+
+**Foundation/Basics Articles:**
+- 2-3 inline CTAs for different types mentioned
+- 1 banner CTA at the end
+
+#### Available QR Types for CTAs
+
+```
+url, text, wifi, vcard, email, phone, sms, whatsapp, facebook, instagram,
+apps, menu, pdf, video, mp3, images, links, event, coupon, crypto, geo,
+business, social, google-review, x, tiktok, linkedin, youtube, spotify,
+snapchat, threads, telegram, amazon
+```
+
+#### CTA Placement Guidelines
+
+**DO:**
+- Place inline CTAs after fully explaining a concept/type
+- Use banner CTAs to replace old "Ready to get started?" prose endings
+- Match the qrType to what's being discussed
+
+**DON'T:**
+- Place CTAs before explaining the concept
+- Use more than 4 CTAs per article (creates fatigue)
+- Use generic `url` type when a specific type fits better
+
+#### Example: Proper CTA Integration
+
+```mdx
+## WiFi QR Codes for Guests
+
+Hotels have discovered that WiFi access is one of the most common guest requests.
+A WiFi QR code eliminates the need to verbally share passwords or print credentials
+on easily-lost cards. Guests simply scan the code displayed in their room or at
+the front desk, and their phone connects automatically.
+
+<ArticleCTA qrType="wifi" />
+
+The convenience extends beyond the initial connection. When guests return for
+future stays, their device often remembers the network...
+
+[... more content ...]
+
+## Getting Started
+
+<ArticleCTA variant="banner" title="Create WiFi QR codes for your hotel" description="Let guests connect instantly with a single scan—no passwords to remember." buttonText="Create WiFi QR" qrType="wifi" />
+```
+
+#### Legacy Prose CTAs (DEPRECATED)
+
+Old-style prose CTAs are now deprecated:
+```mdx
+<!-- DON'T DO THIS ANYMORE -->
+Ready to create your first QR code? [Get started for free](/signup) with QRWolf.
+```
+
+Replace with ArticleCTA banner component instead.
 
 ---
 
@@ -305,11 +385,17 @@ Incorporate these naturally - they should appear where they fit the prose, not s
 
 When relevant, mention these capabilities:
 
-**Free Tier:** 11 QR types (URL, Text, WiFi, vCard, Email, Phone, SMS, WhatsApp, Facebook, Instagram, Apps), basic customization, PNG/SVG download
+**Free Tier:** Core QR types (URL, Text, WiFi, vCard, Email, Phone, SMS), basic customization, PNG/SVG download
 
-**Pro Tier ($9/mo):** All 16 QR types, dynamic QR codes (50), full analytics, logo upload, expiration dates, password protection, scan tracking
+**Pro Tier ($9/mo):** All 34 QR types, dynamic QR codes (50), full analytics, logo upload, expiration dates, password protection, scan tracking
 
 **Business Tier ($29/mo):** Unlimited dynamic QRs, bulk generation, REST API (10k requests/mo), team members (up to 3)
+
+**All 34 QR Types:**
+- **Core:** URL, Text, WiFi, vCard, Email, Phone, SMS
+- **Social:** WhatsApp, Facebook, Instagram, X (Twitter), LinkedIn, TikTok, YouTube, Snapchat, Threads, Telegram, Spotify
+- **Business:** Menu, PDF, Video, MP3/Audio, Images, Links, Event, Coupon, Business Card, Google Review
+- **Utility:** Geo/Location, Apps, Crypto, Amazon, Social (multi-profile)
 
 ---
 
@@ -322,8 +408,13 @@ When relevant, mention these capabilities:
 5. **Write quality prose first** - get the ideas and explanations right
 6. Add formatting elements (lists, tables, callouts) only where they enhance understanding
 7. Review for bullet-point overuse - convert to prose where needed
-8. Add internal links and CTAs naturally
-9. Build to verify: `npm run build`
+8. Add internal links naturally
+9. **Add ArticleCTA components:**
+   - Identify which QR types are discussed in the article
+   - Add 1-2 inline `<ArticleCTA qrType="xxx" />` after explaining each type
+   - Add 1 banner CTA at the end with custom copy
+   - Ensure qrTypes match the article topic
+10. Build to verify: `npm run build`
 
 ---
 
@@ -341,7 +432,8 @@ Before finalizing content:
 - [ ] 800-1500 words for blog, 600-1200 for learn
 - [ ] 1-3 Callout components (not more)
 - [ ] Internal links to related content
-- [ ] CTA to /signup or /plans
+- [ ] **ArticleCTA components included** (1-2 inline + 1 banner at end)
+- [ ] **CTA qrTypes match article topic** (not generic `url` if specific type fits)
 - [ ] relatedSlugs reference actual existing articles
 
 ---
@@ -366,6 +458,12 @@ Before finalizing content:
 5. **Read the article aloud.** Does it sound like a person explaining something, or like someone reading a PowerPoint deck?
    - If it sounds like bullets, rewrite until it flows.
 
+6. **Check ArticleCTA components.** Does the article have:
+   - At least 1 inline CTA after discussing a QR type?
+   - Exactly 1 banner CTA at the end?
+   - qrTypes that match the article topic?
+   - If missing any CTAs, ADD THEM before submitting.
+
 ### Example Self-Audit
 
 Article: "QR Codes for Restaurants"
@@ -373,6 +471,8 @@ Article: "QR Codes for Restaurants"
 - Total bullets: 14 (under 20 for ~1100 words) ✓
 - "Use Cases" section: Written as 4 prose paragraphs with examples ✓
 - Read aloud: Flows naturally ✓
+- Inline CTAs: 2 (`<ArticleCTA qrType="menu" />`, `<ArticleCTA qrType="wifi" />`) ✓
+- Banner CTA: 1 at end with `qrType="menu"` ✓
 
 **Only submit after passing all checks.**
 

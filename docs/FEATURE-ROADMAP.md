@@ -2,7 +2,7 @@
 
 > **Last Updated**: January 26, 2026
 > **Status**: Active development
-> **Current Features**: 34 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, 151 SEO articles
+> **Current Features**: 34 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, 151 SEO articles (all with CTAs)
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -368,6 +368,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-26 | Completed Content Audit: 58 articles updated with ArticleCTAs (P1-P4). Updated content skill with CTA requirements for future content generation. |
 | 2026-01-26 | Completed PDF Export (Feature #10), ArticleCTA component, Content Audit plan, updated types article to 34 types |
 | 2026-01-25 | Completed Template Gallery (Feature #9), 40 templates across 7 categories |
 | 2026-01-24 | Completed Geo/Location QR Code Type, 28th QR type with landing page and map buttons |

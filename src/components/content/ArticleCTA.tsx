@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { QR_TYPE_METADATA } from '@/components/qr/wizard/constants';
 
 interface ArticleCTAProps {
   /** Type of QR code to link to (e.g., 'url', 'wifi', 'vcard') */
@@ -17,24 +16,6 @@ interface ArticleCTAProps {
   buttonText?: string;
 }
 
-// Map QR types to their display names and descriptions
-const QR_TYPE_CONFIG: Record<string, { name: string; description: string }> = {
-  url: { name: 'URL', description: 'Link to any website or landing page' },
-  wifi: { name: 'WiFi', description: 'Let guests connect with a single scan' },
-  vcard: { name: 'vCard', description: 'Share your contact info instantly' },
-  email: { name: 'Email', description: 'Pre-compose emails for easy sending' },
-  sms: { name: 'SMS', description: 'Pre-filled text messages' },
-  phone: { name: 'Phone', description: 'One-tap phone calls' },
-  menu: { name: 'Menu', description: 'Digital menus for restaurants' },
-  pdf: { name: 'PDF', description: 'Share documents easily' },
-  social: { name: 'Social Links', description: 'All your profiles in one place' },
-  'google-review': { name: 'Google Review', description: 'Get more reviews from customers' },
-  event: { name: 'Event', description: 'Add events to calendars instantly' },
-  video: { name: 'Video', description: 'Share videos from YouTube, Vimeo, and more' },
-  business: { name: 'Business Card', description: 'Digital business cards with all your info' },
-  geo: { name: 'Location', description: 'Share map locations and directions' },
-};
-
 export function ArticleCTA({
   qrType,
   title,
@@ -42,7 +23,7 @@ export function ArticleCTA({
   variant = 'inline',
   buttonText,
 }: ArticleCTAProps) {
-  const config = qrType ? QR_TYPE_CONFIG[qrType] : null;
+  const config = qrType ? QR_TYPE_METADATA[qrType] : null;
 
   const displayTitle = title || (config ? `Create a ${config.name} QR Code` : 'Create Your QR Code');
   const displayDescription =
@@ -63,18 +44,54 @@ export function ArticleCTA({
 
   if (variant === 'banner') {
     return (
-      <div className="my-8 rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 p-6 md:p-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-center md:text-left">
-            <h3 className="text-lg font-semibold mb-1">{displayTitle}</h3>
-            <p className="text-muted-foreground text-sm">{displayDescription}</p>
+      <div className="my-10 relative group">
+        {/* Glow effect */}
+        <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-cyan-500/30 to-primary/30 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-500" />
+
+        {/* Main card */}
+        <div className="relative rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 overflow-hidden">
+          {/* Animated gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-cyan-500/10 opacity-60" />
+
+          {/* Shine effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+
+          {/* Content */}
+          <div className="relative p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            {/* Icon */}
+            <div className="hidden md:flex w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-cyan-500/20 border border-primary/30 items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+              <QRIcon className="w-8 h-8 text-primary" />
+            </div>
+
+            {/* Text */}
+            <div className="flex-1 text-center md:text-left">
+              <h3 className="text-xl md:text-2xl font-bold mb-2 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                {displayTitle}
+              </h3>
+              <p className="text-slate-400 text-sm md:text-base max-w-md">
+                {displayDescription}
+              </p>
+            </div>
+
+            {/* Button */}
+            <Link href={href} onClick={handleClick} className="shrink-0">
+              <button className="group/btn relative px-6 py-3 rounded-xl font-semibold text-white overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/25">
+                {/* Button gradient bg */}
+                <div className="absolute inset-0 bg-gradient-to-r from-primary to-cyan-500" />
+                {/* Button shine */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-500" />
+                {/* Button content */}
+                <span className="relative flex items-center gap-2">
+                  {displayButtonText}
+                  <ArrowRightIcon className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-200" />
+                </span>
+              </button>
+            </Link>
           </div>
-          <Link href={href} onClick={handleClick}>
-            <Button className="whitespace-nowrap">
-              {displayButtonText}
-              <ArrowRightIcon className="ml-2 w-4 h-4" />
-            </Button>
-          </Link>
         </div>
       </div>
     );
@@ -82,43 +99,61 @@ export function ArticleCTA({
 
   // Inline variant
   return (
-    <Card className="my-6 p-5 bg-gradient-to-br from-primary/5 to-transparent border-primary/20">
-      <div className="flex items-start gap-4">
-        <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
-          <QRIcon className="w-5 h-5 text-primary" />
-        </div>
-        <div className="flex-1">
-          <h4 className="font-semibold text-sm mb-1">{displayTitle}</h4>
-          <p className="text-muted-foreground text-sm mb-3">{displayDescription}</p>
-          <Link href={href} onClick={handleClick}>
-            <Button size="sm" variant="outline" className="text-primary border-primary/30 hover:bg-primary/10">
-              {displayButtonText}
-              <ArrowRightIcon className="ml-1.5 w-3.5 h-3.5" />
-            </Button>
-          </Link>
+    <div className="my-8 relative group">
+      {/* Subtle glow */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-cyan-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+      {/* Card */}
+      <div className="relative rounded-xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/50 p-5 overflow-hidden backdrop-blur-sm">
+        {/* Decorative corner */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+
+        <div className="relative flex items-start gap-4">
+          {/* Icon */}
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-cyan-500/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:border-primary/40 transition-all duration-300">
+            <QRIcon className="w-6 h-6 text-primary" />
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <h4 className="font-semibold text-white mb-1 group-hover:text-primary transition-colors duration-200">
+              {displayTitle}
+            </h4>
+            <p className="text-slate-400 text-sm mb-4 line-clamp-2">
+              {displayDescription}
+            </p>
+
+            {/* Button */}
+            <Link href={href} onClick={handleClick}>
+              <button className="group/btn inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-primary bg-primary/10 border border-primary/20 hover:bg-primary/20 hover:border-primary/40 transition-all duration-200">
+                {displayButtonText}
+                <ArrowRightIcon className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform duration-200" />
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
 
 function QRIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="3" y="3" width="7" height="7" rx="1" />
-      <rect x="14" y="3" width="7" height="7" rx="1" />
-      <rect x="3" y="14" width="7" height="7" rx="1" />
-      <rect x="14" y="14" width="3" height="3" />
-      <rect x="18" y="14" width="3" height="3" />
-      <rect x="14" y="18" width="3" height="3" />
-      <rect x="18" y="18" width="3" height="3" />
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <rect x="14" y="14" width="3" height="3" rx="0.5" />
+      <rect x="18" y="14" width="3" height="3" rx="0.5" />
+      <rect x="14" y="18" width="3" height="3" rx="0.5" />
+      <rect x="18" y="18" width="3" height="3" rx="0.5" />
     </svg>
   );
 }
 
 function ArrowRightIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="5" y1="12" x2="19" y2="12" />
       <polyline points="12 5 19 12 12 19" />
     </svg>

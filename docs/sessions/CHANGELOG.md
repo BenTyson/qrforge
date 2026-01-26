@@ -4,6 +4,41 @@ Session-by-session history of development work. Most recent first.
 
 ---
 
+## January 26, 2026
+
+### Growth Cleanup: PDF Export & Content Audit
+
+#### PDF Export UI
+- Installed `jspdf` package
+- Wired PDF button into QRStudio download step
+- Connected existing `PDFOptionsModal` component
+- Pro-tier gated (same as SVG export)
+- Options: paper size, QR size, bleed, crop marks
+
+#### ArticleCTA Component
+- Registered in MDX components (`src/components/content/mdx/index.tsx`)
+- Created `QR_TYPE_METADATA` in constants.tsx - single source of truth for all 34 QR types
+- Redesigned component with polished styling:
+  - Glow effects and gradients
+  - Animated shine on hover
+  - Scale animations on icons/buttons
+  - Banner and inline variants
+
+#### Content Audit: 34 QR Types
+- Rewrote `learn/qr-basics/types-of-qr-codes.mdx` from 16 → 34 types
+- Added 25+ strategic CTAs throughout the article
+- Added missing types: LinkedIn, X, TikTok, Snapchat, Threads, YouTube, Pinterest, Spotify, Reddit, Twitch, Discord, Event, Geo, Google Review
+- Created `docs/CONTENT-AUDIT.md` with prioritized audit plan:
+  - P1: 4 foundation articles
+  - P2: 33 use-case articles
+  - P3: 20 industry articles
+  - P4: 9 how-to blog posts
+
+#### CTA Injection
+- `blog/2026/share-wifi-password-qr-code.mdx` - Added inline + banner WiFi CTAs
+
+---
+
 ## January 25, 2026 (Evening Session)
 
 ### Growth Roadmap Implementation (Sessions 1-10)

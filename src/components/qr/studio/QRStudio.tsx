@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn, getAppUrl } from '@/lib/utils';
 import { generateQRDataURL, downloadQRPNG, generateQRSVG, downloadQRSVG } from '@/lib/qr/generator';
+import { PDFOptionsModal } from '@/components/qr/PDFOptionsModal';
 import type {
   QRContent,
   QRContentType,
@@ -146,6 +147,8 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
   const [state, actions] = useQRStudioState({ mode, qrCodeId });
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [mobilePreviewExpanded, setMobilePreviewExpanded] = useState(false);
+  const [showPDFModal, setShowPDFModal] = useState(false);
+  const [pdfSvgContent, setPdfSvgContent] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(mode === 'create');
   const [templateLoaded, setTemplateLoaded] = useState(false);
 
@@ -291,6 +294,33 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
       actions.setHasDownloaded(true);
     } finally {
       actions.setIsDownloading(false);
+    }
+  }, [state, actions]);
+
+  const handleDownloadPDF = useCallback(async () => {
+    if (!state.content || !state.selectedType) return;
+
+    // PDF requires Pro tier (like SVG)
+    if (!state.userTier || state.userTier === 'free') return;
+
+    try {
+      let code = state.shortCode;
+      if (!state.savedQRId) {
+        const result = await actions.saveQRCode();
+        if (!result) return;
+        code = result.shortCode;
+      }
+
+      const qrContent: QRContent = {
+        type: 'url',
+        url: `${getAppUrl()}/r/${code}`,
+      };
+
+      const svg = await generateQRSVG(qrContent, state.style);
+      setPdfSvgContent(svg);
+      setShowPDFModal(true);
+    } catch (err) {
+      console.error('Failed to prepare PDF:', err);
     }
   }, [state, actions]);
 
@@ -544,6 +574,7 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
                 onSave={handleSave}
                 onDownloadPNG={handleDownloadPNG}
                 onDownloadSVG={handleDownloadSVG}
+                onDownloadPDF={handleDownloadPDF}
                 onDone={() => router.push('/qr-codes')}
                 onCreateAnother={() => actions.reset()}
               />
@@ -648,6 +679,15 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
             </div>
           </div>
         </div>
+      )}
+
+      {showPDFModal && pdfSvgContent && (
+        <PDFOptionsModal
+          open={showPDFModal}
+          onClose={() => setShowPDFModal(false)}
+          svgContent={pdfSvgContent}
+          qrName={state.qrName || 'QR Code'}
+        />
       )}
     </div>
   );
@@ -1086,6 +1126,7 @@ interface DownloadStepProps {
   onSave: () => void;
   onDownloadPNG: () => void;
   onDownloadSVG: () => void;
+  onDownloadPDF: () => void;
   onDone: () => void;
   onCreateAnother: () => void;
 }
@@ -1105,6 +1146,7 @@ function DownloadStep({
   onSave,
   onDownloadPNG,
   onDownloadSVG,
+  onDownloadPDF,
   onDone,
   onCreateAnother,
 }: DownloadStepProps) {
@@ -1268,6 +1310,29 @@ function DownloadStep({
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
             Download SVG (Vector)
+            {!canDownloadSVG && (
+              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full ml-2">
+                Pro
+              </span>
+            )}
+          </span>
+        </Button>
+
+        <Button
+          variant="outline"
+          className="w-full"
+          size="lg"
+          onClick={onDownloadPDF}
+          disabled={!content || !canDownloadSVG || isDownloading}
+        >
+          <span className="flex items-center gap-2">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="12" y1="18" x2="12" y2="12" />
+              <line x1="9" y1="15" x2="15" y2="15" />
+            </svg>
+            Download Print PDF
             {!canDownloadSVG && (
               <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full ml-2">
                 Pro

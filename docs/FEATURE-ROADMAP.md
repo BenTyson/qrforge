@@ -1,8 +1,8 @@
 # QRWolf Feature Roadmap
 
-> **Last Updated**: January 25, 2026
+> **Last Updated**: January 26, 2026
 > **Status**: Active development
-> **Current Features**: 28 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, 151 SEO articles
+> **Current Features**: 34 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, 151 SEO articles
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -30,48 +30,6 @@ This document tracks planned features in priority order. Work through sequential
 ---
 
 ## NEXT UP
-
-### 10. Print-Ready PDF Export
-**Tier**: STANDARD | **Priority**: 10 of 24 | **Effort**: ~1-2 days
-
-**What**: Download QR codes as print-ready PDF with crop marks and bleed.
-
-**Why build this**:
-- Professional users need this
-- Differentiator from basic generators
-- Pro feature upsell
-
-**Implementation**:
-- New download format option: "PDF (Print-Ready)"
-- Options: Include crop marks, bleed area, CMYK conversion
-
-**Technical**:
-- Use `jsPDF` or `pdf-lib` for PDF generation
-- SVG → PDF conversion
-- Add crop marks as vector lines
-- Optional: CMYK color conversion (complex, may skip)
-
-**UI Components**:
-- Download dropdown: PNG | SVG | PDF
-- PDF options modal:
-  - Include crop marks (checkbox)
-  - Bleed area: 0.125" / 0.25" / custom
-  - Paper size: Letter / A4 / Custom
-  - QR position on page
-
-**Files to create/modify**:
-- `src/lib/qr/pdf-generator.ts`
-- Update download step with PDF option
-- `src/components/qr/PDFOptionsModal.tsx`
-
-**Acceptance criteria**:
-- [ ] PDF download works
-- [ ] Crop marks optional
-- [ ] Bleed area configurable
-- [ ] QR code is vector (not raster) in PDF
-- [ ] Multiple paper sizes supported
-
----
 
 ### 11. Simple Feedback Form QR Type
 **Tier**: MAJOR | **Priority**: 11 of 24 | **Effort**: ~1 week
@@ -334,6 +292,7 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Print-Ready PDF Export | 2026-01-26 | Pro feature. jsPDF integration. Options: paper size (Letter/A4/custom), QR size, bleed area, crop marks. PDFOptionsModal component. Button in QRStudio download step. |
 | Template Gallery | 2026-01-25 | 40 templates across 7 categories (Restaurant, Business, Marketing, Events, Social, Retail, Creative). Templates are style presets (type + colors/patterns/frames). 13 free, 27 Pro. Gallery at `/templates` with filtering/search. Creator integration via `?template=` param. |
 | A/B Testing for Dynamic QR Codes | 2026-01-25 | Pro+ feature. Split traffic between destinations with configurable weights (10-90%). Deterministic variant assignment (same visitor = same variant). Statistical significance calculations with 95% confidence threshold. Dashboard with comparison charts, pause/resume, declare winner. Separate tables: ab_tests, ab_variants, ab_assignments. |
 | Geo/Location QR Code Type | 2026-01-24 | 28th QR type. Coordinates input with "Use my current location" button. Landing page with OpenStreetMap embed, Open in Google Maps, Open in Apple Maps, and Get Directions buttons. Free tier. |
@@ -409,6 +368,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-26 | Completed PDF Export (Feature #10), ArticleCTA component, Content Audit plan, updated types article to 34 types |
 | 2026-01-25 | Completed Template Gallery (Feature #9), 40 templates across 7 categories |
 | 2026-01-24 | Completed Geo/Location QR Code Type, 28th QR type with landing page and map buttons |
 | 2026-01-24 | Completed Event/Calendar QR Code Type, 27th QR type with landing page and calendar buttons |

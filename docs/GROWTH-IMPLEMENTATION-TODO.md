@@ -14,28 +14,22 @@ This document tracks remaining work from the Growth Roadmap implementation (Sess
 - [x] **Sentry Error Tracking** - `@sentry/nextjs` installed, client/server/edge configs, error boundaries wired, instrumentation hook, test endpoint at `/api/test/sentry`
 - [x] **Cron Jobs** - CRON_SECRET set, cron-job.org configured (onboarding 9am UTC, milestones 10am UTC), Pro users excluded from usage warnings
 - [x] **Email Test Endpoint** - `/api/test/emails` for previewing and sending all 12 email templates
+- [x] **Database Migrations** - All 3 migrations pushed to production Supabase (referral system, onboarding email tracking, trial support)
+- [x] **Stripe Portal Error Handling** - Surfaced real Stripe error messages instead of generic fallback
+- [x] **Double-Billing Fix** - Auto-cancel old subscriptions when user upgrades (both checkout and custom flows)
+- [x] **Signup Suspense Fix** - Wrapped `useSearchParams()` in Suspense boundary to fix production build
 
 ---
 
-## Remaining Task
+## All Tasks Complete
 
-### 1. Database Migrations - Push to Production
-
-These migrations were pushed to dev Supabase (`fxcvxomvkgioxwbwmbsy`):
-
-1. `20260125000001_add_referral_system.sql` - Referral codes, credits, tracking
-2. `20260125000002_add_onboarding_email_tracking.sql` - Email sent tracking
-3. `20260125000003_add_trial_support.sql` - Trial fields (used by Stripe trial too)
-
-**Before production deploy:**
-- [ ] Link to production: `npx supabase link --project-ref otdlggbhsmgqhsviazho`
-- [ ] Push migrations: `npx supabase db push`
+All growth roadmap implementation tasks have been completed and deployed to production.
 
 ---
 
 ## Quick Verification Checklist
 
-After deploying to production:
+Post-deploy verification (production):
 
 - [ ] Sign up with `?ref=TESTCODE` → referrer linked
 - [ ] Free user sees "Start Free Trial" → redirects to Stripe checkout
@@ -46,6 +40,8 @@ After deploying to production:
 - [ ] Hit `/api/test/sentry` → error appears in Sentry dashboard
 - [ ] Cron endpoints return success with valid CRON_SECRET
 - [ ] Preview emails at `/api/test/emails?template=onboarding_day1`
+- [ ] "Manage Subscription" shows real Stripe error (not generic) for accounts without valid Stripe customer
+- [ ] Subscription upgrade cancels old subscription automatically
 
 ---
 
@@ -56,3 +52,5 @@ After deploying to production:
 - Trial duration is 7 days (configured in `/api/stripe/checkout/route.ts`)
 - Pro users only receive positive milestone emails, not usage warnings
 - Email test endpoint requires no auth in dev, Bearer token in production
+- Admin test account (`ideaswithben@gmail.com`) on production has a fake `stripe_customer_id` — portal won't work for it (expected)
+- Subscription upgrades now auto-cancel old subscriptions in both webhook and finalize-subscription flows

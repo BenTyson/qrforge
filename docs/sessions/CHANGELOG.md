@@ -6,6 +6,26 @@ Session-by-session history of development work. Most recent first.
 
 ## January 27, 2026
 
+### Stripe Billing Portal & Subscription Upgrade Fixes
+
+#### Stripe Portal Error Handling
+- Surfaced actual Stripe error messages in portal endpoint instead of generic "Failed to create portal session"
+- Diagnosed root cause: admin test account had fake `stripe_customer_id` not matching any real Stripe customer
+- Added `portalError` display to BillingSection component (deployed in earlier commit)
+
+#### Double-Billing on Upgrade Fix (Critical)
+- Discovered that upgrading from Pro → Business created a second subscription without cancelling the first
+- Added automatic cancellation of existing active/trialing subscriptions in both subscription creation paths:
+  - `handleCheckoutCompleted` in Stripe webhook (checkout flow)
+  - `finalize-subscription/route.ts` (custom subscription flow)
+- Old subscriptions are cancelled after the new one is confirmed, preventing double-charges
+
+#### Production Build Fix
+- Fixed `useSearchParams()` Suspense boundary error on signup page that blocked Railway deploy
+- Wrapped signup form in `<Suspense>` boundary, matching the pattern already used on the login page
+
+---
+
 ### Growth Infrastructure: Sentry, Cron Jobs, PDF & Download Fixes
 
 #### Bug Fixes

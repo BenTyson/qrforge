@@ -48,12 +48,9 @@ export async function generatePrintPDF(
   options: PDFOptions = DEFAULT_PDF_OPTIONS
 ): Promise<Blob> {
   // Dynamically import jspdf to avoid SSR issues
-  // jspdf is an optional dependency - install with: npm install jspdf
   let jsPDF: JsPDFModule;
   try {
-    // Use variable to prevent TypeScript from trying to resolve the module
-    const moduleName = 'jspdf';
-    const jspdfModule = await (Function('moduleName', 'return import(moduleName)')(moduleName));
+    const jspdfModule = await import('jspdf');
     jsPDF = jspdfModule.jsPDF;
   } catch {
     throw new Error(
@@ -88,27 +85,9 @@ export async function generatePrintPDF(
   pdf.setFillColor(255, 255, 255);
   pdf.rect(qrX + bleed, qrY + bleed, qrSize, qrSize, 'F');
 
-  // Add QR code as SVG image
-  // Convert SVG to data URL for embedding
-  const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' });
-  const svgUrl = URL.createObjectURL(svgBlob);
-
-  try {
-    // Add the QR code image
-    await pdf.addSvgAsImage(
-      svgContent,
-      qrX + bleed,
-      qrY + bleed,
-      qrSize,
-      qrSize
-    );
-  } catch {
-    // Fallback: convert SVG to PNG and add as image
-    const pngDataUrl = await svgToPngDataUrl(svgContent, qrSize * 300);
-    pdf.addImage(pngDataUrl, 'PNG', qrX + bleed, qrY + bleed, qrSize, qrSize);
-  }
-
-  URL.revokeObjectURL(svgUrl);
+  // Convert SVG to PNG and add to PDF (most reliable cross-browser approach)
+  const pngDataUrl = await svgToPngDataUrl(svgContent, qrSize * 300);
+  pdf.addImage(pngDataUrl, 'PNG', qrX + bleed, qrY + bleed, qrSize, qrSize);
 
   // Draw crop marks
   if (options.showCropMarks) {
@@ -192,13 +171,25 @@ function addPrintInstructions(
 }
 
 /**
- * Convert SVG to PNG data URL for fallback
+ * Convert SVG to PNG data URL
  */
 async function svgToPngDataUrl(svgContent: string, targetWidth: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(svgBlob);
+
+    // Ensure SVG has explicit dimensions for proper rendering
+    let processedSvg = svgContent;
+    if (!svgContent.includes('width=') || !svgContent.includes('height=')) {
+      // Add width/height attributes to the SVG element
+      processedSvg = svgContent.replace(
+        /<svg([^>]*)>/,
+        `<svg$1 width="${targetWidth}" height="${targetWidth}">`
+      );
+    }
+
+    // Use data URL instead of blob URL for better cross-browser compatibility
+    const base64Svg = btoa(unescape(encodeURIComponent(processedSvg)));
+    const dataUrl = `data:image/svg+xml;base64,${base64Svg}`;
 
     img.onload = () => {
       const canvas = document.createElement('canvas');
@@ -218,16 +209,15 @@ async function svgToPngDataUrl(svgContent: string, targetWidth: number): Promise
       // Draw SVG
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      URL.revokeObjectURL(url);
       resolve(canvas.toDataURL('image/png'));
     };
 
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('Failed to load SVG'));
+    img.onerror = (e) => {
+      console.error('SVG load error:', e);
+      reject(new Error('Failed to load SVG for PDF generation'));
     };
 
-    img.src = url;
+    img.src = dataUrl;
   });
 }
 

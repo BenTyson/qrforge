@@ -4,6 +4,47 @@ Session-by-session history of development work. Most recent first.
 
 ---
 
+## January 27, 2026
+
+### Growth Infrastructure: Sentry, Cron Jobs, PDF & Download Fixes
+
+#### Bug Fixes
+- Fixed QR Studio download step redirect bug: save from download step no longer auto-routes to dashboard
+- Fixed PDF export jspdf dynamic import: replaced broken `Function()` hack with standard `await import('jspdf')`
+- Fixed PDF export missing QR code: removed non-existent `addSvgAsImage`, now converts SVG→PNG via canvas with proper dimensions and base64 data URL
+
+#### Sentry Error Tracking (Fully Set Up)
+- Installed `@sentry/nextjs` SDK
+- Created `sentry.client.config.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`
+- Created `src/instrumentation.ts` for server/edge runtime initialization
+- Wired `error.tsx` and `global-error.tsx` to capture exceptions via Sentry
+- `next.config.ts` Sentry wrapper now active (was conditional, SDK now installed)
+- Production-only (disabled in development)
+- Client-side: session replay (1% normal, 100% on error), browser tracing
+- Created `/api/test/sentry` endpoint to verify integration post-deploy
+
+#### Cron Jobs (Configured)
+- Generated and set `CRON_SECRET` in Railway environment variables
+- Configured cron-job.org with two daily jobs:
+  - Onboarding emails (9:00 AM UTC): Day 1, 3, 7 emails for free users
+  - Milestone emails (10:00 AM UTC): 50 scans, 5 QR codes, 80% usage warning
+- Removed Pro users from 80% usage warning to avoid triggering cancellation
+- Email targeting: onboarding (free only), milestones (all tiers), usage warning (free only)
+
+#### Email Testing Endpoint
+- Created `/api/test/emails` with preview and send capabilities
+- GET: List all 12 templates or preview any as rendered HTML in browser
+- POST: Send test emails with `[TEST]` subject prefix
+- Sample data pre-configured for all templates
+- Dev: no auth required; Production: requires Bearer token
+
+#### Growth TODO Updates
+- Marked PDF Export and Content CTAs as completed in TODO doc
+- Marked Sentry and Cron Jobs as completed
+- Renumbered remaining tasks
+
+---
+
 ## January 26, 2026
 
 ### Content Audit Complete: 58 Articles with ArticleCTAs

@@ -324,7 +324,7 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
     }
   }, [state, actions]);
 
-  // Handle save
+  // Handle save (for edit mode - redirects to dashboard after save)
   const handleSave = useCallback(async () => {
     if (!state.userId) {
       router.push('/signup');
@@ -334,6 +334,16 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
     if (result) {
       router.push('/qr-codes');
     }
+  }, [state.userId, actions, router]);
+
+  // Handle save from download step (no redirect - stays on download step to allow downloads)
+  const handleSaveFromDownloadStep = useCallback(async () => {
+    if (!state.userId) {
+      router.push('/signup');
+      return;
+    }
+    await actions.saveQRCode();
+    // Don't redirect - let user stay on download step to download their QR code
   }, [state.userId, actions, router]);
 
   // Handle exit
@@ -571,7 +581,7 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
                 isDownloading={state.isDownloading}
                 hasDownloaded={state.hasDownloaded}
                 saveError={state.saveError}
-                onSave={handleSave}
+                onSave={handleSaveFromDownloadStep}
                 onDownloadPNG={handleDownloadPNG}
                 onDownloadSVG={handleDownloadSVG}
                 onDownloadPDF={handleDownloadPDF}

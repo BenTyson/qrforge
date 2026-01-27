@@ -176,12 +176,13 @@ async function process5QRCodesMilestone(tracker: { sent: number; errors: number 
 }
 
 async function process80PercentWarning(tracker: { sent: number; errors: number }) {
-  // Find users approaching their scan limit (80%+)
+  // Find FREE users approaching their scan limit (80%+)
+  // Pro users are excluded - we don't want usage warnings to make them question their subscription value
   const { data: users, error } = await supabaseAdmin
     .from('profiles')
     .select('id, email, full_name, subscription_tier, monthly_scan_count')
     .eq('marketing_unsubscribed', false)
-    .in('subscription_tier', ['free', 'pro']); // Only users with limits
+    .eq('subscription_tier', 'free'); // Only free users - nudge to upgrade
 
   if (error || !users) {
     console.error('Error querying users for 80% warning:', error);

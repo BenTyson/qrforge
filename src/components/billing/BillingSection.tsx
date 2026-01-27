@@ -48,7 +48,7 @@ export function BillingSection({
   cancelAtPeriodEnd,
   interval,
 }: BillingSectionProps) {
-  const { openPortal, loading: portalLoading } = useStripePortal();
+  const { openPortal, loading: portalLoading, error: portalError } = useStripePortal();
 
   const tierInfo = TIER_INFO[tier];
   const isPaid = tier !== 'free';
@@ -96,6 +96,13 @@ export function BillingSection({
           </Button>
         )}
       </div>
+
+      {/* Portal error */}
+      {portalError && (
+        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-sm text-red-400">
+          {portalError}
+        </div>
+      )}
 
       {/* Subscription details for paid plans */}
       {isPaid && (

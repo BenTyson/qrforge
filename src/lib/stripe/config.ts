@@ -1,7 +1,15 @@
 import Stripe from 'stripe';
 
 // Re-export plans for backward compatibility
-export { PLANS, SCAN_LIMITS, getScanLimit, isWithinScanLimit } from './plans';
+export {
+  PLANS,
+  SCAN_LIMITS,
+  getScanLimit,
+  isWithinScanLimit,
+  getEffectiveTier,
+  isTrialActive,
+  getTrialDaysRemaining,
+} from './plans';
 export type { SubscriptionTier } from './plans';
 
 // Stripe client - only initialize on server side when env var is available

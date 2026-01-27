@@ -1,4 +1,5 @@
 import { Callout } from './Callout';
+import { ArticleCTA } from '../ArticleCTA';
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -218,4 +219,5 @@ export const mdxComponents = {
   ),
   // Custom components
   Callout,
+  ArticleCTA,
 };

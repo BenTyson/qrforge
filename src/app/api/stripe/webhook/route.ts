@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { stripe, STRIPE_PRICES } from '@/lib/stripe/config';
 import { createClient } from '@supabase/supabase-js';
-import { sendSubscriptionConfirmEmail, sendPaymentFailedEmail } from '@/lib/email';
+import { sendSubscriptionConfirmEmail, sendPaymentFailedEmail, sendTrialEndingSoonEmail } from '@/lib/email';
 import type Stripe from 'stripe';
 
 // Use service role key for webhook (no auth context)
@@ -100,6 +100,13 @@ export async function POST(request: Request) {
         }
         break;
       }
+
+      case 'customer.subscription.trial_will_end': {
+        // Stripe sends this 3 days before trial ends
+        const subscription = event.data.object as Stripe.Subscription;
+        await handleTrialWillEnd(subscription);
+        break;
+      }
     }
 
     // Mark event as processed after successful handling
@@ -131,19 +138,44 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     throw new Error('Missing customer ID in checkout session');
   }
 
-  // Get user profile for email
+  // Get user profile for email and referral info
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('email, full_name')
+    .select('email, full_name, referred_by, subscription_tier')
     .eq('id', userId)
     .single();
+
+  // Check if this is their first upgrade (referral credit eligibility)
+  const wasFreeTier = profile?.subscription_tier === 'free';
+
+  // Check if this subscription has a trial
+  let subscriptionStatus = 'active';
+  let isTrialing = false;
+  let trialEndDate: string | null = null;
+  if (session.subscription) {
+    try {
+      const sub = await stripe.subscriptions.retrieve(session.subscription as string);
+      if (sub.status === 'trialing') {
+        subscriptionStatus = 'trialing';
+        isTrialing = true;
+        // Store the trial end date for display purposes
+        if (sub.trial_end) {
+          trialEndDate = new Date(sub.trial_end * 1000).toISOString();
+        }
+      }
+    } catch {
+      // Use default status if retrieval fails
+    }
+  }
 
   const { error } = await supabaseAdmin
     .from('profiles')
     .update({
       subscription_tier: plan,
-      subscription_status: 'active',
+      subscription_status: subscriptionStatus,
       stripe_customer_id: customerId,
+      // Mark trial as used and store end date if they started with a trial
+      ...(isTrialing && { trial_used: true, trial_ends_at: trialEndDate }),
     })
     .eq('id', userId);
 
@@ -153,6 +185,11 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   console.log(`Subscription activated for user ${userId}: ${plan}`);
+
+  // Credit referrer if this is user's first upgrade from free tier
+  if (wasFreeTier && profile?.referred_by) {
+    await creditReferrerForUpgrade(userId, profile.referred_by);
+  }
 
   // Send subscription confirmation email (non-blocking)
   if (profile?.email) {
@@ -233,6 +270,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 
   // Map Stripe status to our status
   let status = 'active';
+  if (subscription.status === 'trialing') status = 'trialing';
   if (subscription.status === 'past_due') status = 'past_due';
   if (subscription.status === 'canceled') status = 'canceled';
   if (subscription.status === 'unpaid') status = 'unpaid';
@@ -384,4 +422,110 @@ async function handleSubscriptionPaymentSucceeded(subscriptionId: string, custom
   }
 
   console.log(`Subscription activated via payment for user ${userId}: ${plan}`);
+}
+
+/**
+ * Credit the referrer when a referred user upgrades to a paid plan
+ * Awards $5 credit (500 cents)
+ */
+async function creditReferrerForUpgrade(refereeId: string, referrerId: string) {
+  const REFERRAL_CREDIT_AMOUNT = 500; // $5 in cents
+
+  try {
+    // Find the referral record
+    const { data: referral, error: fetchError } = await supabaseAdmin
+      .from('referrals')
+      .select('id, status')
+      .eq('referee_id', refereeId)
+      .eq('referrer_id', referrerId)
+      .single();
+
+    if (fetchError || !referral) {
+      console.log(`No referral record found for referee ${refereeId}`);
+      return;
+    }
+
+    // Only credit if not already credited
+    if (referral.status === 'credited') {
+      console.log(`Referral ${referral.id} already credited`);
+      return;
+    }
+
+    // Get current referrer credits
+    const { data: referrerProfile } = await supabaseAdmin
+      .from('profiles')
+      .select('referral_credits')
+      .eq('id', referrerId)
+      .single();
+
+    const currentCredits = referrerProfile?.referral_credits || 0;
+
+    // Update referrer credits
+    const { error: creditError } = await supabaseAdmin
+      .from('profiles')
+      .update({ referral_credits: currentCredits + REFERRAL_CREDIT_AMOUNT })
+      .eq('id', referrerId);
+
+    if (creditError) {
+      console.error('Failed to credit referrer:', creditError);
+      return;
+    }
+
+    // Update referral status to credited
+    await supabaseAdmin
+      .from('referrals')
+      .update({
+        status: 'credited',
+        converted_at: new Date().toISOString(),
+        credited_at: new Date().toISOString(),
+      })
+      .eq('id', referral.id);
+
+    console.log(`Credited referrer ${referrerId} with $5 for referee ${refereeId} upgrade`);
+  } catch (error) {
+    console.error('Error crediting referrer:', error);
+  }
+}
+
+/**
+ * Handle trial ending notification from Stripe (sent 3 days before trial ends)
+ */
+async function handleTrialWillEnd(subscription: Stripe.Subscription) {
+  const customerId = subscription.customer as string;
+
+  if (!customerId) {
+    throw new Error('Missing customer ID in subscription');
+  }
+
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('id, email, full_name')
+    .eq('stripe_customer_id', customerId)
+    .single();
+
+  if (!profile) {
+    console.warn('No profile found for customer:', customerId);
+    return;
+  }
+
+  // Calculate days remaining
+  const trialEnd = subscription.trial_end;
+  const daysRemaining = trialEnd
+    ? Math.ceil((trialEnd * 1000 - Date.now()) / (1000 * 60 * 60 * 24))
+    : 3;
+
+  // Send trial ending email
+  if (profile.email) {
+    const result = await sendTrialEndingSoonEmail(
+      profile.email,
+      profile.full_name,
+      daysRemaining
+    );
+
+    if (!result.success) {
+      console.error('Failed to send trial ending email:', result.error);
+    } else {
+      console.log(`Trial ending email sent to ${profile.email}, ${daysRemaining} days remaining`);
+    }
+  }
 }

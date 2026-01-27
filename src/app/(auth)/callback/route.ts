@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { sendWelcomeEmail } from '@/lib/email';
+import { linkReferral } from '@/lib/referrals';
 import { NextResponse } from 'next/server';
 
 // Get the base URL for redirects (supports Railway/proxy scenarios)
@@ -18,6 +19,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const origin = getBaseUrl(request);
   const code = searchParams.get('code');
+  const refCode = searchParams.get('ref'); // Referral code from OAuth redirect
   const redirect = searchParams.get('redirect') || '/dashboard';
 
   if (code) {
@@ -32,13 +34,22 @@ export async function GET(request: Request) {
         // Check if profile has received welcome email
         const { data: profile } = await supabase
           .from('profiles')
-          .select('welcome_email_sent')
+          .select('welcome_email_sent, referred_by')
           .eq('id', user.id)
           .single();
 
-        // Send welcome email if not already sent
+        // Send welcome email if not already sent (indicates new user)
         if (profile && !profile.welcome_email_sent) {
           const userName = user.user_metadata?.full_name || user.email?.split('@')[0];
+
+          // Process referral if code provided and user not already referred
+          if (refCode && !profile.referred_by) {
+            linkReferral(user.id, refCode).then((result) => {
+              if (result.success) {
+                console.log(`User ${user.id} linked to referrer via code ${refCode}`);
+              }
+            });
+          }
 
           // Send welcome email (non-blocking)
           sendWelcomeEmail(user.email!, userName).then((result) => {

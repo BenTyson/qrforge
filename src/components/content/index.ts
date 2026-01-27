@@ -6,3 +6,4 @@ export { MDXContent } from './MDXContent';
 export { mdxComponents } from './mdx';
 export { LearnSearch } from './LearnSearch';
 export { BlogSearch } from './BlogSearch';
+export { ArticleCTA } from './ArticleCTA';

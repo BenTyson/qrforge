@@ -18,7 +18,9 @@ npm run dev                 # Port 3322
 | **[PROJECT.md](./PROJECT.md)** | Start here - project overview, features, structure |
 | **[DEVELOPMENT.md](./DEVELOPMENT.md)** | Dev environment, testing, safety mechanisms |
 | **[WORKFLOW.md](./WORKFLOW.md)** | Branch workflow, deployment, agent rules |
-| **[FEATURE-ROADMAP.md](./FEATURE-ROADMAP.md)** | What to build next |
+| **[FEATURE-ROADMAP.md](./FEATURE-ROADMAP.md)** | What to build next (features) |
+| **[GROWTH-ROADMAP.md](./GROWTH-ROADMAP.md)** | Growth mechanics roadmap (5→100 users) |
+| **[GROWTH-IMPLEMENTATION-TODO.md](./GROWTH-IMPLEMENTATION-TODO.md)** | Remaining tasks from growth implementation |
 | **[DEPLOYMENT.md](./DEPLOYMENT.md)** | Railway production deployment |
 
 ## Reference (Rarely Needed)

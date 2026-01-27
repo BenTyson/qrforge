@@ -1,6 +1,6 @@
 # Development Environment Guide
 
-> **Last Updated**: January 17, 2026
+> **Last Updated**: January 25, 2026
 > **Status**: COMPLETED
 > **Phase**: Development Environment & Data Protection
 
@@ -116,7 +116,7 @@ supabase db push --db-url "postgresql://postgres:[PASSWORD]@db.fxcvxomvkgioxwbwm
 
 ### Test Suite
 
-**159 tests** across 4 test suites:
+**185 tests** across 6 test suites:
 
 | Suite | Tests | Coverage |
 |-------|-------|----------|
@@ -246,6 +246,43 @@ You accidentally committed a production secret.
 1. Remove the secret from code
 2. Rotate the exposed secret in Supabase/Stripe dashboards
 3. Force push to remove from git history (if needed)
+
+## Cron Endpoints (Growth Features)
+
+These endpoints support the growth roadmap features and need to be triggered by a scheduler (Vercel Cron, cron-job.org, etc.):
+
+| Endpoint | Schedule | Purpose |
+|----------|----------|---------|
+| `/api/cron/onboarding-emails` | Daily (9am) | Send Day 1, 3, 7 onboarding emails |
+| `/api/cron/milestone-emails` | Daily (10am) | Send milestone/usage warning emails |
+| `/api/cron/trial-ending-emails` | Daily | Legacy trial reminders (Stripe handles most) |
+
+**Authentication:**
+All cron endpoints require `Authorization: Bearer {CRON_SECRET}` header.
+
+**Environment Variable:**
+```bash
+CRON_SECRET=your-secure-random-string
+```
+
+## Additional Environment Variables
+
+Added in Growth Roadmap implementation:
+
+```bash
+# Cron job authentication
+CRON_SECRET=your-secure-random-string
+
+# Sentry error tracking (optional - install @sentry/nextjs first)
+SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx
+SENTRY_ORG=your-org
+SENTRY_PROJECT=qrwolf
+SENTRY_AUTH_TOKEN=your-auth-token
+
+# Rate limiting (optional - falls back to in-memory)
+UPSTASH_REDIS_REST_URL=https://xxx.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your-token
+```
 
 ---
 

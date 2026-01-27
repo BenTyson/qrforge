@@ -56,6 +56,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
     }
 
+    // Check if user is eligible for trial (Pro plan, hasn't used trial before)
+    let trialDays: number | undefined;
+    if (plan === 'pro') {
+      const { data: trialCheck } = await supabase
+        .from('profiles')
+        .select('trial_used')
+        .eq('id', user.id)
+        .single();
+
+      if (!trialCheck?.trial_used) {
+        trialDays = 7; // 7-day free trial for first-time Pro subscribers
+      }
+    }
+
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -67,7 +81,16 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com'}/subscription/success`,
+      ...(trialDays && {
+        subscription_data: {
+          trial_period_days: trialDays,
+          metadata: {
+            supabase_user_id: user.id,
+            plan,
+          },
+        },
+      }),
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com'}/subscription/success${trialDays ? '?trial=true' : ''}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://qrwolf.com'}/#pricing`,
       metadata: {
         supabase_user_id: user.id,

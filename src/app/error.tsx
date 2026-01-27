@@ -13,6 +13,12 @@ export default function Error({
 }) {
   useEffect(() => {
     console.error('Application error:', error);
+    // Report to Sentry in production
+    import('@sentry/nextjs').then((Sentry) => {
+      Sentry.captureException(error);
+    }).catch(() => {
+      // Sentry not available
+    });
   }, [error]);
 
   return (

@@ -463,6 +463,48 @@ export const TESTIMONIALS: Testimonial[] = [
     quote: 'The bulk generation feature is incredible. We created 500 unique ticket QR codes in minutes. The analytics showed us exactly when attendees arrived and from which entrance.',
     industry: 'Events',
   },
+  {
+    name: 'David Park',
+    role: 'Conference Director, TechConf 2026',
+    quote: 'Managed 50+ QR codes for our conference sessions, sponsors, and networking areas. The analytics dashboard helped us identify which booths got the most traffic - a 35% increase in sponsor engagement.',
+    industry: 'Events',
+  },
+  {
+    name: 'Lisa Wang',
+    role: 'Owner, Glow Beauty Studio',
+    quote: 'Our booking QR code is on every service menu and receipt. We\'ve seen 40% more online appointments since switching to QRWolf. Clients love the instant access.',
+    industry: 'Beauty',
+  },
+  {
+    name: 'Mike Johnson',
+    role: 'Agent, Premier Realty',
+    quote: 'Every listing sign has a QR to the virtual tour. Buyers scan and get immediate access to photos, floor plans, and scheduling. I\'ve closed 3 deals where the buyer found us through the QR code.',
+    industry: 'Real Estate',
+  },
+  {
+    name: 'Dr. Amanda Foster',
+    role: 'Practice Manager, City Dental',
+    quote: 'Our patients scan for forms, appointment reminders, and aftercare instructions. The paperwork reduction alone saved us 10+ hours per week. HIPAA-friendly and professional.',
+    industry: 'Healthcare',
+  },
+  {
+    name: 'James Liu',
+    role: 'Operations Lead, FreshBox Delivery',
+    quote: 'We print QR codes on every delivery bag linking to nutrition info and reorder pages. Scan tracking shows 28% of customers check nutrition data - way higher than expected.',
+    industry: 'Food & Beverage',
+  },
+  {
+    name: 'Rachel Torres',
+    role: 'Founder, Artisan Candle Co',
+    quote: 'The vCard QR on my business cards has replaced awkward contact exchanges at craft fairs. People scan and save my info in seconds. Professional and memorable.',
+    industry: 'Retail',
+  },
+  {
+    name: 'Tom Bradley',
+    role: 'Gym Owner, Peak Fitness',
+    quote: 'Members scan to book classes, access workout videos, and get loyalty rewards. Our app downloads increased 60% after adding QR codes to our equipment and signage.',
+    industry: 'Fitness',
+  },
 ];
 
 // Additional use cases for the "Also perfect for" section

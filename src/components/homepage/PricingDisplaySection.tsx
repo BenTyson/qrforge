@@ -16,7 +16,7 @@ export function PricingDisplaySection({
         <LargeSectionHeader
           title="Simple,"
           highlightedText="transparent"
-          description="Start free, upgrade when you need more."
+          description="Start free forever, or try Pro free for 7 days."
         />
 
         <PricingSection

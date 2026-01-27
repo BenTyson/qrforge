@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 import type { Compiler } from 'webpack';
 import { build } from 'velite';
 
+// Try to load Sentry - it may not be installed yet
+let withSentryConfig: ((config: NextConfig, options: Record<string, unknown>) => NextConfig) | null = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  withSentryConfig = require('@sentry/nextjs').withSentryConfig;
+} catch {
+  // Sentry not installed, that's fine
+}
+
 class VeliteWebpackPlugin {
   static started = false;
   apply(compiler: Compiler) {
@@ -69,7 +78,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https: http:",
-              "connect-src 'self' https://*.supabase.co https://api.stripe.com https://plausible.io wss://*.supabase.co",
+              "connect-src 'self' https://*.supabase.co https://api.stripe.com https://plausible.io wss://*.supabase.co https://*.sentry.io https://*.ingest.sentry.io",
               "frame-src https://js.stripe.com https://hooks.stripe.com",
               "object-src 'none'",
               "base-uri 'self'",
@@ -107,4 +116,36 @@ const nextConfig: NextConfig = {
   output: 'standalone',
 };
 
-export default nextConfig;
+// Sentry configuration (only used if @sentry/nextjs is installed)
+const sentryWebpackPluginOptions = {
+  // Suppresses source map uploading logs during build
+  silent: true,
+
+  // For all available options, see:
+  // https://github.com/getsentry/sentry-webpack-plugin#options
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+
+  // Auth token for uploading source maps
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  // Upload source maps only in production
+  widenClientFileUpload: true,
+
+  // Transpile SDK to support IE11
+  transpileClientSDK: false,
+
+  // Route browser requests to Sentry through Next.js to avoid ad-blockers
+  tunnelRoute: '/monitoring',
+
+  // Hides source maps from generated client bundles
+  hideSourceMaps: true,
+
+  // Disable Sentry in development
+  disableLogger: true,
+};
+
+// Export with Sentry if available, otherwise just the config
+export default withSentryConfig
+  ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+  : nextConfig;

@@ -4,6 +4,181 @@ Session-by-session history of development work. Most recent first.
 
 ---
 
+## January 27, 2026
+
+### Growth Infrastructure: Sentry, Cron Jobs, PDF & Download Fixes
+
+#### Bug Fixes
+- Fixed QR Studio download step redirect bug: save from download step no longer auto-routes to dashboard
+- Fixed PDF export jspdf dynamic import: replaced broken `Function()` hack with standard `await import('jspdf')`
+- Fixed PDF export missing QR code: removed non-existent `addSvgAsImage`, now converts SVG→PNG via canvas with proper dimensions and base64 data URL
+
+#### Sentry Error Tracking (Fully Set Up)
+- Installed `@sentry/nextjs` SDK
+- Created `sentry.client.config.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`
+- Created `src/instrumentation.ts` for server/edge runtime initialization
+- Wired `error.tsx` and `global-error.tsx` to capture exceptions via Sentry
+- `next.config.ts` Sentry wrapper now active (was conditional, SDK now installed)
+- Production-only (disabled in development)
+- Client-side: session replay (1% normal, 100% on error), browser tracing
+- Created `/api/test/sentry` endpoint to verify integration post-deploy
+
+#### Cron Jobs (Configured)
+- Generated and set `CRON_SECRET` in Railway environment variables
+- Configured cron-job.org with two daily jobs:
+  - Onboarding emails (9:00 AM UTC): Day 1, 3, 7 emails for free users
+  - Milestone emails (10:00 AM UTC): 50 scans, 5 QR codes, 80% usage warning
+- Removed Pro users from 80% usage warning to avoid triggering cancellation
+- Email targeting: onboarding (free only), milestones (all tiers), usage warning (free only)
+
+#### Email Testing Endpoint
+- Created `/api/test/emails` with preview and send capabilities
+- GET: List all 12 templates or preview any as rendered HTML in browser
+- POST: Send test emails with `[TEST]` subject prefix
+- Sample data pre-configured for all templates
+- Dev: no auth required; Production: requires Bearer token
+
+#### Growth TODO Updates
+- Marked PDF Export and Content CTAs as completed in TODO doc
+- Marked Sentry and Cron Jobs as completed
+- Renumbered remaining tasks
+
+---
+
+## January 26, 2026
+
+### Content Audit Complete: 58 Articles with ArticleCTAs
+
+#### P1-P4 Article Updates
+- Added ArticleCTA components to **58 articles** across all priority levels
+- P1 Foundation (4 articles): what-is-a-qr-code, static-vs-dynamic-qr-codes, how-to-create-a-qr-code, qr-code-faqs
+- P2 Use-Cases (25 articles): All use-case articles with inline + banner CTAs
+- P3 Industries (20 articles): All industry articles with 2-3 relevant CTAs each
+- P4 Blog How-To (9 articles): All how-to articles with matching qrTypes
+
+#### Content Skill Updates
+- Updated `.claude/skills/content/SKILL.md` with comprehensive CTA documentation
+- Added CTA placement guidelines (inline vs banner variants)
+- Added full list of 34 available qrTypes for CTAs
+- Updated Quality Checklist to require CTA verification
+- Updated Workflow to include CTA step before build
+- Updated Pre-Submission Audit with CTA checks
+- Deprecated old prose CTAs in favor of ArticleCTA component
+- Updated QRWolf Features Reference from 16 to 34 types
+
+#### Documentation
+- Marked `docs/CONTENT-AUDIT.md` as ✅ Complete
+- All future content generation will include CTAs automatically
+
+---
+
+### Growth Cleanup: PDF Export & Content Audit
+
+#### PDF Export UI
+- Installed `jspdf` package
+- Wired PDF button into QRStudio download step
+- Connected existing `PDFOptionsModal` component
+- Pro-tier gated (same as SVG export)
+- Options: paper size, QR size, bleed, crop marks
+
+#### ArticleCTA Component
+- Registered in MDX components (`src/components/content/mdx/index.tsx`)
+- Created `QR_TYPE_METADATA` in constants.tsx - single source of truth for all 34 QR types
+- Redesigned component with polished styling:
+  - Glow effects and gradients
+  - Animated shine on hover
+  - Scale animations on icons/buttons
+  - Banner and inline variants
+
+#### Content Audit: 34 QR Types
+- Rewrote `learn/qr-basics/types-of-qr-codes.mdx` from 16 → 34 types
+- Added 25+ strategic CTAs throughout the article
+- Added missing types: LinkedIn, X, TikTok, Snapchat, Threads, YouTube, Pinterest, Spotify, Reddit, Twitch, Discord, Event, Geo, Google Review
+- Created `docs/CONTENT-AUDIT.md` with prioritized audit plan:
+  - P1: 4 foundation articles
+  - P2: 33 use-case articles
+  - P3: 20 industry articles
+  - P4: 9 how-to blog posts
+
+#### CTA Injection
+- `blog/2026/share-wifi-password-qr-code.mdx` - Added inline + banner WiFi CTAs
+
+---
+
+## January 25, 2026 (Evening Session)
+
+### Growth Roadmap Implementation (Sessions 1-10)
+Implemented all 10 sessions from the Growth Roadmap in a single extended session.
+
+#### Session 1: Referral Program
+- Database migration: `20260125000001_add_referral_system.sql`
+- Added `referral_code`, `referred_by`, `referral_credits` to profiles table
+- Created `referrals` tracking table with RLS policies
+- `src/lib/referrals/index.ts` - Server-side referral logic
+- `src/lib/referrals/client.ts` - Client-side utilities (copy link, generate link)
+- `src/components/dashboard/ReferralWidget.tsx` - Dashboard widget with copy link, stats
+- Updated signup flow to track `?ref=CODE` parameter
+- Stripe webhook credits referrer $5 when referee upgrades
+
+#### Session 2: Onboarding Email Sequence
+- Database migration: `20260125000002_add_onboarding_email_tracking.sql`
+- Email templates: `OnboardingDay1.tsx`, `OnboardingDay3.tsx`, `OnboardingDay7.tsx`
+- Cron endpoint: `/api/cron/onboarding-emails`
+- Tracks sent emails to prevent duplicates
+
+#### Session 3: 7-Day Stripe Trial (changed from 14-day database trial)
+- Database migration: `20260125000003_add_trial_support.sql`
+- **Stripe-based trial** (requires credit card, auto-converts)
+- Updated `/api/stripe/checkout` to add `trial_period_days: 7` for Pro plan
+- Webhook handles `trialing` status and `customer.subscription.trial_will_end` event
+- `src/components/dashboard/TrialBanner.tsx` - Shows days remaining
+- `src/components/dashboard/StartTrialPrompt.tsx` - "Start Free Trial" CTA (redirects to Stripe checkout)
+- Updated `getEffectiveTier()` and `isTrialActive()` to handle Stripe trial status
+- Pricing section shows "7-day free trial" badge on Pro tier
+
+#### Session 4: Sentry Error Tracking (Prepared)
+- Made Sentry imports conditional in `next.config.ts`
+- Updated `error.tsx` and `global-error.tsx` error boundaries
+- Ready to install: `npx @sentry/wizard@latest -i nextjs`
+
+#### Session 5: Password Rate Limiting
+- Created `src/lib/rate-limit.ts` with Redis (Upstash) + in-memory fallback
+- Updated `/api/qr/verify-password` - 5 attempts per IP per 15 minutes
+- Returns 429 Too Many Requests when limit exceeded
+
+#### Session 6: Expanded Social Proof
+- Expanded testimonials from 3 to 10 in `src/constants/homepage.tsx`
+- Added trust badges to `TestimonialsSection.tsx`:
+  - "500+ businesses"
+  - "99.9% uptime"
+  - "GDPR compliant"
+  - "Privacy-first"
+
+#### Session 7: Milestone Emails
+- `src/emails/MilestoneEmail.tsx` - 50 scans, 5 QR codes celebration
+- `src/emails/UsageLimitWarning.tsx` - 80% usage warning
+- Cron endpoint: `/api/cron/milestone-emails`
+
+#### Session 8: Print-Ready PDF Export (Code Only)
+- Created `src/lib/qr/pdf-generator.ts` - PDF generation with crop marks, bleed, paper sizes
+- Created `src/components/qr/PDFOptionsModal.tsx` - Options UI
+- **TODO**: Install `jspdf`, add UI button to QR Studio
+
+#### Session 9: Comparison Pages
+- Created `src/lib/competitors.ts` - Competitor data (QR Code Monkey, QR Tiger, Beaconstac)
+- Created `/vs/[competitor]/page.tsx` - Dynamic comparison pages
+- Pages: `/vs/qr-code-monkey`, `/vs/qr-tiger`, `/vs/beaconstac`
+
+#### Session 10: Content CTAs (Component Only)
+- Created `src/components/content/ArticleCTA.tsx` - Inline and banner CTAs
+- **TODO**: Add to top-traffic articles
+
+#### Documentation
+- Created `docs/GROWTH-IMPLEMENTATION-TODO.md` - Remaining tasks checklist
+- Updated `docs/README.md` - Added link to TODO doc
+
+---
+
 ## January 25, 2026
 
 ### Landing Page Background Modernization

@@ -182,6 +182,13 @@ export const COLOR_PRESETS = [
 // Types that have landing page previews
 export const PREVIEWABLE_TYPES: QRContentType[] = ['menu', 'business', 'links', 'coupon', 'social'];
 
+// Flattened type metadata for use in ArticleCTA and other components
+export const QR_TYPE_METADATA = TYPE_CATEGORIES.flatMap(cat => cat.types)
+  .reduce((acc, type) => {
+    acc[type.id] = { name: type.name, description: type.description };
+    return acc;
+  }, {} as Record<string, { name: string; description: string }>);
+
 // Wizard step types
 export type WizardStep = 'type' | 'content' | 'style' | 'options' | 'download';
 

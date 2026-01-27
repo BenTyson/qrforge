@@ -368,6 +368,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-27 | Fixed critical double-billing bug on subscription upgrades (old subscription now auto-cancelled). Surfaced real Stripe errors in portal endpoint. Fixed signup page Suspense boundary for production build. |
 | 2026-01-27 | Sentry error tracking fully installed. Cron jobs configured via cron-job.org. Email test endpoint created. PDF export bugs fixed (redirect, import, rendering). Pro users excluded from usage warnings. |
 | 2026-01-26 | Completed Content Audit: 58 articles updated with ArticleCTAs (P1-P4). Updated content skill with CTA requirements for future content generation. |
 | 2026-01-26 | Completed PDF Export (Feature #10), ArticleCTA component, Content Audit plan, updated types article to 34 types |

@@ -148,6 +148,30 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   // Check if this is their first upgrade (referral credit eligibility)
   const wasFreeTier = profile?.subscription_tier === 'free';
 
+  // Cancel any existing subscriptions (prevents double-billing on upgrade)
+  if (session.subscription && customerId) {
+    try {
+      const existingSubs = await stripe.subscriptions.list({
+        customer: customerId,
+        status: 'active',
+      });
+      const trialingSubs = await stripe.subscriptions.list({
+        customer: customerId,
+        status: 'trialing',
+      });
+      const allSubs = [...existingSubs.data, ...trialingSubs.data];
+      for (const sub of allSubs) {
+        if (sub.id !== session.subscription) {
+          await stripe.subscriptions.cancel(sub.id);
+          console.log(`Cancelled old subscription ${sub.id} during upgrade`);
+        }
+      }
+    } catch (cancelError) {
+      console.error('Failed to cancel old subscriptions:', cancelError);
+      // Continue - new subscription is already created
+    }
+  }
+
   // Check if this subscription has a trial
   let subscriptionStatus = 'active';
   let isTrialing = false;

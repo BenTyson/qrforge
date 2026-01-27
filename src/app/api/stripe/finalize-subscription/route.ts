@@ -57,6 +57,26 @@ export async function POST(request: Request) {
       },
     });
 
+    // Cancel any existing subscriptions (prevents double-billing on upgrade)
+    try {
+      const existingSubs = await stripe.subscriptions.list({
+        customer: profile.stripe_customer_id,
+        status: 'active',
+      });
+      const trialingSubs = await stripe.subscriptions.list({
+        customer: profile.stripe_customer_id,
+        status: 'trialing',
+      });
+      const allSubs = [...existingSubs.data, ...trialingSubs.data];
+      for (const sub of allSubs) {
+        await stripe.subscriptions.cancel(sub.id);
+        console.log(`Cancelled old subscription ${sub.id} during upgrade`);
+      }
+    } catch (cancelError) {
+      console.error('Failed to cancel old subscriptions:', cancelError);
+      // Continue - we still want to create the new subscription
+    }
+
     // Create the subscription with the payment method
     const subscription = await stripe.subscriptions.create({
       customer: profile.stripe_customer_id,

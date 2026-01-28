@@ -6,6 +6,31 @@ Session-by-session history of development work. Most recent first.
 
 ## January 28, 2026
 
+### Embed Code Generator (Feature #16)
+
+Added a modal that generates copy-pasteable HTML/SVG/Markdown embed snippets for any saved QR code. Available from both the QR Studio download step and dashboard QR code cards.
+
+#### New Files
+- `src/lib/qr/embed-templates.ts` — Pure utility with `generateEmbedCode()` supporting static (base64) and dynamic (URL-based) embeds in HTML `<img>`, inline SVG, and Markdown formats. Includes `escapeHtml()` helper and border wrapping option.
+- `src/lib/qr/__tests__/embed-templates.test.ts` — 19 unit tests covering all template combinations, escaping, border toggle, size params, and null-qrId fallback.
+- `src/components/qr/EmbedCodeModal.tsx` — shadcn Dialog modal following PDFOptionsModal pattern. Tabs for Static/Dynamic embed type, format select, size select (128–512), border toggle, dark code preview, and copy button with checkmark feedback.
+- `src/app/api/embed/[id]/route.ts` — Public GET endpoint serving SVG images for dynamic embeds. UUID validation, 60 req/min/IP rate limiting, admin Supabase client (bypasses RLS), server-side QR generation, CORS headers, 5-minute cache. Size clamped to 64–1024px.
+
+#### Modified Files
+- `src/components/qr/studio/QRStudio.tsx` — Added embed state, `handleShowEmbed` handler (saves QR if needed, generates SVG + data URL in parallel), "Get Embed Code" button with `</>` icon in DownloadStep, and EmbedCodeModal render.
+- `src/components/qr/QRCodeCard.tsx` — Added embed state, handler, `</>` icon button in action row, and EmbedCodeModal render.
+
+#### Tier Gating
+- Free: Static HTML `<img>` + Markdown
+- Pro/Business: + Dynamic embeds + Inline SVG
+- Gated options show "Pro" badge; clicking navigates to `/plans`
+
+#### Tests
+- 19 new embed-templates tests, all passing
+- Full suite: 216 tests passing, 0 lint errors, type-check clean
+
+---
+
 ### Align Static/Dynamic QR Architecture with Product Intent
 
 Resolved the static/dynamic QR code split left over from a Jan 21 emergency fix. All QR codes are now dynamic under the hood (single code path, no race condition risk). Plan definitions, UI copy, and enforcement updated to match.

@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { generateQRDataURL, downloadQRPNG, generateQRSVG, downloadQRSVG } from '@/lib/qr/generator';
+import { EmbedCodeModal } from '@/components/qr/EmbedCodeModal';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
 import type { Folder, SubscriptionTier } from '@/lib/supabase/types';
 import {
@@ -61,6 +62,9 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
   const [qrDataURL, setQRDataURL] = useState<string | null>(null);
   const [showQuickView, setShowQuickView] = useState(false);
   const [largeQRDataURL, setLargeQRDataURL] = useState<string | null>(null);
+  const [showEmbedModal, setShowEmbedModal] = useState(false);
+  const [embedSvgContent, setEmbedSvgContent] = useState<string | null>(null);
+  const [embedDataURL, setEmbedDataURL] = useState<string | null>(null);
 
   // Check if user can download SVG (Pro or Business tier)
   const canDownloadSVG = userTier === 'pro' || userTier === 'business';
@@ -168,6 +172,26 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
       toast.success('Link copied to clipboard');
     } catch {
       toast.error('Failed to copy link');
+    }
+  };
+
+  const handleShowEmbed = async () => {
+    try {
+      let qrContent: QRContent = qrCode.content as QRContent;
+      if (qrCode.short_code) {
+        qrContent = { type: 'url', url: `${getAppUrl()}/r/${qrCode.short_code}` };
+      }
+
+      const [svg, dataURL] = await Promise.all([
+        generateQRSVG(qrContent, { ...(qrCode.style as QRStyleOptions), width: 256 }),
+        generateQRDataURL(qrContent, { ...(qrCode.style as QRStyleOptions), width: 256 }),
+      ]);
+
+      setEmbedSvgContent(svg);
+      setEmbedDataURL(dataURL);
+      setShowEmbedModal(true);
+    } catch {
+      toast.error('Failed to generate embed code');
     }
   };
 
@@ -491,6 +515,19 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
               <CopyIcon className="w-3 h-3" aria-hidden="true" />
             </Button>
           )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 text-xs px-2"
+            onClick={handleShowEmbed}
+            title="Get embed code"
+            aria-label="Get embed code"
+          >
+            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <polyline points="16 18 22 12 16 6" />
+              <polyline points="8 6 2 12 8 18" />
+            </svg>
+          </Button>
           {folders.length > 0 && onFolderChange && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -584,6 +621,20 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Embed Code Modal */}
+      {showEmbedModal && embedSvgContent && embedDataURL && (
+        <EmbedCodeModal
+          open={showEmbedModal}
+          onClose={() => setShowEmbedModal(false)}
+          svgContent={embedSvgContent}
+          svgDataURL={embedDataURL}
+          qrName={qrCode.name}
+          qrId={qrCode.id}
+          shortCode={qrCode.short_code}
+          userTier={userTier}
+        />
+      )}
     </div>
   );
 }

@@ -28,14 +28,13 @@ const PLANS: Record<Tier, PlanInfo> = {
     monthlyPrice: 0,
     yearlyPrice: 0,
     features: [
-      'Unlimited static QR codes',
+      '5 QR codes',
       '100 scans/month',
       'Custom colors',
       'PNG downloads',
-      'Basic support',
     ],
     limitations: [
-      'No dynamic QR codes',
+      'No URL editing',
       'No analytics',
       'No custom logos',
       'No SVG downloads',

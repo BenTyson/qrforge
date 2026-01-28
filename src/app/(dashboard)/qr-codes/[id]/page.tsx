@@ -79,6 +79,14 @@ export default function EditQRCodePage() {
   // Short code for redirect URL
   const [shortCode, setShortCode] = useState<string | null>(null);
 
+  // Upgrade banner for free users redirected from edit gate
+  const [showUpgradeBanner, setShowUpgradeBanner] = useState(false);
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('upgrade') === 'edit') {
+      setShowUpgradeBanner(true);
+    }
+  }, []);
+
   // Load QR code data
   useEffect(() => {
     const fetchQRCode = async () => {
@@ -308,6 +316,21 @@ export default function EditQRCodePage() {
       {error && (
         <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500">
           {error}
+        </div>
+      )}
+
+      {showUpgradeBanner && (
+        <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-amber-500/10 to-primary/10 border border-amber-500/20 flex items-center gap-3">
+          <LockIcon className="w-5 h-5 text-amber-500 shrink-0" />
+          <div className="flex-1">
+            <p className="font-medium text-sm">Editing requires Pro</p>
+            <p className="text-xs text-muted-foreground">
+              Free accounts can view and download QR codes. Upgrade to edit destinations, styles, and settings.
+            </p>
+          </div>
+          <Link href="/plans">
+            <Button size="sm">Upgrade</Button>
+          </Link>
         </div>
       )}
 
@@ -630,12 +653,24 @@ export default function EditQRCodePage() {
           {/* Save Button */}
           <Button
             onClick={handleSave}
-            disabled={!name.trim() || isSaving}
+            disabled={!name.trim() || isSaving || tier === 'free'}
             className="w-full"
             size="lg"
           >
-            {isSaving ? 'Saving...' : 'Save Changes'}
+            {tier === 'free' ? (
+              <>
+                <LockIcon className="w-4 h-4 mr-2" />
+                Upgrade to Edit
+              </>
+            ) : (
+              isSaving ? 'Saving...' : 'Save Changes'
+            )}
           </Button>
+          {tier === 'free' && (
+            <p className="text-center text-xs text-muted-foreground mt-2">
+              <Link href="/plans" className="text-primary hover:underline">Upgrade to Pro</Link> to edit QR codes
+            </p>
+          )}
         </div>
 
         {/* Right Column - Preview */}
@@ -782,6 +817,15 @@ function ArrowRightIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <line x1="5" y1="12" x2="19" y2="12" />
       <polyline points="12 5 19 12 12 19" />
+    </svg>
+  );
+}
+
+function LockIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
   );
 }

@@ -4,7 +4,7 @@
  * Tests for subscription tier limits and feature gating.
  */
 
-import { PLANS, SCAN_LIMITS, getScanLimit, isWithinScanLimit } from '../plans';
+import { PLANS, SCAN_LIMITS, getScanLimit, isWithinScanLimit, getQRCodeLimit, isWithinQRCodeLimit } from '../plans';
 
 describe('Subscription Plans', () => {
   describe('Plan Configuration', () => {
@@ -49,16 +49,16 @@ describe('Subscription Plans', () => {
     });
   });
 
-  describe('Dynamic QR Limits', () => {
-    it('should have 0 dynamic QR codes for free tier', () => {
-      expect(PLANS.free.dynamicQRLimit).toBe(0);
+  describe('QR Code Limits', () => {
+    it('should have 5 QR codes for free tier', () => {
+      expect(PLANS.free.dynamicQRLimit).toBe(5);
     });
 
-    it('should have 50 dynamic QR codes for pro tier', () => {
+    it('should have 50 QR codes for pro tier', () => {
       expect(PLANS.pro.dynamicQRLimit).toBe(50);
     });
 
-    it('should have unlimited dynamic QR codes for business tier', () => {
+    it('should have unlimited QR codes for business tier', () => {
       expect(PLANS.business.dynamicQRLimit).toBe(-1);
     });
   });
@@ -125,6 +125,65 @@ describe('Subscription Plans', () => {
     });
   });
 
+  describe('getQRCodeLimit', () => {
+    it('should return correct limit for free tier', () => {
+      expect(getQRCodeLimit('free')).toBe(5);
+    });
+
+    it('should return correct limit for pro tier', () => {
+      expect(getQRCodeLimit('pro')).toBe(50);
+    });
+
+    it('should return -1 for business tier', () => {
+      expect(getQRCodeLimit('business')).toBe(-1);
+    });
+
+    it('should default to free tier limit for unknown tier', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect(getQRCodeLimit('unknown' as any)).toBe(5);
+    });
+  });
+
+  describe('isWithinQRCodeLimit', () => {
+    describe('Free tier', () => {
+      it('should allow QR codes under limit', () => {
+        expect(isWithinQRCodeLimit('free', 0)).toBe(true);
+        expect(isWithinQRCodeLimit('free', 4)).toBe(true);
+      });
+
+      it('should block QR codes at limit', () => {
+        expect(isWithinQRCodeLimit('free', 5)).toBe(false);
+      });
+
+      it('should block QR codes over limit', () => {
+        expect(isWithinQRCodeLimit('free', 6)).toBe(false);
+        expect(isWithinQRCodeLimit('free', 100)).toBe(false);
+      });
+    });
+
+    describe('Pro tier', () => {
+      it('should allow QR codes under limit', () => {
+        expect(isWithinQRCodeLimit('pro', 0)).toBe(true);
+        expect(isWithinQRCodeLimit('pro', 49)).toBe(true);
+      });
+
+      it('should block QR codes at limit', () => {
+        expect(isWithinQRCodeLimit('pro', 50)).toBe(false);
+      });
+
+      it('should block QR codes over limit', () => {
+        expect(isWithinQRCodeLimit('pro', 51)).toBe(false);
+      });
+    });
+
+    describe('Business tier', () => {
+      it('should always allow QR codes (unlimited)', () => {
+        expect(isWithinQRCodeLimit('business', 0)).toBe(true);
+        expect(isWithinQRCodeLimit('business', 1000000)).toBe(true);
+      });
+    });
+  });
+
   describe('Plan Features', () => {
     it('should have features array for each plan', () => {
       expect(Array.isArray(PLANS.free.features)).toBe(true);
@@ -139,8 +198,8 @@ describe('Subscription Plans', () => {
     });
 
     describe('Free tier features', () => {
-      it('should include static QR codes', () => {
-        expect(PLANS.free.features.some(f => f.toLowerCase().includes('static'))).toBe(true);
+      it('should include QR code limit', () => {
+        expect(PLANS.free.features.some(f => f.includes('5 QR codes'))).toBe(true);
       });
     });
 

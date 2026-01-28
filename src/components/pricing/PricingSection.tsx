@@ -72,7 +72,7 @@ export function PricingSection({ isAuthenticated = false, currentTier = 'free' }
             </div>
           </div>
           <ul className="space-y-3 mb-8">
-            {['Unlimited static QR codes', '100 scans/month', 'Custom colors', 'PNG downloads'].map((feature) => (
+            {['5 QR codes', '100 scans/month', 'Custom colors', 'PNG downloads'].map((feature) => (
               <li key={feature} className="flex items-center gap-2 text-sm">
                 <CheckIcon />
                 {feature}

@@ -70,7 +70,7 @@ export function ComparisonSection() {
               <FeatureListItem
                 positive={true}
                 title="Generous free tier"
-                description="Unlimited static QR codes, forever free"
+                description="5 free QR codes, all with tracking"
               />
               <FeatureListItem
                 positive={true}

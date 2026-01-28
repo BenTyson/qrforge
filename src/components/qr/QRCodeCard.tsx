@@ -412,9 +412,23 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
           aria-label="QR code actions"
         >
           <Link href={`/qr-codes/${qrCode.id}/edit`} className="flex-1">
-            <Button variant="outline" size="sm" className="w-full h-8 text-xs">
+            <Button variant="outline" size="sm" className={`w-full h-8 text-xs${userTier === 'free' ? ' opacity-60' : ''}`}>
               <EditIcon className="w-3 h-3 mr-1.5" aria-hidden="true" />
               Edit
+              {userTier === 'free' && (
+                <span className="ml-1 text-[8px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-400 font-medium">Pro</span>
+              )}
+            </Button>
+          </Link>
+          <Link href={`/analytics?qr=${qrCode.id}`}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 text-xs px-2"
+              title="View analytics"
+              aria-label="View analytics for this QR code"
+            >
+              <AnalyticsIcon className="w-3 h-3" aria-hidden="true" />
             </Button>
           </Link>
           <Link href={`/analytics?qr=${qrCode.id}`}>

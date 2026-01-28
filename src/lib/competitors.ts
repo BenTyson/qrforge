@@ -36,7 +36,7 @@ export const COMPETITORS: Record<string, Competitor> = {
     description: 'QR Code Monkey is a popular free QR code generator. While it offers basic QR creation, QRWolf provides more features, better analytics, and professional templates at competitive pricing.',
     pricingStart: '$5/mo',
     features: [
-      { feature: 'Static QR Codes', qrwolf: 'Unlimited', competitor: 'Unlimited' },
+      { feature: 'Free QR Codes', qrwolf: '5 (all trackable)', competitor: 'Unlimited' },
       { feature: 'Dynamic QR Codes', qrwolf: '50 (Pro)', competitor: 'Limited' },
       { feature: 'Scan Analytics', qrwolf: 'Detailed', competitor: 'Basic' },
       { feature: 'Custom Logo', qrwolf: true, competitor: true },
@@ -73,7 +73,7 @@ export const COMPETITORS: Record<string, Competitor> = {
     description: 'QR Tiger offers enterprise QR solutions at premium prices. QRWolf delivers similar features at a fraction of the cost, making professional QR codes accessible to businesses of all sizes.',
     pricingStart: '$7/mo',
     features: [
-      { feature: 'Static QR Codes', qrwolf: 'Unlimited', competitor: 'Unlimited' },
+      { feature: 'Free QR Codes', qrwolf: '5 (all trackable)', competitor: 'Unlimited' },
       { feature: 'Dynamic QR Codes', qrwolf: '50 (Pro)', competitor: '25 (Pro)' },
       { feature: 'Scans/Month', qrwolf: '10,000 (Pro)', competitor: '5,000 (Pro)' },
       { feature: 'Scan Analytics', qrwolf: true, competitor: true },
@@ -110,7 +110,7 @@ export const COMPETITORS: Record<string, Competitor> = {
     description: 'Beaconstac is known for enterprise QR solutions with complex pricing tiers. QRWolf offers similar capabilities with transparent, straightforward pricing that scales with your needs.',
     pricingStart: '$5/mo',
     features: [
-      { feature: 'Static QR Codes', qrwolf: 'Unlimited', competitor: 'Limited' },
+      { feature: 'Free QR Codes', qrwolf: '5 (all trackable)', competitor: 'Limited' },
       { feature: 'Dynamic QR Codes', qrwolf: '50 (Pro)', competitor: '25 (Starter)' },
       { feature: 'Scan Analytics', qrwolf: 'Detailed', competitor: 'Detailed' },
       { feature: 'Custom Branding', qrwolf: true, competitor: true },
@@ -133,7 +133,7 @@ export const COMPETITORS: Record<string, Competitor> = {
     },
     whySwitch: [
       'Dramatically lower pricing (80% less than Beaconstac Pro)',
-      'More generous free tier with unlimited static QR codes',
+      'More generous free tier with 5 trackable QR codes included',
       'Simpler pricing without complex tier limitations',
       'All core features included in lower tiers',
       'No per-scan pricing surprises',

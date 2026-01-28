@@ -141,8 +141,7 @@ stripe_customer_id: 'cus_...'
 
 | Feature | Free | Pro | Business |
 |---------|------|-----|----------|
-| Static QR codes | Unlimited | Unlimited | Unlimited |
-| Dynamic QR codes | 0 | 50 | Unlimited |
+| QR codes | 5 | 50 | Unlimited |
 | Analytics | No | Yes | Yes |
 | Geolocation tracking | No | Yes | Yes |
 | Scan history | No | Yes | Yes |

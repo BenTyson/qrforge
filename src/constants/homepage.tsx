@@ -62,7 +62,7 @@ export const jsonLd = {
           name: 'Free',
           price: '0',
           priceCurrency: 'USD',
-          description: 'Unlimited static QR codes with basic customization',
+          description: '5 QR codes with custom colors and PNG downloads',
         },
         {
           '@type': 'Offer',
@@ -239,11 +239,11 @@ export const FAQS: FAQ[] = [
   },
   {
     question: 'What happens if I downgrade my plan?',
-    answer: "Your existing QR codes will continue to work. However, you'll lose access to Pro/Business features like analytics, and dynamic QR codes beyond your plan's limit will become static (the last saved destination).",
+    answer: "Your existing QR codes will continue to work. However, you'll lose access to Pro features like analytics and URL editing. Existing QR codes keep working.",
   },
   {
     question: 'Do QR codes expire on the free plan?',
-    answer: 'No! Static QR codes on the free plan never expire. They link directly to your destination and will work forever. Only dynamic QR codes (Pro feature) can have optional expiration dates.',
+    answer: 'No! QR codes on the free plan never expire and will work as long as your account is active. Pro users can optionally set expiration dates.',
   },
   {
     question: "What's your refund policy?",

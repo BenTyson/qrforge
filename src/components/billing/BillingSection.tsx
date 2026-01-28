@@ -20,7 +20,7 @@ interface BillingSectionProps {
 const TIER_INFO = {
   free: {
     name: 'Free',
-    dynamicLimit: 0,
+    dynamicLimit: 5,
     scanLimit: 100,
     color: 'bg-zinc-500/20 text-zinc-400',
   },
@@ -75,7 +75,7 @@ export function BillingSection({
           <div>
             <p className="font-medium">{tierInfo.name} Plan</p>
             <p className="text-sm text-muted-foreground">
-              {tier === 'free' && 'Basic features with static QR codes'}
+              {tier === 'free' && '5 QR codes with custom colors'}
               {tier === 'pro' && '50 dynamic QR codes with analytics & custom styling'}
               {tier === 'business' && 'Unlimited dynamic QR codes + API access'}
             </p>
@@ -152,23 +152,15 @@ export function BillingSection({
       {/* Usage */}
       <div className="pt-4 border-t border-border">
         <h3 className="text-sm font-medium mb-3">Current Usage</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-3 bg-secondary/20 rounded-lg">
-            <p className="text-2xl font-bold">{staticCount}</p>
-            <p className="text-sm text-muted-foreground">Static QR Codes</p>
-            <p className="text-xs text-muted-foreground mt-1">Unlimited</p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-3 bg-secondary/20 rounded-lg">
             <p className="text-2xl font-bold">
-              {dynamicCount}
+              {staticCount + dynamicCount}
               <span className="text-lg text-muted-foreground">
                 /{tierInfo.dynamicLimit === Infinity ? '∞' : tierInfo.dynamicLimit}
               </span>
             </p>
-            <p className="text-sm text-muted-foreground">Dynamic QR Codes</p>
-            {tier === 'free' && (
-              <p className="text-xs text-primary mt-1">Upgrade to unlock</p>
-            )}
+            <p className="text-sm text-muted-foreground">QR Codes</p>
           </div>
           <div className="p-3 bg-secondary/20 rounded-lg">
             <p className="text-2xl font-bold">
@@ -188,9 +180,9 @@ export function BillingSection({
       {/* Upgrade prompts for free/pro users */}
       {tier === 'free' && (
         <div className="mt-4 p-4 bg-primary/10 rounded-lg border border-primary/20">
-          <p className="text-sm font-medium mb-2">Unlock Dynamic QR Codes</p>
+          <p className="text-sm font-medium mb-2">Need more QR codes?</p>
           <p className="text-xs text-muted-foreground mb-3">
-            Create QR codes that can be edited after printing. Track scans with analytics.
+            Upgrade to Pro for up to 50 QR codes, analytics, and URL editing.
           </p>
           <Button size="sm" asChild>
             <Link href="/plans">Compare Plans</Link>

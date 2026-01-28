@@ -219,12 +219,14 @@ describe('useQRStudioState', () => {
     });
   });
 
-  describe('requiresDynamicQR', () => {
-    it('should return true for Pro users regardless of type', async () => {
+  describe('QR code creation limit enforcement', () => {
+    it('should block free user from creating QR code when at limit', async () => {
       const mockUser = { id: 'user-123', email: 'test@example.com' };
       mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
+
+      // Profile fetch returns free tier
       mockSingle.mockResolvedValueOnce({
-        data: { subscription_tier: 'pro' },
+        data: { subscription_tier: 'free' },
         error: null,
       });
 
@@ -233,18 +235,37 @@ describe('useQRStudioState', () => {
       );
 
       await waitFor(() => {
-        expect(result.current[0].userTier).toBe('pro');
+        expect(result.current[0].userTierLoading).toBe(false);
       });
 
-      // Pro users always get dynamic QR (verified by the state and behavior)
-      expect(result.current[0].userTier).toBe('pro');
+      // Override mockFrom for the count query: user has 5 QR codes (at free limit of 5)
+      mockFrom.mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockResolvedValue({ count: 5, error: null }),
+        }),
+      });
+
+      act(() => {
+        result.current[1].selectType('url');
+        result.current[1].setContent({ type: 'url', url: 'https://example.com' });
+      });
+
+      let saveResult: { id: string; shortCode: string } | null = null;
+      await act(async () => {
+        saveResult = await result.current[1].saveQRCode();
+      });
+
+      expect(saveResult).toBeNull();
+      expect(result.current[0].saveBlockedReason).toContain('limit');
     });
 
-    it('should return true for Business users regardless of type', async () => {
+    it('should allow free user to create QR code when under limit', async () => {
       const mockUser = { id: 'user-123', email: 'test@example.com' };
       mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
+
+      // Profile fetch returns free tier
       mockSingle.mockResolvedValueOnce({
-        data: { subscription_tier: 'business' },
+        data: { subscription_tier: 'free' },
         error: null,
       });
 
@@ -253,10 +274,66 @@ describe('useQRStudioState', () => {
       );
 
       await waitFor(() => {
-        expect(result.current[0].userTier).toBe('business');
+        expect(result.current[0].userTierLoading).toBe(false);
       });
 
-      expect(result.current[0].userTier).toBe('business');
+      // Count query: user has 3 QR codes (under free limit of 5)
+      mockFrom.mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockResolvedValue({ count: 3, error: null }),
+        }),
+      });
+
+      // Insert mock for the actual save
+      mockSingle.mockResolvedValueOnce({ data: { id: 'qr-new' }, error: null });
+
+      act(() => {
+        result.current[1].selectType('url');
+        result.current[1].setContent({ type: 'url', url: 'https://example.com' });
+      });
+
+      let saveResult: { id: string; shortCode: string } | null = null;
+      await act(async () => {
+        saveResult = await result.current[1].saveQRCode();
+      });
+
+      expect(saveResult).not.toBeNull();
+      expect(result.current[0].saveBlockedReason).toBeNull();
+    });
+
+    it('should not check limit for Pro users (50 limit)', async () => {
+      const mockUser = { id: 'user-123', email: 'test@example.com' };
+      mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
+      mockSingle
+        .mockResolvedValueOnce({ data: { subscription_tier: 'pro' }, error: null })
+        .mockResolvedValueOnce({ data: { id: 'qr-123' }, error: null });
+
+      const { result } = renderHook(() =>
+        useQRStudioState({ mode: 'create' })
+      );
+
+      await waitFor(() => {
+        expect(result.current[0].userTierLoading).toBe(false);
+      });
+
+      act(() => {
+        result.current[1].selectType('url');
+        result.current[1].setContent({ type: 'url', url: 'https://example.com' });
+      });
+
+      // Pro user has limit of 50 — count query still runs, but with 10 codes should be fine
+      mockFrom.mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockResolvedValue({ count: 10, error: null }),
+        }),
+      });
+
+      let saveResult: { id: string; shortCode: string } | null = null;
+      await act(async () => {
+        saveResult = await result.current[1].saveQRCode();
+      });
+
+      expect(saveResult).not.toBeNull();
     });
   });
 

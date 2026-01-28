@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { validateApiKey, apiError, apiSuccess, rateLimitError, monthlyLimitError, incrementRequestCount, validators } from '@/lib/api/auth';
+import { PLANS } from '@/lib/stripe/plans';
+import type { SubscriptionTier } from '@/lib/stripe/plans';
 import { headers } from 'next/headers';
 import crypto from 'crypto';
 
@@ -201,6 +203,24 @@ export async function POST(request: Request) {
   };
 
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+  // Enforce QR code creation limit
+  const tier = user.tier as SubscriptionTier;
+  const qrLimit = PLANS[tier].dynamicQRLimit;
+  if (qrLimit !== -1) {
+    const { count, error: countError } = await supabase
+      .from('qr_codes')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+
+    if (countError) {
+      return apiError('Failed to check QR code limit', 500);
+    }
+
+    if (count !== null && count >= qrLimit) {
+      return apiError(`QR code limit reached (${qrLimit}). Upgrade your plan for more.`, 403);
+    }
+  }
 
   // Generate short code for dynamic QR codes
   let shortCode = null;

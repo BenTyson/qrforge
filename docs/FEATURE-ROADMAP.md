@@ -368,6 +368,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-28 | Static/dynamic QR architecture alignment: Free tier now gets 5 QR codes (was "unlimited static" + 0 dynamic). Limit enforcement in client + API. URL editing gated behind Pro. Dead code cleanup. |
 | 2026-01-28 | Dashboard & Analytics V2: Sparkline charts, trend badges, Top Performing section, enriched Recent Activity, contextual Quick Actions, per-QR filtering, Traffic Sources/OS breakdowns, expandable locations. |
 | 2026-01-27 | Homepage UX redesign: QR Types section split into 3 tabbed categories (Basics/Social/Pro), Testimonials section replaced with auto-rotating 3-card carousel with dot navigation. |
 | 2026-01-27 | Fixed critical double-billing bug on subscription upgrades (old subscription now auto-cancelled). Surfaced real Stripe errors in portal endpoint. Fixed signup page Suspense boundary for production build. |

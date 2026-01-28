@@ -12,9 +12,9 @@ export const PLANS = {
     name: 'Free',
     price: 0,
     scanLimit: SCAN_LIMITS.free,
-    dynamicQRLimit: 0,
+    dynamicQRLimit: 5,
     features: [
-      'Unlimited static QR codes',
+      '5 QR codes',
       '100 scans/month',
       'Custom colors',
       'PNG downloads',
@@ -66,6 +66,16 @@ export function getScanLimit(tier: SubscriptionTier): number {
 
 export function isWithinScanLimit(tier: SubscriptionTier, currentCount: number): boolean {
   const limit = getScanLimit(tier);
+  if (limit === -1) return true; // unlimited
+  return currentCount < limit;
+}
+
+export function getQRCodeLimit(tier: SubscriptionTier): number {
+  return PLANS[tier]?.dynamicQRLimit ?? PLANS.free.dynamicQRLimit;
+}
+
+export function isWithinQRCodeLimit(tier: SubscriptionTier, currentCount: number): boolean {
+  const limit = getQRCodeLimit(tier);
   if (limit === -1) return true; // unlimited
   return currentCount < limit;
 }

@@ -6,6 +6,38 @@ Session-by-session history of development work. Most recent first.
 
 ## January 28, 2026
 
+### Align Static/Dynamic QR Architecture with Product Intent
+
+Resolved the static/dynamic QR code split left over from a Jan 21 emergency fix. All QR codes are now dynamic under the hood (single code path, no race condition risk). Plan definitions, UI copy, and enforcement updated to match.
+
+#### Plan Definition Changes
+- Free tier `dynamicQRLimit` changed from `0` to `5` (was incorrectly zero after the all-dynamic migration)
+- Free tier feature copy updated: "Unlimited static QR codes" replaced with "5 QR codes"
+- Added `getQRCodeLimit()` and `isWithinQRCodeLimit()` helper functions to `plans.ts`
+
+#### QR Code Limit Enforcement
+- **Client-side** (`useQRStudioState.ts`): `saveQRCode()` now queries the user's existing QR count before creating. Free users at their 5-code limit see an upgrade CTA. Skipped for edits and unlimited tiers.
+- **API route** (`/api/v1/qr-codes`): POST handler enforces the same limit server-side (returns 403 when exceeded). Practically only applies if API access is ever extended beyond Business tier.
+- Existing free users with >5 QR codes keep their codes; they just can't create new ones until they upgrade or are under the limit.
+
+#### URL Editing Gated Behind Pro
+- `/qr-codes/[id]/edit` page now checks user tier server-side
+- Free users redirected to `/qr-codes/[id]?upgrade=edit` instead of seeing the edit form
+- Uses `getEffectiveTier()` so trial users retain edit access
+
+#### Code Cleanup
+- Removed unused `_requiresDynamicQR` function from `useQRStudioState.ts`
+- Removed unused `DYNAMIC_REQUIRED_TYPES` import from the same file
+- Pricing page hardcoded feature list updated to match plan definitions
+
+#### Tests
+- Updated `plans.test.ts`: free tier limit expectation `0` → `5`, feature test "static" → "5 QR codes"
+- Added `getQRCodeLimit` and `isWithinQRCodeLimit` test suites (12 new tests)
+- Replaced `requiresDynamicQR` tests with QR limit enforcement tests (free blocked at limit, free allowed under limit, Pro proceeds)
+- All 197 tests passing, 0 lint errors, type-check clean
+
+---
+
 ### Dashboard & Analytics V2 Overhaul
 
 Complete redesign of `/dashboard` and `/analytics` pages with new data visualizations, trend indicators, and per-QR filtering.

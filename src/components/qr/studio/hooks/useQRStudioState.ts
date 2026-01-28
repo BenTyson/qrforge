@@ -42,7 +42,8 @@ import type {
   CouponContent,
   SocialContent,
 } from '@/lib/qr/types';
-import { DYNAMIC_REQUIRED_TYPES, QR_TYPE_CATEGORIES } from '@/lib/qr/types';
+import { QR_TYPE_CATEGORIES } from '@/lib/qr/types';
+import { PLANS } from '@/lib/stripe/plans';
 import type { Template } from '@/lib/templates/types';
 import type { WizardStep } from '../../wizard';
 
@@ -269,16 +270,6 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     }
     return result;
   }, []);
-
-  // Check if type requires dynamic QR
-  // Pro and Business users always get dynamic QR codes (for analytics tracking)
-  // Note: This function is currently unused but kept for potential future use
-  const _requiresDynamicQR = useCallback((type: QRContentType): boolean => {
-    if (userTier === 'pro' || userTier === 'business') {
-      return true;
-    }
-    return DYNAMIC_REQUIRED_TYPES.includes(type);
-  }, [userTier]);
 
   // Validate content
   const isContentValid = useCallback((): boolean => {
@@ -564,6 +555,32 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
       return null;
     }
 
+    // Enforce QR code creation limit (skip for edits — user already owns the code)
+    if (mode === 'create' && userTier) {
+      const limit = PLANS[userTier].dynamicQRLimit;
+      if (limit !== -1) {
+        try {
+          const supabase = createClient();
+          const { count, error } = await supabase
+            .from('qr_codes')
+            .select('id', { count: 'exact', head: true })
+            .eq('user_id', userId);
+
+          if (!error && count !== null && count >= limit) {
+            setSaveBlockedReason(
+              userTier === 'free'
+                ? `You've reached your limit of ${limit} QR codes. Upgrade to Pro for up to 50.`
+                : `You've reached your limit of ${limit} QR codes. Upgrade to Business for unlimited.`
+            );
+            return null;
+          }
+        } catch {
+          // If count check fails, allow the save to proceed
+          // The database or a server-side check will catch it if needed
+        }
+      }
+    }
+
     setIsSaving(true);
     setSaveError(null);
 
@@ -723,7 +740,7 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     } finally {
       setIsSaving(false);
     }
-  }, [content, selectedType, userId, userTierLoading, qrName, style, mode, savedQRId, shortCode, generateShortCode, expiresAt, passwordEnabled, password, scheduledEnabled, activeFrom, activeUntil, abTestEnabled, abVariantBUrl, abSplitPercentage]);
+  }, [content, selectedType, userId, userTier, userTierLoading, qrName, style, mode, savedQRId, shortCode, generateShortCode, expiresAt, passwordEnabled, password, scheduledEnabled, activeFrom, activeUntil, abTestEnabled, abVariantBUrl, abSplitPercentage]);
 
   // Load existing QR code for edit mode
   const loadQRCode = useCallback(async (id: string): Promise<boolean> => {

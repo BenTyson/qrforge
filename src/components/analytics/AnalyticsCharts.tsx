@@ -15,16 +15,9 @@ import {
   BarChart,
   Bar,
 } from 'recharts';
+import type { ScanData } from '@/lib/analytics/types';
 
 type DateRange = '7d' | '30d' | 'all';
-
-interface ScanData {
-  scanned_at: string;
-  device_type?: string;
-  browser?: string;
-  country?: string;
-  city?: string;
-}
 
 interface AnalyticsChartsProps {
   scans: ScanData[];
@@ -122,16 +115,19 @@ export function AnalyticsCharts({ scans, deviceBreakdown, browserBreakdown }: An
       }));
   }, [browserBreakdown]);
 
-  // Export to CSV
+  // Export to CSV (updated with OS, referrer fields)
   const exportToCSV = () => {
-    const headers = ['Date', 'QR Code', 'Device', 'Browser', 'Country', 'City'];
+    const headers = ['Date', 'QR Code', 'Device', 'OS', 'Browser', 'Referrer', 'Country', 'City', 'Region'];
     const rows = filteredScans.map(scan => [
       new Date(scan.scanned_at).toISOString(),
       '',
       scan.device_type || 'Unknown',
+      scan.os || 'Unknown',
       scan.browser || 'Unknown',
+      scan.referrer || 'Direct',
       scan.country || 'Unknown',
       scan.city || 'Unknown',
+      scan.region || 'Unknown',
     ]);
 
     const csvContent = [

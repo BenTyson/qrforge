@@ -1,16 +1,25 @@
+'use client';
+
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ArrowRightIcon } from '@/components/icons';
-import { QR_TYPES } from '@/constants/homepage';
+import { QR_TYPES, QRTypeCategory } from '@/constants/homepage';
+
+const CATEGORIES: { value: QRTypeCategory; label: string }[] = [
+  { value: 'basics', label: 'Basics' },
+  { value: 'social', label: 'Social' },
+  { value: 'pro', label: 'Pro' },
+];
 
 export function QRTypesSection() {
   return (
     <section className="py-20 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
-            16 QR Types
+            34 QR Types
           </Badge>
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
             One tool for <span className="gradient-text">every QR code</span>
@@ -21,20 +30,42 @@ export function QRTypesSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-          {QR_TYPES.map((type) => (
-            <div
-              key={type.name}
-              className="group p-4 rounded-xl bg-secondary/30 hover:bg-primary/10 border border-transparent hover:border-primary/30 transition-all cursor-pointer text-center"
-            >
-              <div className="w-10 h-10 mx-auto mb-2 rounded-lg bg-background flex items-center justify-center text-muted-foreground group-hover:text-primary transition-colors">
-                {type.icon}
+        <Tabs defaultValue="basics" className="w-full">
+          <div className="flex justify-center mb-6">
+            <TabsList>
+              {CATEGORIES.map((cat) => (
+                <TabsTrigger key={cat.value} value={cat.value}>
+                  {cat.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+
+          {CATEGORIES.map((cat) => (
+            <TabsContent key={cat.value} value={cat.value}>
+              <div className="flex flex-wrap justify-center gap-3">
+                {QR_TYPES.filter((t) => t.category === cat.value).map(
+                  (type) => (
+                    <div
+                      key={type.name}
+                      className="group w-[calc(50%-0.375rem)] sm:w-[calc(25%-0.5625rem)] lg:w-[calc(12.5%-0.65625rem)] p-4 rounded-xl bg-secondary/30 hover:bg-primary/10 border border-transparent hover:border-primary/30 transition-all cursor-pointer text-center"
+                    >
+                      <div className="w-10 h-10 mx-auto mb-2 rounded-lg bg-background flex items-center justify-center text-muted-foreground group-hover:text-primary transition-colors">
+                        {type.icon}
+                      </div>
+                      <p className="text-xs font-medium truncate">
+                        {type.name}
+                      </p>
+                      {type.pro && (
+                        <span className="text-[10px] text-primary">Pro</span>
+                      )}
+                    </div>
+                  )
+                )}
               </div>
-              <p className="text-xs font-medium truncate">{type.name}</p>
-              {type.pro && <span className="text-[10px] text-primary">Pro</span>}
-            </div>
+            </TabsContent>
           ))}
-        </div>
+        </Tabs>
 
         <div className="mt-8 text-center">
           <Link href="/signup">

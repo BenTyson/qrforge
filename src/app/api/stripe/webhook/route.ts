@@ -172,10 +172,11 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
   }
 
-  // Check if this subscription has a trial
+  // Check if this subscription has a trial and determine billing interval
   let subscriptionStatus = 'active';
   let isTrialing = false;
   let trialEndDate: string | null = null;
+  let billingInterval: 'monthly' | 'yearly' = 'monthly';
   if (session.subscription) {
     try {
       const sub = await stripe.subscriptions.retrieve(session.subscription as string);
@@ -187,8 +188,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           trialEndDate = new Date(sub.trial_end * 1000).toISOString();
         }
       }
+      // Determine billing interval from subscription price
+      const subData = sub as unknown as Record<string, unknown>;
+      const items = subData.items as { data: Array<{ price?: { recurring?: { interval?: string } } }> };
+      if (items?.data?.[0]?.price?.recurring?.interval === 'year') {
+        billingInterval = 'yearly';
+      }
     } catch {
-      // Use default status if retrieval fails
+      // Use default status and interval if retrieval fails
     }
   }
 
@@ -198,6 +205,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       subscription_tier: plan,
       subscription_status: subscriptionStatus,
       stripe_customer_id: customerId,
+      billing_interval: billingInterval,
       // Mark trial as used and store end date if they started with a trial
       ...(isTrialing && { trial_used: true, trial_ends_at: trialEndDate }),
     })
@@ -292,6 +300,10 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     }
   }
 
+  // Determine billing interval
+  const interval = subscription.items.data[0]?.price?.recurring?.interval;
+  const billingInterval: 'monthly' | 'yearly' = interval === 'year' ? 'yearly' : 'monthly';
+
   // Map Stripe status to our status
   let status = 'active';
   if (subscription.status === 'trialing') status = 'trialing';
@@ -304,6 +316,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     .update({
       subscription_tier: tier,
       subscription_status: status,
+      billing_interval: billingInterval,
     })
     .eq('id', profile.id);
 
@@ -431,12 +444,17 @@ async function handleSubscriptionPaymentSucceeded(subscriptionId: string, custom
     throw new Error('Missing required metadata in subscription');
   }
 
+  // Determine billing interval from subscription
+  const subInterval = subscription.items.data[0]?.price?.recurring?.interval;
+  const billingInterval: 'monthly' | 'yearly' = subInterval === 'year' ? 'yearly' : 'monthly';
+
   const { error } = await supabaseAdmin
     .from('profiles')
     .update({
       subscription_tier: plan,
       subscription_status: 'active',
       stripe_customer_id: customerId,
+      billing_interval: billingInterval,
     })
     .eq('id', userId);
 

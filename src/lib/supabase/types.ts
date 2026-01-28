@@ -10,6 +10,7 @@ export interface Profile {
   stripe_customer_id: string | null;
   subscription_tier: SubscriptionTier;
   subscription_status: string | null;
+  billing_interval: 'monthly' | 'yearly' | null;
   created_at: string;
   updated_at: string;
 }

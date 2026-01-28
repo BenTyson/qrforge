@@ -1,13 +1,34 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { StarRating } from './ui';
 import { QuoteIcon } from '@/components/icons';
 import { TESTIMONIALS } from '@/constants/homepage';
 
+const CARDS_PER_PAGE = 3;
+const TOTAL_PAGES = Math.ceil(TESTIMONIALS.length / CARDS_PER_PAGE);
+const AUTO_ADVANCE_MS = 6000;
+
 export function TestimonialsSection() {
-  // Show first 6 testimonials in featured grid, rest in scrollable row
-  const featuredTestimonials = TESTIMONIALS.slice(0, 6);
-  const moreTestimonials = TESTIMONIALS.slice(6);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const nextPage = useCallback(() => {
+    setCurrentPage((prev) => (prev + 1) % TOTAL_PAGES);
+  }, []);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(nextPage, AUTO_ADVANCE_MS);
+    return () => clearInterval(timer);
+  }, [isPaused, nextPage]);
+
+  const visibleTestimonials = TESTIMONIALS.slice(
+    currentPage * CARDS_PER_PAGE,
+    currentPage * CARDS_PER_PAGE + CARDS_PER_PAGE
+  );
 
   return (
     <section className="py-24 px-4 bg-secondary/30">
@@ -22,11 +43,13 @@ export function TestimonialsSection() {
           </p>
         </div>
 
-        {/* Featured testimonials grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {featuredTestimonials.map((testimonial, index) => (
-            <Card key={index} className="p-6 glass relative">
-              {/* Quote mark */}
+        <div
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          {visibleTestimonials.map((testimonial) => (
+            <Card key={testimonial.name} className="p-6 glass relative">
               <QuoteIcon className="absolute top-4 right-4" />
 
               <div className="flex items-center gap-3 mb-4">
@@ -54,38 +77,21 @@ export function TestimonialsSection() {
           ))}
         </div>
 
-        {/* Additional testimonials in horizontal scroll */}
-        {moreTestimonials.length > 0 && (
-          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
-            {moreTestimonials.map((testimonial, index) => (
-              <Card key={index} className="p-6 glass relative flex-shrink-0 w-[350px]">
-                <QuoteIcon className="absolute top-4 right-4" />
-
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
-                    {testimonial.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-semibold">{testimonial.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {testimonial.role}
-                    </p>
-                  </div>
-                </div>
-
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-4">
-                  &ldquo;{testimonial.quote}&rdquo;
-                </p>
-
-                <StarRating />
-
-                <Badge className="mt-4 bg-secondary text-muted-foreground text-xs">
-                  {testimonial.industry}
-                </Badge>
-              </Card>
-            ))}
-          </div>
-        )}
+        {/* Page indicators */}
+        <div className="flex justify-center items-center gap-2 mt-8">
+          {Array.from({ length: TOTAL_PAGES }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i)}
+              aria-label={`Show testimonials page ${i + 1}`}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === currentPage
+                  ? 'w-6 bg-primary'
+                  : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50'
+              }`}
+            />
+          ))}
+        </div>
 
         {/* Trust badges */}
         <div className="mt-16 pt-12 border-t border-border/50">

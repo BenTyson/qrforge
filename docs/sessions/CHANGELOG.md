@@ -6,6 +6,25 @@ Session-by-session history of development work. Most recent first.
 
 ## January 27, 2026
 
+### Homepage UX Redesign: Tabbed QR Types & Testimonial Carousel
+
+#### QR Types Section — Tabbed Category Filter
+- Replaced overwhelming flat 8-column grid (34 tiles, 4.5 rows) with a tabbed layout using Radix Tabs
+- Three tabs: Basics (12 types), Social (13 types), Pro (9 types)
+- Default tab is "Basics"; each tab shows at most ~2 rows of tiles
+- Added `category` field to `QRType` interface and all 34 entries in `src/constants/homepage.tsx`
+- Switched from rigid CSS grid to `flex-wrap justify-center` so smaller groups (like Pro with 9) center naturally
+- Component converted to `"use client"` for tab interactivity
+
+#### Testimonials Section — Auto-Rotating Carousel
+- Replaced static 6-card grid + 4-card horizontal scroll (10 cards visible at once) with a 3-card rotating carousel
+- Auto-advances every 6 seconds, pauses on hover
+- Dot-style page indicators (active dot stretches wider) with click-to-navigate
+- All 10 testimonials surface across 4 pages; trust badges section unchanged
+- Accessible: each dot has `aria-label`
+
+---
+
 ### Stripe Billing Portal & Subscription Upgrade Fixes
 
 #### Stripe Portal Error Handling

@@ -25,9 +25,9 @@ export default async function AdminSubscriptionsPage() {
     { count: canceledCount },
   ] = await Promise.all([
     // All profiles (for total user count display)
-    supabase.from('profiles').select('id, email, subscription_tier, subscription_status, stripe_customer_id, created_at, updated_at'),
+    supabase.from('profiles').select('id, email, subscription_tier, subscription_status, billing_interval, stripe_customer_id, created_at, updated_at'),
     // Profiles excluding admin (for revenue calculations)
-    supabase.from('profiles').select('id, email, subscription_tier, subscription_status, stripe_customer_id, created_at, updated_at').not('email', 'in', `(${excludeFilter.join(',')})`),
+    supabase.from('profiles').select('id, email, subscription_tier, subscription_status, billing_interval, stripe_customer_id, created_at, updated_at').not('email', 'in', `(${excludeFilter.join(',')})`),
     // Active paid subscribers (excluding admin)
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_status', 'active').neq('subscription_tier', 'free').not('email', 'in', `(${excludeFilter.join(',')})`),
     // Past due (excluding admin)
@@ -36,31 +36,47 @@ export default async function AdminSubscriptionsPage() {
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_status', 'canceled').not('email', 'in', `(${excludeFilter.join(',')})`),
   ]);
 
-  // Calculate tier counts (excluding admin for revenue)
+  // Calculate tier counts split by billing interval (excluding admin for revenue)
   const tierCounts = {
     free: 0,
     pro: 0,
     business: 0,
   };
+  const intervalCounts = {
+    proMonthly: 0,
+    proYearly: 0,
+    businessMonthly: 0,
+    businessYearly: 0,
+  };
 
   // Count from profiles that exclude admin
-  profiles?.forEach((p: { subscription_tier: string }) => {
+  profiles?.forEach((p: { subscription_tier: string; billing_interval: string | null }) => {
     const tier = p.subscription_tier as keyof typeof tierCounts;
     if (tier in tierCounts) {
       tierCounts[tier]++;
     } else {
       tierCounts.free++;
     }
+    // Track billing interval for paid tiers
+    const isYearly = p.billing_interval === 'yearly';
+    if (tier === 'pro') {
+      if (isYearly) intervalCounts.proYearly++;
+      else intervalCounts.proMonthly++;
+    } else if (tier === 'business') {
+      if (isYearly) intervalCounts.businessYearly++;
+      else intervalCounts.businessMonthly++;
+    }
   });
 
   // Total users count (includes everyone for display)
   const totalUsersCount = allProfiles?.length || 0;
 
-  // Calculate estimated monthly revenue (assuming monthly billing for simplicity)
-  // In production, you'd query Stripe for actual billing intervals
+  // Calculate MRR: monthly subs at monthly rate, yearly subs at yearly rate / 12
   const estimatedMonthlyRevenue =
-    (tierCounts.pro * PRICING.pro.monthly) +
-    (tierCounts.business * PRICING.business.monthly);
+    (intervalCounts.proMonthly * PRICING.pro.monthly) +
+    (intervalCounts.proYearly * PRICING.pro.yearly / 12) +
+    (intervalCounts.businessMonthly * PRICING.business.monthly) +
+    (intervalCounts.businessYearly * PRICING.business.yearly / 12);
 
   const payingUsers = tierCounts.pro + tierCounts.business;
   // Use totalUsersCount for display but tierCounts total for percentage of paying
@@ -69,7 +85,7 @@ export default async function AdminSubscriptionsPage() {
 
   // Get recent subscription changes (users with updated subscription, excluding admin)
   const recentChanges = profiles
-    ?.filter((p: { subscription_tier: string; email: string }) =>
+    ?.filter((p: { subscription_tier: string; email: string; billing_interval: string | null }) =>
       p.subscription_tier !== 'free' && !EXCLUDED_EMAILS.includes(p.email)
     )
     .sort((a: { updated_at: string }, b: { updated_at: string }) =>
@@ -108,10 +124,10 @@ export default async function AdminSubscriptionsPage() {
         />
         <AdminStatsCard
           title="Est. Monthly Revenue"
-          value={`$${estimatedMonthlyRevenue.toLocaleString()}`}
+          value={`$${estimatedMonthlyRevenue.toLocaleString(undefined, { maximumFractionDigits: 2 })}`}
           icon={DollarIcon}
           color="emerald"
-          subtitle="Based on monthly rates"
+          subtitle="Interval-aware MRR"
         />
       </div>
 
@@ -184,21 +200,31 @@ export default async function AdminSubscriptionsPage() {
           <DollarIcon className="w-5 h-5 text-emerald-500" />
           Revenue Breakdown
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <div className="p-4 rounded-xl bg-secondary/30">
-            <p className="text-sm text-muted-foreground mb-1">Pro Monthly ($9/mo)</p>
-            <p className="text-2xl font-bold">${tierCounts.pro * PRICING.pro.monthly}/mo</p>
-            <p className="text-xs text-muted-foreground mt-1">{tierCounts.pro} subscribers</p>
+            <p className="text-sm text-muted-foreground mb-1">Pro Monthly</p>
+            <p className="text-2xl font-bold">${intervalCounts.proMonthly * PRICING.pro.monthly}/mo</p>
+            <p className="text-xs text-muted-foreground mt-1">{intervalCounts.proMonthly} @ ${PRICING.pro.monthly}/mo</p>
           </div>
           <div className="p-4 rounded-xl bg-secondary/30">
-            <p className="text-sm text-muted-foreground mb-1">Business Monthly ($29/mo)</p>
-            <p className="text-2xl font-bold">${tierCounts.business * PRICING.business.monthly}/mo</p>
-            <p className="text-xs text-muted-foreground mt-1">{tierCounts.business} subscribers</p>
+            <p className="text-sm text-muted-foreground mb-1">Pro Yearly</p>
+            <p className="text-2xl font-bold">${(intervalCounts.proYearly * PRICING.pro.yearly / 12).toLocaleString(undefined, { maximumFractionDigits: 2 })}/mo</p>
+            <p className="text-xs text-muted-foreground mt-1">{intervalCounts.proYearly} @ ${PRICING.pro.yearly}/yr</p>
+          </div>
+          <div className="p-4 rounded-xl bg-secondary/30">
+            <p className="text-sm text-muted-foreground mb-1">Business Monthly</p>
+            <p className="text-2xl font-bold">${intervalCounts.businessMonthly * PRICING.business.monthly}/mo</p>
+            <p className="text-xs text-muted-foreground mt-1">{intervalCounts.businessMonthly} @ ${PRICING.business.monthly}/mo</p>
+          </div>
+          <div className="p-4 rounded-xl bg-secondary/30">
+            <p className="text-sm text-muted-foreground mb-1">Business Yearly</p>
+            <p className="text-2xl font-bold">${(intervalCounts.businessYearly * PRICING.business.yearly / 12).toLocaleString(undefined, { maximumFractionDigits: 2 })}/mo</p>
+            <p className="text-xs text-muted-foreground mt-1">{intervalCounts.businessYearly} @ ${PRICING.business.yearly}/yr</p>
           </div>
           <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 via-emerald-500/10 to-transparent border border-emerald-500/20">
-            <p className="text-sm text-muted-foreground mb-1">Total Monthly</p>
-            <p className="text-2xl font-bold text-emerald-400">${estimatedMonthlyRevenue}/mo</p>
-            <p className="text-xs text-muted-foreground mt-1">${estimatedMonthlyRevenue * 12}/yr annualized</p>
+            <p className="text-sm text-muted-foreground mb-1">Total MRR</p>
+            <p className="text-2xl font-bold text-emerald-400">${estimatedMonthlyRevenue.toLocaleString(undefined, { maximumFractionDigits: 2 })}/mo</p>
+            <p className="text-xs text-muted-foreground mt-1">${(estimatedMonthlyRevenue * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr annualized</p>
           </div>
         </div>
       </div>
@@ -214,6 +240,7 @@ export default async function AdminSubscriptionsPage() {
               <tr className="border-b border-border/50">
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">User</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Plan</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Billing</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
                 <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Stripe Customer</th>
                 <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Updated</th>
@@ -226,6 +253,7 @@ export default async function AdminSubscriptionsPage() {
                   email: string;
                   subscription_tier: string;
                   subscription_status: string;
+                  billing_interval: string | null;
                   stripe_customer_id: string | null;
                   updated_at: string;
                 }) => (
@@ -238,6 +266,14 @@ export default async function AdminSubscriptionsPage() {
                         'bg-secondary text-muted-foreground'
                       }`}>
                         {user.subscription_tier}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                        user.billing_interval === 'yearly' ? 'bg-cyan-500/20 text-cyan-400' :
+                        'bg-secondary text-muted-foreground'
+                      }`}>
+                        {user.billing_interval === 'yearly' ? 'Yearly' : 'Monthly'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -259,7 +295,7 @@ export default async function AdminSubscriptionsPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
+                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
                     No paid subscribers yet
                   </td>
                 </tr>

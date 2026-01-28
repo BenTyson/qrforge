@@ -32,8 +32,7 @@ export default async function AdminOverviewPage() {
     { count: newUsersThisWeek },
     { data: recentUsers },
     { data: recentScans },
-    { count: proUsers },
-    { count: businessUsers },
+    { data: paidProfiles },
   ] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('qr_codes').select('*', { count: 'exact', head: true }),
@@ -50,14 +49,32 @@ export default async function AdminOverviewPage() {
       device_type,
       qr_codes!inner(name, user_id, profiles!inner(email))
     `).order('scanned_at', { ascending: false }).limit(5),
-    // Exclude admin from Pro count (for revenue)
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_tier', 'pro').not('email', 'in', `(${excludeFilter.join(',')})`),
-    // Exclude admin from Business count (for revenue)
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('subscription_tier', 'business').not('email', 'in', `(${excludeFilter.join(',')})`),
+    // Fetch paid profiles with billing_interval for revenue calculation (excluding admin)
+    supabase.from('profiles').select('subscription_tier, billing_interval').neq('subscription_tier', 'free').not('email', 'in', `(${excludeFilter.join(',')})`),
   ]);
 
-  // Calculate revenue (assuming monthly billing - in production you'd query Stripe for actual intervals)
-  const monthlyRevenue = ((proUsers || 0) * PRICING.pro.monthly) + ((businessUsers || 0) * PRICING.business.monthly);
+  // Calculate interval-aware revenue
+  const revenueBuckets = { proMonthly: 0, proYearly: 0, businessMonthly: 0, businessYearly: 0 };
+  paidProfiles?.forEach((p: { subscription_tier: string; billing_interval: string | null }) => {
+    const isYearly = p.billing_interval === 'yearly';
+    if (p.subscription_tier === 'pro') {
+      if (isYearly) revenueBuckets.proYearly++;
+      else revenueBuckets.proMonthly++;
+    } else if (p.subscription_tier === 'business') {
+      if (isYearly) revenueBuckets.businessYearly++;
+      else revenueBuckets.businessMonthly++;
+    }
+  });
+
+  const proUsers = revenueBuckets.proMonthly + revenueBuckets.proYearly;
+  const businessUsers = revenueBuckets.businessMonthly + revenueBuckets.businessYearly;
+
+  // MRR: monthly subs pay full monthly rate, yearly subs contribute yearly price / 12
+  const monthlyRevenue =
+    (revenueBuckets.proMonthly * PRICING.pro.monthly) +
+    (revenueBuckets.proYearly * PRICING.pro.yearly / 12) +
+    (revenueBuckets.businessMonthly * PRICING.business.monthly) +
+    (revenueBuckets.businessYearly * PRICING.business.yearly / 12);
   const yearlyProjection = monthlyRevenue * 12;
 
   return (
@@ -129,29 +146,39 @@ export default async function AdminOverviewPage() {
           {/* Monthly Revenue */}
           <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 via-emerald-500/10 to-transparent border border-emerald-500/20">
             <p className="text-sm text-muted-foreground mb-1">Monthly Revenue</p>
-            <p className="text-3xl font-bold text-emerald-400">${monthlyRevenue.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-emerald-400">${monthlyRevenue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
             <p className="text-xs text-muted-foreground mt-1">Current MRR</p>
           </div>
 
           {/* Yearly Projection */}
           <div className="p-4 rounded-xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20">
             <p className="text-sm text-muted-foreground mb-1">Yearly Projection</p>
-            <p className="text-3xl font-bold text-primary">${yearlyProjection.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-primary">${yearlyProjection.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
             <p className="text-xs text-muted-foreground mt-1">ARR at current rate</p>
           </div>
 
           {/* Pro Revenue */}
           <div className="p-4 rounded-xl bg-secondary/30">
             <p className="text-sm text-muted-foreground mb-1">Pro Revenue</p>
-            <p className="text-2xl font-bold">${((proUsers || 0) * PRICING.pro.monthly).toLocaleString()}<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
-            <p className="text-xs text-muted-foreground mt-1">{proUsers || 0} subscribers × ${PRICING.pro.monthly}</p>
+            <p className="text-2xl font-bold">
+              ${(revenueBuckets.proMonthly * PRICING.pro.monthly + revenueBuckets.proYearly * PRICING.pro.yearly / 12).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              <span className="text-sm font-normal text-muted-foreground">/mo</span>
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {proUsers} subscribers ({revenueBuckets.proMonthly} mo / {revenueBuckets.proYearly} yr)
+            </p>
           </div>
 
           {/* Business Revenue */}
           <div className="p-4 rounded-xl bg-secondary/30">
             <p className="text-sm text-muted-foreground mb-1">Business Revenue</p>
-            <p className="text-2xl font-bold">${((businessUsers || 0) * PRICING.business.monthly).toLocaleString()}<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
-            <p className="text-xs text-muted-foreground mt-1">{businessUsers || 0} subscribers × ${PRICING.business.monthly}</p>
+            <p className="text-2xl font-bold">
+              ${(revenueBuckets.businessMonthly * PRICING.business.monthly + revenueBuckets.businessYearly * PRICING.business.yearly / 12).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              <span className="text-sm font-normal text-muted-foreground">/mo</span>
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {businessUsers} subscribers ({revenueBuckets.businessMonthly} mo / {revenueBuckets.businessYearly} yr)
+            </p>
           </div>
         </div>
       </div>

@@ -46,6 +46,7 @@ export function createMockProfile(overrides: Partial<Profile> = {}): Profile {
     stripe_customer_id: null,
     subscription_tier: 'free' as SubscriptionTier,
     subscription_status: null,
+    billing_interval: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     ...overrides,

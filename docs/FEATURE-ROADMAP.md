@@ -269,7 +269,7 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
-| Embed Code Generator | 2026-01-28 | Quick win. Modal with static (base64) and dynamic (URL-based) embeds in HTML `<img>`, inline SVG, Markdown formats. Public `/api/embed/[id]` endpoint for dynamic embeds. Available in QR Studio download step and dashboard cards. Free: static HTML + Markdown. Pro: + dynamic + inline SVG. |
+| Embed Code Generator | 2026-01-28 | Quick win. Modal with static (base64) and dynamic (URL-based) embeds in HTML `<img>`, inline SVG, Markdown formats. Public `/api/embed/[id]` endpoint for dynamic embeds. Available in QR Studio download step and dashboard cards. Free: static HTML + Markdown. Pro: + dynamic + inline SVG. UX polish: truncated base64 display, visual preview, format hints, smart embed-type auto-detection, scrollable modal. |
 | Print-Ready PDF Export | 2026-01-26 | Pro feature. jsPDF integration. Options: paper size (Letter/A4/custom), QR size, bleed area, crop marks. PDFOptionsModal component. Button in QRStudio download step. |
 | Template Gallery | 2026-01-25 | 40 templates across 7 categories (Restaurant, Business, Marketing, Events, Social, Retail, Creative). Templates are style presets (type + colors/patterns/frames). 13 free, 27 Pro. Gallery at `/templates` with filtering/search. Creator integration via `?template=` param. |
 | A/B Testing for Dynamic QR Codes | 2026-01-25 | Pro+ feature. Split traffic between destinations with configurable weights (10-90%). Deterministic variant assignment (same visitor = same variant). Statistical significance calculations with 95% confidence threshold. Dashboard with comparison charts, pause/resume, declare winner. Separate tables: ab_tests, ab_variants, ab_assignments. |
@@ -346,6 +346,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-28 | Embed Modal UX polish: truncated base64 display, visual QR preview, format hints, smart embed-type auto-detection, scrollable modal, card button wrap fix. |
 | 2026-01-28 | Completed Embed Code Generator (Feature #16). Modal with static/dynamic embeds, public SVG endpoint, tier gating. |
 | 2026-01-28 | Static/dynamic QR architecture alignment: Free tier now gets 5 QR codes (was "unlimited static" + 0 dynamic). Limit enforcement in client + API. URL editing gated behind Pro. Dead code cleanup. |
 | 2026-01-28 | Dashboard & Analytics V2: Sparkline charts, trend badges, Top Performing section, enriched Recent Activity, contextual Quick Actions, per-QR filtering, Traffic Sources/OS breakdowns, expandable locations. |

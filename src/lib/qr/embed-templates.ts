@@ -36,20 +36,21 @@ export function escapeHtml(str: string): string {
  * Resize an SVG string by adjusting its width/height attributes.
  */
 function resizeSvg(svgContent: string, size: number): string {
-  let resized = svgContent;
-  // Replace or add width attribute
-  if (/width="[^"]*"/.test(resized)) {
-    resized = resized.replace(/width="[^"]*"/, `width="${size}"`);
-  } else {
-    resized = resized.replace(/<svg/, `<svg width="${size}"`);
-  }
-  // Replace or add height attribute
-  if (/height="[^"]*"/.test(resized)) {
-    resized = resized.replace(/height="[^"]*"/, `height="${size}"`);
-  } else {
-    resized = resized.replace(/<svg/, `<svg height="${size}"`);
-  }
-  return resized;
+  // Replace width/height in the opening <svg> tag only (not child elements)
+  return svgContent.replace(/<svg([^>]*)>/, (match, attrs: string) => {
+    let newAttrs = attrs;
+    if (/width="[^"]*"/.test(newAttrs)) {
+      newAttrs = newAttrs.replace(/width="[^"]*"/, `width="${size}"`);
+    } else {
+      newAttrs = ` width="${size}"` + newAttrs;
+    }
+    if (/height="[^"]*"/.test(newAttrs)) {
+      newAttrs = newAttrs.replace(/height="[^"]*"/, `height="${size}"`);
+    } else {
+      newAttrs = ` height="${size}"` + newAttrs;
+    }
+    return `<svg${newAttrs}>`;
+  });
 }
 
 /**

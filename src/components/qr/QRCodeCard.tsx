@@ -431,7 +431,7 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
 
         {/* Actions - Always visible on mobile, hover on desktop */}
         <div
-          className={`flex gap-2 mt-3 pt-3 border-t border-border/30 transition-all duration-200 ${showActions ? 'opacity-100' : 'sm:opacity-0'}`}
+          className={`flex flex-wrap gap-2 mt-3 pt-3 border-t border-border/30 transition-all duration-200 ${showActions ? 'opacity-100' : 'sm:opacity-0'}`}
           role="group"
           aria-label="QR code actions"
         >
@@ -442,17 +442,6 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
               {userTier === 'free' && (
                 <span className="ml-1 text-[8px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-400 font-medium">Pro</span>
               )}
-            </Button>
-          </Link>
-          <Link href={`/analytics?qr=${qrCode.id}`}>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 text-xs px-2"
-              title="View analytics"
-              aria-label="View analytics for this QR code"
-            >
-              <AnalyticsIcon className="w-3 h-3" aria-hidden="true" />
             </Button>
           </Link>
           <Link href={`/analytics?qr=${qrCode.id}`}>
@@ -631,7 +620,6 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
           svgDataURL={embedDataURL}
           qrName={qrCode.name}
           qrId={qrCode.id}
-          shortCode={qrCode.short_code}
           userTier={userTier}
         />
       )}

@@ -6,6 +6,37 @@ Session-by-session history of development work. Most recent first.
 
 ## January 28, 2026
 
+### Embed Modal UX Improvements
+
+Polished the Embed Code Modal with usability improvements across display, preview, and interaction.
+
+#### Truncated Base64 Display
+- Long base64 data URIs in the code block are now replaced with `data:image/svg+xml;base64,...` for readability
+- Full untruncated code is still copied when clicking "Copy Code"
+- Explanatory note appears below code block when truncation is active
+
+#### Visual Preview
+- New `<img>` preview section renders the QR code on a white background at `min(size, 160)` px
+- Mirrors the border style when the "Show Border" toggle is active
+- Shows between the border toggle and the embed code block
+
+#### Format Guidance Hints
+- One-sentence contextual hint below the Format select, updating per format
+- Covers HTML `<img>`, Inline SVG, Markdown, and Dynamic embed use cases
+
+#### Smart Embed Type Detection
+- Modal auto-selects Dynamic for Pro/Business users when a `qrId` is present
+- Hides the Static/Dynamic tabs entirely when dynamic embedding is impossible (no `qrId`)
+- Pro users can still switch between modes when both are available
+
+#### Minor Fixes
+- Renamed code block label from "Preview" to "Embed Code" (visual preview now owns "Preview")
+- Updated dialog description to "Generate a snippet to embed this QR code on any webpage or document."
+- Added `max-h-[60vh]` scrollable body to prevent modal overflow on smaller viewports
+- Added `flex-wrap` to QRCodeCard action buttons to prevent folder/delete buttons from being clipped
+
+---
+
 ### Embed Code Generator (Feature #16)
 
 Added a modal that generates copy-pasteable HTML/SVG/Markdown embed snippets for any saved QR code. Available from both the QR Studio download step and dashboard QR code cards.

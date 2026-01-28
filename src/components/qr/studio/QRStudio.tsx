@@ -742,7 +742,6 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
           svgDataURL={embedDataURL}
           qrName={state.qrName || 'QR Code'}
           qrId={state.savedQRId}
-          shortCode={state.shortCode}
           userTier={state.userTier}
         />
       )}

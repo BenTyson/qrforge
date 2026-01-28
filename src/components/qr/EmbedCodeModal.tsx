@@ -32,7 +32,6 @@ interface EmbedCodeModalProps {
   svgContent: string;
   qrName: string;
   qrId: string | null;
-  shortCode: string | null;
   userTier: 'free' | 'pro' | 'business' | null;
 }
 
@@ -45,11 +44,13 @@ export function EmbedCodeModal({
   svgContent,
   qrName,
   qrId,
-  shortCode: _shortCode,
   userTier,
 }: EmbedCodeModalProps) {
   const router = useRouter();
-  const [embedType, setEmbedType] = useState<EmbedType>('static');
+  const canUseDynamic = qrId !== null;
+  const [embedType, setEmbedType] = useState<EmbedType>(
+    canUseDynamic && (userTier === 'pro' || userTier === 'business') ? 'dynamic' : 'static'
+  );
   const [format, setFormat] = useState<EmbedFormat>('html-img');
   const [size, setSize] = useState(256);
   const [showBorder, setShowBorder] = useState(false);
@@ -104,6 +105,32 @@ export function EmbedCodeModal({
     });
   }, [embedType, format, size, showBorder, svgDataURL, svgContent, qrName, qrId]);
 
+  const displayCode = useMemo(() => {
+    if (embedType === 'dynamic') return embedCode;
+    return embedCode.replace(
+      /data:image\/svg\+xml;base64,[A-Za-z0-9+/=]{40,}/g,
+      'data:image/svg+xml;base64,...'
+    );
+  }, [embedCode, embedType]);
+
+  const isCodeTruncated = displayCode !== embedCode;
+
+  const formatHint = useMemo(() => {
+    if (embedType === 'dynamic') {
+      return 'Paste this tag into your HTML. The QR auto-updates when you change its destination.';
+    }
+    switch (format) {
+      case 'html-img':
+        return 'Paste this tag into any HTML page. The QR image is embedded in the code.';
+      case 'html-inline':
+        return 'Embeds raw SVG markup. Best when you need CSS control over the QR.';
+      case 'markdown':
+        return 'Use in README files, GitHub, Notion, or any Markdown editor.';
+      default:
+        return null;
+    }
+  }, [embedType, format]);
+
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(embedCode);
@@ -121,33 +148,39 @@ export function EmbedCodeModal({
         <DialogHeader>
           <DialogTitle>Embed QR Code</DialogTitle>
           <DialogDescription>
-            Copy HTML embed code for your website
+            Generate a snippet to embed this QR code on any webpage or document.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-5 py-4">
-          {/* Embed Type Tabs */}
-          <div className="space-y-2">
-            <Label>Embed Type</Label>
-            <Tabs value={embedType} onValueChange={handleEmbedTypeChange}>
-              <TabsList className="w-full">
-                <TabsTrigger value="static" className="flex-1">Static</TabsTrigger>
-                <TabsTrigger value="dynamic" className="flex-1 gap-1.5">
-                  Dynamic
-                  {!isPro && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-medium">
-                      Pro
-                    </span>
-                  )}
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+        <div className="space-y-5 py-4 max-h-[60vh] overflow-y-auto pr-1">
+          {/* Embed Type Tabs — only shown when dynamic is possible */}
+          {canUseDynamic ? (
+            <div className="space-y-2">
+              <Label>Embed Type</Label>
+              <Tabs value={embedType} onValueChange={handleEmbedTypeChange}>
+                <TabsList className="w-full">
+                  <TabsTrigger value="static" className="flex-1">Static</TabsTrigger>
+                  <TabsTrigger value="dynamic" className="flex-1 gap-1.5">
+                    Dynamic
+                    {!isPro && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-medium">
+                        Pro
+                      </span>
+                    )}
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+              <p className="text-xs text-muted-foreground">
+                {embedType === 'static'
+                  ? 'Embeds the QR as inline data. Updates require re-copying the code.'
+                  : 'Uses a URL that auto-updates when QR content changes.'}
+              </p>
+            </div>
+          ) : (
             <p className="text-xs text-muted-foreground">
-              {embedType === 'static'
-                ? 'Embeds the QR as inline data. Updates require re-copying the code.'
-                : 'Uses a URL that auto-updates when QR content changes.'}
+              Static embed — the QR image is embedded directly in the code.
             </p>
-          </div>
+          )}
 
           {/* Format Select */}
           <div className="space-y-2">
@@ -171,6 +204,9 @@ export function EmbedCodeModal({
                 ))}
               </SelectContent>
             </Select>
+            {formatHint && (
+              <p className="text-xs text-muted-foreground">{formatHint}</p>
+            )}
           </div>
 
           {/* Size Select */}
@@ -203,12 +239,38 @@ export function EmbedCodeModal({
             </div>
           )}
 
-          {/* Code Preview */}
+          {/* Visual Preview */}
           <div className="space-y-2">
             <Label>Preview</Label>
+            <div className="flex items-center justify-center rounded-lg border border-zinc-700 bg-white p-4">
+              <img
+                src={svgDataURL}
+                alt={qrName}
+                width={Math.min(size, 160)}
+                height={Math.min(size, 160)}
+                style={showBorder && format !== 'markdown' ? {
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  padding: '8px',
+                } : undefined}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              This is how the QR code will appear on your page.
+            </p>
+          </div>
+
+          {/* Embed Code Block */}
+          <div className="space-y-2">
+            <Label>Embed Code</Label>
             <pre className="bg-zinc-900 text-zinc-100 text-xs font-mono p-4 rounded-lg overflow-x-auto max-h-48 whitespace-pre-wrap break-all">
-              {embedCode}
+              {displayCode}
             </pre>
+            {isCodeTruncated && (
+              <p className="text-xs text-muted-foreground">
+                Base64 data shortened for display. The full code will be copied.
+              </p>
+            )}
           </div>
         </div>
 

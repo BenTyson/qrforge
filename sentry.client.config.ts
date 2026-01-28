@@ -17,7 +17,19 @@ Sentry.init({
   replaysOnErrorSampleRate: 1.0,
 
   integrations: [
-    Sentry.replayIntegration(),
+    Sentry.replayIntegration({
+      // Block cross-origin iframes (Stripe, YouTube, Spotify, etc.)
+      // to prevent SecurityError when replay tries to access their DOM
+      blockAllMedia: false,
+      block: ['iframe[src*="stripe.com"]', 'iframe[src*="js.stripe.com"]'],
+    }),
     Sentry.browserTracingIntegration(),
+  ],
+
+  // Ignore cross-origin iframe access errors (triggered by replay
+  // encountering third-party iframes like Stripe checkout)
+  ignoreErrors: [
+    "Blocked a frame with origin",
+    "Failed to read a named property 'Element' from 'Window'",
   ],
 });

@@ -37,7 +37,6 @@ Resolved the static/dynamic QR code split left over from a Jan 21 emergency fix.
 - All 197 tests passing, 0 lint errors, type-check clean
 
 ---
-
 ### Dashboard & Analytics V2 Overhaul
 
 Complete redesign of `/dashboard` and `/analytics` pages with new data visualizations, trend indicators, and per-QR filtering.

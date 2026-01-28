@@ -431,6 +431,17 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
               <AnalyticsIcon className="w-3 h-3" aria-hidden="true" />
             </Button>
           </Link>
+          <Link href={`/analytics?qr=${qrCode.id}`}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 text-xs px-2"
+              title="View analytics"
+              aria-label="View analytics for this QR code"
+            >
+              <AnalyticsIcon className="w-3 h-3" aria-hidden="true" />
+            </Button>
+          </Link>
           <Button
             variant="outline"
             size="sm"

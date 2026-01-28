@@ -2,7 +2,7 @@
 
 > **Last Updated**: January 28, 2026
 > **Status**: Active development
-> **Current Features**: 34 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Sentry error tracking, Cron-based email automation, 151 SEO articles (all with CTAs)
+> **Current Features**: 34 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Sentry error tracking, Cron-based email automation, 151 SEO articles (all with CTAs)
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -125,29 +125,6 @@ CREATE TABLE feedback_responses (
 - TripAdvisor button
 - Facebook Reviews button
 - Custom platform support
-
----
-
-### 16. Embed Code Generator
-**Tier**: QUICK WIN | **Priority**: 16 of 24 | **Effort**: ~4 hours
-
-**What**: Generate HTML embed code to display QR code on websites.
-
-**Why build this**:
-- Common request
-- Easy to implement
-- Increases QR code visibility (marketing)
-
-**Implementation**:
-- New option in download step: "Embed Code"
-- Generates `<img>` tag or `<iframe>` for dynamic codes
-- Copy button
-
-**Options**:
-- Static embed (image URL)
-- Dynamic embed (updates when QR changes)
-- Size options
-- With/without border
 
 ---
 
@@ -292,6 +269,7 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Embed Code Generator | 2026-01-28 | Quick win. Modal with static (base64) and dynamic (URL-based) embeds in HTML `<img>`, inline SVG, Markdown formats. Public `/api/embed/[id]` endpoint for dynamic embeds. Available in QR Studio download step and dashboard cards. Free: static HTML + Markdown. Pro: + dynamic + inline SVG. UX polish: truncated base64 display, visual preview, format hints, smart embed-type auto-detection, scrollable modal. |
 | Print-Ready PDF Export | 2026-01-26 | Pro feature. jsPDF integration. Options: paper size (Letter/A4/custom), QR size, bleed area, crop marks. PDFOptionsModal component. Button in QRStudio download step. |
 | Template Gallery | 2026-01-25 | 40 templates across 7 categories (Restaurant, Business, Marketing, Events, Social, Retail, Creative). Templates are style presets (type + colors/patterns/frames). 13 free, 27 Pro. Gallery at `/templates` with filtering/search. Creator integration via `?template=` param. |
 | A/B Testing for Dynamic QR Codes | 2026-01-25 | Pro+ feature. Split traffic between destinations with configurable weights (10-90%). Deterministic variant assignment (same visitor = same variant). Statistical significance calculations with 95% confidence threshold. Dashboard with comparison charts, pause/resume, declare winner. Separate tables: ab_tests, ab_variants, ab_assignments. |
@@ -368,6 +346,8 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-28 | Embed Modal UX polish: truncated base64 display, visual QR preview, format hints, smart embed-type auto-detection, scrollable modal, card button wrap fix. |
+| 2026-01-28 | Completed Embed Code Generator (Feature #16). Modal with static/dynamic embeds, public SVG endpoint, tier gating. |
 | 2026-01-28 | Static/dynamic QR architecture alignment: Free tier now gets 5 QR codes (was "unlimited static" + 0 dynamic). Limit enforcement in client + API. URL editing gated behind Pro. Dead code cleanup. |
 | 2026-01-28 | Dashboard & Analytics V2: Sparkline charts, trend badges, Top Performing section, enriched Recent Activity, contextual Quick Actions, per-QR filtering, Traffic Sources/OS breakdowns, expandable locations. |
 | 2026-01-27 | Homepage UX redesign: QR Types section split into 3 tabbed categories (Basics/Social/Pro), Testimonials section replaced with auto-rotating 3-card carousel with dot navigation. |

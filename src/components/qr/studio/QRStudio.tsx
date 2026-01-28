@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { cn, getAppUrl } from '@/lib/utils';
 import { generateQRDataURL, downloadQRPNG, generateQRSVG, downloadQRSVG } from '@/lib/qr/generator';
 import { PDFOptionsModal } from '@/components/qr/PDFOptionsModal';
+import { EmbedCodeModal } from '@/components/qr/EmbedCodeModal';
 import type {
   QRContent,
   QRContentType,
@@ -149,6 +150,9 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
   const [mobilePreviewExpanded, setMobilePreviewExpanded] = useState(false);
   const [showPDFModal, setShowPDFModal] = useState(false);
   const [pdfSvgContent, setPdfSvgContent] = useState<string | null>(null);
+  const [showEmbedModal, setShowEmbedModal] = useState(false);
+  const [embedSvgContent, setEmbedSvgContent] = useState<string | null>(null);
+  const [embedDataURL, setEmbedDataURL] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(mode === 'create');
   const [templateLoaded, setTemplateLoaded] = useState(false);
 
@@ -321,6 +325,35 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
       setShowPDFModal(true);
     } catch (err) {
       console.error('Failed to prepare PDF:', err);
+    }
+  }, [state, actions]);
+
+  const handleShowEmbed = useCallback(async () => {
+    if (!state.content || !state.selectedType) return;
+
+    try {
+      let code = state.shortCode;
+      if (!state.savedQRId) {
+        const result = await actions.saveQRCode();
+        if (!result) return;
+        code = result.shortCode;
+      }
+
+      const qrContent: QRContent = {
+        type: 'url',
+        url: `${getAppUrl()}/r/${code}`,
+      };
+
+      const [svg, dataURL] = await Promise.all([
+        generateQRSVG(qrContent, state.style),
+        generateQRDataURL(qrContent, { ...state.style, width: 256 }),
+      ]);
+
+      setEmbedSvgContent(svg);
+      setEmbedDataURL(dataURL);
+      setShowEmbedModal(true);
+    } catch (err) {
+      console.error('Failed to prepare embed:', err);
     }
   }, [state, actions]);
 
@@ -585,6 +618,7 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
                 onDownloadPNG={handleDownloadPNG}
                 onDownloadSVG={handleDownloadSVG}
                 onDownloadPDF={handleDownloadPDF}
+                onEmbed={handleShowEmbed}
                 onDone={() => router.push('/qr-codes')}
                 onCreateAnother={() => actions.reset()}
               />
@@ -697,6 +731,18 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
           onClose={() => setShowPDFModal(false)}
           svgContent={pdfSvgContent}
           qrName={state.qrName || 'QR Code'}
+        />
+      )}
+
+      {showEmbedModal && embedSvgContent && embedDataURL && (
+        <EmbedCodeModal
+          open={showEmbedModal}
+          onClose={() => setShowEmbedModal(false)}
+          svgContent={embedSvgContent}
+          svgDataURL={embedDataURL}
+          qrName={state.qrName || 'QR Code'}
+          qrId={state.savedQRId}
+          userTier={state.userTier}
         />
       )}
     </div>
@@ -1137,6 +1183,7 @@ interface DownloadStepProps {
   onDownloadPNG: () => void;
   onDownloadSVG: () => void;
   onDownloadPDF: () => void;
+  onEmbed: () => void;
   onDone: () => void;
   onCreateAnother: () => void;
 }
@@ -1157,6 +1204,7 @@ function DownloadStep({
   onDownloadPNG,
   onDownloadSVG,
   onDownloadPDF,
+  onEmbed,
   onDone,
   onCreateAnother,
 }: DownloadStepProps) {
@@ -1348,6 +1396,22 @@ function DownloadStep({
                 Pro
               </span>
             )}
+          </span>
+        </Button>
+
+        <Button
+          variant="outline"
+          className="w-full"
+          size="lg"
+          onClick={onEmbed}
+          disabled={!content}
+        >
+          <span className="flex items-center gap-2">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="16 18 22 12 16 6" />
+              <polyline points="8 6 2 12 8 18" />
+            </svg>
+            Get Embed Code
           </span>
         </Button>
       </div>

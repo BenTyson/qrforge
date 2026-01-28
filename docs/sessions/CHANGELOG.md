@@ -6,6 +6,62 @@ Session-by-session history of development work. Most recent first.
 
 ## January 28, 2026
 
+### Embed Modal UX Improvements
+
+Polished the Embed Code Modal with usability improvements across display, preview, and interaction.
+
+#### Truncated Base64 Display
+- Long base64 data URIs in the code block are now replaced with `data:image/svg+xml;base64,...` for readability
+- Full untruncated code is still copied when clicking "Copy Code"
+- Explanatory note appears below code block when truncation is active
+
+#### Visual Preview
+- New `<img>` preview section renders the QR code on a white background at `min(size, 160)` px
+- Mirrors the border style when the "Show Border" toggle is active
+- Shows between the border toggle and the embed code block
+
+#### Format Guidance Hints
+- One-sentence contextual hint below the Format select, updating per format
+- Covers HTML `<img>`, Inline SVG, Markdown, and Dynamic embed use cases
+
+#### Smart Embed Type Detection
+- Modal auto-selects Dynamic for Pro/Business users when a `qrId` is present
+- Hides the Static/Dynamic tabs entirely when dynamic embedding is impossible (no `qrId`)
+- Pro users can still switch between modes when both are available
+
+#### Minor Fixes
+- Renamed code block label from "Preview" to "Embed Code" (visual preview now owns "Preview")
+- Updated dialog description to "Generate a snippet to embed this QR code on any webpage or document."
+- Added `max-h-[60vh]` scrollable body to prevent modal overflow on smaller viewports
+- Added `flex-wrap` to QRCodeCard action buttons to prevent folder/delete buttons from being clipped
+
+---
+
+### Embed Code Generator (Feature #16)
+
+Added a modal that generates copy-pasteable HTML/SVG/Markdown embed snippets for any saved QR code. Available from both the QR Studio download step and dashboard QR code cards.
+
+#### New Files
+- `src/lib/qr/embed-templates.ts` — Pure utility with `generateEmbedCode()` supporting static (base64) and dynamic (URL-based) embeds in HTML `<img>`, inline SVG, and Markdown formats. Includes `escapeHtml()` helper and border wrapping option.
+- `src/lib/qr/__tests__/embed-templates.test.ts` — 19 unit tests covering all template combinations, escaping, border toggle, size params, and null-qrId fallback.
+- `src/components/qr/EmbedCodeModal.tsx` — shadcn Dialog modal following PDFOptionsModal pattern. Tabs for Static/Dynamic embed type, format select, size select (128–512), border toggle, dark code preview, and copy button with checkmark feedback.
+- `src/app/api/embed/[id]/route.ts` — Public GET endpoint serving SVG images for dynamic embeds. UUID validation, 60 req/min/IP rate limiting, admin Supabase client (bypasses RLS), server-side QR generation, CORS headers, 5-minute cache. Size clamped to 64–1024px.
+
+#### Modified Files
+- `src/components/qr/studio/QRStudio.tsx` — Added embed state, `handleShowEmbed` handler (saves QR if needed, generates SVG + data URL in parallel), "Get Embed Code" button with `</>` icon in DownloadStep, and EmbedCodeModal render.
+- `src/components/qr/QRCodeCard.tsx` — Added embed state, handler, `</>` icon button in action row, and EmbedCodeModal render.
+
+#### Tier Gating
+- Free: Static HTML `<img>` + Markdown
+- Pro/Business: + Dynamic embeds + Inline SVG
+- Gated options show "Pro" badge; clicking navigates to `/plans`
+
+#### Tests
+- 19 new embed-templates tests, all passing
+- Full suite: 216 tests passing, 0 lint errors, type-check clean
+
+---
+
 ### Align Static/Dynamic QR Architecture with Product Intent
 
 Resolved the static/dynamic QR code split left over from a Jan 21 emergency fix. All QR codes are now dynamic under the hood (single code path, no race condition risk). Plan definitions, UI copy, and enforcement updated to match.

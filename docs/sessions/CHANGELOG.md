@@ -4,6 +4,42 @@ Session-by-session history of development work. Most recent first.
 
 ---
 
+## January 28, 2026
+
+### Dashboard & Analytics V2 Overhaul
+
+Complete redesign of `/dashboard` and `/analytics` pages with new data visualizations, trend indicators, and per-QR filtering.
+
+#### Dashboard Enhancements
+- **Sparkline chart** on "Scans This Month" card showing last 7 days of activity (Recharts AreaChart)
+- **Month-over-month trend badge** with green/red arrow and percentage change
+- **Top Performing QR Codes section** showing top 3 by scan count with progress bars and edit links
+- **Enriched Recent Activity** with device icons (mobile/desktop/tablet), clickable QR names, device + country display
+- **Contextual Quick Actions** that change based on user state (new_user, no_scans, near_limit, default)
+- **Two-phase data fetching** for optimized parallel queries
+
+#### Analytics Enhancements
+- **QR Code filter dropdown** to view analytics for a single QR code (URL param `?qr=`)
+- **Single-QR header card** when filtering, showing name, type, total scans, edit link
+- **Traffic Sources breakdown** (referrer domains grouped, "Direct" for empty)
+- **Operating Systems breakdown** (new card in 2x2 grid)
+- **Enhanced Locations** with expandable city lists per country using `<details>/<summary>`
+- **Trend indicators** on hero stat cards (today vs yesterday, week vs last week, month vs last month)
+- **Clickable QR names** throughout (Top Performing, Recent Scans table)
+- **Analytics icon on hover** for quick per-QR filtering
+- **Updated CSV export** includes OS, referrer, city, region fields
+- **Updated mock data** for free-tier blurred view with new breakdowns
+
+#### QR Code List Enhancement
+- **Analytics chart icon** in QRCodeCard action bar linking to `/analytics?qr={id}`
+
+#### New Files
+- `src/components/dashboard/ScanSparkline.tsx` - Recharts sparkline component
+- `src/components/analytics/QRCodeFilterSelect.tsx` - Client component for filter dropdown
+- `src/lib/analytics/types.ts` - Shared `ScanData` interface
+
+---
+
 ## January 27, 2026
 
 ### Homepage UX Redesign: Tabbed QR Types & Testimonial Carousel

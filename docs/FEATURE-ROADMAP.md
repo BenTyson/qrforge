@@ -1,6 +1,6 @@
 # QRWolf Feature Roadmap
 
-> **Last Updated**: January 27, 2026
+> **Last Updated**: January 28, 2026
 > **Status**: Active development
 > **Current Features**: 34 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Sentry error tracking, Cron-based email automation, 151 SEO articles (all with CTAs)
 > **Strategy**: Build features that align with SEO content for maximum conversion
@@ -368,6 +368,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-28 | Dashboard & Analytics V2: Sparkline charts, trend badges, Top Performing section, enriched Recent Activity, contextual Quick Actions, per-QR filtering, Traffic Sources/OS breakdowns, expandable locations. |
 | 2026-01-27 | Homepage UX redesign: QR Types section split into 3 tabbed categories (Basics/Social/Pro), Testimonials section replaced with auto-rotating 3-card carousel with dot navigation. |
 | 2026-01-27 | Fixed critical double-billing bug on subscription upgrades (old subscription now auto-cancelled). Surfaced real Stripe errors in portal endpoint. Fixed signup page Suspense boundary for production build. |
 | 2026-01-27 | Sentry error tracking fully installed. Cron jobs configured via cron-job.org. Email test endpoint created. PDF export bugs fixed (redirect, import, rendering). Pro users excluded from usage warnings. |

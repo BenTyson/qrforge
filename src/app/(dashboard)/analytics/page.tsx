@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { AnalyticsCharts } from '@/components/analytics/AnalyticsCharts';
+import { QRCodeFilterSelect } from '@/components/analytics/QRCodeFilterSelect';
+import type { ScanData } from '@/lib/analytics/types';
 
 // Pagination constants
 const SCANS_PER_PAGE = 10;
@@ -15,6 +17,11 @@ const MOCK_DATA = {
   scansThisWeek: 892,
   scansThisMonth: 2134,
   dailyAverage: 127.4,
+  trends: {
+    todayVsYesterday: 12,
+    weekVsLastWeek: 8,
+    monthVsLastMonth: 23,
+  },
   topQRCodes: [
     { id: '1', name: 'Product Launch Campaign', scan_count: 847 },
     { id: '2', name: 'Restaurant Menu', scan_count: 623 },
@@ -24,23 +31,34 @@ const MOCK_DATA = {
   ],
   deviceBreakdown: { Mobile: 68, Desktop: 24, Tablet: 8 },
   browserBreakdown: { Chrome: 45, Safari: 32, Firefox: 12, Edge: 11 },
-  countryBreakdown: { 'United States': 42, 'United Kingdom': 18, 'Germany': 14, 'Canada': 12 },
+  countryBreakdown: { 'United States': 42, 'United Kingdom': 18, 'Germany': 14, 'Canada': 12, 'Australia': 8, 'France': 6 },
+  osBreakdown: { iOS: 38, Android: 30, Windows: 18, macOS: 12, Linux: 2 },
+  referrerBreakdown: { Direct: 45, 'google.com': 22, 'facebook.com': 15, 'twitter.com': 10, 'linkedin.com': 8 },
+  cityBreakdown: {
+    'United States': ['New York', 'Los Angeles', 'Chicago'],
+    'United Kingdom': ['London', 'Manchester'],
+    'Germany': ['Berlin', 'Munich'],
+    'Canada': ['Toronto', 'Vancouver'],
+    'Australia': ['Sydney'],
+    'France': ['Paris'],
+  },
   recentScans: [
-    { id: '1', qrName: 'Product Launch Campaign', scanned_at: new Date(Date.now() - 5 * 60000).toISOString(), device_type: 'Mobile', browser: 'Safari', city: 'New York', country: 'United States' },
-    { id: '2', qrName: 'Restaurant Menu', scanned_at: new Date(Date.now() - 12 * 60000).toISOString(), device_type: 'Mobile', browser: 'Chrome', city: 'London', country: 'United Kingdom' },
-    { id: '3', qrName: 'Business Card - John', scanned_at: new Date(Date.now() - 23 * 60000).toISOString(), device_type: 'Desktop', browser: 'Chrome', city: 'Berlin', country: 'Germany' },
-    { id: '4', qrName: 'Event Registration', scanned_at: new Date(Date.now() - 45 * 60000).toISOString(), device_type: 'Mobile', browser: 'Safari', city: 'Toronto', country: 'Canada' },
-    { id: '5', qrName: 'WiFi Guest Access', scanned_at: new Date(Date.now() - 67 * 60000).toISOString(), device_type: 'Tablet', browser: 'Chrome', city: 'Sydney', country: 'Australia' },
+    { id: '1', qrName: 'Product Launch Campaign', qr_code_id: '1', scanned_at: new Date(Date.now() - 5 * 60000).toISOString(), device_type: 'Mobile', browser: 'Safari', city: 'New York', country: 'United States' },
+    { id: '2', qrName: 'Restaurant Menu', qr_code_id: '2', scanned_at: new Date(Date.now() - 12 * 60000).toISOString(), device_type: 'Mobile', browser: 'Chrome', city: 'London', country: 'United Kingdom' },
+    { id: '3', qrName: 'Business Card - John', qr_code_id: '3', scanned_at: new Date(Date.now() - 23 * 60000).toISOString(), device_type: 'Desktop', browser: 'Chrome', city: 'Berlin', country: 'Germany' },
+    { id: '4', qrName: 'Event Registration', qr_code_id: '4', scanned_at: new Date(Date.now() - 45 * 60000).toISOString(), device_type: 'Mobile', browser: 'Safari', city: 'Toronto', country: 'Canada' },
+    { id: '5', qrName: 'WiFi Guest Access', qr_code_id: '5', scanned_at: new Date(Date.now() - 67 * 60000).toISOString(), device_type: 'Tablet', browser: 'Chrome', city: 'Sydney', country: 'Australia' },
   ],
 };
 
 interface AnalyticsPageProps {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; qr?: string }>;
 }
 
 export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps) {
   const params = await searchParams;
   const currentPage = Math.max(1, parseInt(params.page || '1', 10));
+  const selectedQRId = params.qr || null; // Session 3A: QR code filter
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -106,15 +124,22 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
               topCountry={MOCK_DATA.topCountry}
               scansThisWeek={MOCK_DATA.scansThisWeek}
               scansThisMonth={MOCK_DATA.scansThisMonth}
+              trends={MOCK_DATA.trends}
               topQRCodes={MOCK_DATA.topQRCodes}
               deviceBreakdown={MOCK_DATA.deviceBreakdown}
               browserBreakdown={MOCK_DATA.browserBreakdown}
               countryBreakdown={MOCK_DATA.countryBreakdown}
+              osBreakdown={MOCK_DATA.osBreakdown}
+              referrerBreakdown={MOCK_DATA.referrerBreakdown}
+              cityBreakdown={MOCK_DATA.cityBreakdown}
               recentScans={MOCK_DATA.recentScans}
               allScans={[]}
               totalPages={1}
               currentPage={1}
               isPro={false}
+              selectedQRId={null}
+              selectedQRCode={null}
+              allQRCodes={[]}
             />
           </div>
         </div>
@@ -125,10 +150,21 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
   // Pro/Business users get real data
   const { data: qrCodes } = await supabase
     .from('qr_codes')
-    .select('id, name, scan_count')
+    .select('id, name, type, scan_count')
     .eq('user_id', user.id);
 
-  const qrCodeIds = qrCodes?.map(qr => qr.id) || [];
+  // Session 3A: Filter to single QR code if selected
+  const allQRCodes = qrCodes || [];
+  let qrCodeIds = allQRCodes.map(qr => qr.id);
+  let selectedQRCode: { id: string; name: string; type: string; scan_count: number } | null = null;
+
+  if (selectedQRId) {
+    const found = allQRCodes.find(qr => qr.id === selectedQRId);
+    if (found) {
+      selectedQRCode = found;
+      qrCodeIds = [selectedQRId];
+    }
+  }
 
   // Get total scan count for pagination
   const { count: totalScansCount } = qrCodeIds.length > 0
@@ -138,11 +174,11 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
         .in('qr_code_id', qrCodeIds)
     : { count: 0 };
 
-  // Fetch scans for aggregation (limited for performance)
+  // Fetch scans for aggregation (limited for performance) - expanded to include os, referrer, region
   const { data: aggregationScans } = qrCodeIds.length > 0
     ? await supabase
         .from('scans')
-        .select('scanned_at, ip_hash, device_type, browser, country, city')
+        .select('scanned_at, ip_hash, device_type, os, browser, country, city, region, referrer')
         .in('qr_code_id', qrCodeIds)
         .order('scanned_at', { ascending: false })
         .limit(MAX_SCANS_FOR_AGGREGATION)
@@ -159,7 +195,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
         .range(offset, offset + SCANS_PER_PAGE - 1)
     : { data: [] };
 
-  const allScans = aggregationScans || [];
+  const allScans: ScanData[] = (aggregationScans || []) as ScanData[];
   const totalPages = Math.ceil((totalScansCount || 0) / SCANS_PER_PAGE);
 
   // Calculate stats
@@ -169,12 +205,40 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
   // Get scans for different time periods
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
   const thisWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const lastWeek = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
   const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
   const scansToday = allScans.filter(s => new Date(s.scanned_at) >= today).length;
+  const scansYesterday = allScans.filter(s => {
+    const d = new Date(s.scanned_at);
+    return d >= yesterday && d < today;
+  }).length;
   const scansThisWeek = allScans.filter(s => new Date(s.scanned_at) >= thisWeek).length;
+  const scansLastWeek = allScans.filter(s => {
+    const d = new Date(s.scanned_at);
+    return d >= lastWeek && d < thisWeek;
+  }).length;
   const scansThisMonth = allScans.filter(s => new Date(s.scanned_at) >= thisMonth).length;
+  const scansLastMonth = allScans.filter(s => {
+    const d = new Date(s.scanned_at);
+    return d >= lastMonthStart && d < thisMonth;
+  }).length;
+
+  // 2B: Compute trend indicators
+  const trends = {
+    todayVsYesterday: scansYesterday > 0
+      ? Math.round(((scansToday - scansYesterday) / scansYesterday) * 100)
+      : null,
+    weekVsLastWeek: scansLastWeek > 0
+      ? Math.round(((scansThisWeek - scansLastWeek) / scansLastWeek) * 100)
+      : null,
+    monthVsLastMonth: scansLastMonth > 0
+      ? Math.round(((scansThisMonth - scansLastMonth) / scansLastMonth) * 100)
+      : null,
+  };
 
   // Device breakdown
   const deviceBreakdown = allScans.reduce((acc, scan) => {
@@ -197,13 +261,50 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
     return acc;
   }, {} as Record<string, number>);
 
+  // 2A: OS breakdown
+  const osBreakdown = allScans.reduce((acc, scan) => {
+    const os = scan.os || 'Unknown';
+    acc[os] = (acc[os] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  // 2A: Referrer breakdown (extract domain, group empty as "Direct")
+  const referrerBreakdown = allScans.reduce((acc, scan) => {
+    let source = 'Direct';
+    if (scan.referrer) {
+      try {
+        source = new URL(scan.referrer).hostname.replace(/^www\./, '');
+      } catch {
+        source = scan.referrer;
+      }
+    }
+    acc[source] = (acc[source] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  // 2A/2D: City breakdown per country
+  const cityBreakdown: Record<string, string[]> = {};
+  const cityCountMap: Record<string, Record<string, number>> = {};
+  allScans.forEach(scan => {
+    if (scan.country && scan.city) {
+      if (!cityCountMap[scan.country]) cityCountMap[scan.country] = {};
+      cityCountMap[scan.country][scan.city] = (cityCountMap[scan.country][scan.city] || 0) + 1;
+    }
+  });
+  for (const [country, cities] of Object.entries(cityCountMap)) {
+    cityBreakdown[country] = Object.entries(cities)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([city]) => city);
+  }
+
   // Top QR codes
-  const topQRCodes = (qrCodes || [])
+  const topQRCodes = (allQRCodes)
     .sort((a, b) => (b.scan_count || 0) - (a.scan_count || 0))
     .slice(0, 5);
 
   // Recent scans with QR code names
-  const qrCodeNames = new Map(qrCodes?.map(qr => [qr.id, qr.name]) || []);
+  const qrCodeNames = new Map(allQRCodes.map(qr => [qr.id, qr.name]));
   const recentScans = (paginatedScans || []).map(scan => ({
     ...scan,
     qrName: qrCodeNames.get(scan.qr_code_id) || 'Unknown',
@@ -227,6 +328,39 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
         </div>
       </div>
 
+      {/* 3A: QR Code Filter Dropdown */}
+      {allQRCodes.length > 0 && (
+        <QRCodeFilter
+          qrCodes={allQRCodes.map(qr => ({ id: qr.id, name: qr.name }))}
+          selectedQRId={selectedQRId}
+        />
+      )}
+
+      {/* 3B: Single-QR header card */}
+      {selectedQRCode && (
+        <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                <QRIcon className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold">{selectedQRCode.name}</h2>
+                <p className="text-sm text-muted-foreground capitalize">
+                  {selectedQRCode.type} QR Code &middot; {(selectedQRCode.scan_count || 0).toLocaleString()} total scans
+                </p>
+              </div>
+            </div>
+            <Link
+              href={`/qr-codes/${selectedQRCode.id}/edit`}
+              className="text-sm text-primary hover:underline font-medium"
+            >
+              Edit QR Code
+            </Link>
+          </div>
+        </div>
+      )}
+
       <AnalyticsContent
         totalScans={totalScans}
         uniqueVisitors={uniqueVisitors}
@@ -234,27 +368,52 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
         topCountry={topCountry}
         scansThisWeek={scansThisWeek}
         scansThisMonth={scansThisMonth}
+        trends={trends}
         topQRCodes={topQRCodes}
         deviceBreakdown={deviceBreakdown}
         browserBreakdown={browserBreakdown}
         countryBreakdown={countryBreakdown}
+        osBreakdown={osBreakdown}
+        referrerBreakdown={referrerBreakdown}
+        cityBreakdown={cityBreakdown}
         recentScans={recentScans}
         allScans={allScans}
         totalPages={totalPages}
         currentPage={currentPage}
         isPro={true}
+        selectedQRId={selectedQRId}
+        selectedQRCode={selectedQRCode}
+        allQRCodes={allQRCodes}
       />
     </div>
   );
 }
 
+// 3A: QR Code Filter component
+function QRCodeFilter({ qrCodes, selectedQRId }: { qrCodes: { id: string; name: string }[]; selectedQRId: string | null }) {
+  return (
+    <div className="mb-6">
+      <div className="flex items-center gap-3">
+        <label htmlFor="qr-filter" className="text-sm font-medium text-muted-foreground">
+          Filter by QR Code:
+        </label>
+        <QRCodeFilterSelect
+          options={[
+            { value: '', label: 'All QR Codes' },
+            ...qrCodes.map(qr => ({ value: qr.id, label: qr.name })),
+          ]}
+          selected={selectedQRId || ''}
+        />
+      </div>
+    </div>
+  );
+}
+
 // Extracted analytics content component for reuse
-interface ScanData {
-  scanned_at: string;
-  device_type?: string;
-  browser?: string;
-  country?: string;
-  city?: string;
+interface TrendData {
+  todayVsYesterday: number | null;
+  weekVsLastWeek: number | null;
+  monthVsLastMonth: number | null;
 }
 
 interface AnalyticsContentProps {
@@ -264,13 +423,18 @@ interface AnalyticsContentProps {
   topCountry: string | null;
   scansThisWeek: number;
   scansThisMonth: number;
+  trends: TrendData;
   topQRCodes: Array<{ id: string; name: string; scan_count: number }>;
   deviceBreakdown: Record<string, number>;
   browserBreakdown: Record<string, number>;
   countryBreakdown: Record<string, number>;
+  osBreakdown: Record<string, number>;
+  referrerBreakdown: Record<string, number>;
+  cityBreakdown: Record<string, string[]>;
   recentScans: Array<{
     id: string;
     qrName: string;
+    qr_code_id: string;
     scanned_at: string;
     device_type: string;
     browser: string;
@@ -281,6 +445,9 @@ interface AnalyticsContentProps {
   totalPages: number;
   currentPage: number;
   isPro: boolean;
+  selectedQRId: string | null;
+  selectedQRCode: { id: string; name: string; type: string; scan_count: number } | null;
+  allQRCodes: Array<{ id: string; name: string; scan_count: number }>;
 }
 
 function AnalyticsContent({
@@ -290,20 +457,35 @@ function AnalyticsContent({
   topCountry,
   scansThisWeek,
   scansThisMonth,
+  trends,
   topQRCodes,
   deviceBreakdown,
   browserBreakdown,
   countryBreakdown,
+  osBreakdown,
+  referrerBreakdown,
+  cityBreakdown,
   recentScans,
   allScans,
   totalPages,
   currentPage,
   isPro,
+  selectedQRId,
 }: AnalyticsContentProps) {
+
+  // Build pagination URL helper (preserves qr param)
+  const buildPageUrl = (page: number) => {
+    const params = new URLSearchParams();
+    if (page > 1) params.set('page', String(page));
+    if (selectedQRId) params.set('qr', selectedQRId);
+    const qs = params.toString();
+    return qs ? `/analytics?${qs}` : '/analytics';
+  };
+
   return (
     <>
 
-      {/* Hero Stats Row */}
+      {/* Hero Stats Row with 2B trend badges */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {/* Primary Stat - Total Scans */}
         <div className="col-span-2 lg:col-span-1 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 rounded-2xl p-6">
@@ -325,10 +507,13 @@ function AnalyticsContent({
           <p className="text-xs text-muted-foreground mt-0.5">Unique Visitors</p>
         </div>
 
-        {/* Scans Today */}
+        {/* Scans Today with trend */}
         <div className="bg-card/50 backdrop-blur border border-border/50 rounded-2xl p-5 hover:border-emerald-500/30 transition-colors">
-          <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center text-emerald-500 mb-3">
-            <ZapIcon className="w-5 h-5" />
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center text-emerald-500">
+              <ZapIcon className="w-5 h-5" />
+            </div>
+            <TrendBadge value={trends.todayVsYesterday} />
           </div>
           <div className="text-2xl font-bold">{scansToday.toLocaleString()}</div>
           <p className="text-xs text-muted-foreground mt-0.5">Today</p>
@@ -344,7 +529,7 @@ function AnalyticsContent({
         </div>
       </div>
 
-      {/* Time Period Stats - Horizontal bar style */}
+      {/* Time Period Stats with trend badges */}
       <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6 mb-8">
         <h3 className="text-sm font-medium text-muted-foreground mb-4">Performance Overview</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -353,7 +538,10 @@ function AnalyticsContent({
               <TrendIcon className="w-6 h-6 text-cyan-500" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{scansThisWeek.toLocaleString()}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-2xl font-bold">{scansThisWeek.toLocaleString()}</p>
+                <TrendBadge value={trends.weekVsLastWeek} />
+              </div>
               <p className="text-xs text-muted-foreground">Last 7 days</p>
             </div>
           </div>
@@ -362,7 +550,10 @@ function AnalyticsContent({
               <CalendarIcon className="w-6 h-6 text-violet-500" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{scansThisMonth.toLocaleString()}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-2xl font-bold">{scansThisMonth.toLocaleString()}</p>
+                <TrendBadge value={trends.monthVsLastMonth} />
+              </div>
               <p className="text-xs text-muted-foreground">This month</p>
             </div>
           </div>
@@ -389,51 +580,95 @@ function AnalyticsContent({
         </div>
       )}
 
-      {/* Top QR Codes - Full Width with ranking */}
-      <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6 mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Top Performing QR Codes</h3>
-          <Link href="/qr-codes" className="text-xs text-primary hover:underline">View all</Link>
-        </div>
-        {topQRCodes.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="w-12 h-12 rounded-full bg-secondary/50 flex items-center justify-center mx-auto mb-3">
-              <QRIcon className="w-6 h-6 text-muted-foreground/30" />
+      {/* 2A: Traffic Sources */}
+      {Object.keys(referrerBreakdown).length > 0 && (
+        <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6 mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+              <LinkIcon className="w-4 h-4 text-orange-500" />
             </div>
-            <p className="text-muted-foreground text-sm">No QR codes yet</p>
+            <h3 className="font-semibold">Traffic Sources</h3>
           </div>
-        ) : (
           <div className="space-y-3">
-            {topQRCodes.map((qr, index) => {
-              const maxScans = topQRCodes[0]?.scan_count || 1;
-              const percentage = ((qr.scan_count || 0) / maxScans) * 100;
-              const colors = ['from-primary to-cyan-500', 'from-purple-500 to-violet-500', 'from-emerald-500 to-teal-500', 'from-amber-500 to-orange-500', 'from-rose-500 to-pink-500'];
-              return (
-                <div key={qr.id} className="group">
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className={`w-7 h-7 rounded-lg text-xs flex items-center justify-center font-bold ${
-                      index === 0 ? 'bg-primary/20 text-primary' : 'bg-secondary text-muted-foreground'
-                    }`}>
-                      {index + 1}
-                    </span>
-                    <span className="flex-1 font-medium truncate">{qr.name}</span>
-                    <span className="text-sm font-semibold">{(qr.scan_count || 0).toLocaleString()}</span>
+            {Object.entries(referrerBreakdown)
+              .sort((a, b) => (b[1] as number) - (a[1] as number))
+              .slice(0, 6)
+              .map(([source, count]) => {
+                const pct = totalScans > 0 ? ((count as number) / totalScans) * 100 : 0;
+                return (
+                  <div key={source}>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="truncate">{source}</span>
+                      <span className="text-muted-foreground ml-2">{(count as number).toLocaleString()} ({pct.toFixed(0)}%)</span>
+                    </div>
+                    <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-orange-500" style={{ width: `${pct}%` }} />
+                    </div>
                   </div>
-                  <div className="ml-10 h-1.5 bg-secondary/50 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full bg-gradient-to-r ${colors[index]} transition-all duration-500`}
-                      style={{ width: `${percentage}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Breakdown Grid - 3 columns */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      {/* Top QR Codes - hide when filtering single QR (3B) */}
+      {!selectedQRId && (
+        <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold">Top Performing QR Codes</h3>
+            <Link href="/qr-codes" className="text-xs text-primary hover:underline">View all</Link>
+          </div>
+          {topQRCodes.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="w-12 h-12 rounded-full bg-secondary/50 flex items-center justify-center mx-auto mb-3">
+                <QRIcon className="w-6 h-6 text-muted-foreground/30" />
+              </div>
+              <p className="text-muted-foreground text-sm">No QR codes yet</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {topQRCodes.map((qr, index) => {
+                const maxScans = topQRCodes[0]?.scan_count || 1;
+                const percentage = ((qr.scan_count || 0) / maxScans) * 100;
+                const colors = ['from-primary to-cyan-500', 'from-purple-500 to-violet-500', 'from-emerald-500 to-teal-500', 'from-amber-500 to-orange-500', 'from-rose-500 to-pink-500'];
+                return (
+                  <div key={qr.id} className="group">
+                    <div className="flex items-center gap-3 mb-1">
+                      <span className={`w-7 h-7 rounded-lg text-xs flex items-center justify-center font-bold ${
+                        index === 0 ? 'bg-primary/20 text-primary' : 'bg-secondary text-muted-foreground'
+                      }`}>
+                        {index + 1}
+                      </span>
+                      {/* 2C: Clickable QR name */}
+                      <Link href={`/qr-codes/${qr.id}/edit`} className="flex-1 font-medium truncate hover:text-primary transition-colors">
+                        {qr.name}
+                      </Link>
+                      {/* 2C: Analytics link for this QR */}
+                      <Link
+                        href={`/analytics?qr=${qr.id}`}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity mr-1"
+                        title="View analytics for this QR code"
+                      >
+                        <MiniChartIcon className="w-4 h-4 text-muted-foreground hover:text-primary" />
+                      </Link>
+                      <span className="text-sm font-semibold">{(qr.scan_count || 0).toLocaleString()}</span>
+                    </div>
+                    <div className="ml-10 h-1.5 bg-secondary/50 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full bg-gradient-to-r ${colors[index]} transition-all duration-500`}
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Breakdown Grid - 2x2 (expanded from 3-col to include OS) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Device Breakdown */}
         <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6">
           <div className="flex items-center gap-2 mb-4">
@@ -480,7 +715,7 @@ function AnalyticsContent({
             <div className="space-y-3">
               {Object.entries(browserBreakdown)
                 .sort((a, b) => (b[1] as number) - (a[1] as number))
-                .slice(0, 4)
+                .slice(0, 5)
                 .map(([browser, count]) => {
                   const pct = totalScans > 0 ? ((count as number) / totalScans) * 100 : 0;
                   return (
@@ -499,7 +734,40 @@ function AnalyticsContent({
           )}
         </div>
 
-        {/* Country Breakdown */}
+        {/* 2A: OS Breakdown */}
+        <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+              <OSIcon className="w-4 h-4 text-cyan-500" />
+            </div>
+            <h3 className="font-semibold">Operating Systems</h3>
+          </div>
+          {Object.keys(osBreakdown).length === 0 ? (
+            <p className="text-muted-foreground text-sm">No data yet</p>
+          ) : (
+            <div className="space-y-3">
+              {Object.entries(osBreakdown)
+                .sort((a, b) => (b[1] as number) - (a[1] as number))
+                .slice(0, 5)
+                .map(([os, count]) => {
+                  const pct = totalScans > 0 ? ((count as number) / totalScans) * 100 : 0;
+                  return (
+                    <div key={os}>
+                      <div className="flex items-center justify-between text-sm mb-1">
+                        <span className="truncate">{os}</span>
+                        <span className="text-muted-foreground">{pct.toFixed(0)}%</span>
+                      </div>
+                      <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full bg-cyan-500" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
+        </div>
+
+        {/* 2A/2D: Enhanced Country/Location Breakdown */}
         <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur p-6">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
@@ -513,25 +781,11 @@ function AnalyticsContent({
           {Object.keys(countryBreakdown).length === 0 ? (
             <p className="text-muted-foreground text-sm">No data yet</p>
           ) : (
-            <div className="space-y-3">
-              {Object.entries(countryBreakdown)
-                .sort((a, b) => (b[1] as number) - (a[1] as number))
-                .slice(0, 4)
-                .map(([country, count]) => {
-                  const pct = totalScans > 0 ? ((count as number) / totalScans) * 100 : 0;
-                  return (
-                    <div key={country}>
-                      <div className="flex items-center justify-between text-sm mb-1">
-                        <span className="truncate">{country}</span>
-                        <span className="text-muted-foreground">{pct.toFixed(0)}%</span>
-                      </div>
-                      <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full bg-emerald-500" style={{ width: `${pct}%` }} />
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
+            <LocationBreakdown
+              countryBreakdown={countryBreakdown}
+              cityBreakdown={cityBreakdown}
+              totalScans={totalScans}
+            />
           )}
         </div>
       </div>
@@ -558,7 +812,13 @@ function AnalyticsContent({
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <div className={`w-2 h-2 rounded-full ${index === 0 ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
-                      <span className="font-medium">{scan.qrName}</span>
+                      {/* 2C: Clickable QR name in recent scans */}
+                      <Link
+                        href={`/analytics?qr=${scan.qr_code_id}`}
+                        className="font-medium hover:text-primary transition-colors"
+                      >
+                        {scan.qrName}
+                      </Link>
                     </div>
                     <span className="text-xs text-muted-foreground">{formatTimeAgo(scan.scanned_at)}</span>
                   </div>
@@ -591,7 +851,13 @@ function AnalyticsContent({
                     <td className="py-3">
                       <div className="flex items-center gap-2">
                         <div className={`w-2 h-2 rounded-full ${index === 0 ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
-                        <span className="font-medium">{scan.qrName}</span>
+                        {/* 2C: Clickable QR name */}
+                        <Link
+                          href={`/analytics?qr=${scan.qr_code_id}`}
+                          className="font-medium hover:text-primary transition-colors"
+                        >
+                          {scan.qrName}
+                        </Link>
                       </div>
                     </td>
                     <td className="py-3 text-muted-foreground">
@@ -613,7 +879,7 @@ function AnalyticsContent({
               </tbody>
             </table>
 
-            {/* Pagination Controls */}
+            {/* Pagination Controls (preserves qr param) */}
             {totalPages > 1 && (
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-4 pt-4 border-t border-border/30">
                 <p className="text-sm text-muted-foreground">
@@ -621,7 +887,7 @@ function AnalyticsContent({
                 </p>
                 <div className="flex items-center gap-2">
                   <Link
-                    href={currentPage > 1 ? `/analytics?page=${currentPage - 1}` : '#'}
+                    href={currentPage > 1 ? buildPageUrl(currentPage - 1) : '#'}
                     className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
                       currentPage > 1
                         ? 'border-border hover:bg-secondary/50 cursor-pointer'
@@ -632,7 +898,7 @@ function AnalyticsContent({
                     Previous
                   </Link>
                   <Link
-                    href={currentPage < totalPages ? `/analytics?page=${currentPage + 1}` : '#'}
+                    href={currentPage < totalPages ? buildPageUrl(currentPage + 1) : '#'}
                     className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
                       currentPage < totalPages
                         ? 'border-border hover:bg-secondary/50 cursor-pointer'
@@ -649,6 +915,119 @@ function AnalyticsContent({
         )}
       </div>
     </>
+  );
+}
+
+// 2D: Expandable location breakdown component
+function LocationBreakdown({
+  countryBreakdown,
+  cityBreakdown,
+  totalScans,
+}: {
+  countryBreakdown: Record<string, number>;
+  cityBreakdown: Record<string, string[]>;
+  totalScans: number;
+}) {
+  const sortedCountries = Object.entries(countryBreakdown)
+    .sort((a, b) => (b[1] as number) - (a[1] as number));
+
+  // Show first 6
+  const visibleCountries = sortedCountries.slice(0, 6);
+  const hasMore = sortedCountries.length > 6;
+
+  return (
+    <div className="space-y-3">
+      {visibleCountries.map(([country, count]) => {
+        const pct = totalScans > 0 ? ((count as number) / totalScans) * 100 : 0;
+        const cities = cityBreakdown[country];
+        return (
+          <div key={country}>
+            {cities && cities.length > 0 ? (
+              <details className="group/loc">
+                <summary className="cursor-pointer list-none">
+                  <div className="flex items-center justify-between text-sm mb-1">
+                    <span className="truncate flex items-center gap-1">
+                      <ChevronIcon className="w-3 h-3 text-muted-foreground transition-transform group-open/loc:rotate-90" />
+                      {country}
+                    </span>
+                    <span className="text-muted-foreground">{pct.toFixed(0)}%</span>
+                  </div>
+                </summary>
+                <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden mb-1">
+                  <div className="h-full rounded-full bg-emerald-500" style={{ width: `${pct}%` }} />
+                </div>
+                <div className="ml-4 mt-1 space-y-0.5">
+                  {cities.map(city => (
+                    <p key={city} className="text-xs text-muted-foreground">{city}</p>
+                  ))}
+                </div>
+              </details>
+            ) : (
+              <>
+                <div className="flex items-center justify-between text-sm mb-1">
+                  <span className="truncate ml-4">{country}</span>
+                  <span className="text-muted-foreground">{pct.toFixed(0)}%</span>
+                </div>
+                <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden">
+                  <div className="h-full rounded-full bg-emerald-500" style={{ width: `${pct}%` }} />
+                </div>
+              </>
+            )}
+          </div>
+        );
+      })}
+      {hasMore && (
+        <details className="group/all">
+          <summary className="cursor-pointer text-xs text-primary hover:underline list-none">
+            Show all ({sortedCountries.length} countries)
+          </summary>
+          <div className="mt-2 space-y-3">
+            {sortedCountries.slice(6).map(([country, count]) => {
+              const pct = totalScans > 0 ? ((count as number) / totalScans) * 100 : 0;
+              const cities = cityBreakdown[country];
+              return (
+                <div key={country}>
+                  <div className="flex items-center justify-between text-sm mb-1">
+                    <span className="truncate">{country}</span>
+                    <span className="text-muted-foreground">{pct.toFixed(0)}%</span>
+                  </div>
+                  <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full bg-emerald-500" style={{ width: `${pct}%` }} />
+                  </div>
+                  {cities && cities.length > 0 && (
+                    <div className="ml-4 mt-1 space-y-0.5">
+                      {cities.map(city => (
+                        <p key={city} className="text-xs text-muted-foreground">{city}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </details>
+      )}
+    </div>
+  );
+}
+
+// 2B: Trend badge component
+function TrendBadge({ value }: { value: number | null }) {
+  if (value === null) return null;
+  const positive = value >= 0;
+  return (
+    <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-full inline-flex items-center gap-0.5 ${
+      positive
+        ? 'bg-emerald-500/10 text-emerald-500'
+        : 'bg-red-500/10 text-red-500'
+    }`}>
+      {positive ? (
+        <ArrowUpIcon className="w-3 h-3" />
+      ) : (
+        <ArrowDownIcon className="w-3 h-3" />
+      )}
+      {positive ? '+' : ''}{value}%
+    </span>
   );
 }
 
@@ -794,6 +1173,63 @@ function LockIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
+function ArrowUpIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+  );
+}
+
+function ArrowDownIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
+
+// 2A: OS icon
+function OSIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+      <line x1="8" y1="21" x2="16" y2="21" />
+      <line x1="12" y1="17" x2="12" y2="21" />
+    </svg>
+  );
+}
+
+// 2A: Link/referrer icon
+function LinkIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    </svg>
+  );
+}
+
+// 2C: Mini chart icon for analytics link on QR rows
+function MiniChartIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
+    </svg>
+  );
+}
+
+// 2D: Chevron icon for expandable sections
+function ChevronIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <polyline points="9 18 15 12 9 6" />
     </svg>
   );
 }

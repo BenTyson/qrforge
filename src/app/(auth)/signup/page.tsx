@@ -23,6 +23,8 @@ function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const redirect = searchParams.get('redirect') || '/dashboard';
+
   // Store referral code from URL in localStorage
   useEffect(() => {
     const refCode = searchParams.get('ref');
@@ -49,11 +51,13 @@ function SignUpForm() {
     }
 
     const supabase = createClient();
-    // Include referral code in callback if present
+    // Include referral code and redirect in callback
     const storedRef = localStorage.getItem(REFERRAL_STORAGE_KEY);
-    const callbackUrl = storedRef
-      ? `${window.location.origin}/callback?ref=${storedRef}`
-      : `${window.location.origin}/callback`;
+    const callbackParams = new URLSearchParams();
+    if (storedRef) callbackParams.set('ref', storedRef);
+    if (redirect !== '/dashboard') callbackParams.set('redirect', redirect);
+    const callbackQuery = callbackParams.toString();
+    const callbackUrl = `${window.location.origin}/callback${callbackQuery ? `?${callbackQuery}` : ''}`;
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -70,9 +74,9 @@ function SignUpForm() {
     }
 
     // If email confirmation is disabled, user is auto-logged in
-    // Redirect to dashboard instead of showing "check email" message
+    // Redirect to the intended destination (or dashboard by default)
     if (data.session) {
-      router.push('/dashboard');
+      router.push(redirect);
       return;
     }
 
@@ -83,11 +87,13 @@ function SignUpForm() {
 
   const handleGoogleSignUp = async () => {
     const supabase = createClient();
-    // Include referral code in callback if present
+    // Include referral code and redirect in callback
     const storedRef = localStorage.getItem(REFERRAL_STORAGE_KEY);
-    const callbackUrl = storedRef
-      ? `${window.location.origin}/callback?ref=${storedRef}`
-      : `${window.location.origin}/callback`;
+    const callbackParams = new URLSearchParams();
+    if (storedRef) callbackParams.set('ref', storedRef);
+    if (redirect !== '/dashboard') callbackParams.set('redirect', redirect);
+    const callbackQuery = callbackParams.toString();
+    const callbackUrl = `${window.location.origin}/callback${callbackQuery ? `?${callbackQuery}` : ''}`;
 
     await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -228,7 +234,7 @@ function SignUpForm() {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Already have an account?{' '}
-            <Link href="/login" className="text-primary hover:underline">
+            <Link href={redirect !== '/dashboard' ? `/login?redirect=${encodeURIComponent(redirect)}` : '/login'} className="text-primary hover:underline">
               Sign in
             </Link>
           </p>

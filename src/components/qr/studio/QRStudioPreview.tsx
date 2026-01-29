@@ -4,16 +4,10 @@ import { useMemo } from 'react';
 import { QRPreview } from '../QRPreview';
 import { Button } from '@/components/ui/button';
 import { cn, getAppUrl } from '@/lib/utils';
-import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
+import { useQRStudio } from './QRStudioContext';
+import type { QRContent } from '@/lib/qr/types';
 
 interface QRStudioPreviewProps {
-  content: QRContent | null;
-  style: QRStyleOptions;
-  qrName: string;
-  shortCode: string | null;
-  userTier: 'free' | 'pro' | 'business' | null;
-  isSaving: boolean;
-  isDownloading: boolean;
   canDownload: boolean;
   onDownloadPNG: () => void;
   onDownloadSVG: () => void;
@@ -21,18 +15,13 @@ interface QRStudioPreviewProps {
 }
 
 export function QRStudioPreview({
-  content,
-  style,
-  qrName,
-  shortCode,
-  userTier,
-  isSaving,
-  isDownloading,
   canDownload,
   onDownloadPNG,
   onDownloadSVG,
   className,
 }: QRStudioPreviewProps) {
+  const { state } = useQRStudio();
+  const { content, style, qrName, shortCode, userTier, isSaving, isDownloading } = state;
   const canDownloadSVG = userTier === 'pro' || userTier === 'business';
 
   // IMPORTANT: Once saved (shortCode exists), show the actual QR that will be scanned
@@ -164,16 +153,14 @@ export function QRStudioPreview({
 
 // Mobile-specific mini preview component
 export function QRStudioMiniPreview({
-  content,
-  style,
   isExpanded,
   onToggle,
 }: {
-  content: QRContent | null;
-  style: QRStyleOptions;
   isExpanded: boolean;
   onToggle: () => void;
 }) {
+  const { state } = useQRStudio();
+  const { content, style } = state;
   return (
     <div className="border-b border-border bg-card/50 backdrop-blur">
       <button

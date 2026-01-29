@@ -346,6 +346,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-29 | QR Studio Modularization Refactor (6 phases): unified validation module, form/preview registries, extracted ContentStep + DownloadStep, split monolithic hook into 5 focused hooks, social form factory (8 forms), StyleStep tab extraction, QRStudioContext to eliminate prop drilling. 20 new files, 24 modified, ~800 lines removed, 0 behavior changes. |
 | 2026-01-29 | QR Studio UI refinements: compact pill color presets (14 total), Logo tab reordered to 2nd, branded SVG icons for all 34 QR types in type selector. |
 | 2026-01-29 | Logo Crop Modal bug fixes: rounded shape overlay, live preview thumbnail, object URL leak fix. |
 | 2026-01-29 | Logo Editor Enhancement: react-easy-crop crop modal, shape masking (square/rounded/circle), margin slider, background color picker. Velite blog build fix (2 posts restored). |

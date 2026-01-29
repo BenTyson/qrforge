@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useBulkState, BulkStep, MAX_ENTRIES } from './hooks/useBulkState';
+import { useBulkState, BulkStep, MAX_ENTRIES, type BulkState, type BulkActions } from './hooks/useBulkState';
 import { BulkUploadStep } from './BulkUploadStep';
 import { BulkReviewStep } from './BulkReviewStep';
 import { Button } from '@/components/ui/button';
@@ -14,11 +14,69 @@ import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
 // Import reusable step components from wizard (direct imports to avoid barrel export overhead)
 import { StyleStep } from '../wizard/steps/StyleStep';
 import { OptionsStep } from '../wizard/steps/OptionsStep';
+import { QRStudioProvider } from '../studio/QRStudioContext';
+import type { QRStudioState, QRStudioActions } from '../studio/hooks/useQRStudioState';
 
 // Types
 interface UserData {
   userId: string;
   tier: 'free' | 'pro' | 'business';
+}
+
+/**
+ * Adapter that wraps OptionsStep in a QRStudioProvider for use in BulkStudio.
+ * OptionsStep reads from QRStudioContext, so we build a shim state/actions
+ * from BulkStudio's own state.
+ */
+function BulkOptionsStepAdapter({
+  bulkState,
+  bulkActions,
+  canAccessProTypes,
+  userTier,
+  onContinue,
+}: {
+  bulkState: BulkState;
+  bulkActions: BulkActions;
+  canAccessProTypes: boolean;
+  userTier: 'free' | 'pro' | 'business' | null;
+  onContinue: () => void;
+}) {
+  const style = bulkState.style as QRStyleOptions;
+
+  const shimState = {
+    style,
+    expiresAt: bulkState.expiresAt,
+    passwordEnabled: bulkState.passwordEnabled,
+    password: bulkState.password,
+    scheduledEnabled: bulkState.scheduledEnabled,
+    activeFrom: bulkState.activeFrom,
+    activeUntil: bulkState.activeUntil,
+    abTestEnabled: false,
+    abVariantBUrl: '',
+    abSplitPercentage: 50,
+    userTier,
+    content: null,
+    selectedType: null,
+  } as unknown as QRStudioState;
+
+  const shimActions = {
+    setStyle: (s: QRStyleOptions) => bulkActions.setStyle(s),
+    setExpiresAt: bulkActions.setExpiresAt,
+    setPasswordEnabled: bulkActions.setPasswordEnabled,
+    setPassword: bulkActions.setPassword,
+    setScheduledEnabled: bulkActions.setScheduledEnabled,
+    setActiveFrom: bulkActions.setActiveFrom,
+    setActiveUntil: bulkActions.setActiveUntil,
+    setAbTestEnabled: () => {},
+    setAbVariantBUrl: () => {},
+    setAbSplitPercentage: () => {},
+  } as unknown as QRStudioActions;
+
+  return (
+    <QRStudioProvider state={shimState} actions={shimActions} canAccessProTypes={canAccessProTypes}>
+      <OptionsStep onContinue={onContinue} />
+    </QRStudioProvider>
+  );
 }
 
 // Step configuration
@@ -291,29 +349,9 @@ export function BulkStudio() {
                     These settings will apply to all {state.entries.length} QR codes
                   </p>
                 </div>
-                <OptionsStep
-                  errorCorrectionLevel={(state.style as QRStyleOptions).errorCorrectionLevel}
-                  onErrorCorrectionChange={(level) => actions.setStyle({ ...(state.style as QRStyleOptions), errorCorrectionLevel: level })}
-                  margin={(state.style as QRStyleOptions).margin}
-                  onMarginChange={(margin) => actions.setStyle({ ...(state.style as QRStyleOptions), margin })}
-                  expiresAt={state.expiresAt}
-                  onExpiresAtChange={actions.setExpiresAt}
-                  passwordEnabled={state.passwordEnabled}
-                  onPasswordEnabledChange={actions.setPasswordEnabled}
-                  password={state.password}
-                  onPasswordChange={actions.setPassword}
-                  scheduledEnabled={state.scheduledEnabled}
-                  onScheduledEnabledChange={actions.setScheduledEnabled}
-                  activeFrom={state.activeFrom}
-                  onActiveFromChange={actions.setActiveFrom}
-                  activeUntil={state.activeUntil}
-                  onActiveUntilChange={actions.setActiveUntil}
-                  abTestEnabled={false}
-                  onAbTestEnabledChange={() => {}}
-                  abVariantBUrl=""
-                  onAbVariantBUrlChange={() => {}}
-                  abSplitPercentage={50}
-                  onAbSplitPercentageChange={() => {}}
+                <BulkOptionsStepAdapter
+                  bulkState={state}
+                  bulkActions={actions}
                   canAccessProTypes={canAccessProTypes}
                   userTier={userData?.tier || null}
                   onContinue={actions.nextStep}

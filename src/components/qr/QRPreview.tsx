@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import { generateQRDataURL } from '@/lib/qr/generator';
+import { hasMinimalContent } from '@/lib/qr/validation';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
 import { cn } from '@/lib/utils';
 
@@ -37,97 +38,7 @@ export function QRPreview({
       return;
     }
 
-    // Check if content has valid data
-    const hasValidContent = (() => {
-      switch (content.type) {
-        case 'url':
-          return content.url && content.url.length > 0;
-        case 'text':
-          return content.text && content.text.length > 0;
-        case 'wifi':
-          return content.ssid && content.ssid.length > 0;
-        case 'vcard':
-          return (content.firstName && content.firstName.length > 0) ||
-                 (content.lastName && content.lastName.length > 0);
-        case 'email':
-          return content.email && content.email.length > 0;
-        case 'phone':
-          return content.phone && content.phone.length > 0;
-        case 'sms':
-          return content.phone && content.phone.length > 0;
-        case 'whatsapp':
-          return content.phone && content.phone.length > 0;
-        case 'facebook':
-          return content.profileUrl && content.profileUrl.length > 0;
-        case 'instagram':
-          return content.username && content.username.length > 0;
-        case 'linkedin':
-          return content.username && content.username.length > 0;
-        case 'x':
-          return content.username && content.username.length > 0;
-        case 'tiktok':
-          return content.username && content.username.length > 0;
-        case 'snapchat':
-          return content.username && content.username.length > 0;
-        case 'threads':
-          return content.username && content.username.length > 0;
-        case 'youtube':
-          return content.videoId && content.videoId.length > 0;
-        case 'pinterest':
-          return content.username && content.username.length > 0;
-        case 'spotify':
-          return content.spotifyId && content.spotifyId.length > 0;
-        case 'reddit':
-          return (content.username && content.username.length > 0) ||
-                 (content.subreddit && content.subreddit.length > 0);
-        case 'twitch':
-          return content.username && content.username.length > 0;
-        case 'discord':
-          return content.inviteCode && content.inviteCode.length > 0;
-        case 'apps':
-          return (content.appStoreUrl && content.appStoreUrl.length > 0) ||
-                 (content.playStoreUrl && content.playStoreUrl.length > 0) ||
-                 (content.fallbackUrl && content.fallbackUrl.length > 0);
-        case 'google-review':
-          return content.placeId && content.placeId.length >= 20 &&
-                 content.businessName && content.businessName.length > 0;
-        case 'event': {
-          if (!content.title || content.title.length === 0) return false;
-          if (!content.startDate || content.startDate.length === 0) return false;
-          if (!content.endDate || content.endDate.length === 0) return false;
-          const start = new Date(content.startDate);
-          const end = new Date(content.endDate);
-          return end > start;
-        }
-        case 'geo':
-          return content.latitude !== undefined && content.longitude !== undefined &&
-                 content.latitude >= -90 && content.latitude <= 90 &&
-                 content.longitude >= -180 && content.longitude <= 180;
-        // Pro types - these generate preview QR codes
-        case 'pdf':
-          return (content.fileUrl && content.fileUrl.length > 0) || (content.fileName && content.fileName.length > 0);
-        case 'images':
-          return content.images && content.images.length > 0;
-        case 'video':
-          return (content.videoUrl && content.videoUrl.length > 0) || (content.embedUrl && content.embedUrl.length > 0);
-        case 'mp3':
-          return (content.audioUrl && content.audioUrl.length > 0) || (content.embedUrl && content.embedUrl.length > 0);
-        case 'menu':
-          return content.restaurantName && content.restaurantName.length > 0;
-        case 'business':
-          return content.name && content.name.length > 0;
-        case 'links':
-          return content.title && content.title.length > 0;
-        case 'coupon':
-          return (content.businessName && content.businessName.length > 0) && (content.headline && content.headline.length > 0);
-        case 'social':
-          return content.name && content.name.length > 0;
-        default:
-          return false;
-      }
-    })();
-
-    if (!hasValidContent) {
+    if (!hasMinimalContent(content)) {
       setQrDataURL(null);
       setError(null);
       return;

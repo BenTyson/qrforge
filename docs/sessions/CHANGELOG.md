@@ -6,6 +6,56 @@ Session-by-session history of development work. Most recent first.
 
 ## January 29, 2026
 
+### QR Studio Modularization Refactor (6 Phases)
+
+Major architecture refactor of the `/qr-codes/create` page (~10,000 lines across ~50 files). Reduced complexity, eliminated duplication, and improved maintainability without changing any user-facing behavior.
+
+#### Phase 1: Unified Validation Module
+- Created `src/lib/qr/validation.ts` as single source of truth for content validation
+- Eliminated triple-duplicated validation logic from `generator.ts`, `useQRStudioState.ts`, and `QRPreview.tsx`
+- Three tiers: `hasMinimalContent` (preview), `isContentValid` (UI gating), `validateContent` (API)
+
+#### Phase 2: Form Registry + Preview Registry + Destination URL Module
+- Created `src/lib/qr/form-registry.ts` — maps QR type to form component (replaces switch statements)
+- Created `src/lib/qr/preview-registry.ts` — maps dynamic types to sidebar preview components
+- Created `src/lib/qr/destination-url.ts` — consolidated duplicated URL extraction logic
+- Adding a new QR type now requires 1 registry entry instead of 7 file edits
+
+#### Phase 3: Extract Inline Components from QRStudio.tsx
+- Extracted `ContentStep` and `DownloadStep` from inline definitions in QRStudio.tsx
+- `QRStudio.tsx` reduced from 1,443 to ~572 lines
+
+#### Phase 4: Split useQRStudioState into Focused Hooks
+- Decomposed 941-line monolithic hook into 5 focused hooks + orchestrator
+- `useNavigation.ts` (~70 lines) — step navigation
+- `useContentState.ts` (~120 lines) — type, content, name, template
+- `useStyleState.ts` (~35 lines) — style state with DEFAULT_STYLE
+- `useProOptions.ts` (~90 lines) — expiration, password, scheduling, A/B testing
+- `useSaveQR.ts` (~290 lines) — persistence, auth, download state
+- `useQRStudioState.ts` reduced to ~278-line orchestrator; public API unchanged
+
+#### Phase 5: Social Form Factory + StyleStep Tab Extraction
+- Created `createSocialForm.tsx` factory + `social-form-configs.ts` for 8 near-identical social forms
+- Instagram, LinkedIn, X, TikTok, Snapchat, Threads, Pinterest, Twitch forms are now thin wrappers (~3 lines each)
+- Extracted 4 style tab components into `style-tabs/` directory
+- `StyleStep.tsx` reduced from 828 to ~108 lines
+
+#### Phase 6: QRStudioContext (Prop Drilling Elimination)
+- Created `QRStudioContext.tsx` with `QRStudioProvider` and `useQRStudio` hook
+- `OptionsStep`: 19 props → 1 (`onContinue`)
+- `ContentStep`: 10 props → 1 (`onContinue`)
+- `DownloadStep`: 17 props → 7 callback-only props
+- `QRStudioPreview`: 10 props → 4 props
+- Added `BulkOptionsStepAdapter` in BulkStudio for backward compatibility
+
+#### Impact
+- 20 new files created, 24 files modified
+- ~800 net lines removed
+- All 216 tests pass (unchanged test suite)
+- No user-facing behavior changes
+
+---
+
 ### QR Studio UI Refinements
 
 Polished the QR creation/edit/bulk Style step and Type selector for a more professional look.

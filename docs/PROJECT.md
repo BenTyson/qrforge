@@ -67,7 +67,7 @@ Premium QR code generator with analytics and dynamic codes. Goal: passive income
 | Tier | Price | QR Codes | Analytics | Key Features |
 |------|-------|----------|-----------|--------------|
 | Free | $0 | 5 | No | Basic types, 100 scans/mo, no URL editing |
-| Pro | $9/mo | 50 | Yes | All types, logo, landing pages, URL editing, 10k scans/mo, **7-day free trial** |
+| Pro | $9/mo | 50 | Yes | All types, logo (crop/shape/background), landing pages, URL editing, 10k scans/mo, **7-day free trial** |
 | Business | $29/mo | Unlimited | Yes | Bulk generation, API access, unlimited scans |
 
 ### Growth Features

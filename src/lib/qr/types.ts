@@ -49,6 +49,9 @@ export interface GradientOptions {
   angle?: number; // For linear gradient, in degrees (0-360)
 }
 
+// Logo shape options
+export type LogoShape = 'square' | 'rounded' | 'circle';
+
 // Module patterns (6 options from qr-code-styling)
 export type ModuleShape =
   | 'square'       // Standard square modules (default)
@@ -102,7 +105,10 @@ export interface QRStyleOptions {
   margin: number;
   width: number;
   logoUrl?: string;    // URL to uploaded logo image
-  logoSize?: number;   // Logo size as % of QR code (10-30, default 20)
+  logoSize?: number;   // Logo size as % of QR code (10-35, default 20)
+  logoShape?: LogoShape;  // Logo mask shape (default: 'square')
+  logoMargin?: number;    // Logo margin in px (0-20, default: 4)
+  logoBackground?: { enabled: boolean; color: string }; // Logo background fill
   gradient?: GradientOptions; // Optional gradient for foreground
   // Advanced pattern options (Pro feature)
   moduleShape?: ModuleShape;              // Data dot shape
@@ -119,6 +125,9 @@ export const PRO_STYLE_FEATURES = [
   'frame',
   'gradient',
   'logoUrl',
+  'logoShape',
+  'logoMargin',
+  'logoBackground',
 ] as const;
 
 // Patterns that may benefit from higher error correction for reliable scanning

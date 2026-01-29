@@ -54,6 +54,7 @@
     "qr-code-styling": "^1.9.2",
     "react": "19.2.1",
     "react-dom": "19.2.1",
+    "react-easy-crop": "^5.5.6",
     "recharts": "^3.6.0",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-pretty-code": "^0.14.1",

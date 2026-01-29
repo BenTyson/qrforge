@@ -4,6 +4,42 @@ Session-by-session history of development work. Most recent first.
 
 ---
 
+## January 29, 2026
+
+### Logo Editor Enhancement
+
+Replaced the basic upload-and-slider logo experience with a full crop modal and rich inline controls.
+
+#### New Dependency
+- `react-easy-crop` (~9 KB gzipped) for interactive image cropping with pinch-to-zoom support
+
+#### New Files
+- `src/lib/qr/cropUtils.ts` — Canvas utility: `getCroppedImage()` crops, applies shape mask (square/rounded/circle), fills optional background color, exports PNG blob. `createImageUrl()` handles SVG rasterization for the cropper.
+- `src/components/qr/LogoCropModal.tsx` — Dialog modal with `react-easy-crop` Cropper (1:1 aspect), zoom slider (1x–3x), shape selector, background toggle + color picker, Apply/Cancel buttons.
+
+#### Modified Files
+- `src/lib/qr/types.ts` — Added `LogoShape` type, `logoShape`, `logoMargin`, `logoBackground` fields to `QRStyleOptions`, added new fields to `PRO_STYLE_FEATURES`
+- `src/components/qr/LogoUploader.tsx` — Added `onFileSelected` prop; when provided, delegates to parent (crop modal) instead of uploading directly. Existing callers (CouponForm, MenuForm) unaffected.
+- `src/components/qr/wizard/steps/StyleStep.tsx` — Expanded `LogoTabContent`: crop modal integration, logo thumbnail with Edit/Remove, shape selector (square/rounded/circle), size slider (10–35%), margin slider (0–20px), background toggle + color picker. Shape/background changes re-process original file through crop pipeline.
+- `src/lib/qr/generator.ts` — `logoMargin` now reads from style options (was hardcoded 4), added `hideBackgroundDots: true` for cleaner logo zone.
+- `src/components/qr/LogoBestPractices.tsx` — Updated shape tip to reference built-in shape tool.
+
+#### UX Flow
+1. User drops/selects image → crop modal opens with 1:1 cropper
+2. User zooms, pans, selects shape, toggles background → clicks Apply
+3. Canvas crops + masks + backgrounds → PNG blob uploaded to `/api/qr/upload-media`
+4. Inline controls appear (shape, size, margin, background) with live QR preview updates
+5. "Edit" reopens crop modal with original file; "Remove" clears logo
+
+### Velite Blog Build Fix
+
+Fixed 2 blog posts (`how-to-make-qr-code-for-link.mdx`, `qr-code-for-google-form.mdx`) failing with `EISDIR: illegal operation on a directory, read content`.
+
+- Root cause: `[QRWolf.com](/)` links with bare `/` URL. Velite's `isRelativePath` regex requires at least one character after the leading slash, so `/` was treated as a relative path, causing Velite to `readFile('content')` (the root directory).
+- Fix: Changed `(/)` to `(https://qrwolf.com)` in both files. Blog post count restored to 52.
+
+---
+
 ## January 28, 2026
 
 ### Embed Modal UX Improvements

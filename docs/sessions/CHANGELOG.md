@@ -6,6 +6,19 @@ Session-by-session history of development work. Most recent first.
 
 ## January 29, 2026
 
+### Logo Crop Modal Bug Fixes
+
+Audited and fixed four issues in the Logo Crop Editor shipped earlier today.
+
+#### Bug Fixes
+- **Rounded shape overlay**: The "Rounded" shape option looked identical to "Square" in the crop modal because both mapped to `'rect'`. Added `cropAreaStyle` with `borderRadius: '15%'` to the Cropper component when shape is `'rounded'`, matching the 15% radius used in the canvas output.
+- **No background preview**: Background color was only visible after clicking Apply. Added a debounced (150ms) live preview thumbnail (56×56px, checkerboard transparency) next to the zoom slider that calls `getCroppedImage()` whenever crop area, shape, or background settings change.
+- **Object URL leak**: If the logo file changed while `createImageUrl()` was still resolving, the old promise's URL was never revoked. Added a `cancelled` flag so late-resolving URLs are revoked immediately and `setImageUrl` is skipped.
+
+#### Files Modified
+- `src/components/qr/LogoCropModal.tsx` — Added `useRef` import, preview state/refs, cancelled-flag pattern in image load effect, cleanup effect for preview resources, debounced preview generation effect, `cropAreaStyle` on Cropper, restructured zoom section with preview thumbnail.
+- `src/lib/qr/cropUtils.ts` — Updated comment on background fill placement (before clip is intentional: fills corners outside shape mask for QR contrast).
+
 ### Logo Editor Enhancement
 
 Replaced the basic upload-and-slider logo experience with a full crop modal and rich inline controls.

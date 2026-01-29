@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import Cropper from 'react-easy-crop';
 import type { Area } from 'react-easy-crop';
 import { Square, Circle } from 'lucide-react';
@@ -44,6 +44,9 @@ export function LogoCropModal({
   const [bgEnabled, setBgEnabled] = useState(initialBackground?.enabled ?? false);
   const [bgColor, setBgColor] = useState(initialBackground?.color ?? '#ffffff');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const previewUrlRef = useRef<string | null>(null);
 
   // Load image URL when file changes
   useEffect(() => {
@@ -51,16 +54,30 @@ export function LogoCropModal({
       setImageUrl(null);
       return;
     }
-    let revoke: string | null = null;
+    let cancelled = false;
     createImageUrl(file).then((url) => {
-      // Only set if it's an object URL (not a data URL)
-      if (url.startsWith('blob:')) revoke = url;
+      if (cancelled) {
+        if (url.startsWith('blob:')) URL.revokeObjectURL(url);
+        return;
+      }
       setImageUrl(url);
     });
     return () => {
-      if (revoke) URL.revokeObjectURL(revoke);
+      cancelled = true;
+      setImageUrl((prev) => {
+        if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+        return null;
+      });
     };
   }, [file]);
+
+  // Cleanup preview resources on unmount
+  useEffect(() => {
+    return () => {
+      if (previewTimerRef.current) clearTimeout(previewTimerRef.current);
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    };
+  }, []);
 
   // Reset state when modal opens with new initial values
   useEffect(() => {
@@ -70,8 +87,33 @@ export function LogoCropModal({
       setBgColor(initialBackground?.color ?? '#ffffff');
       setCrop({ x: 0, y: 0 });
       setZoom(1);
+      setPreviewUrl(null);
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+        previewUrlRef.current = null;
+      }
     }
   }, [open, initialShape, initialBackground]);
+
+  // Debounced preview generation
+  useEffect(() => {
+    if (!imageUrl || !croppedAreaPixels || !open) return;
+    if (previewTimerRef.current) clearTimeout(previewTimerRef.current);
+    previewTimerRef.current = setTimeout(() => {
+      const background = { enabled: bgEnabled, color: bgColor };
+      getCroppedImage(imageUrl, croppedAreaPixels, shape, background)
+        .then((blob) => {
+          if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+          const url = URL.createObjectURL(blob);
+          previewUrlRef.current = url;
+          setPreviewUrl(url);
+        })
+        .catch(() => { /* preview is best-effort */ });
+    }, 150);
+    return () => {
+      if (previewTimerRef.current) clearTimeout(previewTimerRef.current);
+    };
+  }, [imageUrl, croppedAreaPixels, shape, bgEnabled, bgColor, open]);
 
   const onCropComplete = useCallback((_: Area, croppedPixels: Area) => {
     setCroppedAreaPixels(croppedPixels);
@@ -114,22 +156,47 @@ export function LogoCropModal({
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
                 showGrid={shape !== 'circle'}
+                style={{
+                  cropAreaStyle: shape === 'rounded' ? { borderRadius: '15%' } : undefined,
+                }}
               />
             </div>
 
-            {/* Zoom Slider */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs text-slate-400">Zoom</Label>
-                <span className="text-xs text-slate-500">{zoom.toFixed(1)}x</span>
+            {/* Preview + Zoom Slider */}
+            <div className="flex items-center gap-3">
+              {/* Preview thumbnail */}
+              <div
+                className="w-14 h-14 flex-shrink-0 rounded-md overflow-hidden"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(45deg, #334155 25%, transparent 25%), linear-gradient(-45deg, #334155 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #334155 75%), linear-gradient(-45deg, transparent 75%, #334155 75%)',
+                  backgroundSize: '8px 8px',
+                  backgroundPosition: '0 0, 0 4px, 4px -4px, -4px 0',
+                  backgroundColor: '#1e293b',
+                }}
+              >
+                {previewUrl && (
+                  <img
+                    src={previewUrl}
+                    alt="Crop preview"
+                    className="w-full h-full object-contain"
+                  />
+                )}
               </div>
-              <Slider
-                value={[zoom]}
-                onValueChange={([v]) => setZoom(v)}
-                min={1}
-                max={3}
-                step={0.1}
-              />
+              {/* Zoom slider */}
+              <div className="flex-1 space-y-1">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs text-slate-400">Zoom</Label>
+                  <span className="text-xs text-slate-500">{zoom.toFixed(1)}x</span>
+                </div>
+                <Slider
+                  value={[zoom]}
+                  onValueChange={([v]) => setZoom(v)}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                />
+              </div>
             </div>
 
             {/* Shape Selector */}

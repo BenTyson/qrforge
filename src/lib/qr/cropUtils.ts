@@ -45,7 +45,8 @@ export async function getCroppedImage(
   canvas.width = size;
   canvas.height = size;
 
-  // Fill background if enabled
+  // Fill background if enabled (before clip so it covers the full canvas,
+  // providing contrast in corners outside the shape mask)
   if (background?.enabled && background.color) {
     ctx.fillStyle = background.color;
     ctx.fillRect(0, 0, size, size);

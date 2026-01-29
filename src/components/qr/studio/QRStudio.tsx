@@ -156,16 +156,24 @@ export function QRStudio({ mode, qrCodeId }: QRStudioProps) {
   const [isLoaded, setIsLoaded] = useState(mode === 'create');
   const [templateLoaded, setTemplateLoaded] = useState(false);
 
-  // Load template from URL param in create mode
+  // Load template or prefill URL from query params in create mode
   useEffect(() => {
     if (mode !== 'create' || templateLoaded) return;
 
     const templateParam = searchParams.get('template');
+    const prefillUrl = searchParams.get('prefill_url');
+
     if (templateParam) {
       const template = getTemplateById(templateParam);
       if (template) {
         actions.loadTemplate(template);
       }
+    } else if (prefillUrl) {
+      actions.selectCategory('basic');
+      actions.selectType('url');
+      // selectType resets content to null, but React batches state updates
+      // so the last setContent call wins within the same batch
+      actions.setContent({ type: 'url', url: prefillUrl });
     }
     setTemplateLoaded(true);
   }, [mode, searchParams, templateLoaded, actions]);

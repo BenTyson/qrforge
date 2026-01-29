@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { QRPreview } from './QRPreview';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { createClient } from '@/lib/supabase/client';
 
 const DEFAULT_STYLE: QRStyleOptions = {
   foregroundColor: '#14b8a6',
@@ -18,6 +19,15 @@ const DEFAULT_STYLE: QRStyleOptions = {
 export function QRGenerator() {
   const [urlValue, setUrlValue] = useState('');
   const [content, setContent] = useState<QRContent | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check auth state on mount
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsLoggedIn(!!user);
+    });
+  }, []);
 
   const handleUrlChange = (value: string) => {
     setUrlValue(value);
@@ -32,10 +42,22 @@ export function QRGenerator() {
     }
   };
 
-  // Build signup URL with prefilled data if user entered a URL
-  const getSignupUrl = () => {
-    if (content && content.type === 'url') {
-      return `/signup?next=${encodeURIComponent('/qr-codes/create')}&url=${encodeURIComponent(content.url)}`;
+  // Build destination URL based on auth state
+  const getCtaUrl = () => {
+    const createUrl = content && content.type === 'url'
+      ? `/qr-codes/create?prefill_url=${encodeURIComponent(content.url)}`
+      : '/qr-codes/create';
+
+    if (isLoggedIn) {
+      return createUrl;
+    }
+    return `/signup?redirect=${encodeURIComponent(createUrl)}`;
+  };
+
+  // Build the generic CTA destination (no prefill URL)
+  const getGenericCtaUrl = () => {
+    if (isLoggedIn) {
+      return '/qr-codes/create';
     }
     return '/signup';
   };
@@ -53,24 +75,24 @@ export function QRGenerator() {
             />
           </div>
 
-          {/* Download CTA - Gates to signup */}
+          {/* CTA - Gates to signup or goes to create */}
           <div className="mt-6 w-full max-w-xs">
-            <Link href={getSignupUrl()} className="block">
+            <Link href={getCtaUrl()} className="block">
               <Button
                 className="w-full h-12 bg-primary hover:bg-primary/90 glow-hover transition-all text-base font-medium"
                 disabled={!content}
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
+                  <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
-                Download QR Code
+                Create My QR Code
               </Button>
             </Link>
-            <p className="text-center text-xs text-slate-500 mt-2">
-              Free account required to download
-            </p>
+            {!isLoggedIn && (
+              <p className="text-center text-xs text-slate-500 mt-2">
+                Free account required
+              </p>
+            )}
           </div>
         </div>
 
@@ -109,7 +131,7 @@ export function QRGenerator() {
 
           {/* Studio CTA */}
           <Link
-            href="/signup"
+            href={getGenericCtaUrl()}
             className="block w-full p-6 rounded-xl border-2 border-dashed border-slate-700 hover:border-primary/50 bg-slate-800/30 hover:bg-slate-800/50 transition-all group text-left"
           >
             <div className="flex items-center gap-4">
@@ -163,7 +185,7 @@ export function QRGenerator() {
           </div>
 
           {/* Final CTA */}
-          <Link href="/signup" className="block">
+          <Link href={getGenericCtaUrl()} className="block">
             <Button className="w-full h-12 glow-hover text-base">
               Get Started Free
               <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

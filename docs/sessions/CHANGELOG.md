@@ -6,6 +6,29 @@ Session-by-session history of development work. Most recent first.
 
 ## January 29, 2026
 
+### QR Studio UI Refinements
+
+Polished the QR creation/edit/bulk Style step and Type selector for a more professional look.
+
+#### Color Presets Redesign
+- Replaced large square tile swatches with compact pill-shaped chips (colored circle + label)
+- Added 6 new presets: Charcoal, Espresso, Slate, Wine, Teal, Indigo (14 total, all 7:1+ contrast)
+- Layout changed from `grid-cols-4 aspect-square` to `flex flex-wrap` pills
+
+#### Style Tab Reorder
+- Moved Logo tab from last to second position: Colors → Logo → Pattern → Frame
+
+#### Type Selector Brand Icons
+- Added branded SVG icons with correct brand colors for all 14 social media platforms (WhatsApp, Instagram, LinkedIn, X, TikTok, Snapchat, Threads, YouTube, Pinterest, Spotify, Reddit, Twitch, Discord, Facebook)
+- Added themed stroke icons for all non-social QR types (URL, apps, vcard, email, phone, SMS, WiFi, text, Google Review, event, geo, menu, business, links, coupon, social, PDF, images, video, MP3)
+- Cards now show colored icon square + text instead of plain text-only layout
+
+#### Files Modified
+- `src/components/qr/wizard/constants.tsx` — Added 6 new color presets
+- `src/components/qr/wizard/steps/StyleStep.tsx` — Pill-style color presets, reordered tabs
+- `src/components/qr/wizard/steps/TypeStep.tsx` — Icon-enhanced type cards
+- `src/components/qr/wizard/type-icons.tsx` — New file: brand icons + colors for all QR types
+
 ### Logo Crop Modal Bug Fixes
 
 Audited and fixed four issues in the Logo Crop Editor shipped earlier today.

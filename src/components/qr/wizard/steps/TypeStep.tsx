@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { TYPE_CATEGORIES } from '../constants';
+import { TYPE_ICONS } from '../type-icons';
 
 interface TypeStepProps {
   selectedCategory: string | null;
@@ -81,6 +82,7 @@ export function TypeStep({
             {TYPE_CATEGORIES.find((c) => c.id === selectedCategory)?.types.map((type) => {
               const isProType = 'pro' in type && type.pro;
               const isDisabled = isProType && !canAccessProTypes;
+              const visual = TYPE_ICONS[type.id];
               return (
                 <button
                   key={type.id}
@@ -88,14 +90,22 @@ export function TypeStep({
                   disabled={isDisabled}
                   aria-disabled={isDisabled}
                   className={cn(
-                    'p-4 rounded-xl border transition-all text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900',
+                    'group p-3.5 rounded-xl border transition-all text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900',
                     isDisabled
                       ? 'border-slate-700 bg-slate-800/30 opacity-60 cursor-not-allowed'
-                      : 'border-slate-700 bg-slate-800/50 hover:border-primary hover:bg-primary/5'
+                      : 'border-slate-700 bg-slate-800/50 hover:border-primary/60 hover:bg-slate-800'
                   )}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
+                  <div className="flex items-center gap-3">
+                    {visual && (
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 [&>svg]:w-5 [&>svg]:h-5 text-white transition-transform group-hover:scale-105"
+                        style={{ backgroundColor: visual.color }}
+                      >
+                        {visual.icon}
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
                       <h5 className="font-medium text-white">{type.name}</h5>
                       <p className="text-sm text-slate-400">{type.description}</p>
                     </div>
@@ -108,7 +118,7 @@ export function TypeStep({
                         Pro
                       </Link>
                     ) : (
-                      <svg className="w-5 h-5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg className="w-5 h-5 text-slate-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M9 18l6-6-6-6" />
                       </svg>
                     )}

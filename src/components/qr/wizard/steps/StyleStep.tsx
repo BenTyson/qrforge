@@ -38,9 +38,9 @@ export function StyleStep({
 
   const tabs: { id: TabType; label: string; icon: React.ReactNode; proBadge?: boolean; indicator?: boolean }[] = [
     { id: 'colors', label: 'Colors', icon: <Palette className="w-5 h-5" /> },
+    { id: 'logo', label: 'Logo', icon: <ImageIcon className="w-5 h-5" />, proBadge: true, indicator: !!style.logoUrl },
     { id: 'pattern', label: 'Pattern', icon: <Grid3X3 className="w-5 h-5" />, proBadge: true },
     { id: 'frame', label: 'Frame', icon: <Frame className="w-5 h-5" />, proBadge: true, indicator: style.frame?.enabled },
-    { id: 'logo', label: 'Logo', icon: <ImageIcon className="w-5 h-5" />, proBadge: true, indicator: !!style.logoUrl },
   ];
 
   return (
@@ -433,28 +433,35 @@ function ColorsTabContent({ style, onStyleChange, canAccessProTypes }: ColorsTab
       {!gradientEnabled && (
         <>
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Color Presets</h4>
-            <div className="grid grid-cols-4 gap-2">
-              {COLOR_PRESETS.map((preset) => (
-                <button
-                  key={preset.name}
-                  onClick={() => onStyleChange({ ...style, foregroundColor: preset.fg, backgroundColor: preset.bg })}
-                  className={cn(
-                    'aspect-square rounded-lg border-2 transition-all overflow-hidden',
-                    style.foregroundColor === preset.fg && style.backgroundColor === preset.bg
-                      ? 'border-primary scale-105'
-                      : 'border-transparent hover:border-slate-600'
-                  )}
-                  title={preset.name}
-                >
-                  <div className="w-full h-full" style={{ backgroundColor: preset.bg }}>
-                    <div
-                      className="w-1/2 h-full"
-                      style={{ backgroundColor: preset.fg }}
-                    />
-                  </div>
-                </button>
-              ))}
+            <h4 className="text-lg font-semibold text-white mb-3">Color Presets</h4>
+            <div className="flex flex-wrap gap-2">
+              {COLOR_PRESETS.map((preset) => {
+                const isActive = style.foregroundColor === preset.fg && style.backgroundColor === preset.bg;
+                return (
+                  <button
+                    key={preset.name}
+                    onClick={() => onStyleChange({ ...style, foregroundColor: preset.fg, backgroundColor: preset.bg })}
+                    className={cn(
+                      'flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 border transition-all',
+                      isActive
+                        ? 'border-primary bg-primary/10'
+                        : 'border-slate-700 bg-slate-800/50 hover:border-slate-500'
+                    )}
+                    title={preset.name}
+                  >
+                    <span className="relative flex-shrink-0 w-5 h-5 rounded-full overflow-hidden border border-slate-600">
+                      <span className="absolute inset-0" style={{ backgroundColor: preset.bg }} />
+                      <span className="absolute inset-0 w-1/2" style={{ backgroundColor: preset.fg }} />
+                    </span>
+                    <span className={cn(
+                      'text-xs font-medium',
+                      isActive ? 'text-primary' : 'text-slate-300'
+                    )}>
+                      {preset.name}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 

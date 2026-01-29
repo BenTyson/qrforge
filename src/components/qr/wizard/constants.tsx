@@ -177,6 +177,12 @@ export const COLOR_PRESETS = [
   { name: 'Sunset', fg: '#7c2d12', bg: '#fff7ed' },     // 10:1 - Brown on cream
   { name: 'Berry', fg: '#701a45', bg: '#fce7f3' },      // 9:1 - Magenta on pink
   { name: 'Royal', fg: '#4c1d95', bg: '#f3e8ff' },      // 10:1 - Purple on lavender
+  { name: 'Charcoal', fg: '#374151', bg: '#f9fafb' },   // 10:1 - Gray on off-white
+  { name: 'Espresso', fg: '#451a03', bg: '#fffbeb' },   // 16:1 - Dark brown on amber
+  { name: 'Slate', fg: '#0f172a', bg: '#e2e8f0' },      // 15:1 - Dark slate on light
+  { name: 'Wine', fg: '#4a0420', bg: '#fff1f2' },       // 14:1 - Dark red on rose
+  { name: 'Teal', fg: '#134e4a', bg: '#f0fdfa' },       // 11:1 - Dark teal on mint
+  { name: 'Indigo', fg: '#312e81', bg: '#eef2ff' },     // 12:1 - Dark indigo on blue
 ];
 
 // Types that have landing page previews

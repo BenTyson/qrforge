@@ -27,6 +27,21 @@ interface UserData {
  * Adapter that wraps OptionsStep in a QRStudioProvider for use in BulkStudio.
  * OptionsStep reads from QRStudioContext, so we build a shim state/actions
  * from BulkStudio's own state.
+ *
+ * IMPORTANT: The shim uses `as unknown as` to bypass TypeScript structural
+ * checks, so the compiler won't catch missing fields. If OptionsStep starts
+ * reading new properties from useQRStudio(), you must add them here too.
+ *
+ * Fields OptionsStep currently reads at runtime (keep in sync):
+ *   state  — style, expiresAt, passwordEnabled, password, scheduledEnabled,
+ *            activeFrom, activeUntil, abTestEnabled, abVariantBUrl,
+ *            abSplitPercentage, userTier, content, selectedType
+ *   actions — setStyle, setExpiresAt, setPasswordEnabled, setPassword,
+ *             setScheduledEnabled, setActiveFrom, setActiveUntil,
+ *             setAbTestEnabled, setAbVariantBUrl, setAbSplitPercentage
+ *
+ * A/B testing fields are intentionally hardcoded to disabled (with no-op
+ * setters) because bulk mode does not support A/B testing.
  */
 function BulkOptionsStepAdapter({
   bulkState,

@@ -1,59 +1,17 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import { normalizeContentUrls } from '@/lib/qr/generator';
-import type {
-  QRContent,
-  QRContentType,
-  QRStyleOptions,
-  URLContent,
-  TextContent,
-  WiFiContent,
-  VCardContent,
-  EmailContent,
-  PhoneContent,
-  SMSContent,
-  WhatsAppContent,
-  FacebookContent,
-  InstagramContent,
-  LinkedInContent,
-  XContent,
-  TikTokContent,
-  SnapchatContent,
-  ThreadsContent,
-  YouTubeContent,
-  PinterestContent,
-  SpotifyContent,
-  RedditContent,
-  TwitchContent,
-  DiscordContent,
-  AppsContent,
-  GoogleReviewContent,
-  EventContent,
-  GeoContent,
-  PDFContent,
-  ImagesContent,
-  VideoContent,
-  MP3Content,
-  MenuContent,
-  BusinessContent,
-  LinksContent,
-  CouponContent,
-  SocialContent,
-} from '@/lib/qr/types';
-import { QR_TYPE_CATEGORIES } from '@/lib/qr/types';
-import { PLANS } from '@/lib/stripe/plans';
+import { useCallback, useRef } from 'react';
+import { useNavigation } from './useNavigation';
+import { useContentState } from './useContentState';
+import { useStyleState, DEFAULT_STYLE } from './useStyleState';
+import { useProOptions } from './useProOptions';
+import { useSaveQR } from './useSaveQR';
+import type { QRContent, QRContentType, QRStyleOptions } from '@/lib/qr/types';
 import type { Template } from '@/lib/templates/types';
 import type { WizardStep } from '../../wizard';
 
-export const DEFAULT_STYLE: QRStyleOptions = {
-  foregroundColor: '#000000',
-  backgroundColor: '#ffffff',
-  errorCorrectionLevel: 'M',
-  margin: 4,
-  width: 256,
-};
+// Re-export DEFAULT_STYLE for backward compatibility
+export { DEFAULT_STYLE };
 
 export interface QRStudioState {
   // Mode
@@ -93,7 +51,7 @@ export interface QRStudioState {
   // A/B Testing
   abTestEnabled: boolean;
   abVariantBUrl: string;
-  abSplitPercentage: number;  // 10-90, represents variant B percentage
+  abSplitPercentage: number;
 
   // User context
   userId: string | null;
@@ -170,247 +128,30 @@ interface UseQRStudioStateProps {
   qrCodeId?: string;
 }
 
-// Helper to get category for a QR type
-function getCategoryForType(type: QRContentType): string | null {
-  if (QR_TYPE_CATEGORIES.basic.includes(type as typeof QR_TYPE_CATEGORIES.basic[number])) {
-    return 'basic';
-  }
-  if (QR_TYPE_CATEGORIES.social.includes(type as typeof QR_TYPE_CATEGORIES.social[number])) {
-    return 'social';
-  }
-  if (QR_TYPE_CATEGORIES.media.includes(type as typeof QR_TYPE_CATEGORIES.media[number])) {
-    return 'media';
-  }
-  if (QR_TYPE_CATEGORIES.landing.includes(type as typeof QR_TYPE_CATEGORIES.landing[number])) {
-    return 'landing';
-  }
-  return null;
-}
-
 export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QRStudioState, QRStudioActions] {
-  // Core state
-  const [currentStep, setCurrentStep] = useState<WizardStep>(mode === 'edit' ? 'content' : 'type');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedType, setSelectedType] = useState<QRContentType | null>(null);
-  const [content, setContent] = useState<QRContent | null>(null);
-  const [qrName, setQrName] = useState('');
-  const [style, setStyle] = useState<QRStyleOptions>(DEFAULT_STYLE);
+  // Style hook (no dependencies)
+  const [styleState, styleActions] = useStyleState();
 
-  // Template state
-  const [templateId, setTemplateId] = useState<string | null>(null);
-  const [templateName, setTemplateName] = useState('');
+  // Content hook (depends on style for template loading)
+  const [contentState, contentActions] = useContentState({
+    mode,
+    onStyleChange: styleActions.setStyle,
+    onTypeSelected: () => {
+      // Will set step to 'content' via navigation; handled through goForward
+      // We use a ref-based approach to avoid circular dependencies
+      navSetStepRef.current?.('content');
+    },
+  });
 
-  // Pro options
-  const [expiresAt, setExpiresAt] = useState('');
-  const [passwordEnabled, setPasswordEnabled] = useState(false);
-  const [password, setPassword] = useState('');
-  const [scheduledEnabled, setScheduledEnabled] = useState(false);
-  const [activeFrom, setActiveFrom] = useState('');
-  const [activeUntil, setActiveUntil] = useState('');
-  const [landingPageEnabled, setLandingPageEnabled] = useState(false);
-  const [landingPageTitle, setLandingPageTitle] = useState('');
-  const [landingPageDescription, setLandingPageDescription] = useState('');
-  const [landingPageButtonText, setLandingPageButtonText] = useState('Continue');
-
-  // A/B Testing
-  const [abTestEnabled, setAbTestEnabled] = useState(false);
-  const [abVariantBUrl, setAbVariantBUrl] = useState('');
-  const [abSplitPercentage, setAbSplitPercentage] = useState(50);
-
-  // User context
-  const [userId, setUserId] = useState<string | null>(null);
-  const [userTier, setUserTier] = useState<'free' | 'pro' | 'business' | null>(null);
-  const [userTierLoading, setUserTierLoading] = useState(true);
-
-  // Persistence
-  const [isSaving, setIsSaving] = useState(false);
-  const [savedQRId, setSavedQRId] = useState<string | null>(qrCodeId || null);
-  const [shortCode, setShortCode] = useState<string | null>(null);
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [saveBlockedReason, setSaveBlockedReason] = useState<string | null>(null);
-  const [hasDownloaded, setHasDownloaded] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
-
-  // Fetch user on mount
-  useEffect(() => {
-    const fetchUser = async () => {
-      setUserTierLoading(true);
-      try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-
-        if (user) {
-          setUserId(user.id);
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('subscription_tier')
-            .eq('id', user.id)
-            .single();
-
-          const tier = (profile?.subscription_tier || 'free') as 'free' | 'pro' | 'business';
-          setUserTier(tier);
-        } else {
-          setUserId(null);
-          setUserTier(null); // Keep null for unauthenticated - prevents dynamic QR creation without account
-        }
-      } finally {
-        setUserTierLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  // Generate short code
-  const generateShortCode = useCallback((): string => {
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let result = '';
-    for (let i = 0; i < 7; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-  }, []);
-
-  // Validate content
-  const isContentValid = useCallback((): boolean => {
-    if (!content || !selectedType) return false;
-
-    switch (selectedType) {
-      case 'url':
-        return !!(content as URLContent).url?.trim();
-      case 'text':
-        return !!(content as TextContent).text?.trim();
-      case 'wifi':
-        return !!(content as WiFiContent).ssid?.trim();
-      case 'vcard':
-        return !!((content as VCardContent).firstName?.trim() || (content as VCardContent).lastName?.trim());
-      case 'email':
-        return !!(content as EmailContent).email?.trim();
-      case 'phone':
-        return !!(content as PhoneContent).phone?.trim();
-      case 'sms':
-        return !!(content as SMSContent).phone?.trim();
-      case 'whatsapp':
-        return !!(content as WhatsAppContent).phone?.trim();
-      case 'facebook':
-        return !!(content as FacebookContent).profileUrl?.trim();
-      case 'instagram':
-        return !!(content as InstagramContent).username?.trim();
-      case 'linkedin':
-        return !!(content as LinkedInContent).username?.trim();
-      case 'x':
-        return !!(content as XContent).username?.trim();
-      case 'tiktok':
-        return !!(content as TikTokContent).username?.trim();
-      case 'snapchat':
-        return !!(content as SnapchatContent).username?.trim();
-      case 'threads':
-        return !!(content as ThreadsContent).username?.trim();
-      case 'youtube':
-        return !!(content as YouTubeContent).videoId?.trim();
-      case 'pinterest':
-        return !!(content as PinterestContent).username?.trim();
-      case 'spotify':
-        return !!(content as SpotifyContent).spotifyId?.trim();
-      case 'reddit': {
-        const redditContent = content as RedditContent;
-        if (redditContent.contentType === 'subreddit') {
-          return !!redditContent.subreddit?.trim();
-        }
-        return !!redditContent.username?.trim();
-      }
-      case 'twitch':
-        return !!(content as TwitchContent).username?.trim();
-      case 'discord':
-        return !!(content as DiscordContent).inviteCode?.trim();
-      case 'apps': {
-        const appsContent = content as AppsContent;
-        return !!(appsContent.appStoreUrl?.trim() || appsContent.playStoreUrl?.trim() || appsContent.fallbackUrl?.trim());
-      }
-      case 'google-review': {
-        const reviewContent = content as GoogleReviewContent;
-        return !!(
-          reviewContent.placeId?.trim() &&
-          reviewContent.placeId.length >= 20 &&
-          reviewContent.businessName?.trim()
-        );
-      }
-      case 'event': {
-        const eventContent = content as EventContent;
-        if (!eventContent.title?.trim()) return false;
-        if (!eventContent.startDate?.trim()) return false;
-        if (!eventContent.endDate?.trim()) return false;
-        const start = new Date(eventContent.startDate);
-        const end = new Date(eventContent.endDate);
-        return end > start;
-      }
-      case 'geo': {
-        const geoContent = content as GeoContent;
-        return geoContent.latitude !== undefined && geoContent.longitude !== undefined &&
-               geoContent.latitude >= -90 && geoContent.latitude <= 90 &&
-               geoContent.longitude >= -180 && geoContent.longitude <= 180;
-      }
-      case 'pdf':
-        return !!(content as PDFContent).fileUrl?.trim() || !!(content as PDFContent).fileName?.trim();
-      case 'images':
-        return (content as ImagesContent).images?.length > 0;
-      case 'video':
-        return !!(content as VideoContent).videoUrl?.trim() || !!(content as VideoContent).embedUrl?.trim();
-      case 'mp3':
-        return !!(content as MP3Content).audioUrl?.trim() || !!(content as MP3Content).embedUrl?.trim();
-      case 'menu': {
-        const menu = content as MenuContent;
-        return !!(
-          menu.restaurantName?.trim() &&
-          menu.categories?.length > 0 &&
-          menu.categories[0]?.items?.length > 0
-        );
-      }
-      case 'business': {
-        const biz = content as BusinessContent;
-        return !!(
-          biz.name?.trim() &&
-          (biz.email?.trim() || biz.phone?.trim() || biz.website?.trim())
-        );
-      }
-      case 'links': {
-        const links = content as LinksContent;
-        return !!(
-          links.title?.trim() &&
-          links.links?.length > 0 &&
-          links.links.some(link => link.url?.trim() && link.title?.trim())
-        );
-      }
-      case 'coupon': {
-        const coupon = content as CouponContent;
-        return !!(
-          coupon.businessName?.trim() &&
-          coupon.headline?.trim() &&
-          (coupon.code?.trim() || coupon.description?.trim())
-        );
-      }
-      case 'social': {
-        const social = content as SocialContent;
-        return !!(
-          social.name?.trim() &&
-          social.links?.length > 0 &&
-          social.links.some(link => link.url?.trim())
-        );
-      }
-      default:
-        return false;
-    }
-  }, [content, selectedType]);
-
-  // Navigation
-  const canGoForward = useCallback((): boolean => {
-    switch (currentStep) {
+  // Navigation hook (depends on content for canGoForward)
+  const canGoForwardCheck = useCallback((): boolean => {
+    const step = currentStepRef.current;
+    switch (step) {
       case 'type':
-        return !!selectedType;
+        return !!contentState.selectedType;
       case 'content':
-        return isContentValid();
+        return contentActions.isContentValid();
       case 'style':
-        return true;
       case 'options':
         return true;
       case 'download':
@@ -418,523 +159,121 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
       default:
         return false;
     }
-  }, [currentStep, selectedType, isContentValid]);
+  }, [contentState.selectedType, contentActions]);
 
-  const goForward = useCallback(() => {
-    if (!canGoForward()) return;
+  const [navState, navActions] = useNavigation({ mode, canGoForwardCheck });
 
-    const stepOrder: WizardStep[] = mode === 'edit'
-      ? ['content', 'style', 'options', 'download']
-      : ['type', 'content', 'style', 'options', 'download'];
-    const currentIndex = stepOrder.indexOf(currentStep);
-    if (currentIndex < stepOrder.length - 1) {
-      setCurrentStep(stepOrder[currentIndex + 1]);
-    }
-  }, [currentStep, canGoForward, mode]);
+  // Store navigation refs to break circular dependency — syncing refs with
+  // hook return values is intentional to avoid circular deps between hooks.
+  const navSetStepRef = useRef<(step: WizardStep) => void>(navActions.setStep);
+  navSetStepRef.current = navActions.setStep;
+  const currentStepRef = useRef<WizardStep>(navState.currentStep);
+  // eslint-disable-next-line react-hooks/immutability
+  currentStepRef.current = navState.currentStep;
 
-  const goBack = useCallback(() => {
-    const stepOrder: WizardStep[] = mode === 'edit'
-      ? ['content', 'style', 'options', 'download']
-      : ['type', 'content', 'style', 'options', 'download'];
-    const currentIndex = stepOrder.indexOf(currentStep);
-    if (currentIndex > 0) {
-      setCurrentStep(stepOrder[currentIndex - 1]);
-    }
-  }, [currentStep, mode]);
+  // Pro options hook (no dependencies)
+  const [proState, proActions] = useProOptions();
 
-  const setStep = useCallback((step: WizardStep) => {
-    // In edit mode, allow jumping to any step (except type)
-    if (mode === 'edit') {
-      if (step !== 'type') {
-        setCurrentStep(step);
-      }
-      return;
-    }
-    // In create mode, only allow going back or to the next valid step
-    setCurrentStep(step);
-  }, [mode]);
+  // Save hook (depends on all other hooks via getters)
+  const [saveState, saveActions] = useSaveQR({
+    mode,
+    qrCodeId,
+    getContent: () => contentState.content,
+    getSelectedType: () => contentState.selectedType,
+    getQrName: () => contentState.qrName,
+    getStyle: () => styleState.style,
+    getExpiresAt: () => proState.expiresAt,
+    getPasswordEnabled: () => proState.passwordEnabled,
+    getPassword: () => proState.password,
+    getScheduledEnabled: () => proState.scheduledEnabled,
+    getActiveFrom: () => proState.activeFrom,
+    getActiveUntil: () => proState.activeUntil,
+    getAbTestEnabled: () => proState.abTestEnabled,
+    getAbVariantBUrl: () => proState.abVariantBUrl,
+    getAbSplitPercentage: () => proState.abSplitPercentage,
+    onLoadContent: (type, content, name) => {
+      contentActions.selectCategory(null); // Will be set by type category lookup
+      contentActions.setContent(content);
+      contentActions.setQrName(name);
+      // selectType sets selectedType but also resets content to null in create mode
+      // Since we're in edit mode (loading), we directly set the type and then restore content
+      // We need to use selectType but it resets content, so set content after
+      // Actually, looking at useContentState.selectType: it only calls onTypeSelected in create mode
+      // But it always resets content to null. So we'll call it first, then set content.
+      contentActions.selectType(type);
+      contentActions.setContent(content);
+      contentActions.setQrName(name);
+    },
+    onLoadStyle: styleActions.setStyle,
+    onLoadProOptions: (opts) => {
+      if (opts.expiresAt !== undefined) proActions.setExpiresAt(opts.expiresAt);
+      if (opts.passwordEnabled !== undefined) proActions.setPasswordEnabled(opts.passwordEnabled);
+      if (opts.scheduledEnabled !== undefined) proActions.setScheduledEnabled(opts.scheduledEnabled);
+      if (opts.activeFrom !== undefined) proActions.setActiveFrom(opts.activeFrom);
+      if (opts.activeUntil !== undefined) proActions.setActiveUntil(opts.activeUntil);
+      if (opts.abTestEnabled !== undefined) proActions.setAbTestEnabled(opts.abTestEnabled);
+      if (opts.abVariantBUrl !== undefined) proActions.setAbVariantBUrl(opts.abVariantBUrl);
+      if (opts.abSplitPercentage !== undefined) proActions.setAbSplitPercentage(opts.abSplitPercentage);
+    },
+  });
 
-  // Type selection
-  const selectType = useCallback((type: QRContentType) => {
-    setSelectedType(type);
-    setContent(null); // Reset content when type changes
-    if (mode === 'create') {
-      setCurrentStep('content');
-    }
-  }, [mode]);
-
-  // Template loading
-  const loadTemplate = useCallback((template: Template) => {
-    setTemplateId(template.id);
-    setTemplateName(template.name);
-    setSelectedType(template.qrType);
-    setSelectedCategory(getCategoryForType(template.qrType));
-    setStyle({ ...DEFAULT_STYLE, ...template.style });
-    setContent(null); // Reset content - user will fill in
-    setCurrentStep('content'); // Skip type step
-  }, []);
-
-  const clearTemplate = useCallback(() => {
-    setTemplateId(null);
-    setTemplateName('');
-  }, []);
-
-  // Style updates
-  const updateStyle = useCallback((updates: Partial<QRStyleOptions>) => {
-    setStyle(prev => ({ ...prev, ...updates }));
-  }, []);
-
-  // Get filename for download
-  const getFilename = useCallback(() => {
-    if (qrName.trim()) {
-      return `qrwolf-${qrName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`;
-    }
-    return `qrwolf-${selectedType || 'code'}`;
-  }, [qrName, selectedType]);
-
-  // Helper: Extract destination URL from content based on type
-  const getDestinationUrlFromContent = useCallback((contentData: QRContent, type: QRContentType | null): string | null => {
-    if (!contentData || !type) return null;
-
-    const c = contentData as unknown as Record<string, unknown>;
-
-    switch (type) {
-      case 'url':
-        return c.url as string || null;
-      case 'facebook':
-        return c.profileUrl as string || null;
-      case 'instagram':
-        return c.username ? `https://instagram.com/${String(c.username).replace('@', '')}` : null;
-      case 'linkedin':
-        return c.username ? `https://linkedin.com/in/${String(c.username).replace('@', '')}` : null;
-      case 'x':
-        return c.username ? `https://x.com/${String(c.username).replace('@', '')}` : null;
-      case 'tiktok':
-        return c.username ? `https://tiktok.com/@${String(c.username).replace('@', '')}` : null;
-      case 'youtube':
-        return c.videoId ? `https://youtube.com/watch?v=${c.videoId}` : null;
-      case 'spotify':
-        return c.spotifyId ? `https://open.spotify.com/${c.contentType || 'track'}/${c.spotifyId}` : null;
-      case 'twitch':
-        return c.username ? `https://twitch.tv/${c.username}` : null;
-      case 'discord':
-        return c.inviteCode ? `https://discord.gg/${c.inviteCode}` : null;
-      case 'whatsapp': {
-        if (!c.phone) return null;
-        const phone = String(c.phone).replace(/\D/g, '');
-        let url = `https://wa.me/${phone}`;
-        if (c.message) url += `?text=${encodeURIComponent(String(c.message))}`;
-        return url;
-      }
-      default:
-        // For other types, there might not be a simple URL
-        return null;
-    }
-  }, []);
-
-  // Save QR code
-  const saveQRCode = useCallback(async (): Promise<{ id: string; shortCode: string } | null> => {
-    // Clear any previous blocked reason
-    setSaveBlockedReason(null);
-
-    // Validate all requirements with user-friendly feedback
-    if (!userId) {
-      setSaveBlockedReason('Please sign in to save your QR code');
-      return null;
-    }
-    if (userTierLoading) {
-      setSaveBlockedReason('Loading your account...');
-      return null;
-    }
-    if (!content) {
-      setSaveBlockedReason('Please add content to your QR code');
-      return null;
-    }
-    if (!selectedType) {
-      setSaveBlockedReason('Please select a QR code type');
-      return null;
-    }
-
-    // Enforce QR code creation limit (skip for edits — user already owns the code)
-    if (mode === 'create' && userTier) {
-      const limit = PLANS[userTier].dynamicQRLimit;
-      if (limit !== -1) {
-        try {
-          const supabase = createClient();
-          const { count, error } = await supabase
-            .from('qr_codes')
-            .select('id', { count: 'exact', head: true })
-            .eq('user_id', userId);
-
-          if (!error && count !== null && count >= limit) {
-            setSaveBlockedReason(
-              userTier === 'free'
-                ? `You've reached your limit of ${limit} QR codes. Upgrade to Pro for up to 50.`
-                : `You've reached your limit of ${limit} QR codes. Upgrade to Business for unlimited.`
-            );
-            return null;
-          }
-        } catch {
-          // If count check fails, allow the save to proceed
-          // The database or a server-side check will catch it if needed
-        }
-      }
-    }
-
-    setIsSaving(true);
-    setSaveError(null);
-
-    try {
-      const supabase = createClient();
-      const newShortCode = shortCode || generateShortCode();
-
-      // All saved QR codes are dynamic (they have short_codes for tracking)
-      // destination_url intentionally null - redirect route constructs from content
-
-      // Normalize URLs in content (adds https:// to URLs without protocol)
-      const normalizedContent = normalizeContentUrls(content);
-
-      const insertData: Record<string, unknown> = {
-        user_id: userId,
-        name: qrName.trim() || `${selectedType} QR Code`,
-        type: 'dynamic', // All saved QR codes are dynamic (they have short_codes for tracking)
-        content_type: selectedType,
-        content: normalizedContent as unknown as Record<string, unknown>,
-        destination_url: null, // Redirect route constructs destination from content
-        short_code: newShortCode,
-        // Save entire style object to preserve all properties (gradient, patterns, frame, etc.)
-        style: style as unknown as Record<string, unknown>,
-      };
-
-      // Add Pro options
-      if (expiresAt) {
-        insertData.expires_at = new Date(expiresAt).toISOString();
-      }
-      if (passwordEnabled && password) {
-        // Hash the password before saving
-        const hashResponse = await fetch('/api/qr/hash-password', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password }),
-        });
-        const hashData = await hashResponse.json();
-        if (!hashResponse.ok) {
-          throw new Error(hashData.error || 'Failed to hash password');
-        }
-        if (hashData.hash) {
-          insertData.password_hash = hashData.hash;
-        }
-      } else if (!passwordEnabled) {
-        // Clear password if protection is disabled
-        insertData.password_hash = null;
-      }
-      if (scheduledEnabled) {
-        if (activeFrom) {
-          insertData.active_from = new Date(activeFrom).toISOString();
-        }
-        if (activeUntil) {
-          insertData.active_until = new Date(activeUntil).toISOString();
-        }
-      }
-
-      // Update or insert based on mode
-      let qrCodeId: string;
-      if (mode === 'edit' && savedQRId) {
-        const { error } = await supabase
-          .from('qr_codes')
-          .update(insertData)
-          .eq('id', savedQRId);
-
-        if (error) throw error;
-        qrCodeId = savedQRId;
-      } else {
-        const { data, error } = await supabase
-          .from('qr_codes')
-          .insert(insertData)
-          .select('id')
-          .single();
-
-        if (error) throw error;
-
-        setSavedQRId(data.id);
-        setShortCode(newShortCode);
-        qrCodeId = data.id;
-      }
-
-      // Handle A/B testing in a separate try-catch so it doesn't fail the main save
-      // A/B test creation is optional - QR code save should succeed even if A/B test fails
-      try {
-        if (abTestEnabled && abVariantBUrl.trim()) {
-          // Get the primary destination URL from content
-          const primaryUrl = getDestinationUrlFromContent(normalizedContent, selectedType);
-
-          if (primaryUrl) {
-            // First, delete any existing A/B test for this QR code (we'll recreate it)
-            // This handles the case where user modifies an existing test
-            await supabase
-              .from('ab_tests')
-              .delete()
-              .eq('qr_code_id', qrCodeId)
-              .neq('status', 'completed');  // Don't delete completed tests
-
-            // Create the A/B test
-            const { data: testData, error: testError } = await supabase
-              .from('ab_tests')
-              .insert({
-                qr_code_id: qrCodeId,
-                name: `A/B Test for ${qrName.trim() || selectedType}`,
-                status: 'running',
-                started_at: new Date().toISOString(),
-                target_confidence: 0.95,
-              })
-              .select('id')
-              .single();
-
-            if (testError) {
-              console.error('Failed to create A/B test:', testError);
-            } else if (testData) {
-              // Create the variants
-              const variantA = {
-                test_id: testData.id,
-                name: 'Control',
-                slug: 'a',
-                destination_url: primaryUrl,
-                weight: 100 - abSplitPercentage,
-              };
-
-              const variantB = {
-                test_id: testData.id,
-                name: 'Variant B',
-                slug: 'b',
-                destination_url: abVariantBUrl.trim(),
-                weight: abSplitPercentage,
-              };
-
-              const { error: variantsError } = await supabase
-                .from('ab_variants')
-                .insert([variantA, variantB]);
-
-              if (variantsError) {
-                console.error('Failed to create A/B variants:', variantsError);
-              }
-            }
-          }
-        }
-        // Note: We don't auto-pause tests when abTestEnabled is false
-        // Users can pause tests explicitly from the A/B test management page
-      } catch (abTestError) {
-        // Log A/B test error but don't fail the QR code save
-        console.error('A/B test operation failed (non-critical):', abTestError);
-      }
-
-      return { id: qrCodeId, shortCode: newShortCode };
-    } catch (err) {
-      console.error('Failed to save QR code:', JSON.stringify(err, null, 2), err);
-      // Handle Supabase errors (plain objects with message property) and Error instances
-      const supaErr = err as { message?: string; code?: string; details?: string; hint?: string };
-      const errorMessage = err instanceof Error
-        ? err.message
-        : supaErr?.message || supaErr?.details || supaErr?.code || 'Failed to save QR code';
-      setSaveError(errorMessage);
-      return null;
-    } finally {
-      setIsSaving(false);
-    }
-  }, [content, selectedType, userId, userTier, userTierLoading, qrName, style, mode, savedQRId, shortCode, generateShortCode, expiresAt, passwordEnabled, password, scheduledEnabled, activeFrom, activeUntil, abTestEnabled, abVariantBUrl, abSplitPercentage]);
-
-  // Load existing QR code for edit mode
-  const loadQRCode = useCallback(async (id: string): Promise<boolean> => {
-    try {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from('qr_codes')
-        .select('*')
-        .eq('id', id)
-        .single();
-
-      if (error || !data) {
-        console.error('Failed to load QR code:', error);
-        return false;
-      }
-
-      // Populate state from loaded data
-      setSelectedType(data.content_type as QRContentType);
-      setContent(data.content as QRContent);
-      setQrName(data.name || '');
-      setShortCode(data.short_code);
-      setSavedQRId(data.id);
-
-      if (data.style) {
-        setStyle({
-          ...DEFAULT_STYLE,
-          ...data.style,
-        });
-      }
-
-      // Pro options
-      if (data.expires_at) {
-        setExpiresAt(new Date(data.expires_at).toISOString().slice(0, 16));
-      }
-      if (data.password_hash) {
-        // Just enable password protection indicator, don't populate the password field
-        // The hash should never be shown to the user or saved back
-        setPasswordEnabled(true);
-        // Leave password field empty - user can enter a new one if they want to change it
-        setPassword('');
-      }
-      if (data.active_from || data.active_until) {
-        setScheduledEnabled(true);
-        if (data.active_from) {
-          setActiveFrom(new Date(data.active_from).toISOString().slice(0, 16));
-        }
-        if (data.active_until) {
-          setActiveUntil(new Date(data.active_until).toISOString().slice(0, 16));
-        }
-      }
-
-      // Load A/B test if exists (optional, don't fail if it doesn't work)
-      try {
-        const { data: testData } = await supabase
-          .from('ab_tests')
-          .select(`
-            id,
-            status,
-            ab_variants (
-              id,
-              name,
-              slug,
-              destination_url,
-              weight
-            )
-          `)
-          .eq('qr_code_id', id)
-          .in('status', ['draft', 'running', 'paused'])
-          .single();
-
-        if (testData?.ab_variants && Array.isArray(testData.ab_variants) && testData.ab_variants.length >= 2) {
-          setAbTestEnabled(testData.status === 'running');
-          // Find variant B (slug = 'b')
-          const variantB = testData.ab_variants.find((v: { slug: string }) => v.slug === 'b');
-          if (variantB) {
-            setAbVariantBUrl(variantB.destination_url);
-            setAbSplitPercentage(variantB.weight);
-          }
-        }
-      } catch (abTestError) {
-        // A/B test loading is optional - don't fail the main load
-        console.error('Failed to load A/B test (non-critical):', abTestError);
-      }
-
-      return true;
-    } catch (err) {
-      console.error('Failed to load QR code:', err);
-      return false;
-    }
-  }, []);
-
-  // Reset state
+  // Reset all state
   const reset = useCallback(() => {
-    setCurrentStep(mode === 'edit' ? 'content' : 'type');
-    setSelectedCategory(null);
-    setSelectedType(null);
-    setContent(null);
-    setQrName('');
-    setStyle(DEFAULT_STYLE);
-    setTemplateId(null);
-    setTemplateName('');
-    setExpiresAt('');
-    setPasswordEnabled(false);
-    setPassword('');
-    setScheduledEnabled(false);
-    setActiveFrom('');
-    setActiveUntil('');
-    setLandingPageEnabled(false);
-    setLandingPageTitle('');
-    setLandingPageDescription('');
-    setLandingPageButtonText('Continue');
-    setAbTestEnabled(false);
-    setAbVariantBUrl('');
-    setAbSplitPercentage(50);
-    setSavedQRId(null);
-    setShortCode(null);
-    setSaveError(null);
-    setHasDownloaded(false);
-    setIsDownloading(false);
-  }, [mode]);
+    navActions.setStep(mode === 'edit' ? 'content' : 'type');
+    contentActions.resetContent();
+    styleActions.resetStyle();
+    proActions.resetProOptions();
+    saveActions.resetSave();
+  }, [mode, navActions, contentActions, styleActions, proActions, saveActions]);
 
+  // Compose state
   const state: QRStudioState = {
     mode,
-    qrCodeId: savedQRId,
-    templateId,
-    templateName,
-    currentStep,
-    selectedCategory,
-    selectedType,
-    content,
-    qrName,
-    style,
-    expiresAt,
-    passwordEnabled,
-    password,
-    scheduledEnabled,
-    activeFrom,
-    activeUntil,
-    landingPageEnabled,
-    landingPageTitle,
-    landingPageDescription,
-    landingPageButtonText,
-    abTestEnabled,
-    abVariantBUrl,
-    abSplitPercentage,
-    userId,
-    userTier,
-    userTierLoading,
-    isSaving,
-    savedQRId,
-    shortCode,
-    saveError,
-    saveBlockedReason,
-    hasDownloaded,
-    isDownloading,
+    qrCodeId: saveState.savedQRId,
+    templateId: contentState.templateId,
+    templateName: contentState.templateName,
+    currentStep: navState.currentStep,
+    selectedCategory: contentState.selectedCategory,
+    selectedType: contentState.selectedType,
+    content: contentState.content,
+    qrName: contentState.qrName,
+    style: styleState.style,
+    ...proState,
+    userId: saveState.userId,
+    userTier: saveState.userTier,
+    userTierLoading: saveState.userTierLoading,
+    isSaving: saveState.isSaving,
+    savedQRId: saveState.savedQRId,
+    shortCode: saveState.shortCode,
+    saveError: saveState.saveError,
+    saveBlockedReason: saveState.saveBlockedReason,
+    hasDownloaded: saveState.hasDownloaded,
+    isDownloading: saveState.isDownloading,
   };
 
+  // Compose actions
   const actions: QRStudioActions = {
-    setStep,
-    goBack,
-    goForward,
-    canGoForward,
-    selectCategory: setSelectedCategory,
-    selectType,
-    loadTemplate,
-    clearTemplate,
-    setContent,
-    setQrName,
-    isContentValid,
-    setStyle,
-    updateStyle,
-    setExpiresAt,
-    setPasswordEnabled,
-    setPassword,
-    setScheduledEnabled,
-    setActiveFrom,
-    setActiveUntil,
-    setLandingPageEnabled,
-    setLandingPageTitle,
-    setLandingPageDescription,
-    setLandingPageButtonText,
-    setAbTestEnabled,
-    setAbVariantBUrl,
-    setAbSplitPercentage,
-    saveQRCode,
-    loadQRCode,
+    setStep: navActions.setStep,
+    goBack: navActions.goBack,
+    goForward: navActions.goForward,
+    canGoForward: navActions.canGoForward,
+    selectCategory: contentActions.selectCategory,
+    selectType: contentActions.selectType,
+    loadTemplate: contentActions.loadTemplate,
+    clearTemplate: contentActions.clearTemplate,
+    setContent: contentActions.setContent,
+    setQrName: contentActions.setQrName,
+    isContentValid: contentActions.isContentValid,
+    setStyle: styleActions.setStyle,
+    updateStyle: styleActions.updateStyle,
+    ...proActions,
+    saveQRCode: saveActions.saveQRCode,
+    loadQRCode: saveActions.loadQRCode,
     reset,
-    setHasDownloaded,
-    setIsDownloading,
-    getFilename,
-    clearSaveError: () => {
-      setSaveError(null);
-      setSaveBlockedReason(null);
-    },
+    setHasDownloaded: saveActions.setHasDownloaded,
+    setIsDownloading: saveActions.setIsDownloading,
+    getFilename: contentActions.getFilename,
+    clearSaveError: saveActions.clearSaveError,
   };
 
   return [state, actions];

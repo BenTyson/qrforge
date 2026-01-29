@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
+import { useQRStudio } from '@/components/qr/studio/QRStudioContext';
+import { getDisplayDestinationUrl } from '@/lib/qr/destination-url';
 
 const DURABILITY_OPTIONS = [
   { level: 'L' as const, name: 'Basic', desc: 'Screens & digital' },
@@ -15,69 +17,32 @@ const DURABILITY_OPTIONS = [
 ];
 
 interface OptionsStepProps {
-  // QR Settings
-  errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
-  onErrorCorrectionChange: (level: 'L' | 'M' | 'Q' | 'H') => void;
-  margin: number;
-  onMarginChange: (margin: number) => void;
-  // Expiration
-  expiresAt: string;
-  onExpiresAtChange: (value: string) => void;
-  // Password
-  passwordEnabled: boolean;
-  onPasswordEnabledChange: (enabled: boolean) => void;
-  password: string;
-  onPasswordChange: (value: string) => void;
-  // Scheduling
-  scheduledEnabled: boolean;
-  onScheduledEnabledChange: (enabled: boolean) => void;
-  activeFrom: string;
-  onActiveFromChange: (value: string) => void;
-  activeUntil: string;
-  onActiveUntilChange: (value: string) => void;
-  // A/B Testing
-  abTestEnabled: boolean;
-  onAbTestEnabledChange: (enabled: boolean) => void;
-  abVariantBUrl: string;
-  onAbVariantBUrlChange: (url: string) => void;
-  abSplitPercentage: number;
-  onAbSplitPercentageChange: (percent: number) => void;
-  currentDestinationUrl?: string;
-  // Access
-  canAccessProTypes: boolean;
-  userTier: 'free' | 'pro' | 'business' | null;
-  // Actions
   onContinue: () => void;
 }
 
-export function OptionsStep({
-  errorCorrectionLevel,
-  onErrorCorrectionChange,
-  margin,
-  onMarginChange,
-  expiresAt,
-  onExpiresAtChange,
-  passwordEnabled,
-  onPasswordEnabledChange,
-  password,
-  onPasswordChange,
-  scheduledEnabled,
-  onScheduledEnabledChange,
-  activeFrom,
-  onActiveFromChange,
-  activeUntil,
-  onActiveUntilChange,
-  abTestEnabled,
-  onAbTestEnabledChange,
-  abVariantBUrl,
-  onAbVariantBUrlChange,
-  abSplitPercentage,
-  onAbSplitPercentageChange,
-  currentDestinationUrl,
-  canAccessProTypes,
-  userTier,
-  onContinue,
-}: OptionsStepProps) {
+export function OptionsStep({ onContinue }: OptionsStepProps) {
+  const { state, actions, canAccessProTypes } = useQRStudio();
+
+  const errorCorrectionLevel = state.style.errorCorrectionLevel;
+  const margin = state.style.margin;
+  const {
+    expiresAt,
+    passwordEnabled,
+    password,
+    scheduledEnabled,
+    activeFrom,
+    activeUntil,
+    abTestEnabled,
+    abVariantBUrl,
+    abSplitPercentage,
+    userTier,
+  } = state;
+
+  const currentDestinationUrl = getDisplayDestinationUrl(state.content, state.selectedType);
+
+  const onErrorCorrectionChange = (level: 'L' | 'M' | 'Q' | 'H') => actions.setStyle({ ...state.style, errorCorrectionLevel: level });
+  const onMarginChange = (m: number) => actions.setStyle({ ...state.style, margin: m });
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="text-center mb-8">
@@ -209,7 +174,7 @@ export function OptionsStep({
                 <Input
                   type="date"
                   value={expiresAt}
-                  onChange={(e) => onExpiresAtChange(e.target.value)}
+                  onChange={(e) => actions.setExpiresAt(e.target.value)}
                   min={new Date().toISOString().split('T')[0]}
                   className="bg-slate-900 border-slate-600"
                 />
@@ -254,8 +219,8 @@ export function OptionsStep({
                       type="checkbox"
                       checked={passwordEnabled}
                       onChange={(e) => {
-                        onPasswordEnabledChange(e.target.checked);
-                        if (!e.target.checked) onPasswordChange('');
+                        actions.setPasswordEnabled(e.target.checked);
+                        if (!e.target.checked) actions.setPassword('');
                       }}
                       className="w-4 h-4 rounded border-slate-600 bg-slate-900 text-primary focus:ring-primary"
                     />
@@ -267,7 +232,7 @@ export function OptionsStep({
                         type="password"
                         placeholder="Enter password (min. 4 characters)"
                         value={password}
-                        onChange={(e) => onPasswordChange(e.target.value)}
+                        onChange={(e) => actions.setPassword(e.target.value)}
                         minLength={4}
                         className="bg-slate-900 border-slate-600"
                       />
@@ -320,10 +285,10 @@ export function OptionsStep({
                       type="checkbox"
                       checked={scheduledEnabled}
                       onChange={(e) => {
-                        onScheduledEnabledChange(e.target.checked);
+                        actions.setScheduledEnabled(e.target.checked);
                         if (!e.target.checked) {
-                          onActiveFromChange('');
-                          onActiveUntilChange('');
+                          actions.setActiveFrom('');
+                          actions.setActiveUntil('');
                         }
                       }}
                       className="w-4 h-4 rounded border-slate-600 bg-slate-900 text-primary focus:ring-primary"
@@ -337,7 +302,7 @@ export function OptionsStep({
                         <Input
                           type="datetime-local"
                           value={activeFrom}
-                          onChange={(e) => onActiveFromChange(e.target.value)}
+                          onChange={(e) => actions.setActiveFrom(e.target.value)}
                           className="bg-slate-900 border-slate-600 text-sm"
                         />
                       </div>
@@ -346,7 +311,7 @@ export function OptionsStep({
                         <Input
                           type="datetime-local"
                           value={activeUntil}
-                          onChange={(e) => onActiveUntilChange(e.target.value)}
+                          onChange={(e) => actions.setActiveUntil(e.target.value)}
                           className="bg-slate-900 border-slate-600 text-sm"
                         />
                       </div>
@@ -400,10 +365,10 @@ export function OptionsStep({
                       type="checkbox"
                       checked={abTestEnabled}
                       onChange={(e) => {
-                        onAbTestEnabledChange(e.target.checked);
+                        actions.setAbTestEnabled(e.target.checked);
                         if (!e.target.checked) {
-                          onAbVariantBUrlChange('');
-                          onAbSplitPercentageChange(50);
+                          actions.setAbVariantBUrl('');
+                          actions.setAbSplitPercentage(50);
                         }
                       }}
                       className="w-4 h-4 rounded border-slate-600 bg-slate-900 text-primary focus:ring-primary"
@@ -427,7 +392,7 @@ export function OptionsStep({
                         <Input
                           placeholder="https://example.com/alternative"
                           value={abVariantBUrl}
-                          onChange={(e) => onAbVariantBUrlChange(e.target.value)}
+                          onChange={(e) => actions.setAbVariantBUrl(e.target.value)}
                           className="bg-slate-900 border-slate-600"
                         />
                       </div>
@@ -441,7 +406,7 @@ export function OptionsStep({
                         </div>
                         <Slider
                           value={[abSplitPercentage]}
-                          onValueChange={([v]) => onAbSplitPercentageChange(v)}
+                          onValueChange={([v]) => actions.setAbSplitPercentage(v)}
                           min={10}
                           max={90}
                           step={5}

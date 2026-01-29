@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 interface LogoUploaderProps {
   value?: string;
   onChange: (url: string | undefined) => void;
+  onFileSelected?: (file: File) => void;
   label?: string;
   placeholder?: string;
   className?: string;
@@ -17,6 +18,7 @@ interface LogoUploaderProps {
 export function LogoUploader({
   value,
   onChange,
+  onFileSelected,
   label = 'Logo',
   placeholder = 'Upload your logo',
   className,
@@ -42,8 +44,16 @@ export function LogoUploader({
       return;
     }
 
-    setIsUploading(true);
     setError(null);
+
+    // If onFileSelected is provided, delegate to it (e.g., open crop modal)
+    if (onFileSelected) {
+      onFileSelected(file);
+      if (inputRef.current) inputRef.current.value = '';
+      return;
+    }
+
+    setIsUploading(true);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -70,7 +80,7 @@ export function LogoUploader({
         inputRef.current.value = '';
       }
     }
-  }, [onChange]);
+  }, [onChange, onFileSelected]);
 
   const handleRemove = useCallback(() => {
     onChange(undefined);

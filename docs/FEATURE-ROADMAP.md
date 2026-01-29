@@ -1,8 +1,8 @@
 # QRWolf Feature Roadmap
 
-> **Last Updated**: January 28, 2026
+> **Last Updated**: January 29, 2026
 > **Status**: Active development
-> **Current Features**: 34 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Sentry error tracking, Cron-based email automation, 151 SEO articles (all with CTAs)
+> **Current Features**: 34 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Logo Crop Editor, Sentry error tracking, Cron-based email automation, 151 SEO articles (all with CTAs)
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -346,6 +346,8 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-29 | Logo Crop Modal bug fixes: rounded shape overlay, live preview thumbnail, object URL leak fix. |
+| 2026-01-29 | Logo Editor Enhancement: react-easy-crop crop modal, shape masking (square/rounded/circle), margin slider, background color picker. Velite blog build fix (2 posts restored). |
 | 2026-01-28 | Embed Modal UX polish: truncated base64 display, visual QR preview, format hints, smart embed-type auto-detection, scrollable modal, card button wrap fix. |
 | 2026-01-28 | Completed Embed Code Generator (Feature #16). Modal with static/dynamic embeds, public SVG endpoint, tier gating. |
 | 2026-01-28 | Static/dynamic QR architecture alignment: Free tier now gets 5 QR codes (was "unlimited static" + 0 dynamic). Limit enforcement in client + API. URL editing gated behind Pro. Dead code cleanup. |

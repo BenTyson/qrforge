@@ -421,8 +421,9 @@ function buildQROptions(style: QRStyleOptions): QRCodeStylingOptions {
     options.image = style.logoUrl;
     options.imageOptions = {
       imageSize: logoSizePercent / 100,
-      margin: 4,
+      margin: style.logoMargin ?? 4,
       crossOrigin: 'anonymous',
+      hideBackgroundDots: true,
     };
   }
 

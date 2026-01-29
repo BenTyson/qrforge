@@ -22,7 +22,7 @@ const tips = [
   {
     icon: Square,
     title: "Square or circular shapes",
-    description: "These fit the center naturally. Crop or pad wide/tall logos to a square before uploading."
+    description: "Use the built-in shape tool to crop and mask your logo as a square, rounded square, or circle."
   },
   {
     icon: Contrast,

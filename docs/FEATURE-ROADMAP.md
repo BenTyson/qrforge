@@ -1,8 +1,8 @@
 # QRWolf Feature Roadmap
 
-> **Last Updated**: January 30, 2026
+> **Last Updated**: January 31, 2026
 > **Status**: Active development
-> **Current Features**: 35 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Logo Crop Editor, Sentry error tracking, Cron-based email automation, Feedback Forms, 151 SEO articles (all with CTAs)
+> **Current Features**: 35 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Logo Crop Editor, Sentry error tracking, Cron-based email automation, Feedback Forms, Contact Form, 151 SEO articles (all with CTAs)
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -275,6 +275,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-31 | Contact Form: replaced static mailto page with working form, Resend email integration, rate limiting, honeypot, React Email template. 3 new files, 3 modified. |
 | 2026-01-30 | FAQ Overhaul: 10 static cards → 22-item categorized accordion FAQ with Radix component, 5 category filter tabs, contact CTA. QR Types badge fixed to 35. |
 | 2026-01-30 | Feedback UX Improvements: dashboard Responses button on feedback cards, thank-you page CTA button (ctaUrl/ctaLabel fields), updated creator info box. 6 files modified. |
 | 2026-01-30 | Completed Feedback Form QR Type (Feature #11). 35th QR type. 7 new files, 15 modified. 216 tests passing. |

@@ -202,52 +202,165 @@ export const FEATURES: Feature[] = [
 ];
 
 // FAQ type definition
+export type FAQCategory = 'getting-started' | 'features' | 'pricing' | 'technical' | 'security';
+
 export interface FAQ {
+  id: string;
   question: string;
   answer: string;
+  category: FAQCategory;
 }
+
+export const FAQ_CATEGORIES: { value: FAQCategory; label: string }[] = [
+  { value: 'getting-started', label: 'Getting Started' },
+  { value: 'features', label: 'Features & QR Types' },
+  { value: 'pricing', label: 'Pricing & Plans' },
+  { value: 'technical', label: 'Technical' },
+  { value: 'security', label: 'Security & Privacy' },
+];
 
 // FAQ data
 export const FAQS: FAQ[] = [
+  // Getting Started (4)
   {
-    question: 'What is a dynamic QR code?',
-    answer: 'A dynamic QR code contains a short URL that redirects to your destination. You can change where it points anytime without reprinting the QR code, set expiration dates, add password protection, and track every scan. Available on Pro and Business plans.',
-  },
-  {
+    id: 'account-needed',
     question: 'Do I need an account to create QR codes?',
-    answer: 'You can preview QR codes without signing up, but a free account is required to download and save them. Creating an account gives you access to all 34 QR types, scan tracking, and customization options.',
+    answer: 'You can preview QR codes on the homepage without signing up. A free account is required to download and save them. Once registered you get access to all 35 QR types, custom colors, and error-correction settings — no credit card required.',
+    category: 'getting-started',
   },
   {
+    id: 'what-is-dynamic',
+    question: 'What is a dynamic QR code?',
+    answer: 'A dynamic QR code contains a short redirect URL instead of embedding content directly. That means you can change the destination anytime without reprinting, track every scan with analytics, and optionally set expiration dates, passwords, or scheduling windows. The Free plan includes 5 dynamic QR codes.',
+    category: 'getting-started',
+  },
+  {
+    id: 'how-fast',
+    question: 'How quickly can I create a QR code?',
+    answer: 'Creating a QR code takes just a few steps: choose a type, enter your content, customize the design, and download. No credit card is needed for the Free tier — you can go from idea to finished QR code in under a minute.',
+    category: 'getting-started',
+  },
+  {
+    id: 'try-pro',
+    question: 'Can I try Pro features before paying?',
+    answer: 'Yes. Every paid plan comes with a 7-day free trial that gives you full access to all Pro features including logos, SVG export, analytics, and advanced styling. You can cancel anytime during the trial at no charge.',
+    category: 'getting-started',
+  },
+
+  // Features & QR Types (6)
+  {
+    id: 'how-many-types',
+    question: 'How many QR code types do you support?',
+    answer: 'QRWolf supports 35 QR code types organized into six groups: Basic (7 types including URL, WiFi, vCard, Email, SMS, Phone, and Text), Social (15 platforms like Instagram, YouTube, LinkedIn, TikTok, and more), Reviews & Feedback (2 types), Events & Location (2 types), File Upload (4 types — PDF, Images, Video, Audio — Pro and above), and Landing Pages (5 types — Menu, Business, Link Page, Coupon, Social — Pro and above).',
+    category: 'features',
+  },
+  {
+    id: 'static-vs-dynamic',
+    question: "What's the difference between static and dynamic QR codes?",
+    answer: 'Static QR codes embed content directly into the code pattern (like a URL, WiFi credentials, or vCard). They work forever but cannot be edited or tracked after creation. Dynamic QR codes use a short redirect URL, so you can change the destination, view scan analytics, and add features like password protection or expiration dates — all without reprinting.',
+    category: 'features',
+  },
+  {
+    id: 'customization',
+    question: 'What customization options are available?',
+    answer: 'All users can customize foreground and background colors and adjust error correction levels. Pro and Business users unlock logo upload, gradient colors, 6 module shapes, 7 corner styles, decorative frames with custom text, and SVG export for print-quality output.',
+    category: 'features',
+  },
+  {
+    id: 'logo-support',
+    question: 'Can I add my logo to QR codes?',
+    answer: 'Yes — on Pro and Business plans you can upload an image and place it at the center of your QR code. Choose from square, rounded, or circle shapes, and adjust the size, margin, and background to match your brand.',
+    category: 'features',
+  },
+  {
+    id: 'file-formats',
     question: 'What file formats can I download?',
-    answer: 'Free users can download PNG files. Pro and Business users get access to SVG format, which is perfect for high-quality printing and scalable graphics.',
+    answer: 'Free users can download QR codes as PNG images. Pro and Business users also get SVG export for scalable vector graphics and PDF export for print-ready documents — ideal for signage, packaging, and professional print materials at any size.',
+    category: 'features',
   },
   {
-    question: 'How does scan tracking work?',
-    answer: 'When someone scans your dynamic QR code, we record anonymous data like location (country/city), device type, and time. You can view this data in your analytics dashboard. Pro users get 10,000 scans/month, Business users get unlimited scans.',
+    id: 'feedback-form',
+    question: 'How does the Feedback Form QR type work?',
+    answer: 'The Feedback Form QR type generates a branded feedback page that supports star, emoji, or numeric rating scales. You can optionally enable a comments field and email collection. After submission, visitors see a customizable thank-you screen with an optional call-to-action button linking anywhere you choose.',
+    category: 'features',
+  },
+
+  // Pricing & Plans (5)
+  {
+    id: 'plan-differences',
+    question: 'What are the differences between plans?',
+    answer: 'Free ($0): 5 dynamic QR codes, 100 scans/month, PNG downloads, and custom colors. Pro ($9/month or $90/year): 50 dynamic QR codes, 10,000 scans/month, scan analytics, logo upload, SVG export, and Pro-only QR types. Business ($29/month or $290/year): unlimited QR codes and scans, bulk CSV generation (up to 500 rows), REST API access, and 3 team member seats.',
+    category: 'pricing',
   },
   {
-    question: 'Do you offer API access?',
-    answer: 'Yes! Business plan subscribers get full REST API access to create, manage, and generate QR codes programmatically. Perfect for integrating QR code generation into your own applications.',
-  },
-  {
-    question: 'Can I use QRWolf for commercial purposes?',
-    answer: 'Absolutely! QRWolf is designed for businesses. All plans, including Free, allow commercial use of generated QR codes.',
-  },
-  {
-    question: 'Is my data secure?',
-    answer: "Yes. All data is encrypted in transit (TLS 1.3) and at rest. We don't sell your data or track your visitors beyond anonymous scan analytics. Our infrastructure runs on enterprise-grade cloud providers with 99.9% uptime.",
-  },
-  {
-    question: 'What happens if I downgrade my plan?',
-    answer: "Your existing QR codes will continue to work. However, you'll lose access to Pro features like analytics and URL editing. Existing QR codes keep working.",
-  },
-  {
+    id: 'free-expiration',
     question: 'Do QR codes expire on the free plan?',
-    answer: 'No! QR codes on the free plan never expire and will work as long as your account is active. Pro users can optionally set expiration dates.',
+    answer: 'No. QR codes created on the Free plan work indefinitely as long as your account is active. Pro and Business users can optionally set expiration dates on dynamic QR codes if they want time-limited access.',
+    category: 'pricing',
   },
   {
+    id: 'downgrade',
+    question: 'What happens if I downgrade my plan?',
+    answer: 'Your existing QR codes continue to work and redirect as normal. You lose access to Pro analytics, logo customization, and Pro-only QR types. Any dynamic QR codes above the Free plan limit become read-only — they still redirect, but you cannot edit their destination until you upgrade again.',
+    category: 'pricing',
+  },
+  {
+    id: 'commercial-use',
+    question: 'Can I use QRWolf for commercial purposes?',
+    answer: 'Yes. All plans — including Free — allow full commercial use of generated QR codes. Use them on product packaging, marketing materials, business cards, menus, or anywhere else.',
+    category: 'pricing',
+  },
+  {
+    id: 'refund-policy',
     question: "What's your refund policy?",
-    answer: "We offer a 14-day money-back guarantee on all paid plans. If you're not satisfied, contact us within 14 days of purchase for a full refund, no questions asked.",
+    answer: 'We offer a 14-day money-back guarantee on all paid plans. If you are not satisfied, contact us within 14 days of purchase for a full refund, no questions asked.',
+    category: 'pricing',
+  },
+
+  // Technical (4)
+  {
+    id: 'scan-tracking',
+    question: 'How does scan tracking work?',
+    answer: 'Every time someone scans a dynamic QR code, we record anonymous data: country, city, device type, browser, operating system, referrer, and timestamp. The analytics dashboard shows unique visitor counts, charts, and trend data. Scan tracking is available on Pro (10,000 scans/month) and Business (unlimited) plans.',
+    category: 'technical',
+  },
+  {
+    id: 'api-access',
+    question: 'Do you offer API access?',
+    answer: 'Yes. Business plan subscribers get a full REST API to create, manage, and generate QR codes programmatically — ideal for integrating QR code generation into your own applications or workflows.',
+    category: 'technical',
+  },
+  {
+    id: 'bulk-generation',
+    question: 'What is bulk generation?',
+    answer: 'Bulk generation is a Business plan feature that lets you upload a CSV file with up to 500 rows and generate uniquely styled QR codes for each row in a single batch. Shared styling and options are applied across the entire batch for consistent branding.',
+    category: 'technical',
+  },
+  {
+    id: 'ab-testing',
+    question: 'Can I A/B test my QR codes?',
+    answer: 'Yes. Pro and Business users can split traffic between two destination URLs with configurable weights. The analytics dashboard lets you compare scan performance for each variant so you can optimize your campaigns.',
+    category: 'technical',
+  },
+
+  // Security & Privacy (3)
+  {
+    id: 'data-security',
+    question: 'Is my data secure?',
+    answer: 'All data is encrypted in transit with TLS 1.3 and encrypted at rest. Our infrastructure runs on enterprise-grade cloud providers with 99.9% uptime. We do not sell your data or share it with third parties.',
+    category: 'security',
+  },
+  {
+    id: 'scan-data-collected',
+    question: 'What scan data do you collect?',
+    answer: 'We collect only anonymous scan data: location (country and city), device type, browser, operating system, and timestamp. No personally identifiable information is stored. IP addresses are hashed and never stored in raw form.',
+    category: 'security',
+  },
+  {
+    id: 'password-protection',
+    question: 'Can I password-protect my QR codes?',
+    answer: 'Yes. Pro and Business users can set a password on any dynamic QR code. Visitors must enter the correct password before they can access the content behind the code.',
+    category: 'security',
   },
 ];
 

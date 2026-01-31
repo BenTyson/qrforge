@@ -6,6 +6,36 @@ Session-by-session history of development work. Most recent first.
 
 ## January 30, 2026
 
+### Comprehensive FAQ Overhaul
+
+Rewrote the homepage FAQ from 10 static cards into a categorized, accordion-based FAQ with 22 items covering all current features, pricing, and capabilities.
+
+#### Accordion Component
+- Created `src/components/ui/accordion.tsx` — shadcn/ui-style Radix accordion with glass styling, chevron rotation animation, and expand/collapse transitions
+- Installed `@radix-ui/react-accordion` dependency
+
+#### FAQ Data Restructure
+- New `FAQ` interface with `id`, `question`, `answer`, and `category` fields
+- 5 categories: Getting Started (4), Features & QR Types (6), Pricing & Plans (5), Technical (4), Security & Privacy (3)
+- All content updated to reflect 35 QR types, current pricing, PDF export, feedback forms, A/B testing, and other shipped features
+
+#### FAQSection Component Rewrite
+- Client component with category filter tabs (pill-style buttons with active state)
+- `type="multiple"` accordion so users can open several answers at once
+- "Still have questions?" contact CTA card at bottom
+- Max width bumped to `max-w-4xl` for longer answers
+
+#### QR Types Badge Fix
+- Updated `QRTypesSection.tsx` badge from "34 QR Types" to "35 QR Types"
+
+#### Files Modified (4)
+- `src/components/ui/accordion.tsx` — **created** (Radix accordion component)
+- `src/constants/homepage.tsx` — new FAQ interface, categories, 22 FAQ items
+- `src/components/homepage/FAQSection.tsx` — full rewrite with accordion + category tabs
+- `src/components/homepage/QRTypesSection.tsx` — badge count fix
+
+---
+
 ### Feedback UX Improvements
 
 Three targeted enhancements to the feedback feature's usability for creators and scanners.

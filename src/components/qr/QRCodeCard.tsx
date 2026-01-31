@@ -216,6 +216,7 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
       case 'links': return <LinksIcon className="w-4 h-4" />;
       case 'coupon': return <CouponIcon className="w-4 h-4" />;
       case 'social': return <SocialIcon className="w-4 h-4" />;
+      case 'feedback': return <FeedbackIcon className="w-4 h-4" />;
       default: return <TextIcon className="w-4 h-4" />;
     }
   };
@@ -290,6 +291,7 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
       case 'links': return 'primary';
       case 'coupon': return 'amber';
       case 'social': return 'cyan';
+      case 'feedback': return 'amber';
       default: return 'primary';
     }
   };
@@ -455,6 +457,20 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
               <AnalyticsIcon className="w-3 h-3" aria-hidden="true" />
             </Button>
           </Link>
+          {qrCode.content_type === 'feedback' && (
+            <Link href={`/qr-codes/${qrCode.id}/feedback`}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs px-2"
+                title="View responses"
+                aria-label="View feedback responses"
+              >
+                <ResponsesIcon className="w-3 h-3 mr-1" aria-hidden="true" />
+                <span className="text-[10px] font-medium">Responses</span>
+              </Button>
+            </Link>
+          )}
           <Button
             variant="outline"
             size="sm"
@@ -877,6 +893,15 @@ function SocialIcon({ className }: { className?: string }) {
   );
 }
 
+function FeedbackIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M9 11l3 3L22 4" />
+      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+    </svg>
+  );
+}
+
 function FolderIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -902,6 +927,14 @@ function AnalyticsIcon({ className }: { className?: string }) {
       <line x1="18" y1="20" x2="18" y2="10" />
       <line x1="12" y1="20" x2="12" y2="4" />
       <line x1="6" y1="20" x2="6" y2="14" />
+    </svg>
+  );
+}
+
+function ResponsesIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
     </svg>
   );
 }

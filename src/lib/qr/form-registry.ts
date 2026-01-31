@@ -34,6 +34,7 @@ const FORM_REGISTRY: Record<string, () => Promise<{ default: FormComponent }>> =
   discord:        () => import('@/components/qr/forms/DiscordForm').then(m => ({ default: m.DiscordForm as FormComponent })),
   apps:           () => import('@/components/qr/forms/AppsForm').then(m => ({ default: m.AppsForm as FormComponent })),
   'google-review': () => import('@/components/qr/forms/GoogleReviewForm').then(m => ({ default: m.GoogleReviewForm as FormComponent })),
+  feedback:       () => import('@/components/qr/forms/FeedbackForm').then(m => ({ default: m.FeedbackForm as FormComponent })),
   event:          () => import('@/components/qr/forms/EventForm').then(m => ({ default: m.EventForm as FormComponent })),
   geo:            () => import('@/components/qr/forms/GeoForm').then(m => ({ default: m.GeoForm as FormComponent })),
   pdf:            () => import('@/components/qr/forms/PDFForm').then(m => ({ default: m.PDFForm as FormComponent })),
@@ -68,6 +69,7 @@ import { TwitchForm } from '@/components/qr/forms/TwitchForm';
 import { DiscordForm } from '@/components/qr/forms/DiscordForm';
 import { AppsForm } from '@/components/qr/forms/AppsForm';
 import { GoogleReviewForm } from '@/components/qr/forms/GoogleReviewForm';
+import { FeedbackForm } from '@/components/qr/forms/FeedbackForm';
 import { EventForm } from '@/components/qr/forms/EventForm';
 import { GeoForm } from '@/components/qr/forms/GeoForm';
 import { PDFForm } from '@/components/qr/forms/PDFForm';
@@ -97,6 +99,7 @@ const FORM_COMPONENTS: Partial<Record<QRContentType, FormComponent>> = {
   discord: DiscordForm,
   apps: AppsForm,
   'google-review': GoogleReviewForm,
+  feedback: FeedbackForm,
   event: EventForm,
   geo: GeoForm,
   pdf: PDFForm,

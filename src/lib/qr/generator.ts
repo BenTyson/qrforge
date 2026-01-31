@@ -83,6 +83,12 @@ export function normalizeContentUrls(content: QRContent): QRContent {
         }) || [],
       };
 
+    case 'feedback':
+      return {
+        ...content,
+        ctaUrl: content.ctaUrl ? normalizeUrl(content.ctaUrl) : content.ctaUrl,
+      };
+
     // Other types (text, wifi, vcard, email, phone, sms, whatsapp, instagram, images, menu, coupon)
     // don't have URL fields that need normalization or are handled differently
     default:
@@ -203,8 +209,11 @@ export function contentToString(content: QRContent): string {
       // For smart redirects, this will point to a landing page
       return content.fallbackUrl || content.appStoreUrl || content.playStoreUrl || '';
 
-    // === Reviews ===
+    // === Reviews & Feedback ===
     case 'google-review':
+      return `https://qrwolf.com/preview/${content.type}`;
+
+    case 'feedback':
       return `https://qrwolf.com/preview/${content.type}`;
 
     // === Events ===

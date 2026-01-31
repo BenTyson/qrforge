@@ -301,8 +301,9 @@ export const validators = {
       'url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms',
       // Simple URL types
       'whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'spotify', 'reddit', 'twitch', 'discord', 'apps',
-      // Reviews
+      // Reviews & Feedback
       'google-review',
+      'feedback',
       // Events
       'event',
       // Location
@@ -519,6 +520,15 @@ export const validators = {
         }
         if (!content.businessName || typeof content.businessName !== 'string') {
           return { valid: false, error: 'content.businessName is required for google-review type' };
+        }
+        break;
+
+      case 'feedback':
+        if (!content.businessName || typeof content.businessName !== 'string') {
+          return { valid: false, error: 'content.businessName is required for feedback type' };
+        }
+        if (content.ratingType && !['stars', 'emoji', 'numeric'].includes(content.ratingType as string)) {
+          return { valid: false, error: 'content.ratingType must be stars, emoji, or numeric' };
         }
         break;
 

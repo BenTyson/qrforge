@@ -33,6 +33,7 @@ import type {
   DiscordContent,
   AppsContent,
   GoogleReviewContent,
+  FeedbackContent,
   EventContent,
   GeoContent,
   PDFContent,
@@ -97,6 +98,8 @@ export function hasMinimalContent(content: QRContent): boolean {
     case 'google-review':
       return !!content.placeId && content.placeId.length >= 20 &&
              !!content.businessName && content.businessName.length > 0;
+    case 'feedback':
+      return !!content.businessName && content.businessName.length > 0;
     case 'event': {
       if (!content.title || content.title.length === 0) return false;
       if (!content.startDate || content.startDate.length === 0) return false;
@@ -200,6 +203,8 @@ export function isContentValid(content: QRContent | null, selectedType: QRConten
         reviewContent.businessName?.trim()
       );
     }
+    case 'feedback':
+      return !!(content as FeedbackContent).businessName?.trim();
     case 'event': {
       const eventContent = content as EventContent;
       if (!eventContent.title?.trim()) return false;
@@ -388,6 +393,13 @@ export function validateContent(content: QRContent): { valid: boolean; error?: s
       if (!content.placeId) return { valid: false, error: 'Place ID is required' };
       if (content.placeId.length < 20) return { valid: false, error: 'Place ID must be at least 20 characters' };
       if (!content.businessName) return { valid: false, error: 'Business name is required' };
+      return { valid: true };
+
+    case 'feedback':
+      if (!content.businessName) return { valid: false, error: 'Business name is required' };
+      if (content.ratingType && !['stars', 'emoji', 'numeric'].includes(content.ratingType)) {
+        return { valid: false, error: 'Rating type must be stars, emoji, or numeric' };
+      }
       return { valid: true };
 
     case 'event':

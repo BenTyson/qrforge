@@ -80,6 +80,23 @@ export function isWithinQRCodeLimit(tier: SubscriptionTier, currentCount: number
   return currentCount < limit;
 }
 
+// Feedback response limits per tier (per month)
+export const FEEDBACK_RESPONSE_LIMITS = {
+  free: 10,
+  pro: 1000,
+  business: -1, // unlimited
+} as const;
+
+export function getFeedbackResponseLimit(tier: SubscriptionTier): number {
+  return FEEDBACK_RESPONSE_LIMITS[tier] ?? FEEDBACK_RESPONSE_LIMITS.free;
+}
+
+export function isWithinFeedbackLimit(tier: SubscriptionTier, currentCount: number): boolean {
+  const limit = getFeedbackResponseLimit(tier);
+  if (limit === -1) return true; // unlimited
+  return currentCount < limit;
+}
+
 /**
  * Get effective tier considering trial status
  * Handles both Stripe trials (subscription_status: 'trialing') and legacy database trials

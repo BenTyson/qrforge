@@ -127,6 +127,7 @@ export async function GET(
     text: 'text',
     vcard: 'vcard',
     'google-review': 'review',
+    feedback: 'feedback',
     youtube: 'youtube',
     spotify: 'spotify',
     event: 'event',

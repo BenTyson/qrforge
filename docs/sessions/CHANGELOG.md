@@ -4,6 +4,118 @@ Session-by-session history of development work. Most recent first.
 
 ---
 
+## January 30, 2026
+
+### Feedback UX Improvements
+
+Three targeted enhancements to the feedback feature's usability for creators and scanners.
+
+#### Dashboard "Responses" Button
+- Conditional button on QR code cards when `content_type === 'feedback'`
+- One-click navigation to `/qr-codes/[id]/feedback` response dashboard
+- Message-bubble icon with "Responses" label, placed next to Analytics button
+- File: `QRCodeCard.tsx` — added `ResponsesIcon` component and conditional render
+
+#### Thank-You Page CTA Button
+- Two new optional fields on `FeedbackContent`: `ctaUrl`, `ctaLabel` (defaults to "Visit Our Website")
+- Creator form: URL input + conditional label input (only shown when URL is entered)
+- Landing page success state: styled gradient button with external-link icon, opens in new tab
+- Phone mockup preview: small CTA indicator below submit button when URL is set
+- URL normalization: added `case 'feedback'` to `normalizeContentUrls` for `ctaUrl`
+- No migration needed — fields stored in existing JSONB content column
+
+#### Creator Info Box Update
+- Replaced generic "how it works" text with actionable guidance referencing the Responses button
+
+#### Files Modified (6)
+- `src/lib/qr/types.ts` — `ctaUrl`, `ctaLabel` on FeedbackContent
+- `src/components/qr/forms/FeedbackForm.tsx` — CTA inputs, updated info box, handleChange spread
+- `src/components/qr/QRCodeCard.tsx` — Responses button, ResponsesIcon
+- `src/lib/qr/generator.ts` — feedback ctaUrl normalization
+- `src/app/r/[code]/feedback/page.tsx` — CTA button in success state
+- `src/components/feedback/FeedbackPreview.tsx` — CTA preview indicator
+
+---
+
+### Feedback Form QR Type (Feature #11)
+
+New free-tier QR type (`feedback`) allowing businesses to collect customer feedback via a branded form. When scanned, users see a rating selector, optional comment/email fields, and a submit button. Responses are viewable in a dedicated dashboard.
+
+#### Type System & Validation
+- Added `feedback` to `QRContentType` union (35th type)
+- Created `FeedbackContent` interface: businessName, formTitle, ratingType (stars/emoji/numeric), commentEnabled, emailEnabled, thankYouMessage, accentColor
+- Three-tier validation in `validation.ts`: `hasMinimalContent`, `isContentValid`, `validateContent`
+- Registered in form-registry (lazy + eager), preview-registry, destination-url, generator
+
+#### Creator Form (`FeedbackForm.tsx`)
+- Business Name (required), Form Title, Rating Type (3-button segmented control), Comment/Email toggles, Thank You Message, Accent Color picker
+- Tier info blurb: "Free: 10 responses/mo | Pro: 1,000/mo | Business: Unlimited"
+
+#### Landing Page (`/r/[code]/feedback`)
+- State machine: idle -> submitting -> success / error / limit_reached
+- Three rating variants: Stars (SVG fill), Emoji (5 Unicode faces), Numeric (numbered buttons)
+- 44px min touch targets for mobile, `onPointerDown` for instant feedback
+- Honeypot spam field (invisible, silently accepts but doesn't store)
+- Uses shared LandingBackground/LandingCard/LandingFooter components
+
+#### Public API (`/api/feedback/[id]`)
+- POST handler with UUID validation, rate limiting (10/15min/IP), body parsing
+- Rating (int 1-5 required), comment (max 1000), email (format check)
+- Honeypot detection: returns 201 without storing
+- Fetches QR code via admin client, verifies `content_type === 'feedback'`
+- Monthly response counting across ALL owner's feedback QR codes
+- Tier limit check via `getFeedbackResponseLimit(tier)`, returns 403 if exceeded
+- IP hash stored (SHA-256 first 16 chars) for privacy
+- CORS headers + OPTIONS preflight
+
+#### Dashboard (`FeedbackDashboard.tsx`)
+- Summary cards: Total Responses, Average Rating, This Month (N/limit with tier badge), Latest Response
+- Rating distribution: horizontal bars 5 down to 1 with percentages
+- Paginated responses list (20/page, newest first): stars, comment, email, date
+- CSV Export (Business-only), upgrade link for other tiers
+- Empty state and loading skeletons
+
+#### Preview Component (`FeedbackPreview.tsx`)
+- Phone mockup showing feedback form preview with rating variant, optional fields, submit button
+
+#### Tier Limits
+- Free: 10 responses/month, Pro: 1,000/month, Business: unlimited
+- Added `getFeedbackResponseLimit()` and `isWithinFeedbackLimit()` to `plans.ts`
+
+#### UI Integration
+- Type selector: added to "Reviews & Feedback" category (renamed from "Reviews")
+- QR code cards: clipboard-check icon, amber accent color
+- Dashboard detail page: "View Feedback" link when `contentType === 'feedback'`
+- API validation: added to `isValidContentType()` and `validateContent()` (35 types)
+
+#### Database Migration
+- Updated `qr_codes_content_type_check` constraint to include `'feedback'` (35 types)
+- Created `feedback_responses` table: UUID PK, rating (1-5 CHECK), comment, email, ip_hash, device_type
+- RLS policy for owner SELECT access
+- Indexes on qr_code_id, created_at, composite (qr_code_id, created_at DESC)
+
+#### New Files (7)
+- `supabase/migrations/20260130000001_add_feedback_type.sql`
+- `src/components/qr/forms/FeedbackForm.tsx`
+- `src/components/feedback/FeedbackPreview.tsx`
+- `src/app/r/[code]/feedback/page.tsx`
+- `src/app/api/feedback/[id]/route.ts`
+- `src/components/analytics/FeedbackDashboard.tsx`
+- `src/app/(dashboard)/qr-codes/[id]/feedback/page.tsx`
+
+#### Modified Files (15)
+- `src/lib/qr/types.ts`, `validation.ts`, `generator.ts`, `form-registry.ts`, `preview-registry.ts`
+- `src/lib/stripe/plans.ts`
+- `src/components/qr/forms/index.ts`, `QRTypeSelector.tsx`, `wizard/constants.tsx`, `QRCodeCard.tsx`
+- `src/app/r/[code]/route.ts`
+- `src/app/(dashboard)/qr-codes/[id]/page.tsx`
+- `src/lib/api/auth.ts`, `__tests__/auth.test.ts`
+
+#### Tests
+- All 216 tests passing, 0 lint errors, type-check clean
+
+---
+
 ## January 29, 2026
 
 ### QR Studio Modularization Refactor (6 Phases)

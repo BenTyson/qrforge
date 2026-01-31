@@ -147,7 +147,7 @@ export function QRGenerator() {
                   Create any QR type
                 </p>
                 <p className="text-sm text-slate-400">
-                  WiFi, Contact, Social, PDF, Video & 12 more
+                  WiFi, Contact, Social, PDF, Video & 30 more
                 </p>
               </div>
               <svg className="w-5 h-5 text-slate-500 group-hover:text-primary transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

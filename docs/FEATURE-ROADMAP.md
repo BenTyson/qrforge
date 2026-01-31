@@ -275,6 +275,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-30 | FAQ Overhaul: 10 static cards → 22-item categorized accordion FAQ with Radix component, 5 category filter tabs, contact CTA. QR Types badge fixed to 35. |
 | 2026-01-30 | Feedback UX Improvements: dashboard Responses button on feedback cards, thank-you page CTA button (ctaUrl/ctaLabel fields), updated creator info box. 6 files modified. |
 | 2026-01-30 | Completed Feedback Form QR Type (Feature #11). 35th QR type. 7 new files, 15 modified. 216 tests passing. |
 | 2026-01-29 | QR Studio Modularization Refactor (6 phases): unified validation module, form/preview registries, extracted ContentStep + DownloadStep, split monolithic hook into 5 focused hooks, social form factory (8 forms), StyleStep tab extraction, QRStudioContext to eliminate prop drilling. 20 new files, 24 modified, ~800 lines removed, 0 behavior changes. |

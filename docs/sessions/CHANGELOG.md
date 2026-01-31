@@ -6,6 +6,38 @@ Session-by-session history of development work. Most recent first.
 
 ## January 31, 2026
 
+### Landing Page Previews for All QR Types
+
+Added phone-mockup previews to the 8 remaining QR types that had landing pages but no Content-step sidebar preview. All 18 landing-page types now show a live preview while editing.
+
+#### New Preview Components (8)
+- `TextPreview.tsx` — Document icon, dark card with text content and copy icon
+- `GoogleReviewPreview.tsx` — Business initial avatar, 5 gold stars, "Leave a Google Review" CTA
+- `WiFiPreview.tsx` — WiFi icon, detail cards for SSID/password/security, connection instructions
+- `VCardPreview.tsx` — Name initial avatar, colored icon badges for phone/email/website, "Save Contact" button
+- `SpotifyPreview.tsx` — Spotify logo with content-type badge, dark embed placeholder (height varies by type), pill CTA
+- `YouTubePreview.tsx` — 16:9 video placeholder with red play button, channel row, "Watch on YouTube" CTA
+- `EventPreview.tsx` — Calendar icon, date/time/location/description/URL detail rows, Google + Apple Calendar buttons
+- `GeoPreview.tsx` — Map pin icon, monospace coordinates, static map placeholder with grid lines, "Get Directions" + "Google Maps" buttons
+
+#### Pattern
+All 8 follow the existing Style B phone-frame pattern: 280x560px frame, accent-colored gradient background, floating blur decorations, scrollable content area, "Powered by QRWolf" footer. Each accepts `Partial<XContent>` with graceful defaults for empty fields.
+
+#### Files Created (8)
+- `src/components/text/TextPreview.tsx`
+- `src/components/review/GoogleReviewPreview.tsx`
+- `src/components/wifi/WiFiPreview.tsx`
+- `src/components/vcard/VCardPreview.tsx`
+- `src/components/spotify/SpotifyPreview.tsx`
+- `src/components/youtube/YouTubePreview.tsx`
+- `src/components/event/EventPreview.tsx`
+- `src/components/location/GeoPreview.tsx`
+
+#### Files Modified (1)
+- `src/lib/qr/preview-registry.ts` — registered all 8 new components
+
+---
+
 ### Contact Form
 
 Replaced the static mailto page at `/contact` with a working contact form that sends emails via Resend.

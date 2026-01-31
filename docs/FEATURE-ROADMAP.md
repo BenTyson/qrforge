@@ -275,6 +275,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-31 | Landing Page Previews: added phone-mockup previews for 8 QR types (text, google-review, wifi, vcard, spotify, youtube, event, geo). All 18 landing-page types now have Content-step sidebar previews. 8 new files, 1 modified. |
 | 2026-01-31 | Contact Form: replaced static mailto page with working form, Resend email integration, rate limiting, honeypot, React Email template. 3 new files, 3 modified. |
 | 2026-01-30 | FAQ Overhaul: 10 static cards → 22-item categorized accordion FAQ with Radix component, 5 category filter tabs, contact CTA. QR Types badge fixed to 35. |
 | 2026-01-30 | Feedback UX Improvements: dashboard Responses button on feedback cards, thank-you page CTA button (ctaUrl/ctaLabel fields), updated creator info box. 6 files modified. |

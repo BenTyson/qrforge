@@ -4,6 +4,41 @@ Session-by-session history of development work. Most recent first.
 
 ---
 
+## January 31, 2026
+
+### Contact Form
+
+Replaced the static mailto page at `/contact` with a working contact form that sends emails via Resend.
+
+#### Contact Form Component
+- Client component (`ContactForm.tsx`) with Name, Email, Subject (select dropdown), Message (textarea with character counter), and hidden honeypot field
+- Client-side validation with per-field error messages
+- Browser autofill handling — reads from DOM via `FormData` on submit to catch values that bypass React `onChange`
+- Loading state with spinner, success state with checkmark and "Send Another Message" reset
+- 6 subject categories: General Inquiry, Technical Support, Billing Question, Feature Request, Partnership / Business, Other
+
+#### API Endpoint
+- `POST /api/contact` with IP-based rate limiting (60/min, in-memory fallback when Redis unavailable)
+- Field validation: name (max 100), email (regex + max 254), subject (enum), message (10–5,000 chars)
+- Honeypot spam prevention — silently returns success without sending
+- Sends via Resend with `replyTo` set to the submitter's email
+
+#### Email Template
+- `ContactFormEmail.tsx` using `BaseLayout` with sender info highlight box, subject, pre-wrapped message body, and muted timestamp footer
+- Registered in email test endpoint (`/api/test/emails?template=contact`)
+
+#### Files Created (3)
+- `src/emails/ContactFormEmail.tsx` — React Email template
+- `src/app/api/contact/route.ts` — API endpoint
+- `src/components/contact/ContactForm.tsx` — Client form component
+
+#### Files Modified (3)
+- `src/app/contact/page.tsx` — replaced mailto card with ContactForm
+- `src/lib/email.ts` — added `sendContactFormEmail()` with subject label map
+- `src/app/api/test/emails/route.ts` — registered contact template
+
+---
+
 ## January 30, 2026
 
 ### Comprehensive FAQ Overhaul

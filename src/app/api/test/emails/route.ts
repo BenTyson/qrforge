@@ -14,6 +14,7 @@ import { SubscriptionConfirmEmail } from '@/emails/SubscriptionConfirmEmail';
 import { PaymentFailedEmail } from '@/emails/PaymentFailedEmail';
 import { ScanLimitReachedEmail } from '@/emails/ScanLimitReachedEmail';
 import { TeamInviteEmail } from '@/emails/TeamInviteEmail';
+import { ContactFormEmail } from '@/emails/ContactFormEmail';
 
 // Only allow in development or with admin secret
 function isAuthorized(request: NextRequest): boolean {
@@ -113,6 +114,18 @@ const EMAIL_TEMPLATES = {
       teamName: 'Acme Inc',
       inviteUrl: 'https://qrwolf.com/invite/abc123',
       role: 'Editor',
+    },
+  },
+  contact: {
+    name: 'Contact Form',
+    subject: '[Contact] General Inquiry: from John',
+    component: ContactFormEmail,
+    sampleProps: {
+      name: 'John Doe',
+      email: 'john@example.com',
+      subject: 'General Inquiry',
+      message: 'Hi there! I had a question about your QR code generator. Can I use it for large-scale event management with custom branding?\n\nLooking forward to hearing from you.',
+      submittedAt: 'January 31, 2026 at 2:30 PM',
     },
   },
 };

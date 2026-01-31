@@ -10,6 +10,7 @@ import { OnboardingDay7 } from '@/emails/OnboardingDay7';
 import { TrialEndingSoon } from '@/emails/TrialEndingSoon';
 import { MilestoneEmail } from '@/emails/MilestoneEmail';
 import { UsageLimitWarning } from '@/emails/UsageLimitWarning';
+import { ContactFormEmail } from '@/emails/ContactFormEmail';
 
 // Lazy initialization of Resend client
 let resendClient: Resend | null = null;
@@ -385,6 +386,58 @@ export async function sendUsageLimitWarningEmail(
     return { success: true, id: data?.id };
   } catch (err) {
     console.error('Error sending usage warning email:', err);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+// Contact form subject label map
+const CONTACT_SUBJECT_LABELS: Record<string, string> = {
+  general: 'General Inquiry',
+  support: 'Technical Support',
+  billing: 'Billing Question',
+  feature: 'Feature Request',
+  partnership: 'Partnership / Business',
+  other: 'Other',
+};
+
+/**
+ * Send contact form email to hello@qrwolf.com
+ */
+export async function sendContactFormEmail(
+  name: string,
+  email: string,
+  subject: string,
+  message: string
+): Promise<EmailResult> {
+  try {
+    const resend = getResend();
+    const subjectLabel = CONTACT_SUBJECT_LABELS[subject] || subject;
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: 'hello@qrwolf.com',
+      replyTo: email,
+      subject: `[Contact] ${subjectLabel}: from ${name}`,
+      react: ContactFormEmail({
+        name,
+        email,
+        subject: subjectLabel,
+        message,
+        submittedAt: new Date().toLocaleString('en-US', {
+          dateStyle: 'long',
+          timeStyle: 'short',
+        }),
+      }),
+    });
+
+    if (error) {
+      console.error('Failed to send contact form email:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, id: data?.id };
+  } catch (err) {
+    console.error('Error sending contact form email:', err);
     return { success: false, error: 'Failed to send email' };
   }
 }

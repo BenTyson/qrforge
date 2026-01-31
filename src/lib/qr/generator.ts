@@ -203,8 +203,11 @@ export function contentToString(content: QRContent): string {
       // For smart redirects, this will point to a landing page
       return content.fallbackUrl || content.appStoreUrl || content.playStoreUrl || '';
 
-    // === Reviews ===
+    // === Reviews & Feedback ===
     case 'google-review':
+      return `https://qrwolf.com/preview/${content.type}`;
+
+    case 'feedback':
       return `https://qrwolf.com/preview/${content.type}`;
 
     // === Events ===

@@ -17,6 +17,7 @@ import { GalleryPreview } from '@/components/gallery/GalleryPreview';
 import { PDFPreview } from '@/components/pdf/PDFPreview';
 import { VideoPreview } from '@/components/video/VideoPreview';
 import { AudioPreview } from '@/components/audio/AudioPreview';
+import { FeedbackPreview } from '@/components/feedback/FeedbackPreview';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const PREVIEW_COMPONENTS: Partial<Record<QRContentType, ComponentType<{ content: any }>>> = {
@@ -29,6 +30,7 @@ const PREVIEW_COMPONENTS: Partial<Record<QRContentType, ComponentType<{ content:
   pdf: PDFPreview,
   video: VideoPreview,
   mp3: AudioPreview,
+  feedback: FeedbackPreview,
 };
 
 /**

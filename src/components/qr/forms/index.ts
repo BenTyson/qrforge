@@ -15,8 +15,9 @@ export { TwitchForm } from './TwitchForm';
 export { DiscordForm } from './DiscordForm';
 export { AppsForm } from './AppsForm';
 
-// Reviews (free tier)
+// Reviews & Feedback (free tier)
 export { GoogleReviewForm } from './GoogleReviewForm';
+export { FeedbackForm } from './FeedbackForm';
 
 // Events (free tier)
 export { EventForm } from './EventForm';

@@ -14,7 +14,7 @@ Premium QR code generator with analytics and dynamic codes. Goal: passive income
 
 ---
 
-## QR Code Types (24 Total)
+## QR Code Types (35 Total)
 
 ### Basic Types (All Tiers)
 | Type | Output |
@@ -27,7 +27,7 @@ Premium QR code generator with analytics and dynamic codes. Goal: passive income
 | Phone | tel: link |
 | SMS | sms: link |
 
-### Simple URL Types (All Tiers)
+### Social Media Types (All Tiers)
 | Type | Output |
 |------|--------|
 | WhatsApp | wa.me link |
@@ -40,8 +40,23 @@ Premium QR code generator with analytics and dynamic codes. Goal: passive income
 | Threads | threads.net/@ link |
 | YouTube | Landing page with video embed |
 | Pinterest | pinterest.com link |
+| Spotify | Landing page with embed player |
+| Reddit | reddit.com/u or /r link |
+| Twitch | twitch.tv link |
+| Discord | discord.gg invite link |
 | Apps | Smart app redirect |
-| Google Review | Google review link |
+
+### Reviews & Feedback (All Tiers)
+| Type | Output |
+|------|--------|
+| Google Review | Google review landing page |
+| Feedback | Branded feedback form (stars/emoji/numeric rating, optional comment + email) |
+
+### Events & Location (All Tiers)
+| Type | Output |
+|------|--------|
+| Event | Calendar invite landing page |
+| Geo | Map location landing page |
 
 ### File Upload Types (Pro+)
 | Type | Landing Page |
@@ -149,6 +164,7 @@ src/
 | `teams`, `team_members`, `team_invites` | Team management |
 | `referrals` | Referral tracking (referrer, referee, status) |
 | `onboarding_emails` | Track sent onboarding/milestone emails |
+| `feedback_responses` | Feedback form submissions (rating, comment, email) |
 | `admin_audit_log` | Admin action tracking |
 
 **Key profile columns for growth:**
@@ -177,6 +193,11 @@ src/
 - `/r/[code]/coupon` - Coupon display
 - `/r/[code]/social` - Social profile
 - `/r/[code]/review` - Google review
+- `/r/[code]/feedback` - Feedback form
+- `/r/[code]/event` - Calendar event
+- `/r/[code]/location` - Map location
+- `/r/[code]/youtube` - YouTube video
+- `/r/[code]/spotify` - Spotify embed
 
 ### Tools
 - `/tools` - Tools hub

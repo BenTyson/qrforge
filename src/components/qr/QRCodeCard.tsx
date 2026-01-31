@@ -216,6 +216,7 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
       case 'links': return <LinksIcon className="w-4 h-4" />;
       case 'coupon': return <CouponIcon className="w-4 h-4" />;
       case 'social': return <SocialIcon className="w-4 h-4" />;
+      case 'feedback': return <FeedbackIcon className="w-4 h-4" />;
       default: return <TextIcon className="w-4 h-4" />;
     }
   };
@@ -290,6 +291,7 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
       case 'links': return 'primary';
       case 'coupon': return 'amber';
       case 'social': return 'cyan';
+      case 'feedback': return 'amber';
       default: return 'primary';
     }
   };
@@ -873,6 +875,15 @@ function SocialIcon({ className }: { className?: string }) {
       <circle cx="18" cy="19" r="3" />
       <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
       <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+    </svg>
+  );
+}
+
+function FeedbackIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M9 11l3 3L22 4" />
+      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
     </svg>
   );
 }

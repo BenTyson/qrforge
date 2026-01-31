@@ -1,8 +1,8 @@
 # QRWolf Feature Roadmap
 
-> **Last Updated**: January 29, 2026
+> **Last Updated**: January 30, 2026
 > **Status**: Active development
-> **Current Features**: 34 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Logo Crop Editor, Sentry error tracking, Cron-based email automation, 151 SEO articles (all with CTAs)
+> **Current Features**: 35 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Logo Crop Editor, Sentry error tracking, Cron-based email automation, Feedback Forms, 151 SEO articles (all with CTAs)
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -30,78 +30,6 @@ This document tracks planned features in priority order. Work through sequential
 ---
 
 ## NEXT UP
-
-### 11. Simple Feedback Form QR Type
-**Tier**: MAJOR | **Priority**: 11 of 24 | **Effort**: ~1 week
-
-**What**: QR code that links to a simple branded feedback form, responses collected in dashboard.
-
-**Why build this**:
-- High demand for quick feedback collection
-- Reduces need for external survey tools
-- Strong upsell (Pro: unlimited responses, Business: export)
-
-**Implementation**:
-- New QR type: `feedback`
-- Built-in form builder (simple: rating + comment)
-- Landing page with form
-- Dashboard to view responses
-
-**Form options**:
-- Rating type: Stars (1-5) / NPS (0-10) / Thumbs up/down
-- Optional comment field
-- Optional email field
-- Custom thank you message
-
-**Database**:
-```sql
-CREATE TABLE feedback_responses (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  qr_code_id UUID REFERENCES qr_codes(id),
-  rating INTEGER,
-  comment TEXT,
-  email TEXT,
-  created_at TIMESTAMP DEFAULT NOW(),
-  ip_address TEXT,
-  user_agent TEXT
-);
-```
-
-**Landing page** (`/r/[code]/feedback`):
-- Branded header (business name/logo)
-- Rating selector
-- Comment textarea
-- Submit button
-- Thank you confirmation
-
-**Dashboard**:
-- Average rating
-- Response count
-- Recent responses list
-- Export to CSV
-
-**Files to create**:
-- `src/components/qr/forms/FeedbackForm.tsx`
-- `src/app/r/[code]/feedback/page.tsx`
-- `src/app/(dashboard)/qr-codes/[id]/feedback/page.tsx`
-- API route for form submission
-- Database migration
-
-**Tier gating**:
-- Free: 10 responses/month
-- Pro: 1,000 responses/month
-- Business: Unlimited + export
-
-**Acceptance criteria**:
-- [ ] Feedback QR type in selector
-- [ ] Form builder with rating options
-- [ ] Landing page works
-- [ ] Responses stored in database
-- [ ] Dashboard shows responses
-- [ ] Export to CSV (Business)
-- [ ] Tier limits enforced
-
----
 
 ### 15. Multi-Platform Review QR (Google + Yelp + TripAdvisor)
 **Tier**: STANDARD | **Priority**: 15 of 24 | **Effort**: ~2 days
@@ -269,6 +197,7 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Feedback Form QR Type | 2026-01-30 | 35th QR type (free tier). Branded feedback form with 3 rating variants (stars/emoji/numeric), optional comment + email. Landing page at `/r/[code]/feedback`. Public API with honeypot spam prevention + IP rate limiting. Dashboard with summary cards, rating distribution, paginated responses, CSV export (Business). Tier limits: Free 10/mo, Pro 1,000/mo, Business unlimited. 7 new files, 15 modified. |
 | Embed Code Generator | 2026-01-28 | Quick win. Modal with static (base64) and dynamic (URL-based) embeds in HTML `<img>`, inline SVG, Markdown formats. Public `/api/embed/[id]` endpoint for dynamic embeds. Available in QR Studio download step and dashboard cards. Free: static HTML + Markdown. Pro: + dynamic + inline SVG. UX polish: truncated base64 display, visual preview, format hints, smart embed-type auto-detection, scrollable modal. |
 | Print-Ready PDF Export | 2026-01-26 | Pro feature. jsPDF integration. Options: paper size (Letter/A4/custom), QR size, bleed area, crop marks. PDFOptionsModal component. Button in QRStudio download step. |
 | Template Gallery | 2026-01-25 | 40 templates across 7 categories (Restaurant, Business, Marketing, Events, Social, Retail, Creative). Templates are style presets (type + colors/patterns/frames). 13 free, 27 Pro. Gallery at `/templates` with filtering/search. Creator integration via `?template=` param. |
@@ -346,6 +275,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-30 | Completed Feedback Form QR Type (Feature #11). 35th QR type. 7 new files, 15 modified. 216 tests passing. |
 | 2026-01-29 | QR Studio Modularization Refactor (6 phases): unified validation module, form/preview registries, extracted ContentStep + DownloadStep, split monolithic hook into 5 focused hooks, social form factory (8 forms), StyleStep tab extraction, QRStudioContext to eliminate prop drilling. 20 new files, 24 modified, ~800 lines removed, 0 behavior changes. |
 | 2026-01-29 | QR Studio UI refinements: compact pill color presets (14 total), Logo tab reordered to 2nd, branded SVG icons for all 34 QR types in type selector. |
 | 2026-01-29 | Logo Crop Modal bug fixes: rounded shape overlay, live preview thumbnail, object URL leak fix. |

@@ -36,6 +36,8 @@ export type QRContentType =
   | 'links'
   | 'coupon'
   | 'social'
+  // Feedback (free tier)
+  | 'feedback'
   // Events (free tier)
   | 'event'
   // Location (free tier)
@@ -287,6 +289,17 @@ export interface EventContent {
   accentColor?: string;   // Landing page accent color
 }
 
+export interface FeedbackContent {
+  type: 'feedback';
+  businessName: string;
+  formTitle?: string;           // default: "How was your experience?"
+  ratingType: 'stars' | 'emoji' | 'numeric';
+  commentEnabled: boolean;
+  emailEnabled: boolean;
+  thankYouMessage?: string;     // default: "Thank you for your feedback!"
+  accentColor?: string;         // default: #f59e0b (amber)
+}
+
 export interface GeoContent {
   type: 'geo';
   latitude: number;       // -90 to 90
@@ -437,8 +450,9 @@ export type QRContent =
   | TwitchContent
   | DiscordContent
   | AppsContent
-  // Reviews
+  // Reviews & Feedback
   | GoogleReviewContent
+  | FeedbackContent
   // Events
   | EventContent
   // Location
@@ -497,8 +511,9 @@ export const QR_TYPE_LABELS: Record<QRContentType, string> = {
   twitch: 'Twitch',
   discord: 'Discord',
   apps: 'App Download',
-  // Reviews
+  // Reviews & Feedback
   'google-review': 'Google Review',
+  feedback: 'Feedback Form',
   // Events
   event: 'Event / Calendar',
   // Location
@@ -541,8 +556,9 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
   twitch: 'tv',
   discord: 'message-circle',
   apps: 'smartphone',
-  // Reviews
+  // Reviews & Feedback
   'google-review': 'star',
+  feedback: 'clipboard-check',
   // Events
   event: 'calendar',
   // Location
@@ -577,6 +593,7 @@ export const PRO_ONLY_TYPES: QRContentType[] = [
 // Types that require dynamic QR codes (landing pages)
 export const DYNAMIC_REQUIRED_TYPES: QRContentType[] = [
   'google-review',
+  'feedback',
   'youtube',
   'spotify',
   'event',

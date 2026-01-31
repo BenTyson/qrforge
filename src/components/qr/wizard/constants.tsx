@@ -92,7 +92,7 @@ export const TYPE_CATEGORIES: TypeCategory[] = [
   },
   {
     id: 'reviews',
-    name: 'Reviews',
+    name: 'Reviews & Feedback',
     icon: (
       <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
@@ -100,6 +100,7 @@ export const TYPE_CATEGORIES: TypeCategory[] = [
     ),
     types: [
       { id: 'google-review', name: 'Google Review', description: 'Collect Google reviews' },
+      { id: 'feedback', name: 'Feedback Form', description: 'Collect customer feedback' },
     ],
   },
   {
@@ -186,7 +187,7 @@ export const COLOR_PRESETS = [
 ];
 
 // Types that have landing page previews
-export const PREVIEWABLE_TYPES: QRContentType[] = ['menu', 'business', 'links', 'coupon', 'social'];
+export const PREVIEWABLE_TYPES: QRContentType[] = ['menu', 'business', 'links', 'coupon', 'social', 'feedback'];
 
 // Flattened type metadata for use in ArticleCTA and other components
 export const QR_TYPE_METADATA = TYPE_CATEGORIES.flatMap(cat => cat.types)

@@ -56,8 +56,9 @@ describe('API Validators', () => {
       'url', 'text', 'wifi', 'vcard', 'email', 'phone', 'sms',
       // Simple URL types
       'whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'spotify', 'reddit', 'twitch', 'discord', 'apps',
-      // Reviews
+      // Reviews & Feedback
       'google-review',
+      'feedback',
       // Events
       'event',
       // Location
@@ -74,9 +75,9 @@ describe('API Validators', () => {
       });
     });
 
-    it('should count exactly 34 valid content types', () => {
-      // 7 basic + 15 social + 1 reviews + 1 events + 1 location + 4 file + 5 landing = 34
-      expect(validTypes.length).toBe(34);
+    it('should count exactly 35 valid content types', () => {
+      // 7 basic + 15 social + 2 reviews/feedback + 1 events + 1 location + 4 file + 5 landing = 35
+      expect(validTypes.length).toBe(35);
     });
 
     it('should reject invalid content types', () => {

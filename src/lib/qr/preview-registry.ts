@@ -18,6 +18,14 @@ import { PDFPreview } from '@/components/pdf/PDFPreview';
 import { VideoPreview } from '@/components/video/VideoPreview';
 import { AudioPreview } from '@/components/audio/AudioPreview';
 import { FeedbackPreview } from '@/components/feedback/FeedbackPreview';
+import { TextPreview } from '@/components/text/TextPreview';
+import { GoogleReviewPreview } from '@/components/review/GoogleReviewPreview';
+import { WiFiPreview } from '@/components/wifi/WiFiPreview';
+import { VCardPreview } from '@/components/vcard/VCardPreview';
+import { SpotifyPreview } from '@/components/spotify/SpotifyPreview';
+import { YouTubePreview } from '@/components/youtube/YouTubePreview';
+import { EventPreview } from '@/components/event/EventPreview';
+import { GeoPreview } from '@/components/location/GeoPreview';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const PREVIEW_COMPONENTS: Partial<Record<QRContentType, ComponentType<{ content: any }>>> = {
@@ -31,6 +39,14 @@ const PREVIEW_COMPONENTS: Partial<Record<QRContentType, ComponentType<{ content:
   video: VideoPreview,
   mp3: AudioPreview,
   feedback: FeedbackPreview,
+  text: TextPreview,
+  'google-review': GoogleReviewPreview,
+  wifi: WiFiPreview,
+  vcard: VCardPreview,
+  spotify: SpotifyPreview,
+  youtube: YouTubePreview,
+  event: EventPreview,
+  geo: GeoPreview,
 };
 
 /**

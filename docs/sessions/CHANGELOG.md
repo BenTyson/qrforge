@@ -6,6 +6,37 @@ Session-by-session history of development work. Most recent first.
 
 ## January 30, 2026
 
+### Feedback UX Improvements
+
+Three targeted enhancements to the feedback feature's usability for creators and scanners.
+
+#### Dashboard "Responses" Button
+- Conditional button on QR code cards when `content_type === 'feedback'`
+- One-click navigation to `/qr-codes/[id]/feedback` response dashboard
+- Message-bubble icon with "Responses" label, placed next to Analytics button
+- File: `QRCodeCard.tsx` — added `ResponsesIcon` component and conditional render
+
+#### Thank-You Page CTA Button
+- Two new optional fields on `FeedbackContent`: `ctaUrl`, `ctaLabel` (defaults to "Visit Our Website")
+- Creator form: URL input + conditional label input (only shown when URL is entered)
+- Landing page success state: styled gradient button with external-link icon, opens in new tab
+- Phone mockup preview: small CTA indicator below submit button when URL is set
+- URL normalization: added `case 'feedback'` to `normalizeContentUrls` for `ctaUrl`
+- No migration needed — fields stored in existing JSONB content column
+
+#### Creator Info Box Update
+- Replaced generic "how it works" text with actionable guidance referencing the Responses button
+
+#### Files Modified (6)
+- `src/lib/qr/types.ts` — `ctaUrl`, `ctaLabel` on FeedbackContent
+- `src/components/qr/forms/FeedbackForm.tsx` — CTA inputs, updated info box, handleChange spread
+- `src/components/qr/QRCodeCard.tsx` — Responses button, ResponsesIcon
+- `src/lib/qr/generator.ts` — feedback ctaUrl normalization
+- `src/app/r/[code]/feedback/page.tsx` — CTA button in success state
+- `src/components/feedback/FeedbackPreview.tsx` — CTA preview indicator
+
+---
+
 ### Feedback Form QR Type (Feature #11)
 
 New free-tier QR type (`feedback`) allowing businesses to collect customer feedback via a branded form. When scanned, users see a rating selector, optional comment/email fields, and a submit button. Responses are viewable in a dedicated dashboard.

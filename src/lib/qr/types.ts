@@ -298,6 +298,8 @@ export interface FeedbackContent {
   emailEnabled: boolean;
   thankYouMessage?: string;     // default: "Thank you for your feedback!"
   accentColor?: string;         // default: #f59e0b (amber)
+  ctaUrl?: string;              // Optional CTA button URL on thank-you screen
+  ctaLabel?: string;            // Optional CTA button label (default: "Visit Our Website")
 }
 
 export interface GeoContent {

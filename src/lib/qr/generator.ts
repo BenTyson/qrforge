@@ -83,6 +83,12 @@ export function normalizeContentUrls(content: QRContent): QRContent {
         }) || [],
       };
 
+    case 'feedback':
+      return {
+        ...content,
+        ctaUrl: content.ctaUrl ? normalizeUrl(content.ctaUrl) : content.ctaUrl,
+      };
+
     // Other types (text, wifi, vcard, email, phone, sms, whatsapp, instagram, images, menu, coupon)
     // don't have URL fields that need normalization or are handled differently
     default:

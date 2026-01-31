@@ -21,6 +21,8 @@ export function FeedbackForm({ content, onChange }: FeedbackFormProps) {
       formTitle: content.formTitle,
       thankYouMessage: content.thankYouMessage,
       accentColor: content.accentColor,
+      ctaUrl: content.ctaUrl,
+      ctaLabel: content.ctaLabel,
       [field]: value,
     });
   };
@@ -142,6 +144,37 @@ export function FeedbackForm({ content, onChange }: FeedbackFormProps) {
         </div>
       </div>
 
+      {/* CTA Button (Thank You Page) */}
+      <div>
+        <Label htmlFor="feedbackCtaUrl">Thank-You Page Button URL (optional)</Label>
+        <Input
+          id="feedbackCtaUrl"
+          type="url"
+          placeholder="https://yourbusiness.com"
+          value={content.ctaUrl || ''}
+          onChange={(e) => handleChange('ctaUrl', e.target.value)}
+          className="mt-1 bg-secondary/50"
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Add a button to the thank-you screen that links back to your website
+        </p>
+      </div>
+
+      {/* CTA Label (only when URL is set) */}
+      {content.ctaUrl && (
+        <div>
+          <Label htmlFor="feedbackCtaLabel">Button Label (optional)</Label>
+          <Input
+            id="feedbackCtaLabel"
+            type="text"
+            placeholder="Visit Our Website"
+            value={content.ctaLabel || ''}
+            onChange={(e) => handleChange('ctaLabel', e.target.value)}
+            className="mt-1 bg-secondary/50"
+          />
+        </div>
+      )}
+
       {/* Info Box */}
       <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
         <div className="flex gap-3">
@@ -151,7 +184,8 @@ export function FeedbackForm({ content, onChange }: FeedbackFormProps) {
           <div className="text-sm">
             <p className="text-amber-100 font-medium mb-1">How it works</p>
             <p className="text-amber-200/80">
-              Create a feedback form. When scanned, customers see a simple form to rate their experience and leave optional comments.
+              When scanned, customers see a simple form to rate their experience and leave optional comments.
+              View submissions from the <strong>Responses</strong> button on your QR code card in the dashboard.
             </p>
           </div>
         </div>

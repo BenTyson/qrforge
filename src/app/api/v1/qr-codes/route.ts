@@ -51,6 +51,7 @@ export async function GET(request: Request) {
   offset = Math.max(0, isNaN(offset) ? 0 : offset);
 
   const type = url.searchParams.get('type');
+  const includeArchived = url.searchParams.get('include_archived') === 'true';
 
   let query = supabase
     .from('qr_codes')
@@ -58,6 +59,11 @@ export async function GET(request: Request) {
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1);
+
+  // Exclude archived codes by default
+  if (!includeArchived) {
+    query = query.is('archived_at', null);
+  }
 
   // Validate type filter
   if (type && validators.isValidQRType(type)) {

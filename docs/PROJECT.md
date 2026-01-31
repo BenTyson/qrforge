@@ -157,7 +157,7 @@ src/
 | Table | Purpose |
 |-------|---------|
 | `profiles` | Users + subscription state + trial + referral |
-| `qr_codes` | QR codes + content + style |
+| `qr_codes` | QR codes + content + style + archive |
 | `scans` | Scan analytics (device, location) |
 | `folders` | QR organization (Pro+) |
 | `api_keys` | API authentication (Business) |

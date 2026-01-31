@@ -16,10 +16,12 @@ export default async function DashboardPage() {
   }
 
   // Phase 1: Fetch QR codes first (needed for downstream queries)
+  // Exclude archived codes from dashboard stats
   const qrCodesResult = await supabase
     .from('qr_codes')
     .select('id, name, type, scan_count')
-    .eq('user_id', user.id);
+    .eq('user_id', user.id)
+    .is('archived_at', null);
 
   const qrCodes = qrCodesResult.data || [];
   const userQRCodeIds = qrCodes.map(qr => qr.id);

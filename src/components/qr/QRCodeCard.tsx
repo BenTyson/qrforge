@@ -42,6 +42,7 @@ interface QRCodeData {
   active_from: string | null;
   active_until: string | null;
   password_hash: string | null;
+  archived_at?: string | null;
   folder_id?: string | null;
 }
 
@@ -52,10 +53,15 @@ interface QRCodeCardProps {
   folderColor?: string | null;
   folders?: Folder[];
   onFolderChange?: (qrCodeId: string, folderId: string | null) => void;
+  onDuplicate?: (id: string) => void;
+  onArchive?: (id: string) => void;
+  onRestore?: (id: string) => void;
+  onPermanentDelete?: (id: string) => void;
+  duplicateDisabled?: boolean;
   userTier?: SubscriptionTier;
 }
 
-export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folderColor, folders = [], onFolderChange, userTier = 'free' }: QRCodeCardProps) {
+export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folderColor, folders = [], onFolderChange, onDuplicate, onArchive, onRestore, onPermanentDelete, duplicateDisabled, userTier = 'free' }: QRCodeCardProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showActions, setShowActions] = useState(false);
@@ -337,9 +343,11 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
     }
   };
 
+  const isArchived = !!qrCode.archived_at;
+
   return (
     <div
-      className="group relative rounded-2xl border border-border/50 bg-card/50 backdrop-blur overflow-hidden hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 animate-slide-up"
+      className={`group relative rounded-2xl border border-border/50 bg-card/50 backdrop-blur overflow-hidden hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 animate-slide-up ${isArchived ? 'opacity-75' : ''}`}
       style={{ animationDelay: `${index * 80}ms` }}
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
@@ -390,6 +398,11 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <h3 className="font-semibold truncate text-sm">{qrCode.name}</h3>
+              {isArchived && (
+                <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 font-medium">
+                  Archived
+                </span>
+              )}
             </div>
 
             <div className="flex items-center gap-2 mt-1.5">
@@ -437,148 +450,212 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
           role="group"
           aria-label="QR code actions"
         >
-          <Link href={`/qr-codes/${qrCode.id}/edit`} className="flex-1">
-            <Button variant="outline" size="sm" className={`w-full h-8 text-xs${userTier === 'free' ? ' opacity-60' : ''}`}>
-              <EditIcon className="w-3 h-3 mr-1.5" aria-hidden="true" />
-              Edit
-              {userTier === 'free' && (
-                <span className="ml-1 text-[8px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-400 font-medium">Pro</span>
+          {isArchived ? (
+            <>
+              {onRestore && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 h-8 text-xs text-emerald-500 hover:text-emerald-600 hover:bg-emerald-500/10 hover:border-emerald-500/30"
+                  onClick={() => onRestore(qrCode.id)}
+                  aria-label="Restore QR code"
+                >
+                  <RestoreIcon className="w-3 h-3 mr-1.5" aria-hidden="true" />
+                  Restore
+                </Button>
               )}
-            </Button>
-          </Link>
-          <Link href={`/analytics?qr=${qrCode.id}`}>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 text-xs px-2"
-              title="View analytics"
-              aria-label="View analytics for this QR code"
-            >
-              <AnalyticsIcon className="w-3 h-3" aria-hidden="true" />
-            </Button>
-          </Link>
-          {qrCode.content_type === 'feedback' && (
-            <Link href={`/qr-codes/${qrCode.id}/feedback`}>
+              {onPermanentDelete && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs px-3 text-red-500 hover:text-red-600 hover:bg-red-500/10 hover:border-red-500/30"
+                  onClick={() => {
+                    if (confirm('Permanently delete this QR code? This cannot be undone.')) {
+                      onPermanentDelete(qrCode.id);
+                    }
+                  }}
+                  aria-label="Permanently delete QR code"
+                >
+                  <TrashIcon className="w-3 h-3 mr-1" aria-hidden="true" />
+                  <span className="text-[10px] font-medium">Delete Forever</span>
+                </Button>
+              )}
+            </>
+          ) : (
+            <>
+              <Link href={`/qr-codes/${qrCode.id}/edit`} className="flex-1">
+                <Button variant="outline" size="sm" className={`w-full h-8 text-xs${userTier === 'free' ? ' opacity-60' : ''}`}>
+                  <EditIcon className="w-3 h-3 mr-1.5" aria-hidden="true" />
+                  Edit
+                  {userTier === 'free' && (
+                    <span className="ml-1 text-[8px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-400 font-medium">Pro</span>
+                  )}
+                </Button>
+              </Link>
+              <Link href={`/analytics?qr=${qrCode.id}`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs px-2"
+                  title="View analytics"
+                  aria-label="View analytics for this QR code"
+                >
+                  <AnalyticsIcon className="w-3 h-3" aria-hidden="true" />
+                </Button>
+              </Link>
+              {qrCode.content_type === 'feedback' && (
+                <Link href={`/qr-codes/${qrCode.id}/feedback`}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs px-2"
+                    title="View responses"
+                    aria-label="View feedback responses"
+                  >
+                    <ResponsesIcon className="w-3 h-3 mr-1" aria-hidden="true" />
+                    <span className="text-[10px] font-medium">Responses</span>
+                  </Button>
+                </Link>
+              )}
               <Button
                 variant="outline"
                 size="sm"
                 className="h-8 text-xs px-2"
-                title="View responses"
-                aria-label="View feedback responses"
-              >
-                <ResponsesIcon className="w-3 h-3 mr-1" aria-hidden="true" />
-                <span className="text-[10px] font-medium">Responses</span>
-              </Button>
-            </Link>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs px-2"
-            onClick={handleDownloadPNG}
-            title="Download PNG"
-            aria-label="Download as PNG"
-          >
-            <DownloadIcon className="w-3 h-3 mr-1" aria-hidden="true" />
-            <span className="text-[10px] font-medium">PNG</span>
-          </Button>
-          {canDownloadSVG ? (
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 text-xs px-2"
-              onClick={handleDownloadSVG}
-              title="Download SVG"
-              aria-label="Download as SVG"
-            >
-              <DownloadIcon className="w-3 h-3 mr-1" aria-hidden="true" />
-              <span className="text-[10px] font-medium">SVG</span>
-            </Button>
-          ) : (
-            <Link href="/plans">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 text-xs px-2 opacity-60"
-                title="SVG download - Pro feature"
-                aria-label="Upgrade to Pro for SVG download"
+                onClick={handleDownloadPNG}
+                title="Download PNG"
+                aria-label="Download as PNG"
               >
                 <DownloadIcon className="w-3 h-3 mr-1" aria-hidden="true" />
-                <span className="text-[10px] font-medium">SVG</span>
-                <span className="ml-1 text-[8px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-400 font-medium">Pro</span>
+                <span className="text-[10px] font-medium">PNG</span>
               </Button>
-            </Link>
-          )}
-          {qrCode.short_code && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 text-xs px-3"
-              onClick={handleCopyLink}
-              aria-label="Copy short link"
-            >
-              <CopyIcon className="w-3 h-3" aria-hidden="true" />
-            </Button>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs px-2"
-            onClick={handleShowEmbed}
-            title="Get embed code"
-            aria-label="Get embed code"
-          >
-            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-              <polyline points="16 18 22 12 16 6" />
-              <polyline points="8 6 2 12 8 18" />
-            </svg>
-          </Button>
-          {folders.length > 0 && onFolderChange && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              {canDownloadSVG ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs px-2"
+                  onClick={handleDownloadSVG}
+                  title="Download SVG"
+                  aria-label="Download as SVG"
+                >
+                  <DownloadIcon className="w-3 h-3 mr-1" aria-hidden="true" />
+                  <span className="text-[10px] font-medium">SVG</span>
+                </Button>
+              ) : (
+                <Link href="/plans">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs px-2 opacity-60"
+                    title="SVG download - Pro feature"
+                    aria-label="Upgrade to Pro for SVG download"
+                  >
+                    <DownloadIcon className="w-3 h-3 mr-1" aria-hidden="true" />
+                    <span className="text-[10px] font-medium">SVG</span>
+                    <span className="ml-1 text-[8px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-400 font-medium">Pro</span>
+                  </Button>
+                </Link>
+              )}
+              {qrCode.short_code && (
                 <Button
                   variant="outline"
                   size="sm"
                   className="h-8 text-xs px-3"
-                  aria-label="Move to folder"
+                  onClick={handleCopyLink}
+                  aria-label="Copy short link"
                 >
-                  <FolderIcon className="w-3 h-3" aria-hidden="true" />
+                  <CopyIcon className="w-3 h-3" aria-hidden="true" />
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-card border-border/50">
-                <DropdownMenuItem
-                  onClick={() => onFolderChange(qrCode.id, null)}
-                  className={!qrCode.folder_id ? 'bg-primary/10 text-primary' : ''}
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs px-2"
+                onClick={handleShowEmbed}
+                title="Get embed code"
+                aria-label="Get embed code"
+              >
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <polyline points="16 18 22 12 16 6" />
+                  <polyline points="8 6 2 12 8 18" />
+                </svg>
+              </Button>
+              {folders.length > 0 && onFolderChange && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-xs px-3"
+                      aria-label="Move to folder"
+                    >
+                      <FolderIcon className="w-3 h-3" aria-hidden="true" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48 bg-card border-border/50">
+                    <DropdownMenuItem
+                      onClick={() => onFolderChange(qrCode.id, null)}
+                      className={!qrCode.folder_id ? 'bg-primary/10 text-primary' : ''}
+                    >
+                      No Folder
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    {folders.map((folder) => (
+                      <DropdownMenuItem
+                        key={folder.id}
+                        onClick={() => onFolderChange(qrCode.id, folder.id)}
+                        className={qrCode.folder_id === folder.id ? 'bg-primary/10 text-primary' : ''}
+                      >
+                        <div
+                          className="w-3 h-3 rounded-full mr-2"
+                          style={{ backgroundColor: folder.color }}
+                        />
+                        {folder.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              {onDuplicate && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs px-3"
+                  onClick={() => onDuplicate(qrCode.id)}
+                  disabled={duplicateDisabled}
+                  title={duplicateDisabled ? 'QR code limit reached' : 'Duplicate'}
+                  aria-label="Duplicate QR code"
                 >
-                  No Folder
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                {folders.map((folder) => (
-                  <DropdownMenuItem
-                    key={folder.id}
-                    onClick={() => onFolderChange(qrCode.id, folder.id)}
-                    className={qrCode.folder_id === folder.id ? 'bg-primary/10 text-primary' : ''}
-                  >
-                    <div
-                      className="w-3 h-3 rounded-full mr-2"
-                      style={{ backgroundColor: folder.color }}
-                    />
-                    {folder.name}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DuplicateIcon className="w-3 h-3" aria-hidden="true" />
+                </Button>
+              )}
+              {onArchive ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs px-3 text-amber-500 hover:text-amber-600 hover:bg-amber-500/10 hover:border-amber-500/30"
+                  onClick={() => {
+                    if (confirm('Archive this QR code? You can restore it later.')) {
+                      onArchive(qrCode.id);
+                    }
+                  }}
+                  aria-label="Archive QR code"
+                >
+                  <ArchiveIcon className="w-3 h-3" aria-hidden="true" />
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs px-3 text-red-500 hover:text-red-600 hover:bg-red-500/10 hover:border-red-500/30"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  aria-label="Delete QR code"
+                >
+                  <TrashIcon className="w-3 h-3" aria-hidden="true" />
+                </Button>
+              )}
+            </>
           )}
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs px-3 text-red-500 hover:text-red-600 hover:bg-red-500/10 hover:border-red-500/30"
-            onClick={handleDelete}
-            disabled={isDeleting}
-            aria-label="Delete QR code"
-          >
-            <TrashIcon className="w-3 h-3" aria-hidden="true" />
-          </Button>
         </div>
       </div>
 
@@ -935,6 +1012,36 @@ function ResponsesIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
+
+function DuplicateIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="8" y="8" width="14" height="14" rx="2" ry="2" />
+      <path d="M4 16H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1" />
+      <line x1="15" y1="12" x2="15" y2="18" />
+      <line x1="12" y1="15" x2="18" y2="15" />
+    </svg>
+  );
+}
+
+function ArchiveIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <polyline points="21 8 21 21 3 21 3 8" />
+      <rect x="1" y="3" width="22" height="5" />
+      <line x1="10" y1="12" x2="14" y2="12" />
+    </svg>
+  );
+}
+
+function RestoreIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <polyline points="1 4 1 10 7 10" />
+      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
     </svg>
   );
 }

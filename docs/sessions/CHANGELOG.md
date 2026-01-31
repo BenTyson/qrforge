@@ -6,6 +6,43 @@ Session-by-session history of development work. Most recent first.
 
 ## January 31, 2026
 
+### QR Code Duplication (Feature #22) & Archive/Restore (Feature #23)
+
+Two quick-win dashboard features shipped together since they touch the same core files.
+
+#### QR Code Duplication
+- One-click duplicate via POST `/api/qr/[id]/duplicate`
+- Copies all fields: content, style, folder, schedule, password
+- Resets: name gets "(Copy)" suffix, scan_count starts at 0, clears `bulk_batch_id` and `archived_at`
+- Generates new unique `short_code` with 3-attempt collision retry
+- Tier limit enforcement — blocks duplicate if user is at their QR code limit
+- Duplicate button (copy icon) added to QRCodeCard action bar
+
+#### QR Code Archive/Restore
+- New `archived_at` column on `qr_codes` table (soft delete)
+- Active/Archived tab toggle on the QR codes dashboard page
+- Archive button (amber) replaces the red Delete button for normal cards
+- Archived view shows Restore + "Delete Forever" (with confirmation)
+- Archived QR codes still resolve when scanned (archiving is organizational, not deactivation)
+- Archived codes still count toward tier limit (prevents gaming)
+- Dashboard stats and v1 API GET exclude archived by default (`?include_archived=true` to include)
+- Optimistic UI updates for archive/restore actions with rollback on error
+
+#### Files Created (3)
+- `supabase/migrations/20260131000001_add_archived_at.sql`
+- `src/app/api/qr/[id]/duplicate/route.ts`
+- `src/app/api/qr/[id]/__tests__/duplicate.test.ts`
+
+#### Files Modified (6)
+- `src/lib/supabase/types.ts` — added `archived_at` field to QRCode interface
+- `src/components/qr/QRCodeCard.tsx` — duplicate/archive/restore buttons, archived badge, dimmed styling
+- `src/app/(dashboard)/qr-codes/QRCodesContent.tsx` — tab toggle, handlers, stats from active codes only
+- `src/app/(dashboard)/dashboard/page.tsx` — exclude archived from dashboard stats query
+- `src/app/api/v1/qr-codes/route.ts` — exclude archived by default, `include_archived` param
+- `src/lib/test/factories.ts` — added `archived_at` to mock factory
+
+---
+
 ### Landing Page Previews for All QR Types
 
 Added phone-mockup previews to the 8 remaining QR types that had landing pages but no Content-step sidebar preview. All 18 landing-page types now show a live preview while editing.

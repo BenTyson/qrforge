@@ -9,6 +9,8 @@ import { BulkBatchCard } from '@/components/qr/BulkBatchCard';
 import { QRFilters } from '@/components/qr/QRFilters';
 import { FolderManager } from '@/components/qr/FolderManager';
 import { toast } from 'sonner';
+import { createClient } from '@/lib/supabase/client';
+import { PLANS } from '@/lib/stripe/plans';
 import type { QRContentType } from '@/lib/qr/types';
 import type { Folder, SubscriptionTier, QRCode } from '@/lib/supabase/types';
 
@@ -48,6 +50,7 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
   const router = useRouter();
   const [qrCodes, setQrCodes] = useState(initialQrCodes);
   const [folders, setFolders] = useState(initialFolders);
+  const [showArchived, setShowArchived] = useState(false);
 
   // Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,14 +58,23 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
   const [selectedStatus, setSelectedStatus] = useState<'active' | 'expired' | 'scheduled' | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
 
-  // Calculate stats
-  const totalScans = useMemo(() => qrCodes.reduce((sum, qr) => sum + (qr.scan_count || 0), 0), [qrCodes]);
-  const dynamicCount = useMemo(() => qrCodes.filter(qr => qr.type === 'dynamic').length, [qrCodes]);
-  const staticCount = qrCodes.length - dynamicCount;
+  // Split active vs archived
+  const activeCodes = useMemo(() => qrCodes.filter(qr => !qr.archived_at), [qrCodes]);
+  const archivedCodes = useMemo(() => qrCodes.filter(qr => qr.archived_at), [qrCodes]);
 
-  // Filter QR codes
+  // Calculate stats from active codes only
+  const totalScans = useMemo(() => activeCodes.reduce((sum, qr) => sum + (qr.scan_count || 0), 0), [activeCodes]);
+  const dynamicCount = useMemo(() => activeCodes.filter(qr => qr.type === 'dynamic').length, [activeCodes]);
+  const staticCount = activeCodes.length - dynamicCount;
+
+  // Check if user is at QR code limit (for duplicate button)
+  const qrLimit = PLANS[tier].dynamicQRLimit;
+  const duplicateDisabled = qrLimit !== -1 && qrCodes.length >= qrLimit;
+
+  // Filter QR codes (apply to the currently viewed set)
+  const currentCodes = showArchived ? archivedCodes : activeCodes;
   const filteredCodes = useMemo(() => {
-    return qrCodes.filter(qr => {
+    return currentCodes.filter(qr => {
       // Search filter
       if (searchQuery && !qr.name.toLowerCase().includes(searchQuery.toLowerCase())) {
         return false;
@@ -84,7 +96,7 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
       }
       return true;
     });
-  }, [qrCodes, searchQuery, selectedType, selectedStatus, selectedFolder]);
+  }, [currentCodes, searchQuery, selectedType, selectedStatus, selectedFolder]);
 
   // Separate individual codes from bulk batches
   const individualCodes = useMemo(() => filteredCodes.filter(qr => !qr.bulk_batch_id), [filteredCodes]);
@@ -219,6 +231,94 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
     }
   };
 
+  // Duplicate handler
+  const handleDuplicate = async (id: string) => {
+    try {
+      const response = await fetch(`/api/qr/${id}/duplicate`, { method: 'POST' });
+      if (!response.ok) {
+        const error = await response.json();
+        if (response.status === 403) {
+          toast.error(error.error || 'QR code limit reached. Upgrade for more.');
+        } else {
+          toast.error(error.error || 'Failed to duplicate QR code');
+        }
+        return;
+      }
+      const duplicate = await response.json();
+      toast.success(`Duplicated as "${duplicate.name}"`);
+      window.location.reload();
+    } catch {
+      toast.error('Failed to duplicate QR code');
+    }
+  };
+
+  // Archive handler (optimistic)
+  const handleArchive = async (id: string) => {
+    const previousQrCodes = qrCodes;
+    const archivedAt = new Date().toISOString();
+
+    setQrCodes(prev => prev.map(qr =>
+      qr.id === id ? { ...qr, archived_at: archivedAt } : qr
+    ));
+    toast.success('QR code archived');
+
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('qr_codes')
+        .update({ archived_at: archivedAt })
+        .eq('id', id);
+
+      if (error) throw error;
+    } catch {
+      setQrCodes(previousQrCodes);
+      toast.error('Failed to archive QR code');
+    }
+  };
+
+  // Restore handler (optimistic)
+  const handleRestore = async (id: string) => {
+    const previousQrCodes = qrCodes;
+
+    setQrCodes(prev => prev.map(qr =>
+      qr.id === id ? { ...qr, archived_at: null } : qr
+    ));
+    toast.success('QR code restored');
+
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('qr_codes')
+        .update({ archived_at: null })
+        .eq('id', id);
+
+      if (error) throw error;
+    } catch {
+      setQrCodes(previousQrCodes);
+      toast.error('Failed to restore QR code');
+    }
+  };
+
+  // Permanent delete handler
+  const handlePermanentDelete = async (id: string) => {
+    const previousQrCodes = qrCodes;
+    setQrCodes(prev => prev.filter(qr => qr.id !== id));
+
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('qr_codes')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      toast.success('QR code permanently deleted');
+    } catch {
+      setQrCodes(previousQrCodes);
+      toast.error('Failed to delete QR code');
+    }
+  };
+
   const hasActiveFilters = searchQuery || selectedType || selectedStatus || selectedFolder;
 
   return (
@@ -253,12 +353,44 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
         )}
       </div>
 
-      {/* Stats Cards */}
+      {/* Active / Archived Tabs */}
       {qrCodes.length > 0 && (
+        <div className="flex gap-1 mb-6 p-1 bg-secondary/30 rounded-xl w-fit animate-fade-in">
+          <button
+            onClick={() => setShowArchived(false)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              !showArchived
+                ? 'bg-card shadow-sm text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            My QR Codes
+            <span className="ml-1.5 text-xs text-muted-foreground">({activeCodes.length})</span>
+          </button>
+          <button
+            onClick={() => setShowArchived(true)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              showArchived
+                ? 'bg-card shadow-sm text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            Archived
+            {archivedCodes.length > 0 && (
+              <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500">
+                {archivedCodes.length}
+              </span>
+            )}
+          </button>
+        </div>
+      )}
+
+      {/* Stats Cards */}
+      {qrCodes.length > 0 && !showArchived && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           <StatsCard
             icon={<QRIcon className="w-5 h-5 text-primary" />}
-            value={qrCodes.length}
+            value={activeCodes.length}
             label="Total"
             color="primary"
             index={0}
@@ -288,7 +420,7 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
       )}
 
       {/* Filters and Folders */}
-      {qrCodes.length > 0 && (
+      {qrCodes.length > 0 && !showArchived && (
         <div className="mb-8 space-y-6">
           {/* Filters */}
           <QRFilters
@@ -341,8 +473,21 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
         </div>
       )}
 
+      {/* Empty archived view */}
+      {showArchived && archivedCodes.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-border/50 bg-card/30 p-12 text-center animate-slide-up">
+          <div className="w-16 h-16 mx-auto mb-4 bg-muted/20 rounded-2xl flex items-center justify-center">
+            <ArchiveEmptyIcon className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h2 className="text-lg font-semibold mb-2">No archived QR codes</h2>
+          <p className="text-muted-foreground">
+            Archived QR codes will appear here. Archive codes you no longer need instead of deleting them.
+          </p>
+        </div>
+      )}
+
       {/* No results from filter */}
-      {qrCodes.length > 0 && filteredCodes.length === 0 && hasActiveFilters && (
+      {qrCodes.length > 0 && filteredCodes.length === 0 && hasActiveFilters && !showArchived && (
         <div className="rounded-2xl border border-dashed border-border/50 bg-card/30 p-12 text-center animate-slide-up">
           <div className="w-16 h-16 mx-auto mb-4 bg-muted/20 rounded-2xl flex items-center justify-center">
             <SearchIcon className="w-8 h-8 text-muted-foreground" />
@@ -358,8 +503,8 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
       {individualCodes.length > 0 && (
         <div className="mb-8">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <div className="w-1 h-6 bg-gradient-to-b from-primary to-cyan-500 rounded-full" />
-            QR Codes
+            <div className={`w-1 h-6 bg-gradient-to-b ${showArchived ? 'from-amber-500 to-orange-500' : 'from-primary to-cyan-500'} rounded-full`} />
+            {showArchived ? 'Archived' : 'QR Codes'}
             <span className="text-sm font-normal text-muted-foreground">({individualCodes.length})</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -369,8 +514,13 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
                 qrCode={qr}
                 index={index}
                 folderColor={getFolderColor(qr.folder_id)}
-                folders={tier !== 'free' ? folders : undefined}
-                onFolderChange={tier !== 'free' ? handleFolderAssign : undefined}
+                folders={!showArchived && tier !== 'free' ? folders : undefined}
+                onFolderChange={!showArchived && tier !== 'free' ? handleFolderAssign : undefined}
+                onDuplicate={!showArchived ? handleDuplicate : undefined}
+                onArchive={!showArchived ? handleArchive : undefined}
+                onRestore={showArchived ? handleRestore : undefined}
+                onPermanentDelete={showArchived ? handlePermanentDelete : undefined}
+                duplicateDisabled={duplicateDisabled}
                 userTier={tier}
               />
             ))}
@@ -379,7 +529,7 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
       )}
 
       {/* Bulk Batches */}
-      {bulkBatchList.length > 0 && (
+      {!showArchived && bulkBatchList.length > 0 && (
         <div>
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full" />
@@ -510,6 +660,16 @@ function SearchIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <circle cx="11" cy="11" r="8" />
       <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  );
+}
+
+function ArchiveEmptyIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <polyline points="21 8 21 21 3 21 3 8" />
+      <rect x="1" y="3" width="22" height="5" />
+      <line x1="10" y1="12" x2="14" y2="12" />
     </svg>
   );
 }

@@ -154,27 +154,6 @@ campaign_id UUID REFERENCES campaigns(id)
 
 ---
 
-### 22. QR Code Duplication
-**Tier**: QUICK WIN | **Priority**: 22 of 24 | **Effort**: ~2 hours
-
-**What**: One-click duplicate a QR code with all settings.
-
-**Why build this**:
-- Common workflow need
-- Very easy to implement
-- Improves UX
-
----
-
-### 23. QR Code Archive/Restore
-**Tier**: QUICK WIN | **Priority**: 23 of 24 | **Effort**: ~4 hours
-
-**What**: Archive QR codes instead of deleting, with restore option.
-
-**Why build this**:
-- Prevents accidental data loss
-- Professional feature expectation
-
 ---
 
 ### 24. White-Label Landing Pages
@@ -197,6 +176,8 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| QR Code Duplication | 2026-01-31 | One-click duplicate with POST `/api/qr/[id]/duplicate`. Copies content, style, folder, schedule, password. Resets name to "(Copy)", scan_count to 0, clears bulk_batch_id and archived_at. Tier limit enforcement. Duplicate button on dashboard cards. |
+| QR Code Archive/Restore | 2026-01-31 | Soft-delete with `archived_at` column. Active/Archived tab toggle on QR codes page. Archive replaces delete button (amber). Restore + permanent delete in archived view. Archived codes still resolve when scanned. Dashboard stats and v1 API exclude archived by default (`?include_archived=true` to include). Optimistic UI updates. |
 | Feedback Form QR Type | 2026-01-30 | 35th QR type (free tier). Branded feedback form with 3 rating variants (stars/emoji/numeric), optional comment + email. Landing page at `/r/[code]/feedback`. Public API with honeypot spam prevention + IP rate limiting. Dashboard with summary cards, rating distribution, paginated responses, CSV export (Business). Tier limits: Free 10/mo, Pro 1,000/mo, Business unlimited. 7 new files, 15 modified. |
 | Embed Code Generator | 2026-01-28 | Quick win. Modal with static (base64) and dynamic (URL-based) embeds in HTML `<img>`, inline SVG, Markdown formats. Public `/api/embed/[id]` endpoint for dynamic embeds. Available in QR Studio download step and dashboard cards. Free: static HTML + Markdown. Pro: + dynamic + inline SVG. UX polish: truncated base64 display, visual preview, format hints, smart embed-type auto-detection, scrollable modal. |
 | Print-Ready PDF Export | 2026-01-26 | Pro feature. jsPDF integration. Options: paper size (Letter/A4/custom), QR size, bleed area, crop marks. PDFOptionsModal component. Button in QRStudio download step. |
@@ -275,6 +256,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-31 | Completed QR Code Duplication (Feature #22) and Archive/Restore (Feature #23). One-click duplicate with tier limit checks. Soft-delete archive with Active/Archived tabs, restore, permanent delete. Dashboard and API exclude archived by default. 3 new files, 6 modified. |
 | 2026-01-31 | Landing Page Previews: added phone-mockup previews for 8 QR types (text, google-review, wifi, vcard, spotify, youtube, event, geo). All 18 landing-page types now have Content-step sidebar previews. 8 new files, 1 modified. |
 | 2026-01-31 | Contact Form: replaced static mailto page with working form, Resend email integration, rate limiting, honeypot, React Email template. 3 new files, 3 modified. |
 | 2026-01-30 | FAQ Overhaul: 10 static cards → 22-item categorized accordion FAQ with Radix component, 5 category filter tabs, contact CTA. QR Types badge fixed to 35. |

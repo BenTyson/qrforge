@@ -80,6 +80,7 @@ export function createMockQRCode(overrides: Partial<QRCode> = {}): QRCode {
     active_until: null,
     bulk_batch_id: null,
     password_hash: null,
+    archived_at: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     ...overrides,

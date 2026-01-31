@@ -46,6 +46,7 @@ export interface QRCode {
   active_until: string | null;
   bulk_batch_id: string | null;
   password_hash: string | null;
+  archived_at: string | null;
   created_at: string;
   updated_at: string;
 }

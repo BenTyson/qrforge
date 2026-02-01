@@ -24,6 +24,18 @@ export interface Folder {
   updated_at: string;
 }
 
+export interface Campaign {
+  id: string;
+  user_id: string;
+  name: string;
+  description: string | null;
+  color: string;
+  start_date: string | null;
+  end_date: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface QRCode {
   id: string;
   user_id: string;
@@ -41,6 +53,7 @@ export interface QRCode {
   };
   scan_count: number;
   folder_id: string | null;
+  campaign_id: string | null;
   expires_at: string | null;
   active_from: string | null;
   active_until: string | null;
@@ -133,6 +146,11 @@ export interface Database {
         Insert: Omit<ABAssignment, 'id' | 'assigned_at'>;
         Update: never;
       };
+      campaigns: {
+        Row: Campaign;
+        Insert: Omit<Campaign, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<Campaign, 'id' | 'created_at' | 'updated_at'>>;
+      };
     };
   };
 }
@@ -148,6 +166,7 @@ export const TIER_LIMITS = {
     apiAccess: false,
     teamMembers: 1,
     folders: 0,
+    campaigns: 0,
   },
   pro: {
     staticQRCodes: Infinity,
@@ -158,6 +177,7 @@ export const TIER_LIMITS = {
     apiAccess: false,
     teamMembers: 1,
     folders: 10,
+    campaigns: 5,
   },
   business: {
     staticQRCodes: Infinity,
@@ -168,5 +188,6 @@ export const TIER_LIMITS = {
     apiAccess: true,
     teamMembers: 3,
     folders: Infinity,
+    campaigns: Infinity,
   },
 } as const;

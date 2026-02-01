@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Search, X, Filter, ChevronDown, FolderOpen } from 'lucide-react';
+import { Search, X, Filter, ChevronDown, FolderOpen, Target } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,19 +16,22 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { QR_TYPE_LABELS, QR_TYPE_CATEGORIES } from '@/lib/qr/types';
 import type { QRContentType } from '@/lib/qr/types';
-import type { Folder, SubscriptionTier } from '@/lib/supabase/types';
+import type { Folder, Campaign, SubscriptionTier } from '@/lib/supabase/types';
 
 interface QRFiltersProps {
   searchQuery: string;
   selectedType: QRContentType | null;
   selectedStatus: 'active' | 'expired' | 'scheduled' | null;
   selectedFolder: string | null;
+  selectedCampaign: string | null;
   folders: Folder[];
+  campaigns: Campaign[];
   tier: SubscriptionTier;
   onSearchChange: (query: string) => void;
   onTypeChange: (type: QRContentType | null) => void;
   onStatusChange: (status: 'active' | 'expired' | 'scheduled' | null) => void;
   onFolderChange: (folderId: string | null) => void;
+  onCampaignChange: (campaignId: string | null) => void;
 }
 
 const STATUS_OPTIONS = [
@@ -50,12 +53,15 @@ export function QRFilters({
   selectedType,
   selectedStatus,
   selectedFolder,
+  selectedCampaign,
   folders,
+  campaigns,
   tier,
   onSearchChange,
   onTypeChange,
   onStatusChange,
   onFolderChange,
+  onCampaignChange,
 }: QRFiltersProps) {
   const [searchInput, setSearchInput] = useState(searchQuery);
 
@@ -69,8 +75,9 @@ export function QRFilters({
     return () => clearTimeout(timeout);
   }, [onSearchChange]);
 
-  const hasActiveFilters = selectedType || selectedStatus || selectedFolder || searchQuery;
+  const hasActiveFilters = selectedType || selectedStatus || selectedFolder || selectedCampaign || searchQuery;
   const canUseFolders = tier !== 'free';
+  const canUseCampaigns = tier !== 'free';
 
   const clearAllFilters = () => {
     setSearchInput('');
@@ -78,6 +85,7 @@ export function QRFilters({
     onTypeChange(null);
     onStatusChange(null);
     onFolderChange(null);
+    onCampaignChange(null);
   };
 
   const getActiveFilterCount = () => {
@@ -85,6 +93,7 @@ export function QRFilters({
     if (selectedType) count++;
     if (selectedStatus) count++;
     if (selectedFolder) count++;
+    if (selectedCampaign) count++;
     if (searchQuery) count++;
     return count;
   };
@@ -222,6 +231,54 @@ export function QRFilters({
           </DropdownMenu>
         )}
 
+        {/* Campaign filter (Pro+ only) */}
+        {canUseCampaigns && campaigns.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="gap-2 bg-card/50 border-border/50 hover:border-primary/50"
+              >
+                <Target className="w-4 h-4" />
+                {selectedCampaign === 'no-campaign'
+                  ? 'No Campaign'
+                  : selectedCampaign
+                    ? campaigns.find(c => c.id === selectedCampaign)?.name || 'Campaign'
+                    : 'All Campaigns'}
+                <ChevronDown className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-card border-border/50">
+              <DropdownMenuItem
+                onClick={() => onCampaignChange(null)}
+                className={selectedCampaign === null ? 'bg-primary/10 text-primary' : ''}
+              >
+                All Campaigns
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onCampaignChange('no-campaign')}
+                className={selectedCampaign === 'no-campaign' ? 'bg-primary/10 text-primary' : ''}
+              >
+                No Campaign
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {campaigns.map((campaign) => (
+                <DropdownMenuItem
+                  key={campaign.id}
+                  onClick={() => onCampaignChange(campaign.id)}
+                  className={selectedCampaign === campaign.id ? 'bg-primary/10 text-primary' : ''}
+                >
+                  <div
+                    className="w-3 h-3 rounded-full mr-2"
+                    style={{ backgroundColor: campaign.color }}
+                  />
+                  {campaign.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+
         {/* Clear filters button */}
         {hasActiveFilters && (
           <Button
@@ -288,6 +345,20 @@ export function QRFilters({
                 ? 'Uncategorized'
                 : folders.find(f => f.id === selectedFolder)?.name}
               <button onClick={() => onFolderChange(null)}>
+                <X className="w-3 h-3" />
+              </button>
+            </Badge>
+          )}
+
+          {selectedCampaign && (
+            <Badge
+              variant="secondary"
+              className="bg-primary/10 text-primary border-primary/20 gap-1"
+            >
+              Campaign: {selectedCampaign === 'no-campaign'
+                ? 'No Campaign'
+                : campaigns.find(c => c.id === selectedCampaign)?.name}
+              <button onClick={() => onCampaignChange(null)}>
                 <X className="w-3 h-3" />
               </button>
             </Badge>

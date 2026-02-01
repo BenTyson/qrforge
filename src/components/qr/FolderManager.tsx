@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { FolderPlus, FolderOpen, Pencil, Crown, LayoutGrid } from 'lucide-react';
+import { FolderPlus, FolderOpen, Pencil, Crown, LayoutGrid, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { FolderModal } from './FolderModal';
 import type { Folder, SubscriptionTier, QRCode } from '@/lib/supabase/types';
 import { TIER_LIMITS } from '@/lib/supabase/types';
@@ -97,12 +98,29 @@ export function FolderManager({
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
+      {/* Section label */}
+      <div className="flex items-center gap-1.5 mr-1">
+        <FolderOpen className="w-3.5 h-3.5 text-teal-500" />
+        <span className="text-xs font-semibold text-teal-500 uppercase tracking-wider">Folders</span>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button className="text-muted-foreground/60 hover:text-muted-foreground transition-colors" aria-label="About folders">
+              <Info className="w-3 h-3" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" sideOffset={4} className="max-w-[220px]">
+            Folders organize your QR codes by category (e.g. Marketing, Products). A QR code can be in one folder at a time.
+          </TooltipContent>
+        </Tooltip>
+        <div className="w-px h-4 bg-border/50 ml-1" />
+      </div>
+
       {/* All QR Codes chip */}
       <button
         onClick={() => onFolderSelect(null)}
         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
           selectedFolder === null
-            ? 'bg-primary text-primary-foreground'
+            ? 'bg-teal-500 text-white'
             : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
         }`}
       >
@@ -120,7 +138,7 @@ export function FolderManager({
         onClick={() => onFolderSelect('uncategorized')}
         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
           selectedFolder === 'uncategorized'
-            ? 'bg-primary text-primary-foreground'
+            ? 'bg-teal-500 text-white'
             : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
         }`}
       >
@@ -143,7 +161,7 @@ export function FolderManager({
           onKeyDown={(e) => e.key === 'Enter' && onFolderSelect(folder.id)}
           className={`group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer ${
             selectedFolder === folder.id
-              ? 'bg-primary text-primary-foreground'
+              ? 'bg-teal-500 text-white'
               : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
           }`}
         >

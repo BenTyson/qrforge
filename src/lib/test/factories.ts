@@ -75,6 +75,7 @@ export function createMockQRCode(overrides: Partial<QRCode> = {}): QRCode {
     },
     scan_count: 0,
     folder_id: null,
+    campaign_id: null,
     expires_at: null,
     active_from: null,
     active_until: null,

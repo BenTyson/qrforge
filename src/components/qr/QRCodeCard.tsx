@@ -15,7 +15,7 @@ import {
 import { generateQRDataURL, downloadQRPNG, generateQRSVG, downloadQRSVG } from '@/lib/qr/generator';
 import { EmbedCodeModal } from '@/components/qr/EmbedCodeModal';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
-import type { Folder, SubscriptionTier } from '@/lib/supabase/types';
+import type { Folder, Campaign, SubscriptionTier } from '@/lib/supabase/types';
 import {
   Dialog,
   DialogContent,
@@ -23,6 +23,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { getAppUrl } from '@/lib/utils';
@@ -44,6 +45,7 @@ interface QRCodeData {
   password_hash: string | null;
   archived_at?: string | null;
   folder_id?: string | null;
+  campaign_id?: string | null;
 }
 
 interface QRCodeCardProps {
@@ -53,6 +55,8 @@ interface QRCodeCardProps {
   folderColor?: string | null;
   folders?: Folder[];
   onFolderChange?: (qrCodeId: string, folderId: string | null) => void;
+  campaigns?: Campaign[];
+  onCampaignChange?: (qrCodeId: string, campaignId: string | null) => void;
   onDuplicate?: (id: string) => void;
   onArchive?: (id: string) => void;
   onRestore?: (id: string) => void;
@@ -61,7 +65,7 @@ interface QRCodeCardProps {
   userTier?: SubscriptionTier;
 }
 
-export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folderColor, folders = [], onFolderChange, onDuplicate, onArchive, onRestore, onPermanentDelete, duplicateDisabled, userTier = 'free' }: QRCodeCardProps) {
+export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folderColor, folders = [], onFolderChange, campaigns = [], onCampaignChange, onDuplicate, onArchive, onRestore, onPermanentDelete, duplicateDisabled, userTier = 'free' }: QRCodeCardProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showActions, setShowActions] = useState(false);
@@ -398,18 +402,41 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <h3 className="font-semibold truncate text-sm">{qrCode.name}</h3>
-              {isArchived && (
-                <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 font-medium">
-                  Archived
-                </span>
-              )}
+              <div className="flex items-center gap-1.5 shrink-0">
+                {isArchived && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 font-medium">
+                    Archived
+                  </span>
+                )}
+                {!isArchived && (
+                  <Link href={`/qr-codes/${qrCode.id}/edit`}>
+                    <Button variant="ghost" size="sm" className={`h-6 px-2 text-[11px] text-muted-foreground hover:text-foreground${userTier === 'free' ? ' opacity-60' : ''}`}>
+                      <EditIcon className="w-3 h-3 mr-1" aria-hidden="true" />
+                      Edit
+                      {userTier === 'free' && (
+                        <span className="ml-1 text-[8px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-400 font-medium">Pro</span>
+                      )}
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 mt-1.5">
+            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
               <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${getAccentBg()}`}>
                 {getContentTypeIcon()}
                 <span className="capitalize">{qrCode.content_type}</span>
               </span>
+              {qrCode.campaign_id && (() => {
+                const campaign = campaigns.find(c => c.id === qrCode.campaign_id);
+                if (!campaign) return null;
+                return (
+                  <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500">
+                    <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: campaign.color }} />
+                    <span className="truncate max-w-[80px]">{campaign.name}</span>
+                  </span>
+                );
+              })()}
             </div>
 
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2 text-[11px] text-muted-foreground">
@@ -483,26 +510,21 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
             </>
           ) : (
             <>
-              <Link href={`/qr-codes/${qrCode.id}/edit`} className="flex-1">
-                <Button variant="outline" size="sm" className={`w-full h-8 text-xs${userTier === 'free' ? ' opacity-60' : ''}`}>
-                  <EditIcon className="w-3 h-3 mr-1.5" aria-hidden="true" />
-                  Edit
-                  {userTier === 'free' && (
-                    <span className="ml-1 text-[8px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-400 font-medium">Pro</span>
-                  )}
-                </Button>
-              </Link>
-              <Link href={`/analytics?qr=${qrCode.id}`}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 text-xs px-2"
-                  title="View analytics"
-                  aria-label="View analytics for this QR code"
-                >
-                  <AnalyticsIcon className="w-3 h-3" aria-hidden="true" />
-                </Button>
-              </Link>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href={`/analytics?qr=${qrCode.id}`}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-xs px-2"
+                      aria-label="View analytics for this QR code"
+                    >
+                      <AnalyticsIcon className="w-3 h-3" aria-hidden="true" />
+                    </Button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="top" sideOffset={4}>Analytics</TooltipContent>
+              </Tooltip>
               {qrCode.content_type === 'feedback' && (
                 <Link href={`/qr-codes/${qrCode.id}/feedback`}>
                   <Button
@@ -556,41 +578,55 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
                 </Link>
               )}
               {qrCode.short_code && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 text-xs px-3"
-                  onClick={handleCopyLink}
-                  aria-label="Copy short link"
-                >
-                  <CopyIcon className="w-3 h-3" aria-hidden="true" />
-                </Button>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 text-xs px-2"
-                onClick={handleShowEmbed}
-                title="Get embed code"
-                aria-label="Get embed code"
-              >
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <polyline points="16 18 22 12 16 6" />
-                  <polyline points="8 6 2 12 8 18" />
-                </svg>
-              </Button>
-              {folders.length > 0 && onFolderChange && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                <Tooltip>
+                  <TooltipTrigger asChild>
                     <Button
                       variant="outline"
                       size="sm"
                       className="h-8 text-xs px-3"
-                      aria-label="Move to folder"
+                      onClick={handleCopyLink}
+                      aria-label="Copy short link"
                     >
-                      <FolderIcon className="w-3 h-3" aria-hidden="true" />
+                      <CopyIcon className="w-3 h-3" aria-hidden="true" />
                     </Button>
-                  </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" sideOffset={4}>Copy link</TooltipContent>
+                </Tooltip>
+              )}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs px-2"
+                    onClick={handleShowEmbed}
+                    aria-label="Get embed code"
+                  >
+                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <polyline points="16 18 22 12 16 6" />
+                      <polyline points="8 6 2 12 8 18" />
+                    </svg>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top" sideOffset={4}>Embed code</TooltipContent>
+              </Tooltip>
+              {folders.length > 0 && onFolderChange && (
+                <DropdownMenu>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 text-xs px-3"
+                          aria-label="Move to folder"
+                        >
+                          <FolderIcon className="w-3 h-3" aria-hidden="true" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" sideOffset={4}>Folder</TooltipContent>
+                  </Tooltip>
                   <DropdownMenuContent align="end" className="w-48 bg-card border-border/50">
                     <DropdownMenuItem
                       onClick={() => onFolderChange(qrCode.id, null)}
@@ -615,44 +651,101 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
+              {campaigns.length > 0 && onCampaignChange && (
+                <DropdownMenu>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 text-xs px-3"
+                          aria-label="Assign to campaign"
+                        >
+                          <CampaignIcon className="w-3 h-3" aria-hidden="true" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" sideOffset={4}>Campaign</TooltipContent>
+                  </Tooltip>
+                  <DropdownMenuContent align="end" className="w-48 bg-card border-border/50">
+                    <DropdownMenuItem
+                      onClick={() => onCampaignChange(qrCode.id, null)}
+                      className={!qrCode.campaign_id ? 'bg-primary/10 text-primary' : ''}
+                    >
+                      No Campaign
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    {campaigns.map((campaign) => (
+                      <DropdownMenuItem
+                        key={campaign.id}
+                        onClick={() => onCampaignChange(qrCode.id, campaign.id)}
+                        className={qrCode.campaign_id === campaign.id ? 'bg-primary/10 text-primary' : ''}
+                      >
+                        <div
+                          className="w-3 h-3 rounded-full mr-2"
+                          style={{ backgroundColor: campaign.color }}
+                        />
+                        {campaign.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
               {onDuplicate && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 text-xs px-3"
-                  onClick={() => onDuplicate(qrCode.id)}
-                  disabled={duplicateDisabled}
-                  title={duplicateDisabled ? 'QR code limit reached' : 'Duplicate'}
-                  aria-label="Duplicate QR code"
-                >
-                  <DuplicateIcon className="w-3 h-3" aria-hidden="true" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-xs px-3"
+                      onClick={() => onDuplicate(qrCode.id)}
+                      disabled={duplicateDisabled}
+                      aria-label="Duplicate QR code"
+                    >
+                      <DuplicateIcon className="w-3 h-3" aria-hidden="true" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" sideOffset={4}>
+                    {duplicateDisabled ? 'Limit reached' : 'Duplicate'}
+                  </TooltipContent>
+                </Tooltip>
               )}
               {onArchive ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 text-xs px-3 text-amber-500 hover:text-amber-600 hover:bg-amber-500/10 hover:border-amber-500/30"
-                  onClick={() => {
-                    if (confirm('Archive this QR code? You can restore it later.')) {
-                      onArchive(qrCode.id);
-                    }
-                  }}
-                  aria-label="Archive QR code"
-                >
-                  <ArchiveIcon className="w-3 h-3" aria-hidden="true" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-xs px-3 text-amber-500 hover:text-amber-600 hover:bg-amber-500/10 hover:border-amber-500/30"
+                      onClick={() => {
+                        if (confirm('Archive this QR code? You can restore it later.')) {
+                          onArchive(qrCode.id);
+                        }
+                      }}
+                      aria-label="Archive QR code"
+                    >
+                      <ArchiveIcon className="w-3 h-3" aria-hidden="true" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" sideOffset={4}>Archive</TooltipContent>
+                </Tooltip>
               ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 text-xs px-3 text-red-500 hover:text-red-600 hover:bg-red-500/10 hover:border-red-500/30"
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  aria-label="Delete QR code"
-                >
-                  <TrashIcon className="w-3 h-3" aria-hidden="true" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-xs px-3 text-red-500 hover:text-red-600 hover:bg-red-500/10 hover:border-red-500/30"
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      aria-label="Delete QR code"
+                    >
+                      <TrashIcon className="w-3 h-3" aria-hidden="true" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" sideOffset={4}>Delete</TooltipContent>
+                </Tooltip>
               )}
             </>
           )}
@@ -1042,6 +1135,16 @@ function RestoreIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <polyline points="1 4 1 10 7 10" />
       <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+    </svg>
+  );
+}
+
+function CampaignIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="6" />
+      <circle cx="12" cy="12" r="2" />
     </svg>
   );
 }

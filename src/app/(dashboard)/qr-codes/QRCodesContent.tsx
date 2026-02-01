@@ -8,15 +8,17 @@ import { QRCodeCard } from '@/components/qr/QRCodeCard';
 import { BulkBatchCard } from '@/components/qr/BulkBatchCard';
 import { QRFilters } from '@/components/qr/QRFilters';
 import { FolderManager } from '@/components/qr/FolderManager';
+import { CampaignManager } from '@/components/qr/CampaignManager';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
 import { PLANS } from '@/lib/stripe/plans';
 import type { QRContentType } from '@/lib/qr/types';
-import type { Folder, SubscriptionTier, QRCode } from '@/lib/supabase/types';
+import type { Folder, Campaign, SubscriptionTier, QRCode } from '@/lib/supabase/types';
 
 interface QRCodesContentProps {
   qrCodes: QRCode[];
   folders: Folder[];
+  campaigns: Campaign[];
   tier: SubscriptionTier;
 }
 
@@ -46,10 +48,11 @@ function getQRStatus(qr: QRCode): 'active' | 'expired' | 'scheduled' {
   return 'active';
 }
 
-export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolders, tier }: QRCodesContentProps) {
+export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolders, campaigns: initialCampaigns, tier }: QRCodesContentProps) {
   const router = useRouter();
   const [qrCodes, setQrCodes] = useState(initialQrCodes);
   const [folders, setFolders] = useState(initialFolders);
+  const [campaigns, setCampaigns] = useState(initialCampaigns);
   const [showArchived, setShowArchived] = useState(false);
 
   // Filter state
@@ -57,6 +60,7 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
   const [selectedType, setSelectedType] = useState<QRContentType | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<'active' | 'expired' | 'scheduled' | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
 
   // Split active vs archived
   const activeCodes = useMemo(() => qrCodes.filter(qr => !qr.archived_at), [qrCodes]);
@@ -94,9 +98,16 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
       if (selectedFolder && selectedFolder !== 'uncategorized' && qr.folder_id !== selectedFolder) {
         return false;
       }
+      // Campaign filter
+      if (selectedCampaign === 'no-campaign' && qr.campaign_id !== null) {
+        return false;
+      }
+      if (selectedCampaign && selectedCampaign !== 'no-campaign' && qr.campaign_id !== selectedCampaign) {
+        return false;
+      }
       return true;
     });
-  }, [currentCodes, searchQuery, selectedType, selectedStatus, selectedFolder]);
+  }, [currentCodes, searchQuery, selectedType, selectedStatus, selectedFolder, selectedCampaign]);
 
   // Separate individual codes from bulk batches
   const individualCodes = useMemo(() => filteredCodes.filter(qr => !qr.bulk_batch_id), [filteredCodes]);
@@ -197,6 +208,103 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to delete folder');
       throw error;
+    }
+  };
+
+  // Campaign CRUD handlers
+  const handleCampaignCreate = async (data: { name: string; description: string; color: string; start_date: string; end_date: string }) => {
+    try {
+      const response = await fetch('/api/campaigns', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create campaign');
+      }
+
+      const newCampaign = await response.json();
+      setCampaigns(prev => [...prev, newCampaign]);
+      toast.success('Campaign created');
+      router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to create campaign');
+      throw error;
+    }
+  };
+
+  const handleCampaignUpdate = async (id: string, data: { name: string; description: string; color: string; start_date: string; end_date: string }) => {
+    try {
+      const response = await fetch(`/api/campaigns/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update campaign');
+      }
+
+      setCampaigns(prev => prev.map(c => c.id === id ? { ...c, ...data } : c));
+      toast.success('Campaign updated');
+      router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to update campaign');
+      throw error;
+    }
+  };
+
+  const handleCampaignDelete = async (id: string) => {
+    try {
+      const response = await fetch(`/api/campaigns/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete campaign');
+      }
+
+      setCampaigns(prev => prev.filter(c => c.id !== id));
+      if (selectedCampaign === id) {
+        setSelectedCampaign(null);
+      }
+      toast.success('Campaign deleted');
+      router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to delete campaign');
+      throw error;
+    }
+  };
+
+  // Assign QR code to campaign (optimistic update)
+  const handleCampaignAssign = async (qrCodeId: string, campaignId: string | null) => {
+    const previousQrCodes = qrCodes;
+
+    setQrCodes(prev => prev.map(qr =>
+      qr.id === qrCodeId ? { ...qr, campaign_id: campaignId } : qr
+    ));
+
+    const campaignName = campaignId ? campaigns.find(c => c.id === campaignId)?.name : null;
+    toast.success(campaignName ? `Added to "${campaignName}"` : 'Removed from campaign');
+
+    try {
+      const response = await fetch(`/api/qr/${qrCodeId}/campaign`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaign_id: campaignId }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update QR code campaign');
+      }
+    } catch (error) {
+      setQrCodes(previousQrCodes);
+      toast.error(error instanceof Error ? error.message : 'Failed to update QR code campaign');
     }
   };
 
@@ -319,7 +427,7 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
     }
   };
 
-  const hasActiveFilters = searchQuery || selectedType || selectedStatus || selectedFolder;
+  const hasActiveFilters = searchQuery || selectedType || selectedStatus || selectedFolder || selectedCampaign;
 
   return (
     <div className="relative">
@@ -428,12 +536,15 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
             selectedType={selectedType}
             selectedStatus={selectedStatus}
             selectedFolder={selectedFolder}
+            selectedCampaign={selectedCampaign}
             folders={folders}
+            campaigns={campaigns}
             tier={tier}
             onSearchChange={setSearchQuery}
             onTypeChange={setSelectedType}
             onStatusChange={setSelectedStatus}
             onFolderChange={setSelectedFolder}
+            onCampaignChange={setSelectedCampaign}
           />
 
           {/* Folder Manager (Pro+ only) */}
@@ -448,6 +559,22 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
                 onFolderCreate={handleFolderCreate}
                 onFolderUpdate={handleFolderUpdate}
                 onFolderDelete={handleFolderDelete}
+              />
+            </div>
+          )}
+
+          {/* Campaign Manager (Pro+ only) */}
+          {tier !== 'free' && (
+            <div className="rounded-xl border border-border/50 bg-card/30 backdrop-blur px-3 py-2">
+              <CampaignManager
+                campaigns={campaigns}
+                qrCodes={qrCodes}
+                selectedCampaign={selectedCampaign}
+                tier={tier}
+                onCampaignSelect={setSelectedCampaign}
+                onCampaignCreate={handleCampaignCreate}
+                onCampaignUpdate={handleCampaignUpdate}
+                onCampaignDelete={handleCampaignDelete}
               />
             </div>
           )}
@@ -516,6 +643,8 @@ export function QRCodesContent({ qrCodes: initialQrCodes, folders: initialFolder
                 folderColor={getFolderColor(qr.folder_id)}
                 folders={!showArchived && tier !== 'free' ? folders : undefined}
                 onFolderChange={!showArchived && tier !== 'free' ? handleFolderAssign : undefined}
+                campaigns={!showArchived && tier !== 'free' ? campaigns : undefined}
+                onCampaignChange={!showArchived && tier !== 'free' ? handleCampaignAssign : undefined}
                 onDuplicate={!showArchived ? handleDuplicate : undefined}
                 onArchive={!showArchived ? handleArchive : undefined}
                 onRestore={showArchived ? handleRestore : undefined}

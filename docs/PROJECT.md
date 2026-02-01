@@ -14,7 +14,7 @@ Premium QR code generator with analytics and dynamic codes. Goal: passive income
 
 ---
 
-## QR Code Types (35 Total)
+## QR Code Types (36 Total)
 
 ### Basic Types (All Tiers)
 | Type | Output |
@@ -50,6 +50,7 @@ Premium QR code generator with analytics and dynamic codes. Goal: passive income
 | Type | Output |
 |------|--------|
 | Google Review | Google review landing page |
+| Multi-Platform Review | Review landing page with branded platform buttons |
 | Feedback | Branded feedback form (stars/emoji/numeric rating, optional comment + email) |
 
 ### Events & Location (All Tiers)
@@ -160,6 +161,7 @@ src/
 | `qr_codes` | QR codes + content + style + archive |
 | `scans` | Scan analytics (device, location) |
 | `folders` | QR organization (Pro+) |
+| `campaigns` | Campaign grouping with analytics (Pro+) |
 | `api_keys` | API authentication (Business) |
 | `teams`, `team_members`, `team_invites` | Team management |
 | `referrals` | Referral tracking (referrer, referee, status) |

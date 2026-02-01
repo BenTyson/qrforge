@@ -6,6 +6,50 @@ Session-by-session history of development work. Most recent first.
 
 ## January 31, 2026
 
+### Campaign Grouping (Feature #17)
+
+Pro/Business feature. Campaigns are an independent organizational layer from folders — a QR code can belong to both a folder and a campaign simultaneously. Campaign analytics leverage the existing aggregation system by narrowing `qrCodeIds` to those in the selected campaign.
+
+- New `campaigns` table with RLS policies, `campaign_id` foreign key on `qr_codes` (ON DELETE SET NULL)
+- Full CRUD API: `GET/POST /api/campaigns`, `GET/PATCH/DELETE /api/campaigns/[id]`, `PATCH /api/qr/[id]/campaign`
+- Tier gating: free=0, pro=5, business=unlimited campaigns
+- CampaignManager chip-based UI with indigo accent (distinct from teal folder chips), "All", "No Campaign", and per-campaign chips with color dots and QR counts
+- CampaignModal with name, description, color picker, start/end date fields
+- Campaign badge on QR code cards: indigo pill with campaign color dot and name appears next to the content type badge when a code is assigned to a campaign
+- Campaign filter dropdown on QR codes page and analytics page
+- Campaign header card on analytics page showing name, description, date range, and QR count
+- Edit button moved from action toolbar to top-right of card (ghost style, next to title)
+- Radix UI Tooltip components on all icon-only card action buttons (Analytics, Copy link, Embed, Folder, Campaign, Duplicate, Archive, Delete)
+- Info tooltips on Folders and Campaigns section headers explaining purpose and usage
+- Design differentiation: folders use teal accent, campaigns use indigo accent, each with labeled section headers and distinct icons
+- FolderManager and CampaignManager visually distinct with colored labels, icons (FolderOpen vs Target), and accent colors
+
+#### Files Created (10)
+- `supabase/migrations/20260201000001_add_campaigns.sql`
+- `src/app/api/campaigns/route.ts`
+- `src/app/api/campaigns/[id]/route.ts`
+- `src/app/api/qr/[id]/campaign/route.ts`
+- `src/components/qr/CampaignModal.tsx`
+- `src/components/qr/CampaignManager.tsx`
+- `src/components/analytics/CampaignFilterSelect.tsx`
+- `src/app/api/campaigns/__tests__/route.test.ts`
+- `src/app/api/campaigns/[id]/__tests__/route.test.ts`
+- `src/app/api/qr/[id]/campaign/__tests__/route.test.ts`
+
+#### Files Modified (10)
+- `src/lib/supabase/types.ts` — Campaign interface, campaign_id on QRCode, campaigns in Database, TIER_LIMITS
+- `src/lib/constants/limits.ts` — CAMPAIGN_LIMITS
+- `src/app/(dashboard)/qr-codes/page.tsx` — fetch campaigns, pass to QRCodesContent
+- `src/app/(dashboard)/qr-codes/QRCodesContent.tsx` — campaign state, filters, CRUD handlers, CampaignManager
+- `src/components/qr/QRCodeCard.tsx` — campaign badge, Edit button relocated, Tooltip components on all icon buttons
+- `src/components/qr/QRFilters.tsx` — campaign filter dropdown
+- `src/app/(dashboard)/analytics/page.tsx` — campaign param, filter, header card, CampaignFilterSelect
+- `src/lib/test/factories.ts` — campaign_id field
+- `src/components/qr/FolderManager.tsx` — teal label, info tooltip, design polish
+- `src/components/qr/CampaignManager.tsx` — indigo label, info tooltip, design polish
+
+---
+
 ### Multi-Platform Review QR (Feature #15)
 
 36th QR type (free tier). Landing page with branded buttons for multiple review platforms.

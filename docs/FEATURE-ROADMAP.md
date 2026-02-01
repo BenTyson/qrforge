@@ -2,7 +2,7 @@
 
 > **Last Updated**: January 31, 2026
 > **Status**: Active development
-> **Current Features**: 36 QR types, Analytics, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Logo Crop Editor, Sentry error tracking, Cron-based email automation, Feedback Forms, Contact Form, 151 SEO articles (all with CTAs)
+> **Current Features**: 36 QR types, Analytics, Campaign Grouping, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Logo Crop Editor, Sentry error tracking, Cron-based email automation, Feedback Forms, Contact Form, 151 SEO articles (all with CTAs)
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -30,39 +30,6 @@ This document tracks planned features in priority order. Work through sequential
 ---
 
 ## NEXT UP
-
-### 17. Campaign Grouping
-**Tier**: STANDARD | **Priority**: 17 of 24 | **Effort**: ~2-3 days
-
-**What**: Group QR codes into campaigns with combined analytics.
-
-**Why build this**:
-- Marketing teams run multi-QR campaigns
-- Aggregate reporting is valuable
-- Pro/Business feature
-
-**Implementation**:
-- Campaigns as a layer above folders
-- Combined analytics dashboard
-- Campaign-level reporting
-
-**Database**:
-```sql
-CREATE TABLE campaigns (
-  id UUID PRIMARY KEY,
-  user_id UUID REFERENCES profiles(id),
-  name TEXT NOT NULL,
-  description TEXT,
-  start_date DATE,
-  end_date DATE,
-  created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Add to qr_codes
-campaign_id UUID REFERENCES campaigns(id)
-```
-
----
 
 ### 18. QR Code Scheduling (Enhanced)
 **Tier**: QUICK WIN | **Priority**: 18 of 24 | **Effort**: ~4 hours
@@ -151,6 +118,7 @@ campaign_id UUID REFERENCES campaigns(id)
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Campaign Grouping | 2026-01-31 | Pro/Business feature. Independent from folders (QR can be in both). `campaigns` table with full CRUD API. Chip-based CampaignManager UI (indigo accent) with create/edit/delete modal. Campaign badge on QR cards. Campaign filter on QR codes page and analytics page. Analytics reuse existing aggregation by narrowing qrCodeIds. Tier limits: free=0, pro=5, business=unlimited. 10 new files, 10 modified. |
 | Multi-Platform Review QR | 2026-01-31 | 36th QR type (free tier). Landing page at `/r/[code]/reviews` with branded buttons for Google, Yelp, TripAdvisor, Facebook, and custom platforms. Dynamic platform management in form. Phone-mockup preview. Platform logos on buttons. Accent color customization. 5 new files, 12 modified. |
 | QR Code Duplication | 2026-01-31 | One-click duplicate with POST `/api/qr/[id]/duplicate`. Copies content, style, folder, schedule, password. Resets name to "(Copy)", scan_count to 0, clears bulk_batch_id and archived_at. Tier limit enforcement. Duplicate button on dashboard cards. |
 | QR Code Archive/Restore | 2026-01-31 | Soft-delete with `archived_at` column. Active/Archived tab toggle on QR codes page. Archive replaces delete button (amber). Restore + permanent delete in archived view. Archived codes still resolve when scanned. Dashboard stats and v1 API exclude archived by default (`?include_archived=true` to include). Optimistic UI updates. |
@@ -232,6 +200,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-31 | Completed Campaign Grouping (Feature #17). Pro/Business feature. Campaigns table, CRUD API, CampaignManager/CampaignModal UI, campaign badge on QR cards, campaign filter on analytics, Edit button relocated to card header, Tooltip components on all icon buttons. 10 new files, 10 modified. 216 tests passing. |
 | 2026-01-31 | Completed Multi-Platform Review QR (Feature #15). 36th QR type (free tier). Landing page with branded platform buttons (Google, Yelp, TripAdvisor, Facebook, custom). Dynamic platform management, phone-mockup preview, platform logos. 5 new files, 12 modified. 216 tests passing. |
 | 2026-01-31 | Completed QR Code Duplication (Feature #22) and Archive/Restore (Feature #23). One-click duplicate with tier limit checks. Soft-delete archive with Active/Archived tabs, restore, permanent delete. Dashboard and API exclude archived by default. 3 new files, 6 modified. |
 | 2026-01-31 | Landing Page Previews: added phone-mockup previews for 8 QR types (text, google-review, wifi, vcard, spotify, youtube, event, geo). All 18 landing-page types now have Content-step sidebar previews. 8 new files, 1 modified. |

@@ -3,6 +3,9 @@ import Link from 'next/link';
 import { AnalyticsCharts } from '@/components/analytics/AnalyticsCharts';
 import { QRCodeFilterSelect } from '@/components/analytics/QRCodeFilterSelect';
 import { CampaignFilterSelect } from '@/components/analytics/CampaignFilterSelect';
+import { BatchFilterSelect } from '@/components/analytics/BatchFilterSelect';
+import { BatchComparisonTable } from '@/components/analytics/BatchComparisonTable';
+import type { BatchComparisonRow } from '@/components/analytics/BatchComparisonTable';
 import type { ScanData } from '@/lib/analytics/types';
 import type { Campaign } from '@/lib/supabase/types';
 
@@ -54,7 +57,7 @@ const MOCK_DATA = {
 };
 
 interface AnalyticsPageProps {
-  searchParams: Promise<{ page?: string; qr?: string; campaign?: string }>;
+  searchParams: Promise<{ page?: string; qr?: string; campaign?: string; batch?: string }>;
 }
 
 export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps) {
@@ -62,6 +65,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
   const currentPage = Math.max(1, parseInt(params.page || '1', 10));
   const selectedQRId = params.qr || null; // Session 3A: QR code filter
   const selectedCampaignId = params.campaign || null;
+  const selectedBatchId = params.batch || null;
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -144,6 +148,8 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
               selectedCampaignId={null}
               selectedQRCode={null}
               allQRCodes={[]}
+              selectedBatchId={null}
+              batchComparison={null}
             />
           </div>
         </div>
@@ -155,7 +161,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
   const [qrCodesResult, campaignsResult] = await Promise.all([
     supabase
       .from('qr_codes')
-      .select('id, name, type, scan_count, campaign_id')
+      .select('id, name, type, scan_count, campaign_id, bulk_batch_id, destination_url, created_at')
       .eq('user_id', user.id),
     supabase
       .from('campaigns')
@@ -167,7 +173,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
   const allCampaigns = (campaignsResult.data || []) as Campaign[];
 
   // Session 3A: Filter to single QR code if selected
-  const allQRCodes = (qrCodesResult.data || []) as Array<{ id: string; name: string; type: string; scan_count: number; campaign_id: string | null }>;
+  const allQRCodes = (qrCodesResult.data || []) as Array<{ id: string; name: string; type: string; scan_count: number; campaign_id: string | null; bulk_batch_id: string | null; destination_url: string | null; created_at: string }>;
   let qrCodeIds = allQRCodes.map(qr => qr.id);
   let selectedQRCode: { id: string; name: string; type: string; scan_count: number } | null = null;
   let selectedCampaign: Campaign | null = null;
@@ -192,6 +198,18 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
     }
   }
 
+  // Batch filter: narrow qrCodeIds to those in the selected batch (Business tier only)
+  const isBusiness = tier === 'business';
+  let selectedBatchInfo: { id: string; codeCount: number; createdAt: string } | null = null;
+  if (selectedBatchId && !selectedQRId && !selectedCampaignId && isBusiness) {
+    const batchCodes = allQRCodes.filter(qr => qr.bulk_batch_id === selectedBatchId);
+    if (batchCodes.length > 0) {
+      qrCodeIds = batchCodes.map(qr => qr.id);
+      const earliest = batchCodes.reduce((min, qr) => qr.created_at < min ? qr.created_at : min, batchCodes[0].created_at);
+      selectedBatchInfo = { id: selectedBatchId, codeCount: batchCodes.length, createdAt: earliest };
+    }
+  }
+
   // Get total scan count for pagination
   const { count: totalScansCount } = qrCodeIds.length > 0
     ? await supabase
@@ -204,7 +222,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
   const { data: aggregationScans } = qrCodeIds.length > 0
     ? await supabase
         .from('scans')
-        .select('scanned_at, ip_hash, device_type, os, browser, country, city, region, referrer')
+        .select('qr_code_id, scanned_at, ip_hash, device_type, os, browser, country, city, region, referrer')
         .in('qr_code_id', qrCodeIds)
         .order('scanned_at', { ascending: false })
         .limit(MAX_SCANS_FOR_AGGREGATION)
@@ -324,6 +342,60 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
       .map(([city]) => city);
   }
 
+  // Per-code comparison data for batch view
+  let batchComparison: BatchComparisonRow[] | null = null;
+  if (selectedBatchInfo) {
+    const batchCodes = allQRCodes.filter(qr => qr.bulk_batch_id === selectedBatchId);
+    const scansByCode: Record<string, ScanData[]> = {};
+    allScans.forEach(scan => {
+      if (scan.qr_code_id) {
+        if (!scansByCode[scan.qr_code_id]) scansByCode[scan.qr_code_id] = [];
+        scansByCode[scan.qr_code_id].push(scan);
+      }
+    });
+    const batchTotalScans = allScans.length;
+    batchComparison = batchCodes.map(qr => {
+      const codeScans = scansByCode[qr.id] || [];
+      const deviceCounts: Record<string, number> = {};
+      const countryCounts: Record<string, number> = {};
+      codeScans.forEach(s => {
+        const d = s.device_type || 'Unknown';
+        deviceCounts[d] = (deviceCounts[d] || 0) + 1;
+        const c = s.country || 'Unknown';
+        countryCounts[c] = (countryCounts[c] || 0) + 1;
+      });
+      const topDevice = Object.entries(deviceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '-';
+      const topCountryName = Object.entries(countryCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '-';
+      return {
+        id: qr.id,
+        name: qr.name,
+        destinationUrl: qr.destination_url,
+        scanCount: codeScans.length,
+        percentOfTotal: batchTotalScans > 0 ? (codeScans.length / batchTotalScans) * 100 : 0,
+        topDevice,
+        topCountry: topCountryName,
+      };
+    }).sort((a, b) => b.scanCount - a.scanCount);
+  }
+
+  // Build batch options for filter dropdown
+  const batchMap = new Map<string, { count: number; createdAt: string }>();
+  allQRCodes.forEach(qr => {
+    if (qr.bulk_batch_id) {
+      const existing = batchMap.get(qr.bulk_batch_id);
+      if (existing) {
+        existing.count++;
+        if (qr.created_at < existing.createdAt) existing.createdAt = qr.created_at;
+      } else {
+        batchMap.set(qr.bulk_batch_id, { count: 1, createdAt: qr.created_at });
+      }
+    }
+  });
+  const batchOptions = Array.from(batchMap.entries()).map(([id, info]) => {
+    const date = new Date(info.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return { value: id, label: `Batch ${date} (${info.count} codes)` };
+  });
+
   // Top QR codes
   const topQRCodes = (allQRCodes)
     .sort((a, b) => (b.scan_count || 0) - (a.scan_count || 0))
@@ -361,6 +433,9 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
           selectedQRId={selectedQRId}
           campaigns={allCampaigns}
           selectedCampaignId={selectedCampaignId}
+          batches={batchOptions}
+          selectedBatchId={selectedBatchId}
+          isBusiness={isBusiness}
         />
       )}
 
@@ -384,6 +459,27 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
                   {selectedCampaign.start_date && (
                     <> &middot; {selectedCampaign.start_date}{selectedCampaign.end_date ? ` to ${selectedCampaign.end_date}` : ' onwards'}</>
                   )}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Batch header card */}
+      {selectedBatchInfo && (
+        <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
+                <BatchIcon className="w-6 h-6 text-amber-500" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold">Bulk Batch</h2>
+                <p className="text-sm text-muted-foreground">
+                  {selectedBatchInfo.codeCount} QR code{selectedBatchInfo.codeCount !== 1 ? 's' : ''}
+                  {' '}&middot;{' '}
+                  Created {new Date(selectedBatchInfo.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
               </div>
             </div>
@@ -440,13 +536,15 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
         selectedCampaignId={selectedCampaignId}
         selectedQRCode={selectedQRCode}
         allQRCodes={allQRCodes}
+        selectedBatchId={selectedBatchId}
+        batchComparison={batchComparison}
       />
     </div>
   );
 }
 
 // 3A: QR Code Filter component
-function QRCodeFilter({ qrCodes, selectedQRId, campaigns, selectedCampaignId }: { qrCodes: { id: string; name: string }[]; selectedQRId: string | null; campaigns: Campaign[]; selectedCampaignId: string | null }) {
+function QRCodeFilter({ qrCodes, selectedQRId, campaigns, selectedCampaignId, batches, selectedBatchId, isBusiness }: { qrCodes: { id: string; name: string }[]; selectedQRId: string | null; campaigns: Campaign[]; selectedCampaignId: string | null; batches: { value: string; label: string }[]; selectedBatchId: string | null; isBusiness: boolean }) {
   return (
     <div className="mb-6">
       <div className="flex flex-wrap items-center gap-3">
@@ -467,6 +565,15 @@ function QRCodeFilter({ qrCodes, selectedQRId, campaigns, selectedCampaignId }: 
               ...campaigns.map(c => ({ value: c.id, label: c.name })),
             ]}
             selected={selectedCampaignId || ''}
+          />
+        )}
+        {isBusiness && batches.length > 0 && (
+          <BatchFilterSelect
+            options={[
+              { value: '', label: 'All Batches' },
+              ...batches,
+            ]}
+            selected={selectedBatchId || ''}
           />
         )}
       </div>
@@ -514,6 +621,8 @@ interface AnalyticsContentProps {
   selectedCampaignId: string | null;
   selectedQRCode: { id: string; name: string; type: string; scan_count: number } | null;
   allQRCodes: Array<{ id: string; name: string; scan_count: number }>;
+  selectedBatchId: string | null;
+  batchComparison: BatchComparisonRow[] | null;
 }
 
 function AnalyticsContent({
@@ -538,14 +647,17 @@ function AnalyticsContent({
   isPro,
   selectedQRId,
   selectedCampaignId,
+  selectedBatchId,
+  batchComparison,
 }: AnalyticsContentProps) {
 
-  // Build pagination URL helper (preserves qr and campaign params)
+  // Build pagination URL helper (preserves qr, campaign, and batch params)
   const buildPageUrl = (page: number) => {
     const params = new URLSearchParams();
     if (page > 1) params.set('page', String(page));
     if (selectedQRId) params.set('qr', selectedQRId);
     if (selectedCampaignId) params.set('campaign', selectedCampaignId);
+    if (selectedBatchId) params.set('batch', selectedBatchId);
     const qs = params.toString();
     return qs ? `/analytics?${qs}` : '/analytics';
   };
@@ -646,6 +758,14 @@ function AnalyticsContent({
             browserBreakdown={browserBreakdown}
           />
         </div>
+      )}
+
+      {/* Batch comparison table */}
+      {batchComparison && batchComparison.length > 0 && (
+        <BatchComparisonTable
+          rows={batchComparison}
+          batchLabel={selectedBatchId || 'batch'}
+        />
       )}
 
       {/* 2A: Traffic Sources */}
@@ -1298,6 +1418,18 @@ function ChevronIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <polyline points="9 18 15 12 9 6" />
+    </svg>
+  );
+}
+
+// Batch icon (grid of 4 squares)
+function BatchIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
     </svg>
   );
 }

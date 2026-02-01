@@ -2,7 +2,7 @@
 
 > **Last Updated**: January 31, 2026
 > **Status**: Active development
-> **Current Features**: 36 QR types, Analytics, Campaign Grouping, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Logo Crop Editor, Sentry error tracking, Cron-based email automation, Feedback Forms, Contact Form, 151 SEO articles (all with CTAs)
+> **Current Features**: 36 QR types, Analytics, Bulk Batch Analytics, Campaign Grouping, Enhanced Scheduling, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Logo Crop Editor, Sentry error tracking, Cron-based email automation, Feedback Forms, Contact Form, 151 SEO articles (all with CTAs)
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -30,38 +30,6 @@ This document tracks planned features in priority order. Work through sequential
 ---
 
 ## NEXT UP
-
-### 18. QR Code Scheduling (Enhanced)
-**Tier**: QUICK WIN | **Priority**: 18 of 24 | **Effort**: ~4 hours
-
-**What**: Improve existing scheduling with timezone support and recurring schedules.
-
-**Why build this**:
-- Existing feature can be improved
-- Timezone issues are common pain point
-
-**Enhancements**:
-- Timezone selector
-- Recurring schedules (daily, weekly)
-- Preview of active periods
-
----
-
-### 19. Bulk QR Code Analytics
-**Tier**: STANDARD | **Priority**: 19 of 24 | **Effort**: ~1-2 days
-
-**What**: Combined analytics view for bulk-generated QR codes.
-
-**Why build this**:
-- Bulk generation exists but analytics is per-code
-- Businesses need aggregate view
-
-**Implementation**:
-- Batch-level analytics dashboard
-- Compare codes within batch
-- Export batch report
-
----
 
 ### 20. Webhook Notifications
 **Tier**: MAJOR | **Priority**: 20 of 24 | **Effort**: ~1 week
@@ -118,6 +86,8 @@ This document tracks planned features in priority order. Work through sequential
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Bulk QR Code Analytics | 2026-01-31 | Business tier feature. Batch-level analytics via `?batch=` URL param. BatchFilterSelect dropdown, BatchComparisonTable with per-code ranking/percentages/CSV export, amber batch header card. "Analytics" button on BulkBatchCard. Mutual exclusivity with QR/campaign filters. No migration needed. 4 new files, 3 modified. 14 new tests (257 total). |
+| Enhanced QR Code Scheduling | 2026-01-31 | Pro+ feature. Timezone selector (~55 IANA timezones), recurring schedules (daily/weekly), 7-day active periods preview, SchedulePreview component, info callout for creators. `isActiveAtTime()` enforces schedule on redirect route. Backward compatible — existing one-time schedules unchanged. 4 new files, 12 modified. 27 new tests. |
 | Campaign Grouping | 2026-01-31 | Pro/Business feature. Independent from folders (QR can be in both). `campaigns` table with full CRUD API. Chip-based CampaignManager UI (indigo accent) with create/edit/delete modal. Campaign badge on QR cards. Campaign filter on QR codes page and analytics page. Analytics reuse existing aggregation by narrowing qrCodeIds. Tier limits: free=0, pro=5, business=unlimited. 10 new files, 10 modified. |
 | Multi-Platform Review QR | 2026-01-31 | 36th QR type (free tier). Landing page at `/r/[code]/reviews` with branded buttons for Google, Yelp, TripAdvisor, Facebook, and custom platforms. Dynamic platform management in form. Phone-mockup preview. Platform logos on buttons. Accent color customization. 5 new files, 12 modified. |
 | QR Code Duplication | 2026-01-31 | One-click duplicate with POST `/api/qr/[id]/duplicate`. Copies content, style, folder, schedule, password. Resets name to "(Copy)", scan_count to 0, clears bulk_batch_id and archived_at. Tier limit enforcement. Duplicate button on dashboard cards. |
@@ -152,6 +122,10 @@ This document tracks planned features in priority order. Work through sequential
 
 Features not prioritized but worth tracking:
 
+- **Dashboard page modularization** - Break monolithic dashboard pages into smaller, composable components
+- **Enhanced admin analytics** - Deeper admin-level analytics and insights
+- **Map API for Location QR** - Integrate a map API (e.g., Google Maps) into the Geo/Location QR type for richer previews
+- **Additional social media QR types** - Expand social platform coverage beyond current set
 - **Custom domains for short URLs** - Complex, DNS management needed
 - **Team permissions** - Role-based access within teams
 - **QR code versioning** - History of changes with rollback
@@ -200,6 +174,8 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-31 | Completed Bulk QR Code Analytics (Feature #19). Business tier. Batch filter, per-code comparison table, CSV export, batch header card. 4 new files, 3 modified. 257 tests passing (14 new). |
+| 2026-01-31 | Completed Enhanced QR Code Scheduling (Feature #18). Pro+ feature. Timezone selector, daily/weekly recurring schedules, 7-day preview, `isActiveAtTime()` enforcement. Backward compatible. 4 new files, 12 modified. 243 tests passing (27 new). |
 | 2026-01-31 | Completed Campaign Grouping (Feature #17). Pro/Business feature. Campaigns table, CRUD API, CampaignManager/CampaignModal UI, campaign badge on QR cards, campaign filter on analytics, Edit button relocated to card header, Tooltip components on all icon buttons. 10 new files, 10 modified. 216 tests passing. |
 | 2026-01-31 | Completed Multi-Platform Review QR (Feature #15). 36th QR type (free tier). Landing page with branded platform buttons (Google, Yelp, TripAdvisor, Facebook, custom). Dynamic platform management, phone-mockup preview, platform logos. 5 new files, 12 modified. 216 tests passing. |
 | 2026-01-31 | Completed QR Code Duplication (Feature #22) and Archive/Restore (Feature #23). One-click duplicate with tier limit checks. Soft-delete archive with Active/Archived tabs, restore, permanent delete. Dashboard and API exclude archived by default. 3 new files, 6 modified. |

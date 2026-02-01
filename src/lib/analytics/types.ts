@@ -1,4 +1,5 @@
 export interface ScanData {
+  qr_code_id?: string;
   scanned_at: string;
   ip_hash?: string;
   device_type?: string;

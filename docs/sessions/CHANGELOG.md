@@ -6,6 +6,68 @@ Session-by-session history of development work. Most recent first.
 
 ## January 31, 2026
 
+### Bulk QR Code Analytics (Feature #19)
+
+Business tier feature. Batch-level analytics for bulk-generated QR codes. Follows the existing campaign filter pattern — adds `?batch=batchId` URL param to the analytics page that narrows scans to codes sharing a `bulk_batch_id`. No database migration needed.
+
+- `BatchFilterSelect` dropdown (amber accent, clears conflicting QR/campaign filters on select)
+- `BatchComparisonTable` with per-code ranking, scan count, % of total, top device, top country; mobile+desktop layouts
+- "Export Batch Report" CSV download with full table data
+- Batch header card (amber gradient, matching bulk batch visual language) showing code count and creation date
+- "Analytics" link button on `BulkBatchCard` header (navigates to `/analytics?batch={id}`)
+- Aggregation scan query now includes `qr_code_id` for per-code breakdowns
+- QR codes query expanded to include `bulk_batch_id`, `destination_url`, `created_at`
+- Batch filter only visible to Business tier users with existing bulk batches
+- Mutual exclusivity: selecting batch clears QR/campaign; selecting QR/campaign clears batch
+- 14 new tests (5 for BatchFilterSelect, 9 for BatchComparisonTable)
+
+#### Files Created (4)
+- `src/components/analytics/BatchFilterSelect.tsx`
+- `src/components/analytics/BatchComparisonTable.tsx`
+- `src/components/analytics/__tests__/BatchFilterSelect.test.tsx`
+- `src/components/analytics/__tests__/BatchComparisonTable.test.tsx`
+
+#### Files Modified (3)
+- `src/lib/analytics/types.ts` — added optional `qr_code_id` to `ScanData`
+- `src/app/(dashboard)/analytics/page.tsx` — batch search param, filter logic, header card, comparison data, filter dropdown, `buildPageUrl` preserves batch, mock render updated
+- `src/components/qr/BulkBatchCard.tsx` — "Analytics" link button in header
+
+### Enhanced QR Code Scheduling (Feature #18)
+
+Pro+ feature. Adds timezone selector, recurring schedules (daily/weekly), and a 7-day active periods preview to the existing scheduling system. Existing one-time schedules continue working unchanged — fully backward compatible.
+
+- New DB columns: `schedule_timezone` (TEXT), `schedule_rule` (JSONB) on `qr_codes`
+- Scheduling utility module (`src/lib/scheduling/utils.ts`) with `isActiveAtTime()`, `convertLocalToUTC()`, `getTimezoneOptions()`, `guessUserTimezone()`, `getActivePeriodsPreview()`
+- 27 new unit tests covering one-time windows, daily/weekly recurring, timezone conversion, midnight-crossing ranges, and edge cases
+- Redirect route (`/r/[code]`) uses `isActiveAtTime()` for enforcement — replaces inline date comparisons
+- Not-active page shows "Currently Inactive" variant for `reason=recurring`, explaining the QR is on a recurring schedule
+- QR Studio scheduling UI: timezone picker (~55 IANA timezones grouped by region), one-time/daily/weekly mode tabs, time-of-day inputs, day-of-week toggle pills, SchedulePreview 7-day timeline, info callout explaining what scanners see outside scheduled times
+- QRCodeCard badges: "Daily (active now)" / "Daily (inactive)" / "Weekly (active now)" / "Weekly (inactive)"
+- Duplicate API copies `schedule_timezone` and `schedule_rule`
+- v1 API (GET/POST/PATCH) exposes and accepts the new schedule fields
+
+#### Files Created (4)
+- `supabase/migrations/20260201000002_enhance_scheduling.sql`
+- `src/lib/scheduling/utils.ts`
+- `src/lib/scheduling/__tests__/utils.test.ts`
+- `src/components/qr/schedule/SchedulePreview.tsx`
+
+#### Files Modified (12)
+- `src/lib/supabase/types.ts` — `ScheduleRule` interface, `schedule_timezone`/`schedule_rule` on QRCode
+- `src/lib/test/factories.ts` — added new fields to mock factory
+- `src/components/qr/studio/hooks/useProOptions.ts` — 5 new state fields, `ScheduleMode` type
+- `src/components/qr/studio/hooks/useQRStudioState.ts` — wired new state/actions, onLoadProOptions
+- `src/components/qr/studio/hooks/useSaveQR.ts` — timezone-aware save with `convertLocalToUTC`, recurring rule persistence, load logic
+- `src/app/r/[code]/route.ts` — replaced inline schedule check with `isActiveAtTime()`
+- `src/app/not-active/page.tsx` — added `recurring` reason variant with RecurringIcon
+- `src/components/qr/wizard/steps/OptionsStep.tsx` — full new scheduling UI with timezone/mode/preview/info
+- `src/components/qr/QRCodeCard.tsx` — recurring badge logic with active/inactive status
+- `src/app/api/qr/[id]/duplicate/route.ts` — copies new schedule fields
+- `src/app/api/v1/qr-codes/route.ts` — new fields in SELECT and POST
+- `src/app/api/v1/qr-codes/[id]/route.ts` — new fields in GET SELECT and PATCH validation
+
+---
+
 ### Campaign Grouping (Feature #17)
 
 Pro/Business feature. Campaigns are an independent organizational layer from folders — a QR code can belong to both a folder and a campaign simultaneously. Campaign analytics leverage the existing aggregation system by narrowing `qrCodeIds` to those in the selected campaign.

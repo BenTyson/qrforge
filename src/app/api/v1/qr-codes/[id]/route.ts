@@ -41,7 +41,7 @@ export async function GET(
 
   const { data, error } = await supabase
     .from('qr_codes')
-    .select('id, name, type, content_type, content, short_code, destination_url, scan_count, created_at, expires_at, active_from, active_until, style')
+    .select('id, name, type, content_type, content, short_code, destination_url, scan_count, created_at, expires_at, active_from, active_until, schedule_timezone, schedule_rule, style')
     .eq('id', id)
     .eq('user_id', user.id)
     .single();
@@ -172,6 +172,20 @@ export async function PATCH(
     updates.active_until = body.active_until;
   }
 
+  if (body.schedule_timezone !== undefined) {
+    if (body.schedule_timezone !== null && typeof body.schedule_timezone !== 'string') {
+      return apiError('schedule_timezone must be a string or null', 400);
+    }
+    updates.schedule_timezone = body.schedule_timezone;
+  }
+
+  if (body.schedule_rule !== undefined) {
+    if (body.schedule_rule !== null && typeof body.schedule_rule !== 'object') {
+      return apiError('schedule_rule must be an object or null', 400);
+    }
+    updates.schedule_rule = body.schedule_rule;
+  }
+
   // Handle style updates - merge with existing style and validate
   if (body.style && typeof body.style === 'object') {
     const existingStyle = (existing.style as Record<string, unknown>) || {};
@@ -201,7 +215,7 @@ export async function PATCH(
     .from('qr_codes')
     .update(updates)
     .eq('id', id)
-    .select('id, name, type, content_type, content, short_code, destination_url, scan_count, created_at, expires_at, active_from, active_until, style')
+    .select('id, name, type, content_type, content, short_code, destination_url, scan_count, created_at, expires_at, active_from, active_until, schedule_timezone, schedule_rule, style')
     .single();
 
   if (error) {

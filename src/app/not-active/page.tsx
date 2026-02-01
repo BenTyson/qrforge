@@ -15,6 +15,7 @@ interface PageProps {
 export default async function NotActivePage({ searchParams }: PageProps) {
   const { reason } = await searchParams;
   const isEarly = reason === 'early';
+  const isRecurring = reason === 'recurring';
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-secondary/20">
@@ -23,17 +24,21 @@ export default async function NotActivePage({ searchParams }: PageProps) {
           <div className="w-16 h-16 mx-auto mb-6 bg-muted/50 rounded-full flex items-center justify-center">
             {isEarly ? (
               <CalendarIcon className="w-8 h-8 text-muted-foreground" />
+            ) : isRecurring ? (
+              <RecurringIcon className="w-8 h-8 text-muted-foreground" />
             ) : (
               <ClockIcon className="w-8 h-8 text-muted-foreground" />
             )}
           </div>
 
           <h1 className="text-2xl font-bold mb-2">
-            {isEarly ? 'Not Yet Active' : 'No Longer Active'}
+            {isEarly ? 'Not Yet Active' : isRecurring ? 'Currently Inactive' : 'No Longer Active'}
           </h1>
           <p className="text-muted-foreground mb-6">
             {isEarly
               ? "This QR code hasn't been activated yet. The owner has scheduled it to start at a later time."
+              : isRecurring
+              ? 'This QR code is on a recurring schedule and is currently outside its active hours. Please try again later.'
               : 'This QR code is no longer active. The scheduled activation window has ended.'
             }
           </p>
@@ -86,6 +91,17 @@ function ClockIcon({ className }: { className?: string }) {
       <circle cx="12" cy="12" r="10" />
       <polyline points="12 6 12 12 16 14" />
       <line x1="4" y1="4" x2="20" y2="20" />
+    </svg>
+  );
+}
+
+function RecurringIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M17 2l4 4-4 4" />
+      <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+      <path d="M7 22l-4-4 4-4" />
+      <path d="M21 13v2a4 4 0 0 1-4 4H3" />
     </svg>
   );
 }

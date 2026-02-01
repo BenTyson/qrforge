@@ -7,6 +7,8 @@ import { SCAN_LIMITS } from '@/lib/stripe/config';
 import { sendScanLimitReachedEmail } from '@/lib/email';
 import { selectVariant } from '@/lib/ab-testing/variant-selector';
 import type { ABVariant, ABAssignment } from '@/lib/ab-testing/types';
+import { isActiveAtTime } from '@/lib/scheduling/utils';
+import type { ScheduleRule } from '@/lib/supabase/types';
 
 // Get the base URL for redirects (supports ngrok/proxy scenarios)
 function getBaseUrl(request: Request): string {
@@ -85,20 +87,16 @@ export async function GET(
   }
 
   // Check scheduled activation (Pro+ feature)
-  const now = new Date();
-  if (qrCode.active_from) {
-    const activeFrom = new Date(qrCode.active_from);
-    if (now < activeFrom) {
-      // QR code is not yet active
-      return NextResponse.redirect(new URL('/not-active?reason=early', baseUrl));
-    }
-  }
-  if (qrCode.active_until) {
-    const activeUntil = new Date(qrCode.active_until);
-    if (now > activeUntil) {
-      // QR code is no longer active
-      return NextResponse.redirect(new URL('/not-active?reason=ended', baseUrl));
-    }
+  const scheduleResult = isActiveAtTime({
+    now: new Date(),
+    activeFrom: qrCode.active_from,
+    activeUntil: qrCode.active_until,
+    timezone: qrCode.schedule_timezone as string | null,
+    rule: qrCode.schedule_rule as ScheduleRule | null,
+  });
+
+  if (!scheduleResult.active) {
+    return NextResponse.redirect(new URL(`/not-active?reason=${scheduleResult.reason}`, baseUrl));
   }
 
   // Check if QR code is password protected

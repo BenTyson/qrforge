@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { QRCodeCard } from './QRCodeCard';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
 import type { SubscriptionTier } from '@/lib/supabase/types';
@@ -74,6 +75,13 @@ export function BulkBatchCard({ batch, index = 0, userTier = 'free' }: BulkBatch
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <Link
+            href={`/analytics?batch=${batch.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="text-xs bg-amber-500/10 text-amber-500 px-2 py-1 rounded-full border border-amber-500/20 hover:bg-amber-500/20 transition-colors"
+          >
+            Analytics
+          </Link>
           <span className="text-xs bg-amber-500/10 text-amber-500 px-2 py-1 rounded-full border border-amber-500/20">
             {batch.codes.length} codes
           </span>

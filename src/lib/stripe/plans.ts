@@ -53,6 +53,7 @@ export const PLANS = {
       'Unlimited scans',
       'Bulk QR generation',
       'API access',
+      'Webhook notifications',
       'Team members (up to 3)',
     ],
   },

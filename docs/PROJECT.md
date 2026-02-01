@@ -84,7 +84,7 @@ Premium QR code generator with analytics and dynamic codes. Goal: passive income
 |------|-------|----------|-----------|--------------|
 | Free | $0 | 5 | No | Basic types, 100 scans/mo, no URL editing |
 | Pro | $9/mo | 50 | Yes | All types, logo (crop/shape/background), landing pages, URL editing, 10k scans/mo, **7-day free trial** |
-| Business | $29/mo | Unlimited | Yes | Bulk generation, API access, unlimited scans |
+| Business | $29/mo | Unlimited | Yes | Bulk generation, API access, webhook notifications, unlimited scans |
 
 ### Growth Features
 - **Referral Program**: Users get unique referral code, earn $5 credit when referrals upgrade

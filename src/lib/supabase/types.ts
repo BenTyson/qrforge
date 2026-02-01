@@ -1,4 +1,5 @@
 import type { QRContentType, QRContent } from '@/lib/qr/types';
+import type { WebhookConfig, WebhookDelivery } from '@/lib/webhooks/types';
 
 export type SubscriptionTier = 'free' | 'pro' | 'business';
 
@@ -160,6 +161,16 @@ export interface Database {
         Insert: Omit<Campaign, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<Campaign, 'id' | 'created_at' | 'updated_at'>>;
       };
+      webhook_configs: {
+        Row: WebhookConfig;
+        Insert: Omit<WebhookConfig, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<WebhookConfig, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      webhook_deliveries: {
+        Row: WebhookDelivery;
+        Insert: Omit<WebhookDelivery, 'id' | 'created_at'>;
+        Update: Partial<Omit<WebhookDelivery, 'id' | 'created_at'>>;
+      };
     };
   };
 }
@@ -173,6 +184,7 @@ export const TIER_LIMITS = {
     customLogo: false,
     svgDownload: false,
     apiAccess: false,
+    webhooks: false,
     teamMembers: 1,
     folders: 0,
     campaigns: 0,
@@ -184,6 +196,7 @@ export const TIER_LIMITS = {
     customLogo: true,
     svgDownload: true,
     apiAccess: false,
+    webhooks: false,
     teamMembers: 1,
     folders: 10,
     campaigns: 5,
@@ -195,6 +208,7 @@ export const TIER_LIMITS = {
     customLogo: true,
     svgDownload: true,
     apiAccess: true,
+    webhooks: true,
     teamMembers: 3,
     folders: Infinity,
     campaigns: Infinity,

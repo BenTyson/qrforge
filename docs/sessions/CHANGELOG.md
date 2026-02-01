@@ -6,6 +6,52 @@ Session-by-session history of development work. Most recent first.
 
 ## January 31, 2026
 
+### Webhook Notifications (Feature #20)
+
+Business-tier feature. HTTP POST callbacks when QR codes are scanned. Hybrid delivery model: first attempt fires inside `recordScan()` (already non-awaited, zero redirect latency impact), retries handled by a cron job polling for failed deliveries.
+
+- Two new DB tables: `webhook_configs` (per-QR-code config with UNIQUE constraint, RLS for users) and `webhook_deliveries` (delivery log, service-role only)
+- Core delivery engine (`src/lib/webhooks/deliver.ts`) with HMAC-SHA256 signing, exponential backoff retries (30s → 2m → 15m → 1h → 4h), 5-second timeout, 1KB response body truncation
+- SSRF prevention: HTTPS-only URLs, private IP blocking (10.x, 172.16-31.x, 192.168.x, localhost, link-local)
+- Webhook payload includes QR code metadata and scan data (device, OS, browser, location) — excludes PII (no ip_hash, referrer, or email)
+- `recordScan()` modified: `.insert({...})` → `.insert({...}).select('id').single()` to capture scan ID, then `enqueueWebhookDelivery()` fire-and-forget with `.catch()` isolation
+- Fast path: QR codes without webhooks do one indexed SELECT returning 0 rows (~1ms)
+- Dashboard API: GET/POST/DELETE `/api/qr/[id]/webhook`, POST `/api/qr/[id]/webhook/test`, GET `/api/qr/[id]/webhook/deliveries`
+- V1 API: GET/PUT/DELETE `/api/v1/qr-codes/[id]/webhook`, POST `.../test`, GET `.../deliveries` (follows existing API key auth + rate limit pattern)
+- Cron jobs: `webhook-retries` (every 1 min, processes up to 50 failed deliveries), `webhook-cleanup` (daily, deletes deliveries > 30 days)
+- Webhook config card on QR code edit page (Business tier, dynamic QR only) with Business badge and Configure button
+- Full webhook management page at `/qr-codes/[id]/webhooks` with URL config, signing secret display (shown once on creation), Send Test button, delivery stats (total, success rate, last delivery), and paginated delivery log with status filter tabs and expandable detail rows
+- `WebhookDeliveryLog` component with status badges (green/yellow/orange/red), HTTP status, attempt counts, expandable payload/response/error details
+- `webhooks: boolean` added to TIER_LIMITS (free: false, pro: false, business: true)
+- "Webhook notifications" added to Business tier feature list in plans.ts
+- 24 new tests (20 delivery engine unit tests + 4 URL validation tests)
+- Additive only: no existing tables, columns, or data modified
+
+#### Files Created (15)
+- `supabase/migrations/20260201100000_add_webhook_notifications.sql`
+- `src/lib/webhooks/types.ts`
+- `src/lib/webhooks/deliver.ts`
+- `src/lib/webhooks/__tests__/deliver.test.ts`
+- `src/app/api/qr/[id]/webhook/route.ts`
+- `src/app/api/qr/[id]/webhook/test/route.ts`
+- `src/app/api/qr/[id]/webhook/deliveries/route.ts`
+- `src/app/api/qr/[id]/webhook/__tests__/route.test.ts`
+- `src/app/api/v1/qr-codes/[id]/webhook/route.ts`
+- `src/app/api/v1/qr-codes/[id]/webhook/test/route.ts`
+- `src/app/api/v1/qr-codes/[id]/webhook/deliveries/route.ts`
+- `src/app/api/cron/webhook-retries/route.ts`
+- `src/app/api/cron/webhook-cleanup/route.ts`
+- `src/app/(dashboard)/qr-codes/[id]/webhooks/page.tsx`
+- `src/components/webhooks/WebhookDeliveryLog.tsx`
+
+#### Files Modified (4)
+- `src/app/r/[code]/route.ts` — scan insert returns ID, `enqueueWebhookDelivery()` call at both scan recording sites
+- `src/lib/supabase/types.ts` — `webhooks` in TIER_LIMITS, `webhook_configs`/`webhook_deliveries` in Database interface
+- `src/lib/stripe/plans.ts` — "Webhook notifications" in Business features
+- `src/app/(dashboard)/qr-codes/[id]/page.tsx` — Webhook config card + WebhookIcon component
+
+---
+
 ### Bulk QR Code Analytics (Feature #19)
 
 Business tier feature. Batch-level analytics for bulk-generated QR codes. Follows the existing campaign filter pattern — adds `?batch=batchId` URL param to the analytics page that narrows scans to codes sharing a `bulk_batch_id`. No database migration needed.

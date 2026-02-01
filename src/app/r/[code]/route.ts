@@ -9,6 +9,7 @@ import { selectVariant } from '@/lib/ab-testing/variant-selector';
 import type { ABVariant, ABAssignment } from '@/lib/ab-testing/types';
 import { isActiveAtTime } from '@/lib/scheduling/utils';
 import type { ScheduleRule } from '@/lib/supabase/types';
+import { enqueueWebhookDelivery } from '@/lib/webhooks/deliver';
 
 // Get the base URL for redirects (supports ngrok/proxy scenarios)
 function getBaseUrl(request: Request): string {
@@ -136,7 +137,12 @@ export async function GET(
   const contentType = qrCode.content_type as string;
   if (LANDING_PAGE_ROUTES[contentType]) {
     // Record the scan before redirecting to landing page
-    recordScan(qrCode.id, request);
+    recordScan(qrCode.id, request, {
+      id: qrCode.id,
+      name: qrCode.name,
+      short_code: qrCode.short_code,
+      content_type: qrCode.content_type,
+    });
     return NextResponse.redirect(new URL(`/r/${code}/${LANDING_PAGE_ROUTES[contentType]}`, baseUrl));
   }
 
@@ -404,7 +410,12 @@ export async function GET(
   }
 
   // Record the scan (async, don't wait)
-  recordScan(qrCode.id, request);
+  recordScan(qrCode.id, request, {
+    id: qrCode.id,
+    name: qrCode.name,
+    short_code: qrCode.short_code,
+    content_type: qrCode.content_type,
+  });
 
   // Redirect to destination
   return NextResponse.redirect(normalizedUrl);
@@ -412,7 +423,8 @@ export async function GET(
 
 async function recordScan(
   qrCodeId: string,
-  _request: Request
+  _request: Request,
+  qrCodeData: { id: string; name: string; short_code: string | null; content_type: string }
 ) {
   try {
     const headersList = await headers();
@@ -443,8 +455,8 @@ async function recordScan(
     // This is a system operation, not a user operation
     const adminClient = createAdminClient();
 
-    // Insert scan record and CHECK the result
-    const { error } = await adminClient.from('scans').insert({
+    // Insert scan record and capture the scan ID for webhooks
+    const { data: scan, error } = await adminClient.from('scans').insert({
       qr_code_id: qrCodeId,
       ip_hash: ipHash,
       device_type: deviceType,
@@ -454,7 +466,7 @@ async function recordScan(
       country: geoData?.country || null,
       city: geoData?.city || null,
       region: geoData?.region || null,
-    });
+    }).select('id').single();
 
     if (error) {
       console.error('[Scan] CRITICAL: Failed to insert scan record:', {
@@ -466,6 +478,19 @@ async function recordScan(
       });
     } else {
       console.log('[Scan] Successfully recorded scan for QR:', qrCodeId);
+
+      // Fire webhook if configured (fire-and-forget, failures are silently logged)
+      enqueueWebhookDelivery(qrCodeId, scan.id, {
+        scanned_at: new Date().toISOString(),
+        device_type: deviceType,
+        os,
+        browser,
+        country: geoData?.country || null,
+        city: geoData?.city || null,
+        region: geoData?.region || null,
+      }, qrCodeData).catch(err => {
+        console.error('[Webhook] Enqueue failed:', err);
+      });
     }
   } catch (error) {
     console.error('[Scan] CRITICAL: Exception recording scan:', error);

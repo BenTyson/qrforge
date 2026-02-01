@@ -2,7 +2,7 @@
 
 > **Last Updated**: January 31, 2026
 > **Status**: Active development
-> **Current Features**: 36 QR types, Analytics, Bulk Batch Analytics, Campaign Grouping, Enhanced Scheduling, Bulk generation, API, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Logo Crop Editor, Sentry error tracking, Cron-based email automation, Feedback Forms, Contact Form, 151 SEO articles (all with CTAs)
+> **Current Features**: 36 QR types, Analytics, Bulk Batch Analytics, Campaign Grouping, Enhanced Scheduling, Bulk generation, API, Webhook Notifications, A/B Testing, Template Gallery, PDF Export, Embed Code Generator, Logo Crop Editor, Sentry error tracking, Cron-based email automation, Feedback Forms, Contact Form, 151 SEO articles (all with CTAs)
 > **Strategy**: Build features that align with SEO content for maximum conversion
 
 This document tracks planned features in priority order. Work through sequentially unless dependencies require otherwise.
@@ -30,23 +30,6 @@ This document tracks planned features in priority order. Work through sequential
 ---
 
 ## NEXT UP
-
-### 20. Webhook Notifications
-**Tier**: MAJOR | **Priority**: 20 of 24 | **Effort**: ~1 week
-
-**What**: Send HTTP webhooks when QR codes are scanned.
-
-**Why build this**:
-- Business tier feature
-- Enables integrations (Zapier, custom apps)
-- Already in planned roadmap
-
-**Implementation**:
-- Webhook URL configuration per QR code
-- Retry logic for failed deliveries
-- Webhook logs in dashboard
-
----
 
 ### 21. Custom Short URL Slugs
 **Tier**: STANDARD | **Priority**: 21 of 24 | **Effort**: ~1 day
@@ -86,6 +69,7 @@ This document tracks planned features in priority order. Work through sequential
 
 | Feature | Completed | Notes |
 |---------|-----------|-------|
+| Webhook Notifications | 2026-01-31 | Business tier feature. HTTP POST callbacks on QR scan. Hybrid delivery: first attempt in `recordScan()` (fire-and-forget), retries via cron. HMAC-SHA256 signing, SSRF prevention, exponential backoff (30s→4h), 5s timeout. Dashboard + V1 API for config CRUD, test webhook, delivery logs. Cron jobs for retries (1min) and cleanup (daily, 30-day retention). Full management page with stats and expandable delivery log. Additive only — no existing data modified. 15 new files, 4 modified. 281 tests passing (24 new). |
 | Bulk QR Code Analytics | 2026-01-31 | Business tier feature. Batch-level analytics via `?batch=` URL param. BatchFilterSelect dropdown, BatchComparisonTable with per-code ranking/percentages/CSV export, amber batch header card. "Analytics" button on BulkBatchCard. Mutual exclusivity with QR/campaign filters. No migration needed. 4 new files, 3 modified. 14 new tests (257 total). |
 | Enhanced QR Code Scheduling | 2026-01-31 | Pro+ feature. Timezone selector (~55 IANA timezones), recurring schedules (daily/weekly), 7-day active periods preview, SchedulePreview component, info callout for creators. `isActiveAtTime()` enforces schedule on redirect route. Backward compatible — existing one-time schedules unchanged. 4 new files, 12 modified. 27 new tests. |
 | Campaign Grouping | 2026-01-31 | Pro/Business feature. Independent from folders (QR can be in both). `campaigns` table with full CRUD API. Chip-based CampaignManager UI (indigo accent) with create/edit/delete modal. Campaign badge on QR cards. Campaign filter on QR codes page and analytics page. Analytics reuse existing aggregation by narrowing qrCodeIds. Tier limits: free=0, pro=5, business=unlimited. 10 new files, 10 modified. |
@@ -174,6 +158,7 @@ A/B Testing ──────► Campaign Grouping (campaign-level A/B)
 
 | Date | Changes |
 |------|---------|
+| 2026-01-31 | Completed Webhook Notifications (Feature #20). Business tier. Hybrid delivery model, HMAC-SHA256 signing, SSRF prevention, exponential backoff retries, cron jobs for retries + cleanup. Dashboard API, V1 API, webhook management page with delivery logs. 15 new files, 4 modified. 281 tests passing (24 new). |
 | 2026-01-31 | Completed Bulk QR Code Analytics (Feature #19). Business tier. Batch filter, per-code comparison table, CSV export, batch header card. 4 new files, 3 modified. 257 tests passing (14 new). |
 | 2026-01-31 | Completed Enhanced QR Code Scheduling (Feature #18). Pro+ feature. Timezone selector, daily/weekly recurring schedules, 7-day preview, `isActiveAtTime()` enforcement. Backward compatible. 4 new files, 12 modified. 243 tests passing (27 new). |
 | 2026-01-31 | Completed Campaign Grouping (Feature #17). Pro/Business feature. Campaigns table, CRUD API, CampaignManager/CampaignModal UI, campaign badge on QR cards, campaign filter on analytics, Edit button relocated to card header, Tooltip components on all icon buttons. 10 new files, 10 modified. 216 tests passing. |

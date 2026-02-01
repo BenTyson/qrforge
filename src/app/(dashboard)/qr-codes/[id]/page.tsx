@@ -673,6 +673,31 @@ export default function EditQRCodePage() {
             </Card>
           )}
 
+          {/* Webhook Notifications (Business only) */}
+          {isDynamic && tier === 'business' && (
+            <Card className="p-6 glass">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Webhook Notifications</p>
+                  <p className="text-sm text-muted-foreground">
+                    Get HTTP POST callbacks when this QR code is scanned
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">
+                    Business
+                  </span>
+                  <Link href={`/qr-codes/${qrCodeId}/webhooks`}>
+                    <Button variant="outline" size="sm">
+                      <WebhookIcon className="w-4 h-4 mr-2" />
+                      Configure
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </Card>
+          )}
+
           {/* Save Button */}
           <Button
             onClick={handleSave}
@@ -864,6 +889,17 @@ function SplitIcon({ className }: { className?: string }) {
       <path d="M3 14v7h5" />
       <path d="M14 21l7-7" />
       <path d="M10 21l-7-7" />
+    </svg>
+  );
+}
+
+function WebhookIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c.01-.7.2-1.4.57-2" />
+      <path d="m6 17 3.13-5.78c.53-.97.43-2.17-.26-3.07a4 4 0 0 1 6.92-4.01c.36.6.55 1.27.56 1.94" />
+      <path d="m12 6 3.13 5.73C15.66 12.7 16.9 13 18 13a4 4 0 0 1 .8 7.93" />
+      <circle cx="12" cy="12" r="2" />
     </svg>
   );
 }

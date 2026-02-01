@@ -33,6 +33,7 @@ import type {
   DiscordContent,
   AppsContent,
   GoogleReviewContent,
+  MultiReviewContent,
   FeedbackContent,
   EventContent,
   GeoContent,
@@ -98,6 +99,10 @@ export function hasMinimalContent(content: QRContent): boolean {
     case 'google-review':
       return !!content.placeId && content.placeId.length >= 20 &&
              !!content.businessName && content.businessName.length > 0;
+    case 'multi-review':
+      return !!content.businessName && content.businessName.length > 0 &&
+             !!content.platforms && content.platforms.length > 0 &&
+             content.platforms.some(p => !!p.url && p.url.length > 0);
     case 'feedback':
       return !!content.businessName && content.businessName.length > 0;
     case 'event': {
@@ -201,6 +206,14 @@ export function isContentValid(content: QRContent | null, selectedType: QRConten
         reviewContent.placeId?.trim() &&
         reviewContent.placeId.length >= 20 &&
         reviewContent.businessName?.trim()
+      );
+    }
+    case 'multi-review': {
+      const multiReview = content as MultiReviewContent;
+      return !!(
+        multiReview.businessName?.trim() &&
+        multiReview.platforms?.length > 0 &&
+        multiReview.platforms.some(p => p.url?.trim())
       );
     }
     case 'feedback':
@@ -393,6 +406,16 @@ export function validateContent(content: QRContent): { valid: boolean; error?: s
       if (!content.placeId) return { valid: false, error: 'Place ID is required' };
       if (content.placeId.length < 20) return { valid: false, error: 'Place ID must be at least 20 characters' };
       if (!content.businessName) return { valid: false, error: 'Business name is required' };
+      return { valid: true };
+
+    case 'multi-review':
+      if (!content.businessName) return { valid: false, error: 'Business name is required' };
+      if (!content.platforms || content.platforms.length === 0) {
+        return { valid: false, error: 'At least one review platform is required' };
+      }
+      if (!content.platforms.some(p => p.url?.trim())) {
+        return { valid: false, error: 'At least one platform must have a URL' };
+      }
       return { valid: true };
 
     case 'feedback':

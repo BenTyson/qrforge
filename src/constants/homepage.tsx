@@ -225,7 +225,7 @@ export const FAQS: FAQ[] = [
   {
     id: 'account-needed',
     question: 'Do I need an account to create QR codes?',
-    answer: 'You can preview QR codes on the homepage without signing up. A free account is required to download and save them. Once registered you get access to all 35 QR types, custom colors, and error-correction settings — no credit card required.',
+    answer: 'You can preview QR codes on the homepage without signing up. A free account is required to download and save them. Once registered you get access to all 36 QR types, custom colors, and error-correction settings — no credit card required.',
     category: 'getting-started',
   },
   {
@@ -251,7 +251,7 @@ export const FAQS: FAQ[] = [
   {
     id: 'how-many-types',
     question: 'How many QR code types do you support?',
-    answer: 'QRWolf supports 35 QR code types organized into six groups: Basic (7 types including URL, WiFi, vCard, Email, SMS, Phone, and Text), Social (15 platforms like Instagram, YouTube, LinkedIn, TikTok, and more), Reviews & Feedback (2 types), Events & Location (2 types), File Upload (4 types — PDF, Images, Video, Audio — Pro and above), and Landing Pages (5 types — Menu, Business, Link Page, Coupon, Social — Pro and above).',
+    answer: 'QRWolf supports 36 QR code types organized into six groups: Basic (7 types including URL, WiFi, vCard, Email, SMS, Phone, and Text), Social (15 platforms like Instagram, YouTube, LinkedIn, TikTok, and more), Reviews & Feedback (3 types including Multi-Platform Review), Events & Location (2 types), File Upload (4 types — PDF, Images, Video, Audio — Pro and above), and Landing Pages (5 types — Menu, Business, Link Page, Coupon, Social — Pro and above).',
     category: 'features',
   },
   {

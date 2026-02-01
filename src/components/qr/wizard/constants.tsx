@@ -100,6 +100,7 @@ export const TYPE_CATEGORIES: TypeCategory[] = [
     ),
     types: [
       { id: 'google-review', name: 'Google Review', description: 'Collect Google reviews' },
+      { id: 'multi-review', name: 'Multi-Platform Review', description: 'Reviews on Google, Yelp & more' },
       { id: 'feedback', name: 'Feedback Form', description: 'Collect customer feedback' },
     ],
   },

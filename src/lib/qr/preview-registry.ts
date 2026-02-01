@@ -20,6 +20,7 @@ import { AudioPreview } from '@/components/audio/AudioPreview';
 import { FeedbackPreview } from '@/components/feedback/FeedbackPreview';
 import { TextPreview } from '@/components/text/TextPreview';
 import { GoogleReviewPreview } from '@/components/review/GoogleReviewPreview';
+import { MultiReviewPreview } from '@/components/review/MultiReviewPreview';
 import { WiFiPreview } from '@/components/wifi/WiFiPreview';
 import { VCardPreview } from '@/components/vcard/VCardPreview';
 import { SpotifyPreview } from '@/components/spotify/SpotifyPreview';
@@ -41,6 +42,7 @@ const PREVIEW_COMPONENTS: Partial<Record<QRContentType, ComponentType<{ content:
   feedback: FeedbackPreview,
   text: TextPreview,
   'google-review': GoogleReviewPreview,
+  'multi-review': MultiReviewPreview,
   wifi: WiFiPreview,
   vcard: VCardPreview,
   spotify: SpotifyPreview,

@@ -6,6 +6,42 @@ Session-by-session history of development work. Most recent first.
 
 ## January 31, 2026
 
+### Multi-Platform Review QR (Feature #15)
+
+36th QR type (free tier). Landing page with branded buttons for multiple review platforms.
+
+- New `multi-review` content type with `MultiReviewContent` interface and `ReviewPlatformEntry` array
+- Form with dynamic platform management: add/remove Google, Yelp, TripAdvisor, Facebook, or custom platforms with URLs
+- Landing page at `/r/[code]/reviews` with platform-branded CTA buttons (Google blue, Yelp red, TripAdvisor green, Facebook blue), star animation, glassmorphism design using shared landing components
+- Phone-mockup preview in QR Studio sidebar that reflects only configured platforms (empty state prompt when none added)
+- Platform logos on both preview and landing page buttons
+- Custom platforms use the user's accent color; default accent is amber `#f59e0b`
+- Full 3-tier validation (hasMinimalContent, isContentValid, validateContent) requiring business name + at least one platform with a URL
+- API validation with platform type whitelist (`google`, `yelp`, `tripadvisor`, `facebook`, `custom`)
+- URL normalization for all platform URLs via `normalizeContentUrls`
+- DB migration adds `multi-review` to CHECK constraint (36 types total)
+
+#### Files Created (5)
+- `src/components/qr/forms/MultiReviewForm.tsx`
+- `src/app/r/[code]/reviews/page.tsx`
+- `src/components/review/MultiReviewPreview.tsx`
+- `supabase/migrations/20260131000002_add_multi_review_type.sql`
+
+#### Files Modified (12)
+- `src/lib/qr/types.ts` — added `multi-review` to union, `MultiReviewContent` + `ReviewPlatformEntry` interfaces, labels, icons, DYNAMIC_REQUIRED_TYPES
+- `src/lib/qr/validation.ts` — all 3 validation tiers + `MultiReviewContent` import
+- `src/lib/qr/generator.ts` — `contentToString` + `normalizeContentUrls` cases
+- `src/lib/qr/form-registry.ts` — lazy + eager + sync registration
+- `src/lib/qr/preview-registry.ts` — preview component registration
+- `src/lib/api/auth.ts` — API validation + `isValidContentType`
+- `src/lib/api/__tests__/auth.test.ts` — valid types array + count (35 → 36)
+- `src/components/qr/forms/index.ts` — barrel export
+- `src/components/qr/QRTypeSelector.tsx` — TYPE_CONFIG + CATEGORIES
+- `src/components/qr/wizard/constants.tsx` — TYPE_CATEGORIES entry
+- `src/app/r/[code]/route.ts` — landing page route (`reviews`)
+
+---
+
 ### QR Code Duplication (Feature #22) & Archive/Restore (Feature #23)
 
 Two quick-win dashboard features shipped together since they touch the same core files.

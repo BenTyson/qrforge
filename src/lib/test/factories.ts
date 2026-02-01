@@ -79,6 +79,8 @@ export function createMockQRCode(overrides: Partial<QRCode> = {}): QRCode {
     expires_at: null,
     active_from: null,
     active_until: null,
+    schedule_timezone: null,
+    schedule_rule: null,
     bulk_batch_id: null,
     password_hash: null,
     archived_at: null,

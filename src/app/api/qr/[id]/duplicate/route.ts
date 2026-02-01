@@ -110,6 +110,8 @@ export async function POST(_request: Request, { params }: RouteParams) {
         expires_at: source.expires_at,
         active_from: source.active_from,
         active_until: source.active_until,
+        schedule_timezone: source.schedule_timezone,
+        schedule_rule: source.schedule_rule,
         password_hash: source.password_hash,
         bulk_batch_id: null,
         archived_at: null,

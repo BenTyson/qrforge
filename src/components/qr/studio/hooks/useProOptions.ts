@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { guessUserTimezone } from '@/lib/scheduling/utils';
+
+export type ScheduleMode = 'once' | 'daily' | 'weekly';
 
 export interface ProOptionsState {
   expiresAt: string;
@@ -9,6 +12,11 @@ export interface ProOptionsState {
   scheduledEnabled: boolean;
   activeFrom: string;
   activeUntil: string;
+  scheduleTimezone: string;
+  scheduleMode: ScheduleMode;
+  recurringStartTime: string;
+  recurringEndTime: string;
+  recurringDaysOfWeek: number[];
   landingPageEnabled: boolean;
   landingPageTitle: string;
   landingPageDescription: string;
@@ -25,6 +33,11 @@ export interface ProOptionsActions {
   setScheduledEnabled: (enabled: boolean) => void;
   setActiveFrom: (date: string) => void;
   setActiveUntil: (date: string) => void;
+  setScheduleTimezone: (tz: string) => void;
+  setScheduleMode: (mode: ScheduleMode) => void;
+  setRecurringStartTime: (time: string) => void;
+  setRecurringEndTime: (time: string) => void;
+  setRecurringDaysOfWeek: (days: number[]) => void;
   setLandingPageEnabled: (enabled: boolean) => void;
   setLandingPageTitle: (title: string) => void;
   setLandingPageDescription: (description: string) => void;
@@ -42,6 +55,11 @@ export function useProOptions(): [ProOptionsState, ProOptionsActions] {
   const [scheduledEnabled, setScheduledEnabled] = useState(false);
   const [activeFrom, setActiveFrom] = useState('');
   const [activeUntil, setActiveUntil] = useState('');
+  const [scheduleTimezone, setScheduleTimezone] = useState(() => guessUserTimezone());
+  const [scheduleMode, setScheduleMode] = useState<ScheduleMode>('once');
+  const [recurringStartTime, setRecurringStartTime] = useState('');
+  const [recurringEndTime, setRecurringEndTime] = useState('');
+  const [recurringDaysOfWeek, setRecurringDaysOfWeek] = useState<number[]>([1, 2, 3, 4, 5]);
   const [landingPageEnabled, setLandingPageEnabled] = useState(false);
   const [landingPageTitle, setLandingPageTitle] = useState('');
   const [landingPageDescription, setLandingPageDescription] = useState('');
@@ -57,6 +75,11 @@ export function useProOptions(): [ProOptionsState, ProOptionsActions] {
     setScheduledEnabled(false);
     setActiveFrom('');
     setActiveUntil('');
+    setScheduleTimezone(guessUserTimezone());
+    setScheduleMode('once');
+    setRecurringStartTime('');
+    setRecurringEndTime('');
+    setRecurringDaysOfWeek([1, 2, 3, 4, 5]);
     setLandingPageEnabled(false);
     setLandingPageTitle('');
     setLandingPageDescription('');
@@ -73,6 +96,11 @@ export function useProOptions(): [ProOptionsState, ProOptionsActions] {
     scheduledEnabled,
     activeFrom,
     activeUntil,
+    scheduleTimezone,
+    scheduleMode,
+    recurringStartTime,
+    recurringEndTime,
+    recurringDaysOfWeek,
     landingPageEnabled,
     landingPageTitle,
     landingPageDescription,
@@ -89,6 +117,11 @@ export function useProOptions(): [ProOptionsState, ProOptionsActions] {
     setScheduledEnabled,
     setActiveFrom,
     setActiveUntil,
+    setScheduleTimezone,
+    setScheduleMode,
+    setRecurringStartTime,
+    setRecurringEndTime,
+    setRecurringDaysOfWeek,
     setLandingPageEnabled,
     setLandingPageTitle,
     setLandingPageDescription,

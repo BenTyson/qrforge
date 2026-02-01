@@ -15,7 +15,8 @@ import {
 import { generateQRDataURL, downloadQRPNG, generateQRSVG, downloadQRSVG } from '@/lib/qr/generator';
 import { EmbedCodeModal } from '@/components/qr/EmbedCodeModal';
 import type { QRContent, QRStyleOptions } from '@/lib/qr/types';
-import type { Folder, Campaign, SubscriptionTier } from '@/lib/supabase/types';
+import type { Folder, Campaign, SubscriptionTier, ScheduleRule } from '@/lib/supabase/types';
+import { isActiveAtTime } from '@/lib/scheduling/utils';
 import {
   Dialog,
   DialogContent,
@@ -42,6 +43,8 @@ interface QRCodeData {
   expires_at: string | null;
   active_from: string | null;
   active_until: string | null;
+  schedule_timezone?: string | null;
+  schedule_rule?: ScheduleRule | null;
   password_hash: string | null;
   archived_at?: string | null;
   folder_id?: string | null;
@@ -253,8 +256,29 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
 
   // Determine scheduled activation status
   const getScheduledStatus = () => {
-    const now = new Date();
+    const hasRecurring = !!qrCode.schedule_rule;
+    const hasOneTime = !!(qrCode.active_from || qrCode.active_until);
 
+    if (!hasRecurring && !hasOneTime) return null;
+
+    if (hasRecurring) {
+      const rule = qrCode.schedule_rule!;
+      const result = isActiveAtTime({
+        now: new Date(),
+        activeFrom: qrCode.active_from,
+        activeUntil: qrCode.active_until,
+        timezone: qrCode.schedule_timezone,
+        rule,
+      });
+      const typeLabel = rule.type === 'daily' ? 'Daily' : 'Weekly';
+      return {
+        status: result.active ? 'active' : 'inactive',
+        label: result.active ? `${typeLabel} (active now)` : `${typeLabel} (inactive)`,
+      };
+    }
+
+    // One-time schedule
+    const now = new Date();
     if (qrCode.active_from) {
       const from = new Date(qrCode.active_from);
       if (now < from) {
@@ -452,6 +476,7 @@ export function QRCodeCard({ qrCode, index = 0, compact: _compact = false, folde
                 <span className={`inline-flex items-center gap-0.5 ${
                   scheduledStatus.status === 'pending' ? 'text-blue-500' :
                   scheduledStatus.status === 'ended' ? 'text-red-500' :
+                  scheduledStatus.status === 'inactive' ? 'text-amber-500' :
                   'text-emerald-500'
                 }`}>
                   <ClockIcon className="w-3 h-3" />

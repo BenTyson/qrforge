@@ -5,6 +5,7 @@ import { useNavigation } from './useNavigation';
 import { useContentState } from './useContentState';
 import { useStyleState, DEFAULT_STYLE } from './useStyleState';
 import { useProOptions } from './useProOptions';
+import type { ScheduleMode } from './useProOptions';
 import { useSaveQR } from './useSaveQR';
 import type { QRContent, QRContentType, QRStyleOptions } from '@/lib/qr/types';
 import type { Template } from '@/lib/templates/types';
@@ -43,6 +44,11 @@ export interface QRStudioState {
   scheduledEnabled: boolean;
   activeFrom: string;
   activeUntil: string;
+  scheduleTimezone: string;
+  scheduleMode: ScheduleMode;
+  recurringStartTime: string;
+  recurringEndTime: string;
+  recurringDaysOfWeek: number[];
   landingPageEnabled: boolean;
   landingPageTitle: string;
   landingPageDescription: string;
@@ -99,6 +105,11 @@ export interface QRStudioActions {
   setScheduledEnabled: (enabled: boolean) => void;
   setActiveFrom: (date: string) => void;
   setActiveUntil: (date: string) => void;
+  setScheduleTimezone: (tz: string) => void;
+  setScheduleMode: (mode: ScheduleMode) => void;
+  setRecurringStartTime: (time: string) => void;
+  setRecurringEndTime: (time: string) => void;
+  setRecurringDaysOfWeek: (days: number[]) => void;
   setLandingPageEnabled: (enabled: boolean) => void;
   setLandingPageTitle: (title: string) => void;
   setLandingPageDescription: (description: string) => void;
@@ -188,6 +199,11 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
     getScheduledEnabled: () => proState.scheduledEnabled,
     getActiveFrom: () => proState.activeFrom,
     getActiveUntil: () => proState.activeUntil,
+    getScheduleTimezone: () => proState.scheduleTimezone,
+    getScheduleMode: () => proState.scheduleMode,
+    getRecurringStartTime: () => proState.recurringStartTime,
+    getRecurringEndTime: () => proState.recurringEndTime,
+    getRecurringDaysOfWeek: () => proState.recurringDaysOfWeek,
     getAbTestEnabled: () => proState.abTestEnabled,
     getAbVariantBUrl: () => proState.abVariantBUrl,
     getAbSplitPercentage: () => proState.abSplitPercentage,
@@ -211,6 +227,11 @@ export function useQRStudioState({ mode, qrCodeId }: UseQRStudioStateProps): [QR
       if (opts.scheduledEnabled !== undefined) proActions.setScheduledEnabled(opts.scheduledEnabled);
       if (opts.activeFrom !== undefined) proActions.setActiveFrom(opts.activeFrom);
       if (opts.activeUntil !== undefined) proActions.setActiveUntil(opts.activeUntil);
+      if (opts.scheduleTimezone !== undefined) proActions.setScheduleTimezone(opts.scheduleTimezone);
+      if (opts.scheduleMode !== undefined) proActions.setScheduleMode(opts.scheduleMode);
+      if (opts.recurringStartTime !== undefined) proActions.setRecurringStartTime(opts.recurringStartTime);
+      if (opts.recurringEndTime !== undefined) proActions.setRecurringEndTime(opts.recurringEndTime);
+      if (opts.recurringDaysOfWeek !== undefined) proActions.setRecurringDaysOfWeek(opts.recurringDaysOfWeek);
       if (opts.abTestEnabled !== undefined) proActions.setAbTestEnabled(opts.abTestEnabled);
       if (opts.abVariantBUrl !== undefined) proActions.setAbVariantBUrl(opts.abVariantBUrl);
       if (opts.abSplitPercentage !== undefined) proActions.setAbSplitPercentage(opts.abSplitPercentage);

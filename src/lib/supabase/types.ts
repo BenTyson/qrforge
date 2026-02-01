@@ -2,6 +2,13 @@ import type { QRContentType, QRContent } from '@/lib/qr/types';
 
 export type SubscriptionTier = 'free' | 'pro' | 'business';
 
+export interface ScheduleRule {
+  type: 'daily' | 'weekly';
+  startTime: string;   // "HH:MM" (24h)
+  endTime: string;     // "HH:MM" (24h)
+  daysOfWeek?: number[]; // 0=Sun..6=Sat (weekly only)
+}
+
 export interface Profile {
   id: string;
   email: string | null;
@@ -57,6 +64,8 @@ export interface QRCode {
   expires_at: string | null;
   active_from: string | null;
   active_until: string | null;
+  schedule_timezone: string | null;
+  schedule_rule: ScheduleRule | null;
   bulk_batch_id: string | null;
   password_hash: string | null;
   archived_at: string | null;

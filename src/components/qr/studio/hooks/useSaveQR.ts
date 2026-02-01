@@ -5,6 +5,9 @@ import { createClient } from '@/lib/supabase/client';
 import { normalizeContentUrls } from '@/lib/qr/generator';
 import { getDestinationUrl } from '@/lib/qr/destination-url';
 import type { QRContent, QRContentType, QRStyleOptions } from '@/lib/qr/types';
+import type { ScheduleRule } from '@/lib/supabase/types';
+import type { ScheduleMode } from './useProOptions';
+import { convertLocalToUTC } from '@/lib/scheduling/utils';
 import { PLANS } from '@/lib/stripe/plans';
 import { DEFAULT_STYLE } from './useStyleState';
 
@@ -44,6 +47,11 @@ interface UseSaveQRProps {
   getScheduledEnabled: () => boolean;
   getActiveFrom: () => string;
   getActiveUntil: () => string;
+  getScheduleTimezone: () => string;
+  getScheduleMode: () => ScheduleMode;
+  getRecurringStartTime: () => string;
+  getRecurringEndTime: () => string;
+  getRecurringDaysOfWeek: () => number[];
   getAbTestEnabled: () => boolean;
   getAbVariantBUrl: () => string;
   getAbSplitPercentage: () => number;
@@ -56,6 +64,11 @@ interface UseSaveQRProps {
     scheduledEnabled?: boolean;
     activeFrom?: string;
     activeUntil?: string;
+    scheduleTimezone?: string;
+    scheduleMode?: ScheduleMode;
+    recurringStartTime?: string;
+    recurringEndTime?: string;
+    recurringDaysOfWeek?: number[];
     abTestEnabled?: boolean;
     abVariantBUrl?: string;
     abSplitPercentage?: number;
@@ -85,6 +98,11 @@ export function useSaveQR({
   getScheduledEnabled,
   getActiveFrom,
   getActiveUntil,
+  getScheduleTimezone,
+  getScheduleMode,
+  getRecurringStartTime,
+  getRecurringEndTime,
+  getRecurringDaysOfWeek,
   getAbTestEnabled,
   getAbVariantBUrl,
   getAbSplitPercentage,
@@ -150,6 +168,11 @@ export function useSaveQR({
     const scheduledEnabled = getScheduledEnabled();
     const activeFrom = getActiveFrom();
     const activeUntil = getActiveUntil();
+    const scheduleTimezone = getScheduleTimezone();
+    const scheduleMode = getScheduleMode();
+    const recurringStartTime = getRecurringStartTime();
+    const recurringEndTime = getRecurringEndTime();
+    const recurringDaysOfWeek = getRecurringDaysOfWeek();
     const abTestEnabled = getAbTestEnabled();
     const abVariantBUrl = getAbVariantBUrl();
     const abSplitPercentage = getAbSplitPercentage();
@@ -237,12 +260,37 @@ export function useSaveQR({
         insertData.password_hash = null;
       }
       if (scheduledEnabled) {
-        if (activeFrom) {
-          insertData.active_from = new Date(activeFrom).toISOString();
+        insertData.schedule_timezone = scheduleTimezone || null;
+
+        if (scheduleMode === 'once') {
+          // One-time: convert local times using timezone, clear recurring rule
+          if (activeFrom) {
+            insertData.active_from = convertLocalToUTC(activeFrom, scheduleTimezone);
+          }
+          if (activeUntil) {
+            insertData.active_until = convertLocalToUTC(activeUntil, scheduleTimezone);
+          }
+          insertData.schedule_rule = null;
+        } else {
+          // Recurring (daily/weekly): write rule, clear one-time fields
+          const rule: ScheduleRule = {
+            type: scheduleMode,
+            startTime: recurringStartTime,
+            endTime: recurringEndTime,
+          };
+          if (scheduleMode === 'weekly') {
+            rule.daysOfWeek = recurringDaysOfWeek;
+          }
+          insertData.schedule_rule = rule;
+          insertData.active_from = null;
+          insertData.active_until = null;
         }
-        if (activeUntil) {
-          insertData.active_until = new Date(activeUntil).toISOString();
-        }
+      } else {
+        // Scheduling disabled: clear all schedule fields
+        insertData.active_from = null;
+        insertData.active_until = null;
+        insertData.schedule_timezone = null;
+        insertData.schedule_rule = null;
       }
 
       // Update or insert
@@ -338,7 +386,7 @@ export function useSaveQR({
     } finally {
       setIsSaving(false);
     }
-  }, [userId, userTier, userTierLoading, mode, savedQRId, shortCode, getContent, getSelectedType, getQrName, getStyle, getExpiresAt, getPasswordEnabled, getPassword, getScheduledEnabled, getActiveFrom, getActiveUntil, getAbTestEnabled, getAbVariantBUrl, getAbSplitPercentage]);
+  }, [userId, userTier, userTierLoading, mode, savedQRId, shortCode, getContent, getSelectedType, getQrName, getStyle, getExpiresAt, getPasswordEnabled, getPassword, getScheduledEnabled, getActiveFrom, getActiveUntil, getScheduleTimezone, getScheduleMode, getRecurringStartTime, getRecurringEndTime, getRecurringDaysOfWeek, getAbTestEnabled, getAbVariantBUrl, getAbSplitPercentage]);
 
   // Load existing QR code for edit mode
   const loadQRCode = useCallback(async (id: string): Promise<boolean> => {
@@ -378,13 +426,27 @@ export function useSaveQR({
       if (data.password_hash) {
         proOpts.passwordEnabled = true;
       }
-      if (data.active_from || data.active_until) {
+      if (data.active_from || data.active_until || data.schedule_rule) {
         proOpts.scheduledEnabled = true;
-        if (data.active_from) {
-          proOpts.activeFrom = new Date(data.active_from).toISOString().slice(0, 16);
+        if (data.schedule_timezone) {
+          proOpts.scheduleTimezone = data.schedule_timezone;
         }
-        if (data.active_until) {
-          proOpts.activeUntil = new Date(data.active_until).toISOString().slice(0, 16);
+        if (data.schedule_rule) {
+          const rule = data.schedule_rule as ScheduleRule;
+          proOpts.scheduleMode = rule.type;
+          proOpts.recurringStartTime = rule.startTime;
+          proOpts.recurringEndTime = rule.endTime;
+          if (rule.daysOfWeek) {
+            proOpts.recurringDaysOfWeek = rule.daysOfWeek;
+          }
+        } else {
+          proOpts.scheduleMode = 'once';
+          if (data.active_from) {
+            proOpts.activeFrom = new Date(data.active_from).toISOString().slice(0, 16);
+          }
+          if (data.active_until) {
+            proOpts.activeUntil = new Date(data.active_until).toISOString().slice(0, 16);
+          }
         }
       }
       onLoadProOptions(proOpts);

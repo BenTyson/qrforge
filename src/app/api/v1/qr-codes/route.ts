@@ -55,7 +55,7 @@ export async function GET(request: Request) {
 
   let query = supabase
     .from('qr_codes')
-    .select('id, name, type, content_type, content, short_code, destination_url, scan_count, created_at, expires_at, active_from, active_until', { count: 'exact' })
+    .select('id, name, type, content_type, content, short_code, destination_url, scan_count, created_at, expires_at, active_from, active_until, schedule_timezone, schedule_rule', { count: 'exact' })
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1);
@@ -133,7 +133,7 @@ export async function POST(request: Request) {
     return apiError('Request body too large', 400);
   }
 
-  const { name, type = 'dynamic', content_type = 'url', content, style, expires_at, active_from, active_until } = body;
+  const { name, type = 'dynamic', content_type = 'url', content, style, expires_at, active_from, active_until, schedule_timezone, schedule_rule } = body;
 
   // Validate name
   if (!name || typeof name !== 'string') {
@@ -250,6 +250,8 @@ export async function POST(request: Request) {
       expires_at: expires_at || null,
       active_from: active_from || null,
       active_until: active_until || null,
+      schedule_timezone: schedule_timezone || null,
+      schedule_rule: schedule_rule || null,
       style: validatedStyle,
     })
     .select('id, name, type, content_type, content, short_code, destination_url, scan_count, created_at, style')

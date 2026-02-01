@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { QRCodesContent } from './QRCodesContent';
-import type { SubscriptionTier, QRCode, Folder } from '@/lib/supabase/types';
+import type { SubscriptionTier, QRCode, Folder, Campaign } from '@/lib/supabase/types';
 
 export default async function QRCodesPage() {
   const supabase = await createClient();
@@ -10,16 +10,18 @@ export default async function QRCodesPage() {
     return null;
   }
 
-  // Fetch user profile, QR codes, and folders in parallel
-  const [profileResult, qrCodesResult, foldersResult] = await Promise.all([
+  // Fetch user profile, QR codes, folders, and campaigns in parallel
+  const [profileResult, qrCodesResult, foldersResult, campaignsResult] = await Promise.all([
     supabase.from('profiles').select('subscription_tier').eq('id', user.id).single(),
     supabase.from('qr_codes').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('folders').select('*').eq('user_id', user.id).order('name', { ascending: true }),
+    supabase.from('campaigns').select('*').eq('user_id', user.id).order('name', { ascending: true }),
   ]);
 
   const tier = (profileResult.data?.subscription_tier || 'free') as SubscriptionTier;
   const qrCodes = (qrCodesResult.data || []) as QRCode[];
   const folders = (foldersResult.data || []) as Folder[];
+  const campaigns = (campaignsResult.data || []) as Campaign[];
 
   if (qrCodesResult.error) {
     console.error('Error fetching QR codes:', qrCodesResult.error);
@@ -49,6 +51,7 @@ export default async function QRCodesPage() {
         <QRCodesContent
           qrCodes={qrCodes}
           folders={folders}
+          campaigns={campaigns}
           tier={tier}
         />
       </div>

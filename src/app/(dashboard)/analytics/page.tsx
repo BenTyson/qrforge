@@ -2,7 +2,9 @@ import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { AnalyticsCharts } from '@/components/analytics/AnalyticsCharts';
 import { QRCodeFilterSelect } from '@/components/analytics/QRCodeFilterSelect';
+import { CampaignFilterSelect } from '@/components/analytics/CampaignFilterSelect';
 import type { ScanData } from '@/lib/analytics/types';
+import type { Campaign } from '@/lib/supabase/types';
 
 // Pagination constants
 const SCANS_PER_PAGE = 10;
@@ -52,13 +54,14 @@ const MOCK_DATA = {
 };
 
 interface AnalyticsPageProps {
-  searchParams: Promise<{ page?: string; qr?: string }>;
+  searchParams: Promise<{ page?: string; qr?: string; campaign?: string }>;
 }
 
 export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps) {
   const params = await searchParams;
   const currentPage = Math.max(1, parseInt(params.page || '1', 10));
   const selectedQRId = params.qr || null; // Session 3A: QR code filter
+  const selectedCampaignId = params.campaign || null;
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -138,6 +141,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
               currentPage={1}
               isPro={false}
               selectedQRId={null}
+              selectedCampaignId={null}
               selectedQRCode={null}
               allQRCodes={[]}
             />
@@ -148,21 +152,43 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
   }
 
   // Pro/Business users get real data
-  const { data: qrCodes } = await supabase
-    .from('qr_codes')
-    .select('id, name, type, scan_count')
-    .eq('user_id', user.id);
+  const [qrCodesResult, campaignsResult] = await Promise.all([
+    supabase
+      .from('qr_codes')
+      .select('id, name, type, scan_count, campaign_id')
+      .eq('user_id', user.id),
+    supabase
+      .from('campaigns')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('name', { ascending: true }),
+  ]);
+
+  const allCampaigns = (campaignsResult.data || []) as Campaign[];
 
   // Session 3A: Filter to single QR code if selected
-  const allQRCodes = qrCodes || [];
+  const allQRCodes = (qrCodesResult.data || []) as Array<{ id: string; name: string; type: string; scan_count: number; campaign_id: string | null }>;
   let qrCodeIds = allQRCodes.map(qr => qr.id);
   let selectedQRCode: { id: string; name: string; type: string; scan_count: number } | null = null;
+  let selectedCampaign: Campaign | null = null;
 
   if (selectedQRId) {
     const found = allQRCodes.find(qr => qr.id === selectedQRId);
     if (found) {
       selectedQRCode = found;
       qrCodeIds = [selectedQRId];
+    }
+  }
+
+  // Campaign filter: narrow qrCodeIds to those in the selected campaign
+  if (selectedCampaignId && !selectedQRId) {
+    const foundCampaign = allCampaigns.find(c => c.id === selectedCampaignId);
+    if (foundCampaign) {
+      selectedCampaign = foundCampaign;
+      const campaignQRIds = allQRCodes
+        .filter(qr => qr.campaign_id === selectedCampaignId)
+        .map(qr => qr.id);
+      qrCodeIds = campaignQRIds;
     }
   }
 
@@ -328,12 +354,41 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
         </div>
       </div>
 
-      {/* 3A: QR Code Filter Dropdown */}
+      {/* 3A: QR Code & Campaign Filter Dropdowns */}
       {allQRCodes.length > 0 && (
         <QRCodeFilter
           qrCodes={allQRCodes.map(qr => ({ id: qr.id, name: qr.name }))}
           selectedQRId={selectedQRId}
+          campaigns={allCampaigns}
+          selectedCampaignId={selectedCampaignId}
         />
+      )}
+
+      {/* Campaign header card */}
+      {selectedCampaign && (
+        <div className="rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{ backgroundColor: `${selectedCampaign.color}20` }}
+              >
+                <CampaignFilterIcon className="w-6 h-6" style={{ color: selectedCampaign.color }} />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold">{selectedCampaign.name}</h2>
+                <p className="text-sm text-muted-foreground">
+                  {selectedCampaign.description || 'Campaign'}
+                  {' '}&middot;{' '}
+                  {qrCodeIds.length} QR code{qrCodeIds.length !== 1 ? 's' : ''}
+                  {selectedCampaign.start_date && (
+                    <> &middot; {selectedCampaign.start_date}{selectedCampaign.end_date ? ` to ${selectedCampaign.end_date}` : ' onwards'}</>
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* 3B: Single-QR header card */}
@@ -382,6 +437,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
         currentPage={currentPage}
         isPro={true}
         selectedQRId={selectedQRId}
+        selectedCampaignId={selectedCampaignId}
         selectedQRCode={selectedQRCode}
         allQRCodes={allQRCodes}
       />
@@ -390,12 +446,12 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
 }
 
 // 3A: QR Code Filter component
-function QRCodeFilter({ qrCodes, selectedQRId }: { qrCodes: { id: string; name: string }[]; selectedQRId: string | null }) {
+function QRCodeFilter({ qrCodes, selectedQRId, campaigns, selectedCampaignId }: { qrCodes: { id: string; name: string }[]; selectedQRId: string | null; campaigns: Campaign[]; selectedCampaignId: string | null }) {
   return (
     <div className="mb-6">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <label htmlFor="qr-filter" className="text-sm font-medium text-muted-foreground">
-          Filter by QR Code:
+          Filter by:
         </label>
         <QRCodeFilterSelect
           options={[
@@ -404,6 +460,15 @@ function QRCodeFilter({ qrCodes, selectedQRId }: { qrCodes: { id: string; name: 
           ]}
           selected={selectedQRId || ''}
         />
+        {campaigns.length > 0 && (
+          <CampaignFilterSelect
+            options={[
+              { value: '', label: 'All Campaigns' },
+              ...campaigns.map(c => ({ value: c.id, label: c.name })),
+            ]}
+            selected={selectedCampaignId || ''}
+          />
+        )}
       </div>
     </div>
   );
@@ -446,6 +511,7 @@ interface AnalyticsContentProps {
   currentPage: number;
   isPro: boolean;
   selectedQRId: string | null;
+  selectedCampaignId: string | null;
   selectedQRCode: { id: string; name: string; type: string; scan_count: number } | null;
   allQRCodes: Array<{ id: string; name: string; scan_count: number }>;
 }
@@ -471,13 +537,15 @@ function AnalyticsContent({
   currentPage,
   isPro,
   selectedQRId,
+  selectedCampaignId,
 }: AnalyticsContentProps) {
 
-  // Build pagination URL helper (preserves qr param)
+  // Build pagination URL helper (preserves qr and campaign params)
   const buildPageUrl = (page: number) => {
     const params = new URLSearchParams();
     if (page > 1) params.set('page', String(page));
     if (selectedQRId) params.set('qr', selectedQRId);
+    if (selectedCampaignId) params.set('campaign', selectedCampaignId);
     const qs = params.toString();
     return qs ? `/analytics?${qs}` : '/analytics';
   };
@@ -1230,6 +1298,17 @@ function ChevronIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <polyline points="9 18 15 12 9 6" />
+    </svg>
+  );
+}
+
+// Campaign icon (target)
+function CampaignFilterIcon({ className, style }: { className?: string; style?: React.CSSProperties }) {
+  return (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="6" />
+      <circle cx="12" cy="12" r="2" />
     </svg>
   );
 }

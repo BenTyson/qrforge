@@ -71,6 +71,14 @@ export const API_KEY_LIMITS = {
   business: 5,
 } as const;
 
+// Campaign limits per tier
+// Note: -1 means unlimited
+export const CAMPAIGN_LIMITS = {
+  free: 0,
+  pro: 5,
+  business: -1,
+} as const;
+
 // Helper function to check if within scan limit
 export function isWithinScanLimit(tier: keyof typeof SCAN_LIMITS, currentCount: number): boolean {
   const limit = SCAN_LIMITS[tier];

@@ -17,6 +17,7 @@ export { AppsForm } from './AppsForm';
 
 // Reviews & Feedback (free tier)
 export { GoogleReviewForm } from './GoogleReviewForm';
+export { MultiReviewForm } from './MultiReviewForm';
 export { FeedbackForm } from './FeedbackForm';
 
 // Events (free tier)

@@ -209,6 +209,15 @@ const TYPE_CONFIG: Record<QRContentType, { label: string; icon: React.ReactNode 
       </svg>
     ),
   },
+  'multi-review': {
+    label: 'Multi-Platform Review',
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        <polygon points="12 6 13.55 9.13 17 9.64 14.5 12.07 15.09 15.51 12 13.88 8.91 15.51 9.5 12.07 7 9.64 10.45 9.13 12 6" fill="currentColor" opacity="0.3" />
+      </svg>
+    ),
+  },
   feedback: {
     label: 'Feedback',
     icon: (
@@ -355,7 +364,7 @@ const CATEGORIES = [
   {
     key: 'reviews',
     label: 'Reviews & Feedback',
-    types: ['google-review', 'feedback'] as QRContentType[],
+    types: ['google-review', 'multi-review', 'feedback'] as QRContentType[],
   },
   {
     key: 'events',

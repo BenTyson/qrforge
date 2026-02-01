@@ -303,6 +303,7 @@ export const validators = {
       'whatsapp', 'facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'snapchat', 'threads', 'youtube', 'pinterest', 'spotify', 'reddit', 'twitch', 'discord', 'apps',
       // Reviews & Feedback
       'google-review',
+      'multi-review',
       'feedback',
       // Events
       'event',
@@ -520,6 +521,29 @@ export const validators = {
         }
         if (!content.businessName || typeof content.businessName !== 'string') {
           return { valid: false, error: 'content.businessName is required for google-review type' };
+        }
+        break;
+
+      case 'multi-review':
+        if (!content.businessName || typeof content.businessName !== 'string') {
+          return { valid: false, error: 'content.businessName is required for multi-review type' };
+        }
+        if (!Array.isArray(content.platforms) || content.platforms.length === 0) {
+          return { valid: false, error: 'content.platforms must be a non-empty array for multi-review type' };
+        }
+        {
+          const validPlatforms = ['google', 'yelp', 'tripadvisor', 'facebook', 'custom'];
+          for (const p of content.platforms as Array<Record<string, unknown>>) {
+            if (!p.platform || !validPlatforms.includes(p.platform as string)) {
+              return { valid: false, error: 'Each platform must have a valid platform type' };
+            }
+          }
+          const hasUrl = (content.platforms as Array<Record<string, unknown>>).some(
+            p => typeof p.url === 'string' && p.url.trim().length > 0
+          );
+          if (!hasUrl) {
+            return { valid: false, error: 'At least one platform must have a URL' };
+          }
         }
         break;
 

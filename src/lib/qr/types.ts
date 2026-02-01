@@ -25,6 +25,7 @@ export type QRContentType =
   | 'apps'
   // Reviews (free tier)
   | 'google-review'
+  | 'multi-review'
   // File upload types (Pro+)
   | 'pdf'
   | 'images'
@@ -276,6 +277,21 @@ export interface GoogleReviewContent {
   accentColor?: string;   // Landing page accent color
 }
 
+export type ReviewPlatform = 'google' | 'yelp' | 'tripadvisor' | 'facebook' | 'custom';
+
+export interface ReviewPlatformEntry {
+  platform: ReviewPlatform;
+  url: string;
+  label?: string;           // Custom label (used for 'custom' platform)
+}
+
+export interface MultiReviewContent {
+  type: 'multi-review';
+  businessName: string;
+  platforms: ReviewPlatformEntry[];
+  accentColor?: string;
+}
+
 export interface EventContent {
   type: 'event';
   title: string;
@@ -454,6 +470,7 @@ export type QRContent =
   | AppsContent
   // Reviews & Feedback
   | GoogleReviewContent
+  | MultiReviewContent
   | FeedbackContent
   // Events
   | EventContent
@@ -515,6 +532,7 @@ export const QR_TYPE_LABELS: Record<QRContentType, string> = {
   apps: 'App Download',
   // Reviews & Feedback
   'google-review': 'Google Review',
+  'multi-review': 'Multi-Platform Review',
   feedback: 'Feedback Form',
   // Events
   event: 'Event / Calendar',
@@ -560,6 +578,7 @@ export const QR_TYPE_ICONS: Record<QRContentType, string> = {
   apps: 'smartphone',
   // Reviews & Feedback
   'google-review': 'star',
+  'multi-review': 'stars',
   feedback: 'clipboard-check',
   // Events
   event: 'calendar',
@@ -595,6 +614,7 @@ export const PRO_ONLY_TYPES: QRContentType[] = [
 // Types that require dynamic QR codes (landing pages)
 export const DYNAMIC_REQUIRED_TYPES: QRContentType[] = [
   'google-review',
+  'multi-review',
   'feedback',
   'youtube',
   'spotify',

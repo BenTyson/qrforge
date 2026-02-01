@@ -83,6 +83,15 @@ export function normalizeContentUrls(content: QRContent): QRContent {
         }) || [],
       };
 
+    case 'multi-review':
+      return {
+        ...content,
+        platforms: content.platforms?.map(p => ({
+          ...p,
+          url: p.url ? normalizeUrl(p.url) : p.url,
+        })) || [],
+      };
+
     case 'feedback':
       return {
         ...content,
@@ -211,6 +220,9 @@ export function contentToString(content: QRContent): string {
 
     // === Reviews & Feedback ===
     case 'google-review':
+      return `https://qrwolf.com/preview/${content.type}`;
+
+    case 'multi-review':
       return `https://qrwolf.com/preview/${content.type}`;
 
     case 'feedback':

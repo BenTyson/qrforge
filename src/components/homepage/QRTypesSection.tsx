@@ -19,7 +19,7 @@ export function QRTypesSection() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-8">
           <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
-            35 QR Types
+            36 QR Types
           </Badge>
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
             One tool for <span className="gradient-text">every QR code</span>
